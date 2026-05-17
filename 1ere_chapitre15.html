@@ -1,0 +1,924 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>1ʳᵉ Spé · Chapitre 15 — Ondes mécaniques | PhysiChem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('pco_theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<style>
+:root{--bg:#fbf5f7;--bg2:#f3eaf0;--surface:#ffffff;--surface2:#fdf8fb;--blue:#9f4f68;--blue2:#b96a82;--blue3:#d4899f;--text:#1a0a12;--text2:#5a2d42;--text3:#8a5a6a;--border:rgba(159,79,104,0.15);--border2:rgba(159,79,104,0.30);--ok:#2d9e6b;--ok-bg:#eaf7f0;--ok-bd:rgba(45,158,107,0.3);--warn:#c07820;--warn-bg:#fdf5ea;--warn-bd:rgba(192,120,32,0.3);--prop:#6b5fad;--prop-bg:#f0eefb;--prop-bd:rgba(107,95,173,0.3);--radius:14px;--radius-sm:9px;--shadow:0 2px 16px rgba(159,79,104,0.10);--shadow-md:0 6px 28px rgba(159,79,104,0.16);}
+[data-theme="dark"]{--bg:#12060c;--bg2:#1a0d14;--surface:#1f1018;--surface2:#27151e;--text:#f5e8ef;--text2:#c49ab0;--text3:#8a5a6a;--border:rgba(185,106,130,0.15);--border2:rgba(185,106,130,0.28);--ok:#3dbf82;--ok-bg:rgba(61,191,130,0.09);--ok-bd:rgba(61,191,130,0.25);--warn:#e09a3a;--warn-bg:rgba(224,154,58,0.09);--warn-bd:rgba(224,154,58,0.25);--prop:#9a8fe8;--prop-bg:rgba(154,143,232,0.09);--prop-bd:rgba(154,143,232,0.25);--shadow:0 2px 16px rgba(0,0,0,0.35);--shadow-md:0 6px 28px rgba(0,0,0,0.45);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:90;box-shadow:var(--shadow);}
+.back-btn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.back-btn:hover{color:var(--blue);border-color:var(--blue);}
+.breadcrumb{font-size:12px;color:var(--text3);}
+.breadcrumb strong{color:var(--blue);font-weight:600;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.pct-pill{padding:3px 10px;border-radius:99px;background:var(--bg2);border:1px solid var(--border2);font-size:12px;font-weight:700;color:var(--blue);}
+.th-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.app{display:flex;flex:1;min-height:0;}
+.rail{width:64px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:4px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;width:52px;padding:8px 4px;border-radius:10px;cursor:pointer;border:none;background:transparent;color:var(--text3);font-size:9.5px;font-weight:600;transition:all .2s;text-align:center;line-height:1.2;}
+.tab:hover{background:var(--bg2);color:var(--text2);}
+.tab.active{background:var(--bg2);color:var(--blue);border:1px solid var(--border2);}
+.tab-icon{font-size:18px;line-height:1;}
+.mastery-strip{padding:4px 8px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.mastery-bar{flex:1;height:4px;background:var(--bg2);border-radius:99px;overflow:hidden;}
+.mastery-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue3));border-radius:99px;transition:width .5s;}
+.mastery-txt{font-size:11px;font-weight:700;color:var(--blue);}
+.content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.panel{display:none;}.panel.active{display:block;}
+.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:28px 32px 20px;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:99px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--blue);margin-bottom:12px;}
+.hero h1{font-size:clamp(22px,3.5vw,34px);font-weight:700;letter-spacing:-0.5px;line-height:1.15;margin-bottom:10px;}
+.hero h1 em{font-style:normal;color:var(--blue);}
+.hero-desc{font-size:14px;color:var(--text2);max-width:620px;}
+canvas.hero-canvas{width:100%;height:180px;border-radius:var(--radius);background:var(--bg);display:block;margin-top:16px;}
+.cours-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
+.cours-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:36px 0 14px;padding-bottom:8px;border-bottom:1.5px solid var(--border2);}
+.cours-wrap h2:first-child{margin-top:0;}
+.cours-wrap h3{font-size:15px;font-weight:600;color:var(--text);margin:22px 0 8px;}
+.cours-wrap p{color:var(--text2);margin-bottom:12px;font-size:14.5px;}
+.box{border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin:16px 0;border-left:4px solid;background:var(--surface);}
+.box-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.box.def{border-color:var(--blue);}.box.def .box-lbl{color:var(--blue);}
+.box.prop{border-color:var(--prop);}.box.prop .box-lbl{color:var(--prop);}
+.box.warn{border-color:var(--warn);}.box.warn .box-lbl{color:var(--warn);}
+.box.ok{border-color:var(--ok);}.box.ok .box-lbl{color:var(--ok);}
+.formula-block{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 24px;margin:14px 0;text-align:center;font-size:15px;overflow-x:auto;}
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1.5px solid var(--border);margin:14px 0;}
+table.t{width:100%;border-collapse:collapse;}
+table.t th{background:var(--bg2);padding:9px 14px;font-size:12px;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border);text-align:left;}
+table.t td{padding:9px 14px;font-size:13.5px;color:var(--text2);border-bottom:1px solid var(--border);}
+table.t tr:last-child td{border-bottom:none;}
+table.t tr:hover td{background:var(--bg);color:var(--text);}
+.reldim-wrap,.sim-wrap,.ece-wrap,.fc-wrap,.quiz-wrap,.mm-wrap,.exo-wrap,.term-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
+.reldim-wrap h2,.sim-wrap h2,.ece-wrap h2,.fc-wrap h2,.quiz-wrap h2,.mm-wrap h2,.exo-wrap h2,.term-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:0 0 20px;}
+.rel-card,.sim-card,.term-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.rel-card h3,.sim-card h3,.term-card h3{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:10px;}
+.rel-card p,.sim-card p,.term-card p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:6px;}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:12px;}
+.sim-group label{display:block;font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;}
+.sim-inp{width:100%;padding:8px 11px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;}
+.sim-inp:focus{border-color:var(--blue);}
+.sim-btn{padding:9px 20px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:6px;}
+.sim-btn:hover{opacity:.85;}
+.sim-result{background:var(--bg2);border:1.5px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:13.5px;color:var(--text2);line-height:1.8;margin:10px 0;}
+.sim-result strong{color:var(--blue);font-family:'IBM Plex Mono',monospace;}
+canvas.sim-c{width:100%;height:200px;border-radius:10px;background:var(--bg);display:block;margin-top:10px;}
+canvas.ece-c{width:100%;height:260px;border-radius:var(--radius);background:var(--bg);display:block;margin:14px 0;}
+.fc-modes{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.fc-mode-btn{padding:7px 16px;border-radius:99px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.fc-mode-btn.on{background:var(--bg2);border-color:var(--blue);color:var(--blue);}
+.fc-sec{display:none;}.fc-sec.active{display:block;}
+.fc-ctr{font-size:13px;color:var(--text3);font-weight:600;margin-bottom:18px;text-align:center;}
+.scene{perspective:1000px;max-width:520px;height:260px;margin:0 auto 20px;cursor:pointer;}
+.card3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);border-radius:16px;}
+.card3d.flip{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.face.front{background:var(--surface);border:1.5px solid var(--border);}
+.face.back{background:var(--bg2);border:1.5px solid var(--border2);transform:rotateY(180deg);}
+.fc-q{font-size:17px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:8px;}
+.fc-a{font-size:13.5px;color:var(--text);line-height:1.65;}
+.fc-hint{font-size:11px;color:var(--text3);margin-top:8px;}
+.fc-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.fc-btn{padding:8px 18px;border-radius:9px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.fc-btn:hover{background:var(--bg2);color:var(--text);}
+.fc-btn.primary{background:var(--text);color:var(--bg);border-color:var(--text);}
+.fc-btn.shuf{border-color:var(--prop-bd);color:var(--prop);background:var(--prop-bg);}
+.comp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px;}
+.blank{display:inline-block;min-width:60px;border-bottom:2px solid var(--blue);padding:1px 5px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text);background:transparent;outline:none;text-align:center;}
+.check-r{padding:9px 13px;border-radius:8px;font-size:13px;font-weight:600;margin-top:7px;display:none;}
+.check-r.ok{background:var(--ok-bg);border:1px solid var(--ok-bd);color:var(--ok);}
+.check-r.ko{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);}
+.check-r.show{display:block;}
+.chrono-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.chrono-time{font-size:28px;font-weight:700;color:var(--text);font-family:'IBM Plex Mono',monospace;}
+.chrono-time.urg{color:var(--warn);animation:blink .7s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.chrono-prog{flex:1;height:5px;background:var(--bg2);border-radius:99px;overflow:hidden;}
+.chrono-fill{height:100%;background:linear-gradient(90deg,var(--ok),var(--blue));border-radius:99px;transition:width .5s linear;}
+.chrono-ctr{font-size:13px;color:var(--text3);font-weight:600;}
+.chrono-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:18px;text-align:center;min-height:150px;display:flex;align-items:center;justify-content:center;}
+.chrono-q{font-size:18px;font-weight:700;color:var(--text);line-height:1.35;}
+.chrono-acts{display:flex;gap:10px;justify-content:center;}
+.btn-knew{padding:11px 24px;border-radius:10px;background:var(--ok-bg);color:var(--ok);font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--ok-bd);transition:all .2s;}
+.btn-knew:hover{background:var(--ok);color:#fff;}
+.btn-retry{padding:11px 24px;border-radius:10px;border:1.5px solid var(--warn-bd);background:var(--warn-bg);color:var(--warn);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-retry:hover{background:var(--warn);color:#fff;}
+.chrono-result{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;display:none;}
+.chrono-result.show{display:block;}
+.result-big{font-size:56px;font-weight:800;color:var(--blue);}
+.quiz-wrap h2{margin-bottom:6px;}
+.score-pill{padding:5px 12px;border-radius:99px;background:var(--bg2);border:1.5px solid var(--border2);font-size:13px;font-weight:700;color:var(--blue);}
+.q-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
+.q-num{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:7px;}
+.q-text{font-size:14.5px;font-weight:500;color:var(--text);margin-bottom:12px;line-height:1.6;}
+.opts{display:flex;flex-direction:column;gap:7px;}
+.opt{width:100%;padding:10px 13px;border-radius:9px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;text-align:left;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;}
+.opt-ltr{width:22px;height:22px;border-radius:6px;background:var(--bg2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.opt:hover:not(:disabled){border-color:var(--blue);color:var(--text);background:var(--bg2);}
+.opt.good{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);}
+.opt.good .opt-ltr{background:var(--ok);color:#fff;}
+.opt.bad{border-color:var(--warn-bd);background:var(--warn-bg);color:var(--warn);}
+.opt.bad .opt-ltr{background:var(--warn);color:#fff;}
+.opt:disabled{cursor:default;}
+.corr-box{margin-top:9px;padding:10px 13px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);font-size:13px;color:var(--text2);display:none;}
+.corr-box.show{display:block;}
+.next-q{margin-top:9px;padding:8px 16px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;display:none;transition:all .2s;}
+.next-q.show{display:inline-flex;align-items:center;gap:6px;}
+.quiz-final{display:none;text-align:center;padding:32px;}
+.quiz-final.show{display:block;}
+.final-big{font-size:60px;font-weight:800;color:var(--blue);}
+.quiz-prog{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.qp-bar{flex:1;height:4px;border-radius:99px;background:var(--border);overflow:hidden;}
+.qp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--blue3));transition:width .4s;}
+.qp-lbl{font-size:12px;color:var(--text3);}
+.mm-ctrl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.mm-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.mm-btn:hover{border-color:var(--blue);color:var(--blue);}
+canvas#mmCanvas{width:100%;height:400px;border-radius:var(--radius);background:var(--bg);display:block;}
+.exo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:18px;overflow:hidden;box-shadow:var(--shadow);}
+.exo-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.exo-num{padding:3px 10px;border-radius:6px;background:var(--bg2);border:1px solid var(--border2);font-size:11px;font-weight:700;color:var(--blue);}
+.exo-title{font-size:14px;font-weight:700;color:var(--text);}
+.exo-pills{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto;}
+.epill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.epill.diff1{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd);}
+.epill.diff2{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
+.epill.diff3{background:var(--prop-bg);color:var(--prop);border:1px solid var(--prop-bd);}
+.exo-body{padding:16px 20px;}
+.exo-enonce{font-size:14px;color:var(--text2);line-height:1.75;padding:12px 16px;background:var(--bg2);border-radius:var(--radius-sm);border-left:3px solid var(--blue);margin-bottom:12px;}
+.corr-toggle{padding:7px 15px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.corr-toggle:hover{border-color:var(--blue);color:var(--blue);}
+.corr-content{display:none;margin-top:12px;padding:14px 18px;background:var(--ok-bg);border:1.5px solid var(--ok-bd);border-radius:var(--radius-sm);font-size:13.5px;color:var(--text2);line-height:1.75;}
+.corr-content.show{display:block;}
+@media(max-width:700px){.rail{width:52px;}.tab{width:44px;font-size:8.5px;}.hero{padding:18px 16px 14px;}.cours-wrap,.reldim-wrap,.sim-wrap,.ece-wrap,.fc-wrap,.quiz-wrap,.mm-wrap,.exo-wrap,.term-wrap{padding:20px 14px 60px;}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true}};</script>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">← Retour</button>
+  <span class="breadcrumb">1ère Spé › <strong>Chapitre 15</strong> — Ondes mécaniques</span>
+  <div class="topbar-right">
+    <span class="pct-pill" id="pctPill">0 %</span>
+    <button class="th-btn" id="thBtn" onclick="toggleTheme()">🌙</button>
+  </div>
+</div>
+<div class="app">
+  <nav class="rail">
+    <button class="tab active" onclick="go('cours',this)"><span class="tab-icon">📚</span>Cours</button>
+    <button class="tab" onclick="go('reldim',this)"><span class="tab-icon">📐</span>Relations</button>
+    <button class="tab" onclick="go('exo',this)"><span class="tab-icon">✏️</span>Exercices</button>
+    <button class="tab" onclick="go('fc',this)"><span class="tab-icon">🃏</span>Flash-cards</button>
+    <button class="tab" onclick="go('quiz',this)"><span class="tab-icon">❓</span>Quiz</button>
+    <button class="tab" onclick="go('mm',this)"><span class="tab-icon">🧠</span>Carte</button>
+    <button class="tab" onclick="go('sim',this)"><span class="tab-icon">🌊</span>Simul.</button>
+    <button class="tab" onclick="go('ece',this)"><span class="tab-icon">🔬</span>ECE</button>
+    <button class="tab" onclick="go('terminal',this)"><span class="tab-icon">🚀</span>Terminale</button>
+  </nav>
+  <div class="content">
+    <div class="mastery-strip">
+      <span style="font-size:11px;color:var(--text3);font-weight:600;">Maîtrise :</span>
+      <div class="mastery-bar"><div class="mastery-fill" id="masteryBar" style="width:0%"></div></div>
+      <span class="mastery-txt" id="masteryTxt">0%</span>
+    </div>
+
+    <!-- COURS -->
+    <div class="panel active" id="p-cours">
+      <div class="hero">
+        <div class="hero-badge">🌊 Thème 4 — Ondes & Signaux · Chapitre 15</div>
+        <h1>Ondes <em>mécaniques</em></h1>
+        <p class="hero-desc">Propagation d'une perturbation, célérité, retard, période, fréquence, longueur d'onde. Transport d'énergie sans transport de matière.</p>
+        <canvas class="hero-canvas" id="heroCanvas"></canvas>
+      </div>
+      <div class="cours-wrap">
+        <h2>🌊 I. Onde mécanique progressive</h2>
+        <div class="box def">
+          <div class="box-lbl">Définition</div>
+          <p>Une <strong>onde mécanique progressive</strong> est la propagation d'une perturbation dans un milieu matériel de proche en proche, <strong>sans transport de matière</strong> mais avec <strong>transport d'énergie</strong>.</p>
+        </div>
+        <div class="box prop">
+          <div class="box-lbl">Types d'ondes mécaniques</div>
+          <p>— <strong>Onde transversale</strong> : la perturbation est <strong>perpendiculaire</strong> à la direction de propagation. Exemples : corde tendue, vague à la surface de l'eau.</p>
+          <p>— <strong>Onde longitudinale</strong> : la perturbation est <strong>parallèle</strong> à la direction de propagation (compression/dépression). Exemples : son, ultrason, onde sismique P.</p>
+        </div>
+        <div class="box ok">
+          <div class="box-lbl">Exemples importants</div>
+          <p>— Son dans l'air : onde longitudinale — nécessite un milieu, <strong>ne se propage pas dans le vide</strong></p>
+          <p>— Ondes sismiques : ondes P (longitudinales) et ondes S (transversales)</p>
+          <p>— Ondes ultrasonores : médicales (échographie), sonar, contrôle non destructif</p>
+        </div>
+
+        <h2>⏱️ II. Célérité et retard</h2>
+        <div class="box def">
+          <div class="box-lbl">Célérité v</div>
+          <p>La <strong>célérité</strong> (ou vitesse de propagation) d'une onde est la vitesse à laquelle la perturbation se déplace dans le milieu :</p>
+        </div>
+        <div class="formula-block">\[v = \frac{d}{\tau}\]</div>
+        <p>\(v\) en m·s⁻¹ ; \(d\) = distance parcourue en m ; \(\tau\) = retard (durée de propagation) en s.</p>
+        <p>La célérité dépend du <strong>milieu de propagation</strong> et de sa température, <strong>pas de la source</strong>.</p>
+        <div class="table-wrap"><table class="t">
+          <thead><tr><th>Milieu</th><th>Type d'onde</th><th>Célérité</th></tr></thead>
+          <tbody>
+            <tr><td>Air (20°C)</td><td>Son</td><td>\(\approx 340\) m·s⁻¹</td></tr>
+            <tr><td>Eau</td><td>Son</td><td>\(\approx 1\,500\) m·s⁻¹</td></tr>
+            <tr><td>Acier</td><td>Son</td><td>\(\approx 5\,000\) m·s⁻¹</td></tr>
+            <tr><td>Vide / air</td><td>Lumière (EM)</td><td>\(3 \times 10^8\) m·s⁻¹</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box def">
+          <div class="box-lbl">Retard τ</div>
+          <p>Un point \(M_2\) situé à une distance \(d\) de \(M_1\) présente la même perturbation que \(M_1\) avec un <strong>retard</strong> :</p>
+        </div>
+        <div class="formula-block">\[\tau = \frac{d}{v}\]</div>
+        <div class="box warn">
+          <div class="box-lbl">Application — la foudre</div>
+          <p>On voit l'éclair (lumière quasi instantanée), puis on entend le tonnerre \(\tau = 3\) s après (\(v_{\text{son}} = 340\) m·s⁻¹).</p>
+          <p>\(d = v \times \tau = 340 \times 3 = \mathbf{1\,020}\) m \(\approx 1\) km</p>
+        </div>
+
+        <h2>🌀 III. Onde mécanique périodique</h2>
+        <div class="box def">
+          <div class="box-lbl">Période T et fréquence f</div>
+          <p>— <strong>Période \(T\)</strong> (s) : durée minimale pour que le signal se reproduise identique à lui-même. Sur un graphe temporel, \(T\) se lit horizontalement.</p>
+          <p>— <strong>Fréquence \(f\)</strong> (Hz) : nombre de motifs par seconde.</p>
+        </div>
+        <div class="formula-block">\[f = \frac{1}{T} \qquad \Leftrightarrow \qquad T = \frac{1}{f}\]</div>
+        <div class="box ok">
+          <div class="box-lbl">Domaines de fréquence du son</div>
+          <p>— <strong>Infrasons :</strong> \(f < 20\) Hz (séismes, éléphants)</p>
+          <p>— <strong>Gamme audible :</strong> \(20\) Hz \(\leq f \leq 20\,000\) Hz</p>
+          <p>— <strong>Ultrasons :</strong> \(f > 20\) kHz (chauves-souris, échographie, sonar)</p>
+        </div>
+        <div class="box prop">
+          <div class="box-lbl">Lecture d'un oscillogramme</div>
+          <p>Sur un oscilloscope, la base de temps (TB) donne la durée par division.</p>
+          <p>\(T = \text{nb\_div} \times \text{TB}\) · Amplitude = valeur de crête du signal.</p>
+          <p>Exemple : TB = 2 ms/div, 4 divisions par motif → \(T = 4 \times 2 = 8\) ms → \(f = 125\) Hz.</p>
+        </div>
+
+        <h2>📐 IV. Longueur d'onde λ et relation fondamentale</h2>
+        <div class="box def">
+          <div class="box-lbl">Longueur d'onde λ</div>
+          <p>La <strong>longueur d'onde</strong> \(\lambda\) est la plus petite distance séparant deux points du milieu en phase (dans le même état vibratoire). C'est la distance parcourue par l'onde pendant une période \(T\).</p>
+        </div>
+        <div class="formula-block">\[\lambda = v \cdot T = \frac{v}{f}\]</div>
+        <p>\(\lambda\) en mètres, \(v\) en m·s⁻¹, \(T\) en s, \(f\) en Hz.</p>
+        <p>Sur un <strong>graphe temporel</strong> (signal en un point), on lit \(T\). Sur un <strong>graphe spatial</strong> (photo de la corde à un instant), on lit \(\lambda\).</p>
+        <div class="box ok">
+          <div class="box-lbl">Exemple — son (v = 340 m/s, f = 440 Hz)</div>
+          <p>\(T = 1/f = 1/440 \approx 2{,}27 \times 10^{-3}\) s</p>
+          <p>\(\lambda = v/f = 340/440 \approx \mathbf{0{,}77}\) m</p>
+          <p>Ultrason (\(f = 1\) MHz dans l'air) : \(\lambda = 340/10^6 = 3{,}4 \times 10^{-4}\) m = 0,34 mm</p>
+        </div>
+        <div class="box prop">
+          <div class="box-lbl">Deux points en phase</div>
+          <p>Deux points \(M_1\) et \(M_2\) sont <strong>en phase</strong> si leur distance est un multiple entier de \(\lambda\) :</p>
+          <p>\(d = k\lambda\) avec \(k \in \mathbb{N}^*\)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATIONS -->
+    <div class="panel" id="p-reldim">
+      <div class="reldim-wrap">
+        <h2>📐 Relations & Dimensions — Chapitre 15</h2>
+        <div class="rel-card">
+          <h3>Célérité d'une onde</h3>
+          <div class="formula-block">\[v = \frac{d}{\tau}\]</div>
+          <p><strong>Grandeurs :</strong> \(d\) [m], \(\tau\) [s]. <strong>Unité :</strong> m·s⁻¹. Dépend du milieu, pas de la source.</p>
+        </div>
+        <div class="rel-card">
+          <h3>Retard temporel</h3>
+          <div class="formula-block">\[\tau = \frac{d}{v}\]</div>
+          <p>Retard avec lequel le point \(M_2\) reproduit la perturbation de \(M_1\). Unité : s.</p>
+        </div>
+        <div class="rel-card">
+          <h3>Fréquence et période</h3>
+          <div class="formula-block">\[f = \frac{1}{T}\]</div>
+          <p>\(f\) en Hz = s⁻¹ ; \(T\) en s. Gamme audible : 20 Hz – 20 kHz.</p>
+        </div>
+        <div class="rel-card">
+          <h3>Longueur d'onde</h3>
+          <div class="formula-block">\[\lambda = v \cdot T = \frac{v}{f}\]</div>
+          <p>\(\lambda\) en m. Distance parcourue pendant une période. Deux points en phase : \(d = k\lambda\).</p>
+        </div>
+        <div class="rel-card">
+          <h3>Lecture oscillogramme</h3>
+          <p>\(T = n_{\text{div}} \times \text{TB}\) · Amplitude = crête. Pour lire \(\lambda\) : photo spatiale de l'onde.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXERCICES -->
+    <div class="panel" id="p-exo">
+      <div class="exo-wrap">
+        <h2>✏️ Exercices progressifs</h2>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 1</span>
+            <span class="exo-title">Foudre — célérité et retard</span>
+            <div class="exo-pills"><span class="epill diff1">⭐ Facile</span><span class="epill diff1">APP</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">On voit un éclair, puis on entend le tonnerre \(\tau = 4\) s plus tard. La célérité du son dans l'air est \(v = 340\) m·s⁻¹.<br>1. Calculer la distance \(d\) entre l'observateur et la foudre.<br>2. Peut-on entendre le tonnerre avant de voir l'éclair ? Justifier.</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. \(d = v \times \tau = 340 \times 4 = \mathbf{1\,360}\) m \(\approx 1{,}4\) km</p>
+              <p>2. Non. La lumière se propage à \(3 \times 10^8\) m·s⁻¹, soit environ 900 000 fois plus vite que le son. On voit donc toujours l'éclair avant d'entendre le tonnerre (sauf si on est exactement à la foudre, mais alors il n'y a pas de retard perceptible).</p>
+            </div>
+          </div>
+        </div>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 2</span>
+            <span class="exo-title">Fréquence et longueur d'onde</span>
+            <div class="exo-pills"><span class="epill diff1">⭐ Facile</span><span class="epill diff1">REA</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">Une onde sonore se propage dans l'air (\(v = 340\) m·s⁻¹) avec une fréquence \(f = 850\) Hz.<br>1. Calculer la période \(T\).<br>2. Calculer la longueur d'onde \(\lambda\).<br>3. Ce son est-il dans la gamme audible ?</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. \(T = 1/f = 1/850 \approx \mathbf{1{,}18 \times 10^{-3}}\) s = 1,18 ms</p>
+              <p>2. \(\lambda = v/f = 340/850 = \mathbf{0{,}4}\) m</p>
+              <p>3. Oui : 850 Hz est bien dans [20 Hz ; 20 000 Hz]. C'est un son audible (grave-médium).</p>
+            </div>
+          </div>
+        </div>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 3</span>
+            <span class="exo-title">Lecture d'un oscillogramme</span>
+            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">APP</span><span class="epill diff1">ANA</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">Un oscilloscope affiche un signal périodique. Base de temps TB = 0,5 ms/div. On compte 6 divisions pour un motif complet.<br>1. Calculer la période \(T\).<br>2. Calculer la fréquence \(f\).<br>3. Ce signal est-il audible ? ultrasonique ?</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. \(T = 6 \times 0{,}5\) ms \(= 3\) ms \(= 3 \times 10^{-3}\) s</p>
+              <p>2. \(f = 1/T = 1/(3 \times 10^{-3}) \approx \mathbf{333}\) Hz</p>
+              <p>3. Audible : 333 Hz est dans [20 Hz ; 20 kHz]. Pas ultrasonique (\(f < 20\) kHz).</p>
+            </div>
+          </div>
+        </div>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 4</span>
+            <span class="exo-title">Ultrason médical</span>
+            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">REA</span><span class="epill diff1">VAL</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">Une sonde d'échographie émet des ultrasons à \(f = 5\) MHz dans les tissus biologiques (\(v = 1\,540\) m·s⁻¹).<br>1. Calculer \(\lambda\) dans les tissus.<br>2. L'écho d'un organe revient \(\tau = 130\) µs après l'émission. À quelle profondeur se trouve l'organe ?<br>3. Pourquoi des fréquences élevées sont-elles utilisées en imagerie médicale ?</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. \(\lambda = v/f = 1540/(5 \times 10^6) = \mathbf{3{,}08 \times 10^{-4}}\) m = 0,31 mm</p>
+              <p>2. L'onde fait l'aller-retour : \(d = v \times \tau / 2 = 1540 \times 130 \times 10^{-6} / 2 \approx \mathbf{0{,}10}\) m = 10 cm</p>
+              <p>3. Plus \(\lambda\) est courte (donc \(f\) grande), meilleure est la résolution spatiale. On peut distinguer des détails de taille comparable à \(\lambda\).</p>
+            </div>
+          </div>
+        </div>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 5</span>
+            <span class="exo-title">Onde sur une corde</span>
+            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">APP</span><span class="epill diff1">ANA</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">Une onde transversale se propage sur une corde à \(v = 12\) m·s⁻¹. La période mesurée est \(T = 0{,}25\) s.<br>1. Calculer \(f\) et \(\lambda\).<br>2. Deux points A et B de la corde sont séparés de \(d = 4{,}5\) m. Sont-ils en phase ?<br>3. En quel sens s'effectue la perturbation (transversale ou longitudinale) ?</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. \(f = 1/T = 1/0{,}25 = \mathbf{4}\) Hz ; \(\lambda = vT = 12 \times 0{,}25 = \mathbf{3}\) m</p>
+              <p>2. \(d/\lambda = 4{,}5/3 = 1{,}5\) — non entier → A et B <strong>ne sont pas en phase</strong> (ils sont en opposition de phase, décalage de \(\lambda/2\)).</p>
+              <p>3. Transversale : la perturbation (déplacement de la corde) est perpendiculaire à la direction de propagation (longueur de la corde).</p>
+            </div>
+          </div>
+        </div>
+        <div class="exo-card">
+          <div class="exo-head">
+            <span class="exo-num">Ex. 6</span>
+            <span class="exo-title">Sonar — mesure de profondeur</span>
+            <div class="exo-pills"><span class="epill diff3">⭐⭐⭐ Difficile</span><span class="epill diff1">REA</span><span class="epill diff1">VAL</span></div>
+          </div>
+          <div class="exo-body">
+            <div class="exo-enonce">Un navire émet une impulsion sonore verticale vers le fond marin (\(v = 1\,500\) m·s⁻¹). L'écho revient \(\tau = 2{,}4\) s après.<br>1. Calculer la profondeur \(h\).<br>2. La fréquence utilisée est \(f = 12\) kHz. Calculer \(\lambda\). Ce son est-il audible ?<br>3. Le navire avance à \(v_{\text{bateau}} = 5\) m·s⁻¹. Le retard \(\tau\) change-t-il si le fond est plat ? Justifier.</div>
+            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+            <div class="corr-content">
+              <p>1. L'onde fait l'aller-retour : \(h = v \times \tau / 2 = 1500 \times 2{,}4 / 2 = \mathbf{1\,800}\) m</p>
+              <p>2. \(\lambda = v/f = 1500/(12 \times 10^3) = \mathbf{0{,}125}\) m = 12,5 cm. 12 kHz est un ultrason (\(f > 20\) kHz… non, 12 kHz est encore audible pour certains).</p>
+              <p>3. Non : si le fond est plat et le bateau avance horizontalement, la profondeur verticale est constante. \(\tau\) reste inchangé pour un fond plat.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div class="panel" id="p-fc">
+      <div class="fc-wrap">
+        <h2>🃏 Flashcards — Ondes mécaniques</h2>
+        <p style="color:var(--text3);margin-bottom:20px;font-size:13px;">15 cartes · 3 modes</p>
+        <div class="fc-modes">
+          <button class="fc-mode-btn on" onclick="switchFCMode('libre',this)">📖 Révision libre</button>
+          <button class="fc-mode-btn" onclick="switchFCMode('completion',this)">✍️ Complétion</button>
+          <button class="fc-mode-btn" onclick="switchFCMode('chrono',this)">⏱ Chrono 2 min</button>
+        </div>
+        <div class="fc-sec active" id="fc-libre">
+          <div class="fc-ctr" id="fc-ctr">Carte 1 / 15</div>
+          <div class="scene" onclick="flipCard()">
+            <div class="card3d" id="fc-card">
+              <div class="face front"><div id="fc-icon" style="font-size:28px;margin-bottom:8px;">🌊</div><div class="fc-q" id="fc-q">—</div><div class="fc-hint">Cliquer pour retourner</div></div>
+              <div class="face back"><div class="fc-a" id="fc-a">—</div></div>
+            </div>
+          </div>
+          <div class="fc-controls">
+            <button class="fc-btn" onclick="prevCard()">← Préc.</button>
+            <button class="fc-btn primary" onclick="flipCard()">↻ Retourner</button>
+            <button class="fc-btn" onclick="nextCard()">Suiv. →</button>
+            <button class="fc-btn shuf" onclick="shuffleCards()">🔀 Mélanger</button>
+          </div>
+        </div>
+        <div class="fc-sec" id="fc-completion">
+          <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Score : <strong id="comp-score">0</strong></div>
+          <div id="comp-container"></div>
+        </div>
+        <div class="fc-sec" id="fc-chrono">
+          <div class="chrono-bar">
+            <div class="chrono-time" id="chrono-time">2:00</div>
+            <div class="chrono-prog"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
+            <div class="chrono-ctr" id="chrono-ctr">0/10</div>
+          </div>
+          <div class="chrono-card" id="chrono-card"><div class="chrono-q" id="chrono-q">Appuyez sur Démarrer</div></div>
+          <div class="chrono-acts" id="chrono-acts"><button class="btn-knew" onclick="startChrono()">▶ Démarrer</button></div>
+          <div class="chrono-result" id="chrono-result">
+            <div class="result-big" id="result-big">0/10</div>
+            <div style="font-size:14px;color:var(--text2);margin:8px 0 20px" id="result-sub">—</div>
+            <button class="fc-btn primary" onclick="startChrono()">🔄 Recommencer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="panel" id="p-quiz">
+      <div class="quiz-wrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <h2 style="margin:0">❓ Quiz — Ondes mécaniques</h2>
+          <span class="score-pill" id="scorePill">0/0</span>
+        </div>
+        <div class="quiz-prog"><div class="qp-bar"><div class="qp-fill" id="qpFill" style="width:0%"></div></div><div class="qp-lbl" id="qpLbl">Q 1/12</div></div>
+        <div id="qContainer"></div>
+        <div class="quiz-final" id="qFinal">
+          <div class="final-big" id="finalBig">—</div>
+          <div style="font-size:15px;color:var(--text2);margin:8px 0 22px" id="finalMsg">—</div>
+          <button style="padding:11px 24px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:600;cursor:pointer;" onclick="startQuiz()">🔄 Recommencer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTE MENTALE -->
+    <div class="panel" id="p-mm">
+      <div class="mm-wrap">
+        <h2>🧠 Carte mentale — Ondes mécaniques</h2>
+        <div class="mm-ctrl">
+          <button class="mm-btn" onclick="drawMM()">🗺 Afficher</button>
+          <button class="mm-btn" onclick="dlMM()" style="margin-left:auto">⬇ PNG</button>
+        </div>
+        <canvas id="mmCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- SIMULATIONS -->
+    <div class="panel" id="p-sim">
+      <div class="sim-wrap">
+        <h2>🌊 Simulations interactives</h2>
+        <div class="sim-card">
+          <h3>📐 Calculateur d'ondes — λ, f, v, T</h3>
+          <p>Saisissez deux grandeurs parmi v, f, T pour calculer les autres.</p>
+          <div class="sim-grid">
+            <div class="sim-group"><label>Célérité v (m/s)</label><input class="sim-inp" id="sw-v" type="number" value="340" step="1"></div>
+            <div class="sim-group"><label>Fréquence f (Hz)</label><input class="sim-inp" id="sw-f" type="number" value="440" step="1"></div>
+          </div>
+          <button class="sim-btn" onclick="calcWave()">Calculer</button>
+          <div class="sim-result" id="sw-result">Entrez v et f puis cliquez.</div>
+          <canvas class="sim-c" id="sw-canvas"></canvas>
+        </div>
+        <div class="sim-card">
+          <h3>⏱️ Simulateur retard — v = d/τ</h3>
+          <div class="sim-grid">
+            <div class="sim-group"><label>Distance d (m)</label><input class="sim-inp" id="sr-d" type="number" value="1020" step="10"></div>
+            <div class="sim-group"><label>Célérité v (m/s)</label><input class="sim-inp" id="sr-v" type="number" value="340" step="1"></div>
+          </div>
+          <button class="sim-btn" onclick="calcRetard()">Calculer τ</button>
+          <div class="sim-result" id="sr-result">Entrez d et v.</div>
+          <canvas class="sim-c" id="sr-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECE -->
+    <div class="panel" id="p-ece">
+      <div class="ece-wrap">
+        <h2>🔬 ECE — Mesure de la célérité du son par double microphone</h2>
+        <div class="box def">
+          <div class="box-lbl">Protocole expérimental</div>
+          <p><strong>Objectif :</strong> mesurer la célérité du son dans l'air par la méthode du retard entre deux microphones.</p>
+          <p><strong>Matériel :</strong> émetteur de sons (haut-parleur), 2 microphones (M1 et M2), oscilloscope 2 voies, règle graduée.</p>
+          <p><strong>Principe :</strong> on mesure le décalage temporel \(\tau\) entre les signaux de M1 et M2 séparés d'une distance \(d\).</p>
+        </div>
+        <canvas class="ece-c" id="eceCanvas"></canvas>
+        <div class="box prop">
+          <div class="box-lbl">Calcul</div>
+          <p>1. Mesurer \(d = M_1M_2\) avec la règle (en m).</p>
+          <p>2. Lire le décalage \(\tau\) sur l'oscilloscope : \(\tau = n_{\text{div}} \times \text{TB}\).</p>
+          <p>3. Calculer : \(v = d/\tau\). Comparer à 340 m·s⁻¹.</p>
+        </div>
+        <div class="sim-grid" style="margin:12px 0;">
+          <div class="sim-group"><label>Distance d (m)</label><input class="sim-inp" id="ece-d" type="number" value="0.5" step="0.05"></div>
+          <div class="sim-group"><label>Retard τ (ms)</label><input class="sim-inp" id="ece-tau" type="number" value="1.47" step="0.01"></div>
+        </div>
+        <button class="sim-btn" onclick="calcECE()">Calculer v</button>
+        <div class="sim-result" id="ece-result">Entrez d et τ pour calculer la célérité.</div>
+      </div>
+    </div>
+
+    <!-- VERS TERMINALE -->
+    <div class="panel" id="p-terminal">
+      <div class="term-wrap">
+        <h2>🚀 Vers la Terminale</h2>
+        <div class="term-card">
+          <h3>Ce qui sera réutilisé directement</h3>
+          <p>Les relations \(v = d/\tau\), \(f = 1/T\) et \(\lambda = v/f\) sont les outils de base de toute l'optique ondulatoire en Terminale. La notion de longueur d'onde est centrale dans la diffraction, les interférences et la spectroscopie.</p>
+        </div>
+        <div class="term-card">
+          <h3>Ce qui deviendra plus complexe</h3>
+          <p>— <strong>Diffraction :</strong> une onde se courbe autour d'un obstacle si \(\lambda \approx\) taille de l'obstacle. Condition : \(a \approx \lambda\).</p>
+          <p>— <strong>Interférences :</strong> superposition de deux ondes cohérentes → franges brillantes/sombres. Base de l'effet Young.</p>
+          <p>— <strong>Ondes lumineuses :</strong> la lumière est une onde électromagnétique de longueur d'onde visible \(400\)–\(800\) nm. Les lois de l'optique géométrique sont des cas limites (\(\lambda \ll\) obstacle).</p>
+        </div>
+        <div class="term-card">
+          <h3>Lien avec d'autres chapitres</h3>
+          <p>— Chap. 12 (mouvement) : la célérité \(v\) est une vitesse — mais c'est la vitesse de la <em>perturbation</em>, pas celle des particules du milieu.</p>
+          <p>— Chap. 16 (signaux périodiques) : les notions de période et fréquence s'étendent aux signaux électriques et sonores.</p>
+        </div>
+        <div class="term-card" style="border-color:var(--blue);background:var(--bg2);">
+          <h3>Mini-défi Terminale</h3>
+          <p>Une source sonore de fréquence \(f = 1\,000\) Hz est placée à \(d = 0{,}5\) m d'un obstacle. Quelle doit être la célérité du son pour que la longueur d'onde soit égale à la taille de l'obstacle (condition de diffraction) ? Interpréter.</p>
+          <details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:13px;color:var(--blue);font-weight:600;">Correction</summary>
+            <div style="margin-top:8px;font-size:13px;color:var(--text2);">
+              <p>\(\lambda = d = 0{,}5\) m → \(v = \lambda \times f = 0{,}5 \times 1000 = 500\) m·s⁻¹.</p>
+              <p>Dans l'air réel (\(v = 340\) m·s⁻¹) : \(\lambda = 340/1000 = 0{,}34\) m &lt; 0,5 m → la diffraction est peu marquée pour cet obstacle. Avec des fréquences plus basses (basses), \(\lambda\) augmente et le son contourne mieux les obstacles.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* THEME */
+(function(){var t=localStorage.getItem('pco_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('thBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('thBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pco_theme',n);drawHero();drawMM();drawECE();}
+
+/* TABS */
+var visited=new Set();
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('p-'+id).classList.add('active');
+  btn.classList.add('active');
+  visited.add(id);updateMastery();
+  if(id==='mm')setTimeout(drawMM,60);
+  if(id==='ece')setTimeout(drawECE,60);
+  if(id==='sim')setTimeout(function(){calcWave();calcRetard();},60);
+}
+function updateMastery(){var tot=9,n=visited.size,pct=Math.round(n/tot*100);
+  document.getElementById('masteryBar').style.width=pct+'%';
+  document.getElementById('masteryTxt').textContent=pct+'%';
+  document.getElementById('pctPill').textContent=pct+' %';
+}
+
+/* HERO — animated transverse wave on string */
+function drawHero(){
+  var c=document.getElementById('heroCanvas');
+  c.width=c.offsetWidth||800;c.height=180;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
+  var W=c.width,H=c.height;
+  var t=Date.now()/600;
+  var A=32,lambda=W/4,k=2*Math.PI/lambda,omega=2*Math.PI;
+  // Wave 1 (transverse — bordeaux neon)
+  ctx.strokeStyle='rgba(212,137,159,0.9)';ctx.lineWidth=3;
+  ctx.shadowColor='#9f4f68';ctx.shadowBlur=12;
+  ctx.beginPath();
+  for(var x=0;x<=W;x+=2){
+    var y=H/2-A*Math.sin(k*x-omega*t);
+    if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+  // Wave 2 (second harmonic — cyan)
+  ctx.strokeStyle='rgba(90,200,224,0.5)';ctx.lineWidth=1.5;
+  ctx.beginPath();
+  for(var x=0;x<=W;x+=2){
+    var y=H/2-A*0.5*Math.sin(2*k*x-omega*t*1.5);
+    if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // Direction arrow
+  ctx.fillStyle='rgba(212,137,159,0.7)';ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='left';
+  ctx.fillText('→ propagation (célérité v)',12,H-14);
+  ctx.fillStyle='rgba(90,200,224,0.6)';ctx.fillText('↕ perturbation (transversale)',12,H-28);
+  // λ annotation
+  var lx=W*0.6,ly=H/2;
+  ctx.strokeStyle='rgba(224,154,58,0.7)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(lx,ly-8);ctx.lineTo(lx,ly-A-10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx+lambda,ly-8);ctx.lineTo(lx+lambda,ly-A-10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx,ly-A-8);ctx.lineTo(lx+lambda,ly-A-8);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(224,154,58,0.9)';ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('λ',lx+lambda/2,ly-A-14);
+}
+var heroRaf;
+function heroLoop(){drawHero();heroRaf=requestAnimationFrame(heroLoop);}
+heroLoop();
+
+/* SIM WAVE */
+function calcWave(){
+  var v=parseFloat(document.getElementById('sw-v').value)||340;
+  var f=parseFloat(document.getElementById('sw-f').value)||440;
+  var T=1/f;
+  var lam=v/f;
+  document.getElementById('sw-result').innerHTML=
+    'v = <strong>'+v+' m/s</strong> · f = <strong>'+f+' Hz</strong><br>'+
+    'T = <strong>'+(T*1000).toFixed(3)+' ms</strong> · λ = <strong>'+lam.toFixed(4)+' m</strong> = '+( lam*100).toFixed(2)+' cm';
+  var c=document.getElementById('sw-canvas');c.width=c.offsetWidth||600;c.height=200;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
+  var W=c.width,H=c.height;
+  var nw=Math.min(lam*80,W);
+  var A=50;
+  ctx.strokeStyle='rgba(212,137,159,0.9)';ctx.lineWidth=2.5;ctx.shadowColor='#9f4f68';ctx.shadowBlur=10;
+  ctx.beginPath();
+  for(var x=0;x<=W;x+=2){
+    var y=H/2-A*Math.sin(2*Math.PI*x/nw);
+    if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+  // λ arrow
+  ctx.strokeStyle='rgba(224,154,58,0.8)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,H-25);ctx.lineTo(nw,H-25);ctx.stroke();
+  ctx.fillStyle='rgba(224,154,58,0.9)';ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('λ = '+lam.toFixed(2)+' m',nw/2,H-10);
+}
+setTimeout(calcWave,100);
+
+function calcRetard(){
+  var d=parseFloat(document.getElementById('sr-d').value)||1020;
+  var v=parseFloat(document.getElementById('sr-v').value)||340;
+  var tau=d/v;
+  document.getElementById('sr-result').innerHTML=
+    'd = <strong>'+d+' m</strong> · v = <strong>'+v+' m/s</strong><br>'+
+    'τ = d/v = <strong>'+tau.toFixed(4)+' s</strong> = <strong>'+(tau*1000).toFixed(2)+' ms</strong>';
+  var c=document.getElementById('sr-canvas');c.width=c.offsetWidth||600;c.height=200;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
+  var W=c.width,H=c.height;
+  // source
+  ctx.beginPath();ctx.arc(50,H/2,16,0,Math.PI*2);
+  ctx.fillStyle='rgba(159,79,104,0.3)';ctx.fill();
+  ctx.strokeStyle='#9f4f68';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#d4899f';ctx.font='bold 12px IBM Plex Mono,monospace';ctx.textAlign='center';ctx.fillText('S',50,H/2+5);
+  // destination
+  var dx=W-50;
+  ctx.beginPath();ctx.arc(dx,H/2,16,0,Math.PI*2);
+  ctx.fillStyle='rgba(90,200,224,0.2)';ctx.fill();
+  ctx.strokeStyle='#5ac8e0';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#5ac8e0';ctx.fillText('M',dx,H/2+5);
+  // arrow
+  ctx.strokeStyle='rgba(224,154,58,0.7)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(70,H/2);ctx.lineTo(dx-20,H/2);ctx.stroke();
+  ctx.fillStyle='rgba(224,154,58,0.9)';ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('d = '+d+' m',W/2,H/2-14);
+  ctx.fillText('τ = '+tau.toFixed(3)+' s',W/2,H/2+28);
+}
+setTimeout(calcRetard,100);
+
+/* ECE */
+function drawECE(){
+  var c=document.getElementById('eceCanvas');
+  if(!c)return;
+  c.width=c.offsetWidth||700;c.height=260;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
+  var W=c.width,H=c.height;
+  var t=Date.now()/800;
+  // Speaker
+  ctx.fillStyle='rgba(159,79,104,0.4)';ctx.fillRect(30,H/2-30,20,60);
+  ctx.strokeStyle='#9f4f68';ctx.lineWidth=2;ctx.strokeRect(30,H/2-30,20,60);
+  ctx.fillStyle='#d4899f';ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('HP',40,H/2+5);
+  // Microphone 1
+  var m1x=W*0.38;
+  ctx.beginPath();ctx.arc(m1x,H/2,12,0,Math.PI*2);
+  ctx.fillStyle='rgba(90,200,224,0.3)';ctx.fill();
+  ctx.strokeStyle='#5ac8e0';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#5ac8e0';ctx.fillText('M1',m1x,H/2+5);
+  // Microphone 2
+  var m2x=W*0.72;
+  ctx.beginPath();ctx.arc(m2x,H/2,12,0,Math.PI*2);
+  ctx.fillStyle='rgba(224,154,58,0.3)';ctx.fill();
+  ctx.strokeStyle='#e09a3a';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#e09a3a';ctx.fillText('M2',m2x,H/2+5);
+  // Wave pulses
+  for(var i=0;i<4;i++){
+    var px=((t*60+i*60)%(m2x-60))+60;
+    ctx.beginPath();ctx.arc(px,H/2,4,0,Math.PI*2);
+    ctx.fillStyle='rgba(212,137,159,'+(0.3+0.4*(i%2))+')';ctx.fill();
+  }
+  // d arrow
+  ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(m1x,H/2+22);ctx.lineTo(m2x,H/2+22);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('d = M1M2',( m1x+m2x)/2,H/2+36);
+  ctx.fillStyle='rgba(212,137,159,0.7)';ctx.font='11px Inter,sans-serif';ctx.textAlign='center';
+  ctx.fillText('v = d / τ — Mesurer τ sur oscilloscope 2 voies',W/2,H-14);
+}
+setInterval(function(){if(document.getElementById('p-ece').classList.contains('active'))drawECE();},50);
+
+function calcECE(){
+  var d=parseFloat(document.getElementById('ece-d').value)||0.5;
+  var tau=(parseFloat(document.getElementById('ece-tau').value)||1.47)/1000;
+  var v=d/tau;
+  var ecart=Math.abs(v-340)/340*100;
+  document.getElementById('ece-result').innerHTML=
+    'v = d/τ = '+d+' / '+( tau*1000).toFixed(2)+'×10⁻³ = <strong>'+v.toFixed(1)+' m/s</strong><br>'+
+    'Valeur attendue : 340 m/s | Écart : <strong style="color:var(--'+(ecart<5?'ok':'warn')+')">'+ecart.toFixed(1)+'%</strong> — '+(ecart<5?'✅ Excellent accord':'⚠️ Vérifier le retard lu');
+}
+setTimeout(drawECE,100);
+
+/* FLASHCARDS */
+var FC=[
+  {icon:"🌊",q:"Définition d'une onde mécanique progressive",a:"Propagation d'une perturbation dans un milieu matériel de proche en proche, sans transport de matière mais avec transport d'énergie.",formula:"Onde = propagation sans transport de [___]",blanks:["matière"],answers:["matière","matiere"]},
+  {icon:"🔊",q:"Onde transversale vs longitudinale ?",a:"Transversale : perturbation ⊥ propagation (corde, vague). Longitudinale : perturbation ∥ propagation (son, ultrason).",formula:"Son : onde [___] (compression/dépression)",blanks:["longitudinale"],answers:["longitudinale"]},
+  {icon:"⏱️",q:"Formule de la célérité v ?",a:"v = d/τ. v = célérité (m/s), d = distance (m), τ = retard (s).",formula:"v = [___] / τ",blanks:["d"],answers:["d"]},
+  {icon:"🔊",q:"Célérité du son dans l'air à 20°C ?",a:"v_son ≈ 340 m·s⁻¹. Dans l'eau : ~1500 m/s. Dans l'acier : ~5000 m/s. La célérité dépend du milieu.",formula:"v_son (air 20°C) ≈ [___] m/s",blanks:["340"],answers:["340"]},
+  {icon:"⏱️",q:"Formule du retard τ ?",a:"τ = d/v. Le point M₂ présente la même perturbation que M₁ avec un retard τ = d/v.",formula:"τ = [___] / v",blanks:["d"],answers:["d"]},
+  {icon:"🌀",q:"Formule de la fréquence f en fonction de T ?",a:"f = 1/T (Hz). T = 1/f (s). Fréquence = nombre de motifs par seconde.",formula:"f = [___] / T",blanks:["1"],answers:["1","un"]},
+  {icon:"📐",q:"Formule de la longueur d'onde λ ?",a:"λ = v·T = v/f. λ en mètres. Plus petite distance entre deux points en phase.",formula:"λ = v / [___]",blanks:["f"],answers:["f"]},
+  {icon:"🔊",q:"Son : v=340 m/s, f=440 Hz → λ ?",a:"λ = v/f = 340/440 ≈ 0,77 m.",formula:"λ = 340 / [___] ≈ 0,77 m",blanks:["440"],answers:["440"]},
+  {icon:"📏",q:"Gamme audible humaine ?",a:"20 Hz à 20 000 Hz (20 kHz). Infrasons < 20 Hz. Ultrasons > 20 kHz.",formula:"Audible : [___] Hz à 20 000 Hz",blanks:["20"],answers:["20"]},
+  {icon:"🌊",q:"Le son peut-il se propager dans le vide ?",a:"Non. Le son est une onde mécanique : il nécessite un milieu matériel. Pas de matière → pas de vibration → pas de son.",formula:"Son : onde [___] (nécessite un milieu)",blanks:["mécanique"],answers:["mécanique","mecanique"]},
+  {icon:"⏱️",q:"Foudre : tonnerre entendu 3 s après → distance ?",a:"d = v × τ = 340 × 3 = 1020 m ≈ 1 km.",formula:"d = 340 × [___] = 1020 m",blanks:["3"],answers:["3"]},
+  {icon:"🌀",q:"T = 5 ms → f = ?",a:"f = 1/T = 1/(5×10⁻³) = 200 Hz.",formula:"f = 1 / [___] = 200 Hz",blanks:["0.005"],answers:["0.005","5e-3","5×10⁻³"]},
+  {icon:"📐",q:"Oscilloscope : TB = 2 ms/div, 4 div par motif → T ?",a:"T = nb_div × TB = 4 × 2 ms = 8 ms = 8×10⁻³ s.",formula:"T = 4 × [___] = 8 ms",blanks:["2"],answers:["2","2 ms"]},
+  {icon:"🔊",q:"λ = 0,5 m, v = 340 m/s → f et T ?",a:"f = v/λ = 340/0,5 = 680 Hz. T = 1/f ≈ 1,47×10⁻³ s.",formula:"f = 340 / [___] = 680 Hz",blanks:["0.5"],answers:["0.5","0,5"]},
+  {icon:"🌊",q:"Deux points en phase — condition ?",a:"Distance = multiple entier de λ. Deux points séparés de k·λ (k = 1, 2, 3…) sont dans le même état vibratoire.",formula:"En phase si d = k × [___]",blanks:["λ"],answers:["λ","lambda"]}
+];
+var fcIdx=0,fcFlipped=false,fcOrder=FC.map(function(_,i){return i;}),fcInit=false;
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){var c=FC[fcOrder[fcIdx]];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-q').textContent=c.q;document.getElementById('fc-a').textContent=c.a;document.getElementById('fc-ctr').textContent='Carte '+(fcIdx+1)+'/'+fcOrder.length;document.getElementById('fc-card').classList.remove('flip');fcFlipped=false;}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flip');fcFlipped=!fcFlipped;}
+function nextCard(){fcIdx=(fcIdx+1)%fcOrder.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+fcOrder.length)%fcOrder.length;renderFC();}
+function shuffleCards(){for(var i=fcOrder.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tt=fcOrder[i];fcOrder[i]=fcOrder[j];fcOrder[j]=tt;}fcIdx=0;renderFC();}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.querySelectorAll('.fc-sec').forEach(function(s){s.classList.remove('active');});document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();}
+var compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){var c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML='<div class="comp-card"><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.6">'+c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')+'</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-r" id="check-r"></div><button class="fc-btn" style="margin-top:8px" onclick="nextComp()">Suivante →</button></div>';setTimeout(function(){var b=document.getElementById('blank0');if(b)b.focus();},80);}
+function checkComp(){var c=FC[compIdx];var v=(document.getElementById('blank0').value||'').trim().toLowerCase();var ok=c.answers.map(function(a){return a.toLowerCase();});var r=document.getElementById('check-r');if(ok.indexOf(v)>=0){r.className='check-r ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-r ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+var chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-ctr').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur Démarrer';document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){var pool=FC.map(function(_,i){return i;});for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tt=pool[i];pool[i]=pool[j];pool[j]=tt;}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(function(){chronoLeft--;var m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=m+':'+(s<10?'0':'')+s;document.getElementById('chrono-time').className='chrono-time'+(chronoLeft<=20?' urg':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}var c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-ctr').textContent=chronoCurrent+'/10';document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){var c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-acts').innerHTML='';var el=120-chronoLeft;document.getElementById('result-big').textContent=chronoKnew+'/10';document.getElementById('result-sub').textContent=Math.round(chronoKnew*10)+'% — '+Math.floor(el/60)+'m'+(el%60<10?'0':'')+el%60+'s';document.getElementById('chrono-result').classList.add('show');}
+
+/* QUIZ */
+var QS=[
+  {q:"Une onde mécanique transporte :",opts:["De l'énergie sans transport de matière","De la matière","Ni matière ni énergie","De la matière avec énergie"],ans:0,corr:"Onde mécanique = propagation d'une perturbation. Transporte l'énergie sans transporter la matière."},
+  {q:"Le son est une onde :",opts:["Longitudinale (perturbation ∥ propagation)","Transversale","Électromagnétique","Qui se propage dans le vide"],ans:0,corr:"Son : onde longitudinale (compression/dépression ∥ à la propagation). Nécessite un milieu matériel."},
+  {q:"Célérité du son dans l'air (20°C) ≈ ?",opts:["340 m·s⁻¹","3×10⁸ m·s⁻¹","1500 m·s⁻¹","150 m·s⁻¹"],ans:0,corr:"v_son ≈ 340 m/s dans l'air à 20°C. Dans l'eau : ~1500 m/s. La lumière : 3×10⁸ m/s."},
+  {q:"Foudre : tonnerre entendu 4 s après l'éclair (v=340 m/s) → distance ?",opts:["1360 m","340 m","85 m","4 km"],ans:0,corr:"d = v × τ = 340 × 4 = 1360 m ≈ 1,4 km."},
+  {q:"T = 2 ms → f = ?",opts:["500 Hz","2 Hz","2000 Hz","0,002 Hz"],ans:0,corr:"f = 1/T = 1/(2×10⁻³) = 500 Hz."},
+  {q:"Formule de la longueur d'onde λ ?",opts:["λ = v/f = v·T","λ = f/v","λ = v·f","λ = 1/(vT)"],ans:0,corr:"λ = v·T = v/f. λ en mètres, v en m/s, T en s, f en Hz."},
+  {q:"Son : v=340 m/s, f=680 Hz → λ = ?",opts:["0,5 m","340 m","680 m","0,005 m"],ans:0,corr:"λ = v/f = 340/680 = 0,5 m."},
+  {q:"La gamme audible humaine est :",opts:["20 Hz à 20 000 Hz","0 à 1000 Hz","0 à 10⁶ Hz","1 kHz à 100 kHz"],ans:0,corr:"Audible : 20 Hz – 20 kHz. Infrasons : f < 20 Hz. Ultrasons : f > 20 kHz."},
+  {q:"Oscilloscope : TB = 1 ms/div, 5 div par motif → T et f ?",opts:["T = 5 ms, f = 200 Hz","T = 1 ms, f = 1000 Hz","T = 0,2 ms, f = 5 kHz","T = 5 s, f = 0,2 Hz"],ans:0,corr:"T = 5 × 1 ms = 5 ms = 5×10⁻³ s. f = 1/T = 200 Hz."},
+  {q:"Le son peut-il se propager dans le vide ?",opts:["Non (onde mécanique, nécessite un milieu)","Oui, comme la lumière","Oui mais plus lentement","Oui à 340 m/s"],ans:0,corr:"Non. Le son est une onde mécanique : il nécessite un milieu matériel. Dans le vide → silence total."},
+  {q:"Deux points A et B sont en phase si :",opts:["d(AB) = kλ (k entier)","d(AB) = λ/2","d(AB) = vT seulement","d(AB) quelconque"],ans:0,corr:"En phase : d = k·λ (k = 1, 2, 3…). À λ/2 : opposition de phase. Généralisation : déphasage φ = 2π·d/λ."},
+  {q:"Corde : v=8 m/s, T=0,5 s → λ = ?",opts:["4 m","16 m","0,5 m","8 m"],ans:0,corr:"λ = v·T = 8 × 0,5 = 4 m. On peut aussi : λ = v/f = 8/2 = 4 m."}
+];
+var curQ=0,scoreQ=0,answeredQ=false;
+function startQuiz(){curQ=0;scoreQ=0;answeredQ=false;document.getElementById('qFinal').classList.remove('show');document.getElementById('scorePill').textContent='0/0';renderQ();}
+function renderQ(){if(curQ>=QS.length){showFinal();return;}var q=QS[curQ];document.getElementById('qpFill').style.width=(curQ/QS.length*100)+'%';document.getElementById('qpLbl').textContent='Q '+(curQ+1)+'/'+QS.length;document.getElementById('qContainer').innerHTML='<div class="q-card"><div class="q-num">Q '+(curQ+1)+'/'+QS.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">'+q.opts.map(function(o,i){return'<button class="opt" onclick="ansQ('+i+')" id="o'+i+'"><span class="opt-ltr">'+'ABCD'[i]+'</span>'+o+'</button>';}).join('')+'</div><div class="corr-box" id="corrBox">💡 '+q.corr+'</div><button class="next-q" id="nextQ" onclick="nextQ()">'+(curQ<QS.length-1?'Suivante →':'Résultats 🏆')+'</button></div>';answeredQ=false;}
+function ansQ(i){if(answeredQ)return;answeredQ=true;var q=QS[curQ];document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});document.getElementById('o'+q.ans).classList.add('good');if(i!==q.ans)document.getElementById('o'+i).classList.add('bad');else scoreQ++;document.getElementById('scorePill').textContent=scoreQ+'/'+(curQ+1);document.getElementById('corrBox').classList.add('show');document.getElementById('nextQ').classList.add('show');}
+function nextQ(){curQ++;renderQ();}
+function showFinal(){document.getElementById('qContainer').innerHTML='';var pct=Math.round(scoreQ/QS.length*100);document.getElementById('finalBig').textContent=scoreQ+'/'+QS.length;document.getElementById('finalMsg').textContent=pct+'% — '+(pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🚀 Relis le cours !');document.getElementById('qFinal').classList.add('show');}
+startQuiz();
+
+/* CARTE MENTALE */
+function drawMM(){
+  var c=document.getElementById('mmCanvas');
+  c.width=c.offsetWidth||900;c.height=400;
+  var ctx=c.getContext('2d');
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
+  var W=c.width,H=c.height,cx=W/2,cy=H/2;
+  var branches=[
+    {label:'Onde progressive',color:'#5ac8e0',angle:-90,nodes:['sans transport matière','avec énergie','mécanique = milieu']},
+    {label:'Transv./Longit.',color:'#9f4f68',angle:-30,nodes:['⊥ : corde, vague','∥ : son, ultrason','ondes sismiques P/S']},
+    {label:'Célérité & Retard',color:'#e09a3a',angle:30,nodes:['v = d/τ','son air : 340 m/s','τ = d/v']},
+    {label:'Période & f',color:'#6b5fad',angle:90,nodes:['f = 1/T (Hz)','T = durée motif','20 Hz – 20 kHz']},
+    {label:'Longueur d\'onde',color:'#3dbf82',angle:150,nodes:['λ = vT = v/f (m)','2 pts en phase : kλ','graphe spatial']},
+    {label:'Oscilloscope',color:'#d4899f',angle:210,nodes:['T = n×TB','amplitude crête','lire λ : photo corde']}
+  ];
+  ctx.save();
+  ctx.fillStyle='rgba(159,79,104,0.18)';ctx.beginPath();ctx.roundRect(cx-65,cy-22,130,44,10);ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#d4899f';ctx.font='bold 12px IBM Plex Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('ONDES',cx,cy-7);ctx.fillText('MÉCANIQUES',cx,cy+9);
+  branches.forEach(function(br){
+    var a=br.angle*Math.PI/180;
+    var r1=78,r2=148;
+    var bx=cx+r2*Math.cos(a),by=cy+r2*Math.sin(a);
+    ctx.strokeStyle=br.color+'88';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx+r1*Math.cos(a),cy+r1*Math.sin(a));ctx.lineTo(bx,by);ctx.stroke();
+    ctx.fillStyle=br.color+'22';ctx.beginPath();ctx.roundRect(bx-52,by-14,104,28,8);ctx.fill();
+    ctx.strokeStyle=br.color+'99';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx-52,by-14,104,28,8);ctx.stroke();
+    ctx.fillStyle=br.color;ctx.font='bold 10px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(br.label,bx,by);
+    br.nodes.forEach(function(nd,j){
+      var spread=(j-(br.nodes.length-1)/2)*0.38;
+      var na=a+spread,nr=225;
+      var nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      ctx.strokeStyle=br.color+'44';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(nx,ny);ctx.stroke();ctx.setLineDash([]);
+      var nw=Math.max(80,nd.length*7);
+      ctx.fillStyle=dark?'rgba(30,12,22,0.85)':'rgba(255,248,252,0.85)';ctx.beginPath();ctx.roundRect(nx-nw/2,ny-11,nw,22,5);ctx.fill();
+      ctx.strokeStyle=br.color+'55';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(nx-nw/2,ny-11,nw,22,5);ctx.stroke();
+      ctx.fillStyle=dark?'rgba(245,232,239,0.85)':'rgba(26,10,18,0.85)';ctx.font='9.5px Inter,sans-serif';ctx.textAlign='center';
+      ctx.fillText(nd,nx,ny+1);
+    });
+  });
+}
+function dlMM(){var c=document.getElementById('mmCanvas');var a=document.createElement('a');a.download='carte-mentale-ch15.png';a.href=c.toDataURL();a.click();}
+setTimeout(drawMM,100);
+
+function toggleCorr(btn){var cc=btn.nextElementSibling;cc.classList.toggle('show');btn.textContent=cc.classList.contains('show')?'Masquer la correction':'Voir la correction';}
+
+document.querySelector('[onclick="go(\'fc\',this)"]').addEventListener('click',function(){if(!fcInit)initFC();});
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
+</script>
+</body>
+</html>

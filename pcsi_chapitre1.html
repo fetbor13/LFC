@@ -1,0 +1,1203 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCSI-P01 — Électrocinétique · Lois des circuits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+:root{
+  --bg:#f4f1ee;
+  --paper:#fffdf9;
+  --paper-2:#f8f3ed;
+  --ink:#191d24;
+  --muted:#606979;
+  --soft:#8b93a2;
+  --line:rgba(67,49,39,.16);
+  --line-strong:rgba(67,49,39,.28);
+  --accent:#b9322c;
+  --accent-2:#23384f;
+  --accent-3:#c9872e;
+  --accent-bg:#fff0ec;
+  --ok:#2f8d67;
+  --warn:#c9872e;
+  --shadow:0 22px 70px rgba(50,35,25,.13);
+  --shadow-soft:0 12px 34px rgba(50,35,25,.08);
+  --radius:8px;
+}
+[data-theme="dark"]{
+  --bg:#0e1218;
+  --paper:#161c25;
+  --paper-2:#1e2632;
+  --ink:#edf1f7;
+  --muted:#a4adba;
+  --soft:#768292;
+  --line:rgba(190,200,218,.14);
+  --line-strong:rgba(190,200,218,.28);
+  --accent:#ee695f;
+  --accent-2:#8fb6df;
+  --accent-3:#f0b35b;
+  --accent-bg:rgba(238,105,95,.12);
+  --ok:#69d39d;
+  --warn:#f0b35b;
+  --shadow:0 22px 70px rgba(0,0,0,.35);
+  --shadow-soft:0 12px 34px rgba(0,0,0,.24);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Instrument Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    linear-gradient(120deg,rgba(185,50,44,.11),transparent 31%),
+    linear-gradient(245deg,rgba(35,56,79,.11),transparent 36%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 70px,rgba(67,49,39,.055) 71px),
+    var(--bg);
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:80;
+  height:62px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(18px);
+}
+.progress-top{position:absolute;left:0;top:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-3));width:0;transition:width .15s}
+.back-btn,.theme-btn,.print-btn{
+  border:1px solid var(--line-strong);
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:8px;
+  padding:8px 12px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+.theme-btn,.print-btn{width:38px;height:38px;padding:0;display:grid;place-items:center}
+.crumb{font-size:13px;color:var(--muted);white-space:nowrap}
+.crumb strong{color:var(--accent)}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.pct{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--soft)}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 76%,transparent),transparent);
+}
+.hero-inner{
+  max-width:1280px;
+  margin:0 auto;
+  padding:54px 36px 38px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:34px;
+  align-items:center;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 11px;
+  border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));
+  border-radius:8px;
+  background:var(--accent-bg);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:0;
+}
+h1{
+  max-width:820px;
+  margin:18px 0 16px;
+  font-size:clamp(34px,5.5vw,68px);
+  line-height:1.02;
+  letter-spacing:0;
+}
+h1 em{font-style:normal;color:var(--accent)}
+.hero p{
+  max-width:680px;
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.72;
+}
+.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.meta{
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--paper);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.circuit-panel{
+  min-height:330px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--paper) 86%,transparent),color-mix(in srgb,var(--paper-2) 76%,transparent)),
+    repeating-linear-gradient(0deg,rgba(67,49,39,.08) 0,rgba(67,49,39,.08) 1px,transparent 1px,transparent 24px),
+    repeating-linear-gradient(90deg,rgba(67,49,39,.08) 0,rgba(67,49,39,.08) 1px,transparent 1px,transparent 24px);
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+#circuitHero{position:absolute;inset:0;width:100%;height:100%}
+.panel-caption{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:16px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.panel-caption div{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--paper) 82%,transparent);
+  backdrop-filter:blur(12px);
+  padding:10px;
+}
+.panel-caption strong{display:block;font-family:"JetBrains Mono",monospace;font-size:16px}
+.panel-caption span{font-size:10px;color:var(--soft);font-weight:900;text-transform:uppercase}
+.tabs{
+  position:sticky;
+  top:62px;
+  z-index:70;
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--paper) 90%,transparent);
+  backdrop-filter:blur(16px);
+  padding:0 28px;
+}
+.tabs button{
+  border:0;
+  background:transparent;
+  color:var(--soft);
+  font-weight:900;
+  padding:16px 18px;
+  border-bottom:3px solid transparent;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.layout{
+  max-width:1280px;
+  margin:0 auto;
+  padding:42px 36px 80px;
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr);
+  gap:34px;
+}
+.toc{
+  position:sticky;
+  top:132px;
+  height:fit-content;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--paper) 82%,transparent);
+  padding:14px;
+}
+.toc strong{display:block;font-size:11px;letter-spacing:0;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;padding:8px 9px;border-radius:8px;color:var(--muted);font-size:13px;border-left:3px solid transparent}
+.toc a:hover,.toc a.active{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent)}
+.content{min-width:0}
+.content h2{
+  margin:42px 0 16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+  color:var(--accent);
+  font-size:24px;
+}
+.content h2:first-child{margin-top:0}
+.content h3{margin:28px 0 10px;font-size:18px;color:var(--ink)}
+.content p{color:var(--muted);line-height:1.82;font-size:15px}
+.lead-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:22px 0;
+}
+.note,.definition,.method,.warning,.example,.theorem{
+  border:1px solid var(--line);
+  border-left:4px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  background:var(--paper);
+  padding:18px 20px;
+  box-shadow:var(--shadow-soft);
+  margin:18px 0;
+}
+.definition{border-left-color:var(--accent)}
+.method{border-left-color:var(--accent-2)}
+.warning{border-left-color:var(--warn)}
+.example{border-left-color:var(--ok)}
+.theorem{border-left-color:var(--accent-3)}
+.box-title{
+  display:block;
+  font-size:11px;
+  color:var(--soft);
+  font-weight:900;
+  letter-spacing:0;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.formula{
+  overflow-x:auto;
+  margin:18px 0;
+  padding:18px 22px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--paper-2);
+  text-align:center;
+  font-size:18px;
+}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.data-table{
+  width:100%;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--paper);
+  margin:18px 0;
+}
+.data-table th,.data-table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.data-table th{background:var(--paper-2);font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:0}
+.data-table td{color:var(--muted)}
+.code{font-family:"JetBrains Mono",monospace;color:var(--accent-2)}
+.sim-card,.exercise-card,.flash-card,.quiz-card,.summary-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--paper);
+  padding:18px;
+  box-shadow:var(--shadow-soft);
+  margin:16px 0;
+}
+.sim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.sim-grid label{display:block;font-size:12px;color:var(--soft);font-weight:900;margin-bottom:6px}
+.sim-grid input{width:100%;padding:10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink)}
+#rcCanvas,#rlcCanvas{width:100%;height:260px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2)}
+.exercise-card h3,.quiz-card h3{margin-top:0}
+.solution{display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:12px;color:var(--muted)}
+.solution.open{display:block}
+.small-btn{
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  background:var(--paper-2);
+  color:var(--ink);
+  padding:8px 12px;
+  cursor:pointer;
+  font-weight:900;
+}
+.small-btn:hover{border-color:var(--accent);color:var(--accent)}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.flash-card{min-height:170px;cursor:pointer;transition:.2s}
+.flash-card:hover{transform:translateY(-3px)}
+.flash-card .answer{display:none;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.flash-card.open .answer{display:block}
+.quiz-options{display:grid;gap:8px;margin-top:12px}
+.quiz-options button{border:1px solid var(--line);border-radius:8px;background:var(--paper-2);padding:10px;text-align:left;cursor:pointer;color:var(--ink)}
+.quiz-options button.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--paper))}
+.quiz-options button.wrong{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--paper))}
+.map{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+.map div{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:14px}
+.map strong{display:block;color:var(--accent);margin-bottom:6px}
+.chat-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);overflow:hidden}
+.chat-log{height:420px;overflow:auto;padding:16px;display:grid;gap:10px;background:var(--paper-2)}
+.chat-message{max-width:820px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.65;color:var(--muted);background:var(--paper)}
+.chat-message.user{margin-left:auto;color:var(--ink);border-color:color-mix(in srgb,var(--accent) 38%,var(--line));background:var(--accent-bg)}
+.chat-message.bot strong{color:var(--accent)}
+.chat-input-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px;border-top:1px solid var(--line);background:var(--paper)}
+.chat-input-row input{min-width:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:11px 12px}
+.prompt-chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.prompt-chips button{border:1px solid var(--line);border-radius:8px;background:var(--paper-2);color:var(--muted);padding:8px 10px;cursor:pointer}
+.prompt-chips button:hover{border-color:var(--accent);color:var(--accent)}
+.soul-box{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:linear-gradient(135deg,var(--accent-bg),var(--paper));padding:20px 22px;box-shadow:var(--shadow-soft);margin:0 0 26px}
+.soul-box p{font-size:16px;line-height:1.9;color:var(--muted);margin:8px 0 14px}
+.soul-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.soul-grid span{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:10px 12px;color:var(--muted);font-size:13px;line-height:1.55}
+.lab-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);padding:18px;margin:16px 0}
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
+.lab-grid label{display:block;font-size:12px;color:var(--soft);font-weight:900;margin-bottom:6px}
+.lab-grid input,.lab-grid select{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:10px}
+.lab-canvas{width:100%;height:280px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);display:block}
+.chat-explain{border:1px solid var(--line);border-radius:8px;background:var(--accent-bg);padding:12px 14px;color:var(--muted);line-height:1.7;margin:14px 0}
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr;padding:28px 18px 70px}
+  .toc{display:none}
+  .lead-box,.grid-2,.map,.sim-grid{grid-template-columns:1fr}
+  .tabs{top:62px;padding:0 12px}
+  .topbar{padding:0 12px}
+  .crumb{display:none}
+}
+@media print{
+  .topbar,.tabs,.toc,.hero,.small-btn{display:none!important}
+  body{background:white;color:black}
+  .layout{display:block;padding:0}
+  .tab-panel{display:block}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="progress-top" id="progressTop"></div>
+  <a class="back-btn" href="index.html">← Index PCSI</a>
+  <div class="crumb">PhysiChem · <strong>PCSI-P01</strong> · Électrocinétique</div>
+  <div class="top-actions">
+    <span class="pct" id="pctLabel">0%</span>
+    <button class="print-btn" onclick="window.print()" title="Imprimer">⎙</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="badge">PCSI-P01 · Physique · Prépa</span>
+      <h1>Électrocinétique <em>— lois des circuits</em></h1>
+      <p>Premier chapitre de transition vers la PCSI : on reprend les grandeurs électriques, mais avec les conventions algébriques, les lois de Kirchhoff, les dipôles R, L, C, les équivalents et la notation complexe attendus en prépa.</p>
+      <div class="meta-row">
+        <span class="meta">Niveau : PCSI</span>
+        <span class="meta">Durée conseillée : 3 à 4 h</span>
+        <span class="meta">Outils : équations différentielles, complexes</span>
+        <span class="meta">Objectif : modéliser un circuit linéaire</span>
+      </div>
+    </div>
+    <div class="circuit-panel">
+      <canvas id="circuitHero"></canvas>
+      <div class="panel-caption">
+        <div><strong>KCL</strong><span>Nœuds</span></div>
+        <div><strong>KVL</strong><span>Mailles</span></div>
+        <div><strong>Z(jω)</strong><span>RSF</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Onglets du chapitre">
+  <button class="active" onclick="showTab('cours',this)">Cours</button>
+  <button onclick="showTab('methodes',this)">Méthodes</button>
+  <button onclick="showTab('simulateur',this)">Simulateurs RC/RLC</button>
+  <button onclick="showTab('exercices',this)">Exercices</button>
+  <button onclick="showTab('flashcards',this)">Flashcards</button>
+  <button onclick="showTab('quiz',this)">Quiz</button>
+  <button onclick="showTab('concours',this)">Concours</button>
+  <button onclick="showTab('chatbot',this)">Chatbot</button>
+  <button onclick="showTab('synthese',this)">Synthèse</button>
+</nav>
+
+<section class="tab-panel active" id="tab-cours">
+  <div class="layout">
+    <aside class="toc">
+      <strong>Plan du cours</strong>
+      <a href="#c0">Préambule</a>
+      <a href="#c1">Grandeurs et conventions</a>
+      <a href="#c2">Lois de Kirchhoff</a>
+      <a href="#c3">Dipôles R, L, C</a>
+      <a href="#c4">Associations et équivalents</a>
+      <a href="#c5">Régimes transitoires</a>
+      <a href="#c6">Régime sinusoïdal forcé</a>
+      <a href="#c7">Thévenin et Norton</a>
+      <a href="#c8">Fonctions de transfert</a>
+      <a href="#c9">Deuxième ordre RLC</a>
+      <a href="#c10">Puissance et énergie</a>
+    </aside>
+    <main class="content">
+<!-- PCSI PROGRAMME LOUCHART -->
+<div class="definition" id="programme-pcsi">
+  <span class="box-title">Repère programme PCSI</span>
+  <p><strong>Ancrage.</strong> Électricité PCSI : signaux dans l’ARQS, circuits du premier ordre, oscillateurs, filtrage et ALI.</p>
+  <p><strong>Cap à tenir.</strong> Lire un circuit comme un système dynamique linéaire : conservation, équation différentielle, régime transitoire, régime sinusoïdal.</p>
+  <p class="pct">Référence de cadrage : <a href="http://b.louchart.free.fr/Enseignement_superieur/Classes_prepas/PCSI/Physique/Electricite.html" target="_blank" rel="noopener">B. Louchart — ressources PCSI</a> ; bloc ajouté comme synthèse pédagogique, sans reproduction des documents recensés.</p>
+</div>
+<div class="formula">\[ \sum_k i_k=0,\qquad \sum_k u_k=0,\qquad Z_R=R,\quad Z_L=jL\omega,\quad Z_C=\frac{1}{jC\omega} \]</div>
+<table class="data-table">
+  <tr><th>Point de maîtrise</th><th>Ce que l’étudiant doit savoir faire</th></tr>
+  <tr><td><strong>ARQS</strong></td><td>Justifier quand les fils peuvent être considérés équipotentiels et quand les lois de Kirchhoff s’appliquent.</td></tr><tr><td><strong>Transitoire</strong></td><td>Écrire la loi des mailles, obtenir une équation du premier ou du second ordre, identifier \(\tau\), \(\omega_0\), \(Q\).</td></tr><tr><td><strong>Filtrage</strong></td><td>Passer de l’équation temporelle à \(H(j\omega)\), lire gain, phase et asymptotes de Bode.</td></tr>
+</table>
+<div class="method">
+  <span class="box-title">Méthode de travail inspirée du découpage PCSI</span>
+  <p>Avant un exercice, nommer le bloc du programme, écrire les hypothèses, poser les grandeurs avec leurs unités, choisir la relation directrice, puis terminer par un contrôle : homogénéité, signe, limite, ordre de grandeur et cohérence expérimentale.</p>
+</div>
+<!-- /PCSI PROGRAMME LOUCHART -->
+<div class="soul-box" id="fil-conducteur">
+        <span class="box-title">Pourquoi l’électrocinétique compte</span>
+        <p>Un circuit n'est pas un dessin rempli de composants : c'est un langage pour piloter l'énergie, filtrer l'information et transformer un signal. Ce chapitre apprend à passer d'un montage réel à un système d'équations, puis à lire ce système comme un comportement : stockage, dissipation, retard, résonance, filtrage.</p>
+        <div class="soul-grid"><span>Les signes racontent une orientation choisie.</span><span>Les lois de Kirchhoff traduisent conservation de charge et d’énergie.</span><span>Les impédances complexes révèlent amplitude et phase.</span></div>
+      </div>
+
+
+      <h2 id="c0">0. Préambule : ce qui change en prépa</h2>
+      <div class="lead-box">
+        <div class="note"><span class="box-title">Idée directrice</span>Un circuit est un système d'équations. La difficulté n'est pas d'apprendre des formules, mais de choisir les inconnues, orienter correctement les grandeurs et écrire les bonnes lois.</div>
+        <div class="warning"><span class="box-title">Point PCSI</span>Les intensités et tensions sont des grandeurs algébriques. Un signe négatif signifie que le sens réel est opposé au sens choisi, pas que le résultat est faux.</div>
+      </div>
+
+      <h2 id="c1">1. Grandeurs électriques et conventions</h2>
+      <p>Dans l'approximation des régimes quasi-stationnaires, on néglige les effets de propagation dans les fils. À chaque instant, on peut alors définir des intensités dans les branches et des tensions aux bornes des dipôles.</p>
+      <div class="definition">
+        <span class="box-title">Définition</span>
+        L'intensité \(i(t)\) mesure le débit de charge à travers une section orientée :
+        <div class="formula">\[ i(t)=\frac{\mathrm d q}{\mathrm d t} \]</div>
+        La tension \(u_{AB}=V_A-V_B\) est une différence de potentiel électrique.
+      </div>
+      <h3>Convention récepteur et convention générateur</h3>
+      <p>En convention récepteur, la flèche de tension et la flèche d'intensité sont en sens opposés sur le dipôle. La puissance reçue vaut alors \(p=u i\). En convention générateur, la puissance fournie vaut \(p=-ui\) si l'on garde \(p\) comme puissance reçue.</p>
+      <table class="data-table">
+        <tr><th>Convention</th><th>Utilisation</th><th>Puissance reçue</th></tr>
+        <tr><td>Récepteur</td><td>Résistance, condensateur, bobine en stockage/dissipation</td><td>\(p=ui\)</td></tr>
+        <tr><td>Générateur</td><td>Source qui impose une tension ou un courant</td><td>\(p=-ui\)</td></tr>
+      </table>
+
+
+      <h3 id="unites-globales">Grandeurs, symboles et unités du chapitre</h3>
+      <p>Dans les relations du cours, les grandeurs sont algébriques : leur signe dépend de l'orientation choisie. Les unités ci-dessous sont les unités SI à utiliser dans les calculs.</p>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité SI</th></tr>
+        <tr><td>\(q(t)\)</td><td>Charge électrique ayant traversé une section ou portée par une armature.</td><td>coulomb, C</td></tr>
+        <tr><td>\(i(t)=\frac{\mathrm dq}{\mathrm dt}\)</td><td>Intensité algébrique du courant dans une branche orientée.</td><td>ampère, A</td></tr>
+        <tr><td>\(u_{AB}(t)=V_A-V_B\)</td><td>Tension algébrique entre les points A et B.</td><td>volt, V</td></tr>
+        <tr><td>\(V_A\)</td><td>Potentiel électrique du point A relativement à la masse choisie.</td><td>volt, V</td></tr>
+        <tr><td>\(p(t)=u(t)i(t)\)</td><td>Puissance instantanée reçue par un dipôle en convention récepteur.</td><td>watt, W</td></tr>
+        <tr><td>\(E\) ou \(e(t)\)</td><td>Force électromotrice ou tension imposée par une source.</td><td>volt, V</td></tr>
+        <tr><td>\(R\)</td><td>Résistance électrique.</td><td>ohm, \(\Omega\)</td></tr>
+        <tr><td>\(C\)</td><td>Capacité d'un condensateur.</td><td>farad, F</td></tr>
+        <tr><td>\(L\)</td><td>Inductance d'une bobine.</td><td>henry, H</td></tr>
+        <tr><td>\(Z\)</td><td>Impédance complexe en régime sinusoïdal forcé.</td><td>ohm, \(\Omega\)</td></tr>
+        <tr><td>\(\omega=2\pi f\)</td><td>Pulsation du signal sinusoïdal.</td><td>radian par seconde, rad.s\(^{-1}\)</td></tr>
+        <tr><td>\(f\)</td><td>Fréquence.</td><td>hertz, Hz</td></tr>
+        <tr><td>\(\tau\)</td><td>Constante de temps d'un régime transitoire du premier ordre.</td><td>seconde, s</td></tr>
+        <tr><td>\(E_C,E_L\)</td><td>Énergies stockées dans un condensateur ou une bobine.</td><td>joule, J</td></tr>
+      </table>
+
+      <h2 id="c2">2. Lois de Kirchhoff</h2>
+      <div class="theorem">
+        <span class="box-title">Loi des nœuds</span>
+        La somme algébrique des intensités arrivant à un nœud est nulle :
+        <div class="formula">\[ \sum_k \varepsilon_k i_k = 0 \]</div>
+        où \(\varepsilon_k=+1\) si le courant entre dans le nœud et \(\varepsilon_k=-1\) s'il en sort.
+      </div>
+      <div class="theorem">
+        <span class="box-title">Loi des mailles</span>
+        La somme algébrique des tensions rencontrées le long d'une maille fermée est nulle :
+        <div class="formula">\[ \sum_k \varepsilon_k u_k = 0 \]</div>
+      </div>
+      <div class="method">
+        <span class="box-title">Méthode générale</span>
+        1. Choisir les sens arbitraires des courants. 2. Placer les tensions selon une convention. 3. Écrire les lois des nœuds. 4. Écrire les lois des mailles indépendantes. 5. Ajouter les lois constitutives des dipôles.
+      </div>
+
+      <h2 id="c3">3. Dipôles linéaires fondamentaux R, L, C</h2>
+      <div class="grid-2">
+        <div class="definition"><span class="box-title">Résistance</span>\[u_R=Ri\] Elle dissipe l'énergie par effet Joule : \(p_R=Ri^2\).</div>
+        <div class="definition"><span class="box-title">Condensateur</span>\[i=C\frac{\mathrm d u_C}{\mathrm d t}\] Il stocke l'énergie \(E_C=\frac{1}{2}Cu_C^2\).</div>
+        <div class="definition"><span class="box-title">Bobine idéale</span>\[u_L=L\frac{\mathrm d i}{\mathrm d t}\] Elle stocke l'énergie \(E_L=\frac{1}{2}Li^2\).</div>
+        <div class="definition"><span class="box-title">Source idéale</span>Une source de tension impose \(u=e(t)\). Une source de courant impose \(i=\eta(t)\).</div>
+      </div>
+      <div class="warning">
+        <span class="box-title">Continuité</span>
+        La tension aux bornes d'un condensateur ne peut pas subir de saut si le courant reste fini. Le courant dans une bobine ne peut pas subir de saut si la tension reste finie.
+      </div>
+
+      <h2 id="c4">4. Associations et équivalents</h2>
+      <p>On simplifie un circuit quand des dipôles sont strictement en série ou strictement en parallèle.</p>
+      <table class="data-table">
+        <tr><th>Association</th><th>Résistances</th><th>Condensateurs</th></tr>
+        <tr><td>Série</td><td>\(R_{\rm eq}=R_1+R_2+\cdots\)</td><td>\(\frac{1}{C_{\rm eq}}=\frac{1}{C_1}+\frac{1}{C_2}+\cdots\)</td></tr>
+        <tr><td>Parallèle</td><td>\(\frac{1}{R_{\rm eq}}=\frac{1}{R_1}+\frac{1}{R_2}+\cdots\)</td><td>\(C_{\rm eq}=C_1+C_2+\cdots\)</td></tr>
+      </table>
+      <h3>Diviseur de tension</h3>
+      <div class="formula">\[ u_2 = E\frac{R_2}{R_1+R_2} \]</div>
+      <p>Cette formule n'est valable que si la sortie n'est pas chargée. En prépa, il faut toujours vérifier qu'aucun courant ne sort du point milieu.</p>
+      <h3>Diviseur de courant</h3>
+      <div class="formula">\[ i_1 = I\frac{G_1}{G_1+G_2}=\;I\frac{R_2}{R_1+R_2} \quad \text{avec } G_k=\frac{1}{R_k} \]</div>
+
+      <h2 id="c5">5. Régime transitoire du premier ordre</h2>
+      <p>Un circuit RC ou RL conduit souvent à une équation différentielle linéaire du premier ordre.</p>
+      <div class="example">
+        <span class="box-title">Exemple : charge d'un condensateur</span>
+        Pour un circuit série \(E,R,C\), après fermeture de l'interrupteur :
+        <div class="formula">\[ E = Ri + u_C, \qquad i=C\frac{\mathrm d u_C}{\mathrm d t} \]</div>
+        donc
+        <div class="formula">\[ RC\frac{\mathrm d u_C}{\mathrm d t}+u_C=E \]</div>
+        Si \(u_C(0)=0\), alors :
+        <div class="formula">\[ u_C(t)=E\left(1-e^{-t/RC}\right) \]</div>
+      </div>
+      <div class="method">
+        <span class="box-title">Résolution type</span>
+        Écrire l'équation sous la forme \(\tau y'+y=y_\infty\), identifier \(\tau\), trouver la valeur finale \(y_\infty\), puis appliquer la condition initiale.
+      </div>
+
+      <h2 id="c6">6. Régime sinusoïdal forcé et impédances complexes</h2>
+      <p>Lorsqu'une excitation sinusoïdale est appliquée depuis longtemps, toutes les grandeurs du circuit oscillent à la même pulsation \(\omega\). On associe à \(x(t)=X_m\cos(\omega t+\varphi)\) une amplitude complexe \(\underline X=X_m e^{j\varphi}\).</p>
+      <table class="data-table">
+        <tr><th>Dipôle</th><th>Relation temporelle</th><th>Impédance complexe</th></tr>
+        <tr><td>Résistance</td><td>\(u=Ri\)</td><td>\(Z_R=R\)</td></tr>
+        <tr><td>Bobine</td><td>\(u=L\frac{\mathrm di}{\mathrm dt}\)</td><td>\(Z_L=jL\omega\)</td></tr>
+        <tr><td>Condensateur</td><td>\(i=C\frac{\mathrm du}{\mathrm dt}\)</td><td>\(Z_C=\frac{1}{jC\omega}\)</td></tr>
+      </table>
+      <div class="formula">\[ \underline U = Z\,\underline I \]</div>
+      <p>Les lois de Kirchhoff restent valables en notation complexe : on écrit alors les mêmes équations, mais avec des amplitudes complexes.</p>
+
+      
+      <h2 id="c7">7. Équivalents de Thévenin et Norton</h2>
+      <p>En PCSI, on ne cherche pas seulement à calculer une intensité dans un montage : on apprend à remplacer une partie compliquée du circuit par un modèle équivalent vu depuis deux bornes. C'est une idée très puissante, car elle transforme un réseau linéaire entier en un générateur simple.</p>
+      <div class="theorem">
+        <span class="box-title">Théorème de Thévenin</span>
+        Tout réseau linéaire actif vu entre deux bornes A et B peut être remplacé par une source idéale de tension \(E_{\rm th}\) en série avec une résistance \(R_{\rm th}\).
+        <div class="formula">\[ E_{\rm th}=u_{AB}\text{ à vide},\qquad R_{\rm th}=R_{AB}\text{ sources indépendantes annulées} \]</div>
+      </div>
+      <div class="theorem">
+        <span class="box-title">Théorème de Norton</span>
+        Le même réseau peut être remplacé par une source idéale de courant \(I_{\rm N}\) en parallèle avec une résistance \(R_{\rm N}\), avec \(R_{\rm N}=R_{\rm th}\) et \(E_{\rm th}=R_{\rm th}I_{\rm N}\).
+      </div>
+      <div class="method">
+        <span class="box-title">Lecture prépa</span>
+        Thévenin sert quand la grandeur cherchée est plutôt une tension. Norton sert quand la grandeur cherchée est plutôt un courant. Les deux modèles sont équivalents, mais l'un rend souvent le calcul presque immédiat.
+      </div>
+
+      <h2 id="c8">8. Fonctions de transfert, Fresnel et premiers filtres</h2>
+      <p>En régime sinusoïdal forcé établi, un circuit linéaire transforme une entrée \(e(t)\) en une sortie \(s(t)\), à la même pulsation \(\omega\). Les grandeurs physiques restent réelles ; les complexes et les vecteurs de Fresnel sont des outils de calcul pour coder l'amplitude et la phase.</p>
+      <div class="definition">
+        <span class="box-title">Fonction de transfert</span>
+        Si \(e(t)=E_m\cos(\omega t+\varphi_E)\) et \(s(t)=S_m\cos(\omega t+\varphi_S)\), on associe les amplitudes complexes
+        \(\underline E=E_m e^{j\varphi_E}\) et \(\underline S=S_m e^{j\varphi_S}\). On définit alors :
+        <div class="formula">\[ H(j\omega)=\frac{\underline S}{\underline E},\qquad s(t)=\Re\!\left(\underline S e^{j\omega t}\right) \]</div>
+        Le module \(|H|\) donne le gain en amplitude et l'argument \(\arg(H)\) donne le déphasage de la sortie par rapport à l'entrée.
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(e(t)\), \(s(t)\)</td><td>Grandeurs réelles d'entrée et de sortie. Ici ce sont des tensions.</td><td>volt, V</td></tr>
+        <tr><td>\(E_m\), \(S_m\)</td><td>Amplitudes maximales des signaux sinusoïdaux.</td><td>volt, V</td></tr>
+        <tr><td>\(\underline E\), \(\underline S\)</td><td>Amplitudes complexes associées à l'entrée et à la sortie.</td><td>volt, V</td></tr>
+        <tr><td>\(j\)</td><td>Nombre imaginaire tel que \(j^2=-1\).</td><td>sans unité</td></tr>
+        <tr><td>\(\omega\)</td><td>Pulsation du signal.</td><td>rad.s\(^{-1}\)</td></tr>
+        <tr><td>\(H(j\omega)\)</td><td>Fonction de transfert tension/tension.</td><td>sans unité</td></tr>
+        <tr><td>\(|H|\)</td><td>Gain en amplitude.</td><td>sans unité</td></tr>
+        <tr><td>\(\arg(H)\)</td><td>Déphasage de la sortie par rapport à l'entrée.</td><td>radian, rad</td></tr>
+      </table>
+      <div class="note">
+        <span class="box-title">Écriture vectorielle de Fresnel</span>
+        On peut représenter une amplitude complexe par un vecteur tournant dans le plan de Fresnel. Ce n'est pas un vecteur de l'espace physique : c'est une représentation géométrique de la phase.
+        <div class="formula">\[ \vec E_F(t)=E_m\cos(\omega t+\varphi_E)\,\vec e_x+E_m\sin(\omega t+\varphi_E)\,\vec e_y,\qquad e(t)=\vec E_F(t)\cdot\vec e_x \]</div>
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole vectoriel</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(\vec E_F(t)\)</td><td>Vecteur de Fresnel associé à l'entrée.</td><td>volt, V</td></tr>
+        <tr><td>\(\vec e_x,\vec e_y\)</td><td>Vecteurs unitaires du plan de Fresnel.</td><td>sans unité</td></tr>
+        <tr><td>\(\vec E_F\cdot\vec e_x\)</td><td>Projection donnant le signal réel observé.</td><td>volt, V</td></tr>
+      </table>
+      <div class="example">
+        <span class="box-title">Filtre RC passe-bas</span>
+        Pour un circuit \(R,C\) série, si la sortie est la tension aux bornes du condensateur :
+        <div class="formula">\[ H(j\omega)=\frac{\underline U_C}{\underline E}=\frac{Z_C}{R+Z_C}=\frac{1}{1+jRC\omega} \]</div>
+        La pulsation de coupure est :
+        <div class="formula">\[ \omega_c=\frac{1}{RC},\qquad f_c=\frac{1}{2\pi RC} \]</div>
+        Pour \(\omega \ll \omega_c\), \(H\approx1\) : les basses fréquences passent. Pour \(\omega \gg \omega_c\), \(|H|\approx1/(RC\omega)\) : les hautes fréquences sont atténuées.
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(\underline U_C\)</td><td>Amplitude complexe de la tension aux bornes du condensateur.</td><td>volt, V</td></tr>
+        <tr><td>\(Z_C=\frac{1}{jC\omega}\)</td><td>Impédance complexe du condensateur.</td><td>ohm, \(\Omega\)</td></tr>
+        <tr><td>\(R\)</td><td>Résistance en série avec le condensateur.</td><td>ohm, \(\Omega\)</td></tr>
+        <tr><td>\(C\)</td><td>Capacité du condensateur.</td><td>farad, F</td></tr>
+        <tr><td>\(RC\)</td><td>Constante de temps du filtre.</td><td>seconde, s</td></tr>
+        <tr><td>\(\omega_c\)</td><td>Pulsation de coupure.</td><td>rad.s\(^{-1}\)</td></tr>
+        <tr><td>\(f_c\)</td><td>Fréquence de coupure.</td><td>hertz, Hz</td></tr>
+      </table>
+      <table class="data-table">
+        <tr><th>Régime</th><th>Comportement du condensateur</th><th>Conséquence</th></tr>
+        <tr><td>Basse fréquence</td><td>Impédance très grande : \(|Z_C|\to+\infty\).</td><td>Le condensateur se comporte presque comme un interrupteur ouvert.</td></tr>
+        <tr><td>Haute fréquence</td><td>Impédance très faible : \(|Z_C|\to0\).</td><td>Le condensateur se comporte presque comme un fil.</td></tr>
+      </table>
+
+      <h2 id="c9">9. Circuits du deuxième ordre : RLC série</h2>
+      <p>Un circuit contenant à la fois une bobine et un condensateur possède deux formes de stockage d'énergie. Le modèle conduit naturellement à une équation différentielle du second ordre. La résistance règle l'amortissement.</p>
+      <div class="example">
+        <span class="box-title">RLC série libre</span>
+        En l'absence de générateur, on note \(q(t)\) la charge portée par l'armature positive du condensateur. Alors \(i(t)=\frac{\mathrm dq}{\mathrm dt}\), \(u_C=\frac{q}{C}\), \(u_R=Ri\) et \(u_L=L\frac{\mathrm di}{\mathrm dt}\). La loi des mailles donne :
+        <div class="formula">\[ L\frac{\mathrm d^2q}{\mathrm dt^2}+R\frac{\mathrm dq}{\mathrm dt}+\frac{q}{C}=0 \]</div>
+        En utilisant \(q=C u_C\), on obtient l'équation équivalente sur la tension du condensateur :
+        <div class="formula">\[ LC\frac{\mathrm d^2u_C}{\mathrm dt^2}+RC\frac{\mathrm du_C}{\mathrm dt}+u_C=0 \]</div>
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(q(t)\)</td><td>Charge du condensateur.</td><td>coulomb, C</td></tr>
+        <tr><td>\(i(t)=\frac{\mathrm dq}{\mathrm dt}\)</td><td>Courant dans le circuit série.</td><td>ampère, A</td></tr>
+        <tr><td>\(u_C(t)\)</td><td>Tension aux bornes du condensateur.</td><td>volt, V</td></tr>
+        <tr><td>\(u_R(t)=Ri(t)\)</td><td>Tension aux bornes de la résistance.</td><td>volt, V</td></tr>
+        <tr><td>\(u_L(t)=L\frac{\mathrm di}{\mathrm dt}\)</td><td>Tension aux bornes de la bobine.</td><td>volt, V</td></tr>
+        <tr><td>\(R\)</td><td>Résistance responsable de l'amortissement.</td><td>ohm, \(\Omega\)</td></tr>
+        <tr><td>\(L\)</td><td>Inductance de la bobine.</td><td>henry, H</td></tr>
+        <tr><td>\(C\)</td><td>Capacité du condensateur.</td><td>farad, F</td></tr>
+        <tr><td>\(t\)</td><td>Temps.</td><td>seconde, s</td></tr>
+      </table>
+      <div class="definition">
+        <span class="box-title">Forme canonique</span>
+        En divisant par \(LC\), l'équation sur \(u_C\) devient :
+        <div class="formula">\[ \frac{\mathrm d^2u_C}{\mathrm dt^2}+\frac{R}{L}\frac{\mathrm du_C}{\mathrm dt}+\frac{1}{LC}u_C=0 \]</div>
+        On l'écrit aussi :
+        <div class="formula">\[ \frac{\mathrm d^2u_C}{\mathrm dt^2}+\frac{\omega_0}{Q}\frac{\mathrm du_C}{\mathrm dt}+\omega_0^2u_C=0,\qquad \omega_0=\frac{1}{\sqrt{LC}},\qquad Q=\frac{1}{R}\sqrt{\frac{L}{C}} \]</div>
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(\omega_0\)</td><td>Pulsation propre du circuit sans amortissement.</td><td>rad.s\(^{-1}\)</td></tr>
+        <tr><td>\(Q\)</td><td>Facteur de qualité : mesure inverse de l'amortissement relatif.</td><td>sans unité</td></tr>
+        <tr><td>\(\frac{R}{L}\)</td><td>Coefficient d'amortissement dans l'équation sur \(u_C\).</td><td>s\(^{-1}\)</td></tr>
+        <tr><td>\(\frac{1}{LC}\)</td><td>Carré de la pulsation propre \(\omega_0^2\).</td><td>s\(^{-2}\)</td></tr>
+      </table>
+      <div class="method">
+        <span class="box-title">Écriture vectorielle d'état</span>
+        Pour un RLC série éventuellement forcé par une source de tension \(e(t)\), on peut choisir le vecteur d'état \(\mathbf X(t)=\begin{pmatrix}u_C(t)\\ i(t)\end{pmatrix}\). Les deux équations du premier ordre sont :
+        <div class="formula">\[ \frac{\mathrm d}{\mathrm dt}\begin{pmatrix}u_C\\ i\end{pmatrix}
+        =
+        \begin{pmatrix}0&\frac{1}{C}\\-\frac{1}{L}&-\frac{R}{L}\end{pmatrix}
+        \begin{pmatrix}u_C\\ i\end{pmatrix}
+        +
+        \begin{pmatrix}0\\\frac{e(t)}{L}\end{pmatrix} \]</div>
+        Cette écriture est vectorielle au sens algébrique : \(\mathbf X\) regroupe des inconnues de nature différente, une tension et un courant.
+      </div>
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(\mathbf X(t)\)</td><td>Vecteur d'état du circuit, composé de \(u_C\) et \(i\).</td><td>composantes en V et A</td></tr>
+        <tr><td>\(e(t)\)</td><td>Tension imposée par la source dans la maille.</td><td>volt, V</td></tr>
+        <tr><td>\(\frac{1}{C}\)</td><td>Coefficient reliant le courant à la dérivée de \(u_C\).</td><td>F\(^{-1}\)</td></tr>
+        <tr><td>\(\frac{1}{L}\)</td><td>Coefficient reliant la tension à la dérivée de \(i\).</td><td>H\(^{-1}\)</td></tr>
+        <tr><td>\(\frac{R}{L}\)</td><td>Coefficient d'amortissement de l'intensité.</td><td>s\(^{-1}\)</td></tr>
+        <tr><td>\(\frac{e(t)}{L}\)</td><td>Terme de forçage dans l'équation sur l'intensité.</td><td>A.s\(^{-1}\)</td></tr>
+      </table>
+      <div class="note">
+        <span class="box-title">Pourquoi c'est central</span>
+        Le même schéma mathématique réapparaît dans les oscillateurs mécaniques, les filtres du second ordre, l'optique ondulatoire et certains modèles chimiques. Ce chapitre prépare donc déjà plusieurs thèmes de PCSI.
+      </div>
+
+      <h2 id="c10">10. Puissance et énergie</h2>
+      <p>En régime quelconque, la puissance instantanée reçue par un dipôle vaut \(p(t)=u(t)i(t)\) en convention récepteur. Une résistance dissipe toujours une puissance positive \(Ri^2\), tandis qu'un condensateur ou une bobine idéale peut restituer l'énergie stockée.</p>
+      <div class="formula">\[ E_C=\frac{1}{2}Cu_C^2,\qquad E_L=\frac{1}{2}Li^2,\qquad P_J=Ri^2 \]</div>
+
+      <table class="data-table">
+        <tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
+        <tr><td>\(E_C=\frac{1}{2}Cu_C^2\)</td><td>Énergie stockée dans le condensateur.</td><td>joule, J</td></tr>
+        <tr><td>\(E_L=\frac{1}{2}Li^2\)</td><td>Énergie stockée dans la bobine.</td><td>joule, J</td></tr>
+        <tr><td>\(P_J=Ri^2\)</td><td>Puissance dissipée par effet Joule dans la résistance.</td><td>watt, W</td></tr>
+      </table>
+      <div class="warning">
+        <span class="box-title">À retenir</span>
+        En électrocinétique de prépa, une erreur de signe vient presque toujours d'une convention mal posée. Les flèches sont une partie du raisonnement, pas de la décoration.
+      </div>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-methodes">
+  <div class="layout">
+    <aside class="toc"><strong>Méthodes</strong><a href="#m1">Kirchhoff</a><a href="#m2">Équivalent</a><a href="#m3">Transitoire</a><a href="#m4">Complexes</a></aside>
+    <main class="content">
+      <h2 id="m1">Méthode 1 — Écrire un système de Kirchhoff</h2>
+      <div class="method"><span class="box-title">Algorithme</span>Repérer les nœuds, choisir une masse si nécessaire, nommer les potentiels inconnus, écrire la loi des nœuds en fonction des tensions, puis résoudre le système linéaire.</div>
+      <div class="example"><span class="box-title">Point important</span>Si un circuit comporte \(n\) nœuds, la méthode des potentiels de nœuds utilise en général \(n-1\) inconnues, car le potentiel de référence est arbitraire.</div>
+
+      <h2 id="m2">Méthode 2 — Utiliser Thévenin sans se tromper</h2>
+      <p>Pour remplacer un réseau linéaire vu entre deux bornes A et B, on calcule la tension à vide \(E_{\rm th}=u_{AB,0}\), puis la résistance équivalente \(R_{\rm th}\) vue depuis A-B en annulant les sources indépendantes.</p>
+      <div class="formula">\[ \text{Réseau linéaire} \equiv \left(E_{\rm th},R_{\rm th}\right) \]</div>
+      <div class="warning"><span class="box-title">Annuler une source</span>Une source idéale de tension est remplacée par un fil. Une source idéale de courant est remplacée par un interrupteur ouvert.</div>
+
+      <h2 id="m3">Méthode 3 — Résoudre un premier ordre</h2>
+      <table class="data-table">
+        <tr><th>Étape</th><th>Action</th></tr>
+        <tr><td>1</td><td>Écrire la loi des mailles ou des nœuds.</td></tr>
+        <tr><td>2</td><td>Remplacer \(i\) par \(C u_C'\) ou \(u_L\) par \(L i'\).</td></tr>
+        <tr><td>3</td><td>Mettre sous la forme \(\tau y'+y=y_\infty\).</td></tr>
+        <tr><td>4</td><td>Appliquer la condition initiale.</td></tr>
+      </table>
+      <div class="formula">\[ y(t)=y_\infty+\left(y(0^+)-y_\infty\right)e^{-t/\tau} \]</div>
+
+      <h2 id="m4">Méthode 4 — Passer en notation complexe</h2>
+      <p>La notation complexe est pertinente uniquement en régime sinusoïdal forcé établi. Elle transforme les équations différentielles linéaires en équations algébriques.</p>
+      <div class="method"><span class="box-title">Procédure</span>Remplacer chaque dipôle par son impédance, écrire les lois de Kirchhoff en amplitudes complexes, résoudre, puis revenir au signal temporel avec le module et l'argument.</div>
+
+      <h2 id="m5">Méthode 5 — Construire une fonction de transfert</h2>
+      <div class="method"><span class="box-title">Procédure</span>Choisir l'entrée et la sortie, remplacer les dipôles par leurs impédances, écrire un diviseur ou un système de Kirchhoff, isoler \(H=\underline S/\underline E\), puis interpréter les limites basse et haute fréquence.</div>
+      <div class="example"><span class="box-title">Contrôle express</span>Un résultat du type \(H(j\omega)\) doit être sans dimension si l'entrée et la sortie sont deux tensions. Les limites \(\omega\to0\) et \(\omega\to\infty\) doivent correspondre au comportement physique des condensateurs et bobines.</div>
+
+      <h2 id="m6">Méthode 6 — Analyser un second ordre</h2>
+      <table class="data-table">
+        <tr><th>Étape</th><th>Question à se poser</th></tr>
+        <tr><td>Équation</td><td>Peut-on l'écrire sous la forme canonique \(x''+\frac{\omega_0}{Q}x'+\omega_0^2x=0\) ?</td></tr>
+        <tr><td>Régime</td><td>Le discriminant indique-t-il un régime pseudo-périodique, critique ou apériodique ?</td></tr>
+        <tr><td>Énergie</td><td>La résistance dissipe-t-elle bien l'énergie stockée dans \(L\) et \(C\) ?</td></tr>
+      </table>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-simulateur">
+  <div class="layout">
+    <aside class="toc"><strong>Simulation</strong><a href="#simrc">Charge RC</a><a href="#simrlc">RLC libre</a></aside>
+    <main class="content">
+      <h2 id="simrc">Simulateur — charge d'un condensateur</h2>
+      <div class="sim-card">
+        <p>Modèle : \(u_C(t)=E(1-e^{-t/RC})\). Change les valeurs pour visualiser la constante de temps.</p>
+        <div class="sim-grid">
+          <div><label for="simE">Tension E (V)</label><input id="simE" type="number" value="5" min="1" max="20" step="0.5" oninput="drawRC()"></div>
+          <div><label for="simR">Résistance R (kΩ)</label><input id="simR" type="number" value="10" min="1" max="100" step="1" oninput="drawRC()"></div>
+          <div><label for="simC">Capacité C (µF)</label><input id="simC" type="number" value="100" min="1" max="1000" step="10" oninput="drawRC()"></div>
+        </div>
+        <p class="code" id="simResult"></p>
+        <canvas id="rcCanvas"></canvas>
+      </div>
+
+      <h2 id="simrlc">Simulateur — oscillation libre RLC</h2>
+      <div class="sim-card">
+        <p>Modèle : \(LC\,u_C''+RC\,u_C'+u_C=0\). Le condensateur et la bobine échangent de l’énergie, tandis que la résistance amortit l’oscillation.</p>
+        <div class="sim-grid">
+          <div><label for="rlcL">Inductance L (mH)</label><input id="rlcL" type="number" value="50" min="1" max="500" step="5" oninput="drawRLC()"></div>
+          <div><label for="rlcR">Résistance R (Ω)</label><input id="rlcR" type="number" value="20" min="0" max="300" step="5" oninput="drawRLC()"></div>
+          <div><label for="rlcC">Capacité C (µF)</label><input id="rlcC" type="number" value="100" min="1" max="1000" step="10" oninput="drawRLC()"></div>
+        </div>
+        <p class="code" id="rlcResult"></p>
+        <canvas id="rlcCanvas"></canvas>
+      </div>
+
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-exercices">
+  <div class="layout">
+    <aside class="toc"><strong>Exercices</strong><a href="#e1">Kirchhoff</a><a href="#e2">Diviseur</a><a href="#e3">RC</a><a href="#e4">Impédance</a></aside>
+    <main class="content">
+      <h2>Exercices guidés</h2>
+      <div class="exercise-card" id="e1">
+        <h3>1. Loi des nœuds</h3>
+        <p>Trois branches arrivent à un nœud. \(i_1=2{,}0\,\mathrm{mA}\) entre dans le nœud, \(i_2=0{,}7\,\mathrm{mA}\) sort du nœud. Déterminer \(i_3\) si son orientation est sortante.</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">Loi des nœuds : \(i_1-i_2-i_3=0\), donc \(i_3=i_1-i_2=1{,}3\,\mathrm{mA}\). Comme \(i_3>0\), le courant sort bien du nœud.</div>
+      </div>
+      <div class="exercise-card" id="e2">
+        <h3>2. Diviseur de tension</h3>
+        <p>Un générateur idéal \(E=12\,\mathrm V\) alimente deux résistances en série \(R_1=2{,}0\,\mathrm{k\Omega}\) et \(R_2=4{,}0\,\mathrm{k\Omega}\). Calculer la tension aux bornes de \(R_2\).</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">Comme les résistances sont en série : \(u_2=E\frac{R_2}{R_1+R_2}=12\times\frac{4}{6}=8{,}0\,\mathrm V\).</div>
+      </div>
+      <div class="exercise-card" id="e3">
+        <h3>3. Charge RC</h3>
+        <p>Un condensateur initialement déchargé est chargé par \(E=5{,}0\,\mathrm V\) à travers \(R=10\,\mathrm{k\Omega}\), \(C=100\,\mathrm{\mu F}\). Donner \(\tau\) et \(u_C(\tau)\).</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">\(\tau=RC=10^4\times 100\times10^{-6}=1{,}0\,\mathrm s\). À \(t=\tau\), \(u_C=E(1-e^{-1})\approx0{,}632E=3{,}16\,\mathrm V\).</div>
+      </div>
+      <div class="exercise-card" id="e4">
+        <h3>4. Impédance d'un condensateur</h3>
+        <p>Calculer le module de l'impédance d'un condensateur \(C=1{,}0\,\mathrm{\mu F}\) à \(f=1{,}0\,\mathrm{kHz}\).</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">\(|Z_C|=\frac{1}{C\omega}=\frac{1}{C\,2\pi f}\). Ainsi \(|Z_C|\approx\frac{1}{10^{-6}\times 2\pi\times10^3}\approx159\,\Omega\).</div>
+      </div>
+      <div class="exercise-card" id="e5">
+        <h3>5. Équivalent de Thévenin</h3>
+        <p>Un pont diviseur \(R_1,R_2\) est alimenté par une source idéale \(E\). On observe la sortie aux bornes de \(R_2\), sans charge. Donner \(E_{\rm th}\) et \(R_{\rm th}\) vus depuis la sortie.</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">À vide, \(E_{\rm th}=E\frac{R_2}{R_1+R_2}\). En annulant la source idéale de tension, elle devient un fil, donc \(R_{\rm th}=R_1\parallel R_2=\frac{R_1R_2}{R_1+R_2}\).</div>
+      </div>
+      <div class="exercise-card" id="e6">
+        <h3>6. Filtre RC passe-bas</h3>
+        <p>Pour un filtre \(H(j\omega)=1/(1+jRC\omega)\), déterminer la pulsation de coupure et le gain à cette pulsation.</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">La coupure vérifie \(RC\omega_c=1\), donc \(\omega_c=1/RC\). Le gain vaut alors \(|H|=1/\sqrt{1+1}=1/\sqrt2\), soit environ \(-3\,\mathrm{dB}\).</div>
+      </div>
+      <div class="exercise-card" id="e7">
+        <h3>7. Mise en équation d'un RLC</h3>
+        <p>Dans un RLC série libre, montrer que la charge \(q(t)\) du condensateur vérifie \(L\ddot q+R\dot q+\frac{q}{C}=0\).</p>
+        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
+        <div class="solution">Loi des mailles : \(u_L+u_R+u_C=0\). Or \(i=\dot q\), \(u_L=L\dot i=L\ddot q\), \(u_R=Ri=R\dot q\), \(u_C=\frac{q}{C}\). Donc \(L\ddot q+R\dot q+\frac{q}{C}=0\).</div>
+      </div>
+
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-flashcards">
+  <div class="layout">
+    <aside class="toc"><strong>Flashcards</strong><a href="#fc">Cartes</a></aside>
+    <main class="content">
+      <h2 id="fc">Flashcards PCSI</h2>
+      <p>Clique sur une carte pour afficher la réponse.</p>
+      <div class="flash-grid">
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Convention récepteur ?</strong><div class="answer">Tension et courant orientés de sorte que la puissance reçue vaut \(p=ui\).</div></div>
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Loi des nœuds ?</strong><div class="answer">Somme algébrique des courants au nœud nulle : conservation de la charge.</div></div>
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Loi des mailles ?</strong><div class="answer">Somme algébrique des tensions sur une maille fermée nulle.</div></div>
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Impédance de C ?</strong><div class="answer">\(Z_C=\frac{1}{jC\omega}\).</div></div>
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Énergie dans L ?</strong><div class="answer">\(E_L=\frac{1}{2}Li^2\).</div></div>
+        <div class="flash-card" onclick="this.classList.toggle('open')"><strong>Forme d'un premier ordre ?</strong><div class="answer">\(\tau y'+y=y_\infty\), solution \(y=y_\infty+(y(0^+)-y_\infty)e^{-t/\tau}\).</div></div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-quiz">
+  <div class="layout">
+    <aside class="toc"><strong>Quiz</strong><a href="#quiz">Questions</a></aside>
+    <main class="content">
+      <h2 id="quiz">Quiz rapide</h2>
+      <div id="quizBox"></div>
+      <p class="code" id="quizScore"></p>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-concours">
+  <div class="layout">
+    <aside class="toc"><strong>Concours</strong><a href="#concours-sf">Savoir-faire</a><a href="#concours-pieges">Pièges</a><a href="#concours-qcm">QCM</a><a href="#concours-colle">Colle</a></aside>
+    <main class="content">
+      <h2 id="concours-sf">Focus concours — Électrocinétique</h2>
+      <div class="method"><span class="box-title">Esprit du bloc</span>Ce complément transforme le chapitre en entraînement actif : savoir-faire à réciter, pièges à éviter, QCM de vérification et question de colle. Les exercices sont originaux et rédigés pour travailler le réflexe de concours.</div>
+      <table class="data-table"><tr><th>Savoir-faire</th><th>Ce qu'il faut savoir faire sans hésitation</th></tr><tr><td>Réseau continu</td><td>Écrire les lois de Kirchhoff avec les orientations choisies, puis résoudre un système linéaire.</td></tr><tr><td>Premier ordre</td><td>Reconnaître \(\tau y'+y=y_\infty\), imposer la continuité de \(u_C\) ou \(i_L\).</td></tr><tr><td>Régime sinusoïdal</td><td>Passer à \(Z_R=R\), \(Z_L=jL\omega\), \(Z_C=\frac{1}{jC\omega}\), puis revenir au signal réel.</td></tr><tr><td>Filtrage</td><td>Lire \(|H(j\omega)|\), \(\arg H\), \(\omega_c\), les limites basse et haute fréquence.</td></tr></table>
+      <h2 id="concours-pieges">Pièges de cours</h2>
+      <div class="grid-2"><div class="warning"><span class="box-title">Piège classique</span>Ne pas écrire une loi des mailles sans préciser la convention des tensions.</div><div class="warning"><span class="box-title">Piège classique</span>Ne pas confondre continuité de \(u_C\) et continuité du courant dans un condensateur.</div><div class="warning"><span class="box-title">Piège classique</span>Un module d'impédance n'est pas une impédance complexe : \(|Z|\neq Z\).</div></div>
+      <h2 id="concours-qcm">QCM multi-réponses / Vrai-Faux</h2>
+      <p>Mode concours : chaque affirmation doit être jugée indépendamment. L'objectif est de repérer les erreurs fines, pas de deviner une seule bonne réponse.</p>
+      <table class="data-table"><tr><th>#</th><th>Affirmation</th><th>Correction</th></tr><tr><td>1</td><td>Dans un condensateur idéal, si \(i\) reste fini, \(u_C\) est continue.</td><td>Vrai</td></tr><tr><td>2</td><td>À basse fréquence, un condensateur se comporte comme un court-circuit.</td><td>Faux</td></tr><tr><td>3</td><td>La fonction de transfert d'un passe-bas \(RC\) peut s'écrire \(H(j\omega)=\frac{1}{1+jRC\omega}\).</td><td>Vrai</td></tr><tr><td>4</td><td>Dans un RLC libre, la résistance règle l'amortissement.</td><td>Vrai</td></tr></table>
+      <h2 id="concours-colle">Colle minute</h2>
+      <div class="exercise-card"><span class="box-title">PCSI-P01</span><p>On te donne un montage \(RLC\) série libre. Écris l'équation sur \(q(t)\), définis \(\omega_0\), \(Q\), puis annonce le régime selon la valeur de \(Q\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir les attendus</button><div class="solution">Réponse attendue : commencer par les hypothèses, écrire la relation centrale en notation mathématique, définir chaque grandeur avec son unité, puis finir par une interprétation physique ou chimique et un contrôle de limite.</div></div>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-chatbot">
+  <div class="layout">
+    <aside class="toc"><strong>Assistant externe</strong><a href="#chat">Question libre</a><a href="#chat">Assistant</a></aside>
+    <main class="content">
+      <h2 id="chat">Chatbot externe — Électrocinétique — Lois des circuits</h2>
+      <p class="chat-explain"><strong>Version simple.</strong> Cette page ne contient pas une IA enfermée dans le fichier HTML. Elle prépare une question propre, avec le contexte du chapitre, puis ouvre un assistant externe comme ChatGPT, Claude ou Perplexity. L'étudiant écrit sa question, clique sur un bouton, et l'assistant externe peut répondre à tout : cours, exercice, démonstration, approfondissement.</p>
+      <div class="chat-card">
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-input-row">
+          <input id="chatInput" type="text" placeholder="Pose n'importe quelle question : cours, exercice, démonstration, unité, approfondissement..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="small-btn" onclick="sendChat()">Préparer</button>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <button class="small-btn" onclick="openExternalAssistant('chatgpt')">Ouvrir ChatGPT</button>
+        <button class="small-btn" onclick="openExternalAssistant('claude')">Ouvrir Claude</button>
+        <button class="small-btn" onclick="openExternalAssistant('perplexity')">Ouvrir Perplexity</button>
+        <button class="small-btn" onclick="copyExternalPrompt()">Copier le prompt</button>
+      </div>
+      <div class="chat-explain"><strong>Pour le professeur.</strong> Le bouton “Copier le prompt” suffit pour un site statique. Une intégration directe dans la page demanderait plus tard un vrai serveur/API ; cette option technique n'est volontairement plus affichée aux élèves.</div>
+    </main>
+  </div>
+</section>
+
+<section class="tab-panel" id="tab-synthese">
+  <div class="layout">
+    <aside class="toc"><strong>Synthèse</strong><a href="#map">Carte</a><a href="#check">Checklist</a></aside>
+    <main class="content">
+<!-- PCSI LOUCHART SYNTHESE -->
+<div class="summary-card" id="programme-check">
+  <span class="box-title">Checklist programme PCSI</span>
+  <p><strong>Bloc de rattachement.</strong> Électricité PCSI : signaux dans l’ARQS, circuits du premier ordre, oscillateurs, filtrage et ALI.</p>
+  <ul>
+    <li><strong>ARQS.</strong> Justifier quand les fils peuvent être considérés équipotentiels et quand les lois de Kirchhoff s’appliquent.</li><li><strong>Transitoire.</strong> Écrire la loi des mailles, obtenir une équation du premier ou du second ordre, identifier \(\tau\), \(\omega_0\), \(Q\).</li><li><strong>Filtrage.</strong> Passer de l’équation temporelle à \(H(j\omega)\), lire gain, phase et asymptotes de Bode.</li>
+  </ul>
+  <p><strong>Relation à réciter avec sens.</strong> \(\sum_k i_k=0,\qquad \sum_k u_k=0,\qquad Z_R=R,\quad Z_L=jL\omega,\quad Z_C=\frac{1}{jC\omega}\)</p>
+</div>
+<!-- /PCSI LOUCHART SYNTHESE -->
+
+
+      <h2 id="relations-p01">Relations centrales</h2>
+      <table class="data-table">
+        <tr><th>Objet</th><th>Relation mathématique</th><th>Signification et unités</th></tr>
+        <tr><td>Loi des noeuds</td><td>\(\sum_k \varepsilon_k i_k=0\)</td><td>Conservation de la charge ; \(i_k\) en ampère.</td></tr>
+        <tr><td>Loi des mailles</td><td>\(\sum_k \varepsilon_k u_k=0\)</td><td>Conservation de l’énergie électrique ; \(u_k\) en volt.</td></tr>
+        <tr><td>Dipôle R</td><td>\(u_R=Ri\)</td><td>\(R\) en ohm, \(i\) en ampère, \(u_R\) en volt.</td></tr>
+        <tr><td>Condensateur</td><td>\(i=C\frac{\mathrm du_C}{\mathrm dt}\), \(E_C=\frac{1}{2}Cu_C^2\)</td><td>\(C\) en farad, \(E_C\) en joule.</td></tr>
+        <tr><td>Bobine</td><td>\(u_L=L\frac{\mathrm di}{\mathrm dt}\), \(E_L=\frac{1}{2}Li^2\)</td><td>\(L\) en henry, \(E_L\) en joule.</td></tr>
+        <tr><td>Impédances</td><td>\(Z_R=R\), \(Z_L=jL\omega\), \(Z_C=\frac{1}{jC\omega}\)</td><td>\(Z\) en ohm, \(\omega\) en rad.s\(^{-1}\).</td></tr>
+        <tr><td>Filtre RC</td><td>\(H(j\omega)=\frac{1}{1+jRC\omega}\)</td><td>Fonction de transfert sans unité si entrée et sortie sont deux tensions.</td></tr>
+        <tr><td>RLC série</td><td>\(\frac{d}{dt}\begin{pmatrix}u_C\\ i\end{pmatrix}=\begin{pmatrix}0&\frac{1}{C}\\-\frac{1}{L}&-\frac{R}{L}\end{pmatrix}\begin{pmatrix}u_C\\ i\end{pmatrix}+\begin{pmatrix}0\\\frac{e(t)}{L}\end{pmatrix}\)</td><td>Écriture vectorielle d’état : composantes en volt et ampère.</td></tr>
+      </table>
+
+      <h2 id="map">Carte mentale</h2>
+      <div class="map">
+        <div><strong>Conventions</strong><p>Orienter \(i\), \(u\), choisir récepteur/générateur, interpréter les signes.</p></div>
+        <div><strong>Kirchhoff</strong><p>Écrire les lois de nœuds et de mailles comme un système.</p></div>
+        <div><strong>R, L, C</strong><p>Associer chaque dipôle à sa relation temporelle et à son énergie.</p></div>
+        <div><strong>Équivalents</strong><p>Série, parallèle, diviseurs, Thévenin/Norton.</p></div>
+        <div><strong>Transitoires</strong><p>Identifier \(\tau\), la valeur finale et la condition initiale.</p></div>
+        <div><strong>RSF</strong><p>Utiliser les impédances complexes pour résoudre les circuits sinusoïdaux.</p></div>
+      </div>
+      <h2 id="check">Checklist de maîtrise</h2>
+      <div class="summary-card">
+        <p>Je sais orienter des grandeurs algébriques, écrire un système de Kirchhoff, résoudre un RC du premier ordre, utiliser \(Z_R\), \(Z_L\), \(Z_C\), et vérifier la cohérence énergétique d'un résultat.</p>
+      </div>
+    </main>
+  </div>
+</section>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  window.scrollTo({top:document.querySelector('.tabs').offsetTop,behavior:'smooth'});
+  if(id==='simulateur') setTimeout(function(){drawRC();drawRLC();},80);
+  if(id==='quiz') renderQuiz();
+  if(id==='chatbot') setTimeout(focusChatInput,50);
+}
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme')||'light';
+  var next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('physichem_pcsi_theme',next);
+  document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';
+  drawRC();
+}
+function updateProgress(){
+  var max=document.documentElement.scrollHeight-window.innerHeight;
+  var pct=max>0?Math.round(window.scrollY/max*100):0;
+  document.getElementById('progressTop').style.width=pct+'%';
+  document.getElementById('pctLabel').textContent=pct+'%';
+}
+window.addEventListener('scroll',updateProgress);
+function drawHero(){
+  var canvas=document.getElementById('circuitHero');
+  var ctx=canvas.getContext('2d');
+  function resize(){
+    var r=canvas.getBoundingClientRect();
+    canvas.width=Math.floor(r.width*devicePixelRatio);
+    canvas.height=Math.floor(r.height*devicePixelRatio);
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  var t=0;
+  function line(x1,y1,x2,y2){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+  function resistor(x,y,w){
+    ctx.beginPath();ctx.moveTo(x,y);
+    for(var i=0;i<6;i++){ctx.lineTo(x+w*(i+.5)/6,y+(i%2?-10:10));}
+    ctx.lineTo(x+w,y);ctx.stroke();
+  }
+  function frame(){
+    var r=canvas.getBoundingClientRect(); var w=r.width,h=r.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='rgba(35,56,79,.55)';ctx.lineWidth=2;
+    line(54,82,w-54,82); resistor(w-185,82,80); line(w-105,82,w-54,82);
+    line(w-54,82,w-54,h-110); line(w-54,h-110,54,h-110); line(54,h-110,54,82);
+    ctx.fillStyle='rgba(185,50,44,.92)';
+    ctx.beginPath();ctx.arc(54,82,5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(w-54,82,5,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(201,135,46,.75)';
+    ctx.beginPath();
+    for(var x=70;x<w-70;x+=6){
+      var y=h*.52+Math.sin((x+t)*.035)*16;
+      if(x===70)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle='rgba(35,56,79,.85)';
+    ctx.font='700 14px JetBrains Mono';
+    ctx.fillText('u = Ri',w-178,62);
+    ctx.fillText('Σ i = 0',70,h-80);
+    ctx.fillText('Σ u = 0',w-142,h-80);
+    t+=1.1;
+    requestAnimationFrame(frame);
+  }
+  resize(); window.addEventListener('resize',resize); frame();
+}
+function drawRC(){
+  var canvas=document.getElementById('rcCanvas'); if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var r=canvas.getBoundingClientRect();
+  canvas.width=Math.max(1,Math.floor(r.width*devicePixelRatio));
+  canvas.height=Math.max(1,Math.floor(r.height*devicePixelRatio));
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  var w=r.width,h=r.height;
+  var E=parseFloat(document.getElementById('simE').value)||5;
+  var R=(parseFloat(document.getElementById('simR').value)||10)*1000;
+  var C=(parseFloat(document.getElementById('simC').value)||100)*1e-6;
+  var tau=R*C;
+  document.getElementById('simResult').textContent='τ = RC = '+tau.toFixed(3)+' s ; uC(τ) ≈ '+(0.632*E).toFixed(2)+' V';
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='rgba(96,105,121,.35)';ctx.lineWidth=1;
+  for(var i=0;i<=5;i++){var y=20+i*(h-48)/5;ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(w-18,y);ctx.stroke();}
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();ctx.lineWidth=3;
+  ctx.beginPath();
+  for(var x=42;x<w-18;x++){
+    var t=(x-42)/(w-60)*5*tau;
+    var u=E*(1-Math.exp(-t/tau));
+    var y=h-28-u/E*(h-58);
+    if(x===42)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.strokeStyle='rgba(201,135,46,.8)';ctx.setLineDash([6,6]);
+  var xt=42+(w-60)/5;ctx.beginPath();ctx.moveTo(xt,20);ctx.lineTo(xt,h-28);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();
+  ctx.font='700 12px JetBrains Mono';
+  ctx.fillText('t = τ',xt+6,34);
+  ctx.fillText('uC(t)',48,18);
+  ctx.fillText('5τ',w-48,h-10);
+}
+function drawRLC(){
+  var canvas=document.getElementById('rlcCanvas'); if(!canvas) return;
+  var ctx=canvas.getContext('2d'); var r=canvas.getBoundingClientRect();
+  canvas.width=Math.max(1,Math.floor(r.width*devicePixelRatio)); canvas.height=Math.max(1,Math.floor(r.height*devicePixelRatio));
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  var w=r.width,h=r.height;
+  var L=(parseFloat(document.getElementById('rlcL').value)||50)*1e-3;
+  var R=parseFloat(document.getElementById('rlcR').value)||0;
+  var C=(parseFloat(document.getElementById('rlcC').value)||100)*1e-6;
+  var omega0=1/Math.sqrt(L*C), alpha=R/(2*L), disc=omega0*omega0-alpha*alpha;
+  var regime=disc>0?'pseudo-périodique':Math.abs(disc)<1e-9?'critique':'apériodique';
+  document.getElementById('rlcResult').textContent='ω0 = '+omega0.toFixed(0)+' rad.s⁻¹ ; α = '+alpha.toFixed(0)+' s⁻¹ ; régime '+regime;
+  ctx.clearRect(0,0,w,h); ctx.strokeStyle='rgba(96,105,121,.35)'; ctx.lineWidth=1;
+  for(var i=0;i<=4;i++){var y=24+i*(h-52)/4;ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(w-18,y);ctx.stroke();}
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); ctx.lineWidth=3; ctx.beginPath();
+  var tmax=disc>0?8/Math.max(alpha,1):6/omega0; if(!isFinite(tmax)||tmax<=0)tmax=0.02;
+  for(var x=42;x<w-18;x++){
+    var t=(x-42)/(w-60)*tmax; var u;
+    if(disc>0){var wd=Math.sqrt(disc); u=Math.exp(-alpha*t)*Math.cos(wd*t);}
+    else if(Math.abs(disc)<1e-9){u=(1+alpha*t)*Math.exp(-alpha*t);}
+    else {var beta=Math.sqrt(-disc); u=Math.exp(-alpha*t)*Math.cosh(Math.min(20,beta*t)); if(!isFinite(u))u=0;}
+    var y=h/2-u*(h*.34); if(x===42)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke(); ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim(); ctx.font='700 12px JetBrains Mono'; ctx.fillText('uC(t) normalisée',48,18);
+}
+
+function toggleSolution(btn){
+  var sol=btn.nextElementSibling;
+  sol.classList.toggle('open');
+  btn.textContent=sol.classList.contains('open')?'Masquer la correction':'Voir la correction';
+}
+
+function focusChatInput(){
+  seedChatbot();
+  var input=document.getElementById('chatInput');
+  if(input) input.focus();
+}
+const EXTERNAL_PROMPT_BASE="Tu es un professeur universitaire de physique-chimie en PCSI. Réponds avec rigueur, notations mathématiques, grandeurs, unités, méthode et exemples. Chapitre: PCSI-P01 — Électrocinétique, Kirchhoff, RLC, filtres, régimes transitoires et sinusoïdaux. Question étudiant: ";
+function seedChatbot(){
+  var log=document.getElementById('chatLog');
+  if(!log || log.dataset.seeded) return;
+  log.dataset.seeded='1';
+  appendChatMessage('bot','<strong>Assistant externe PCSI-P01.</strong><br>Pose une question libre, puis ouvre un assistant externe, copie le prompt ou interroge ton endpoint configuré.');
+}
+function appendChatMessage(kind,htmlText){
+  var log=document.getElementById('chatLog'); if(!log) return;
+  var div=document.createElement('div');
+  div.className='chat-message '+kind;
+  div.innerHTML=htmlText;
+  log.appendChild(div);
+  log.scrollTop=log.scrollHeight;
+  if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([div]);
+}
+function buildExternalPrompt(){
+  var input=document.getElementById('chatInput');
+  var question=(input && input.value.trim()) || 'Explique-moi ce chapitre avec un niveau PCSI exigeant.';
+  return EXTERNAL_PROMPT_BASE + question;
+}
+function sendChat(){
+  seedChatbot();
+  var input=document.getElementById('chatInput'); if(!input) return;
+  var text=input.value.trim(); if(!text) return;
+  appendChatMessage('user',text.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}));
+  appendChatMessage('bot','Question prête pour assistant externe. Utilise les boutons ChatGPT, Claude, Perplexity, Copier le prompt, ou configure un endpoint.');
+}
+function openExternalAssistant(kind){
+  var prompt=encodeURIComponent(buildExternalPrompt());
+  var urls={chatgpt:'https://chat.openai.com/',claude:'https://claude.ai/new',perplexity:'https://www.perplexity.ai/search?q='+prompt};
+  window.open(urls[kind]||urls.chatgpt,'_blank','noopener,noreferrer');
+}
+async function copyExternalPrompt(){
+  var prompt=buildExternalPrompt();
+  try{await navigator.clipboard.writeText(prompt);appendChatMessage('bot','Prompt copié. Colle-le dans l’assistant externe de ton choix.');}
+  catch(e){appendChatMessage('bot','Copie manuelle :<br><pre>'+prompt.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];})+'</pre>');}
+}
+async function callExternalEndpoint(){
+  var endpoint=localStorage.getItem('physichem_ai_endpoint');
+  if(!endpoint){appendChatMessage('bot',"Aucun assistant integre n'est configure sur cette page statique. Utilise les boutons externes ou copie le prompt.");return;}
+  appendChatMessage('bot','Interrogation de l’endpoint externe...');
+  try{
+    var res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chapter:'PCSI-P01',question:document.getElementById('chatInput').value,prompt:buildExternalPrompt()})});
+    var json=await res.json();
+    appendChatMessage('bot',json.answer||json.message||'Réponse reçue, mais format inattendu.');
+  }catch(e){appendChatMessage('bot','Erreur endpoint : '+e.message);}
+}
+var quiz=[{"q":"En convention recepteur, la puissance recue vaut :","o":["\\(p(t)=u(t)i(t)\\)","\\(p(t)=-u(t)i(t)\\)","\\(p(t)=Ri(t)\\)","\\(p(t)=\\frac{u(t)}{i(t)}\\)"],"a":0},{"q":"Impedance complexe d’une bobine ideale :","o":["\\(Z_L=jL\\omega\\)","\\(Z_C=\\frac{1}{jC\\omega}\\)","\\(Z_R=R\\)","\\(-jL\\omega\\)"],"a":0},{"q":"Dans un RC serie en charge, la constante de temps vaut :","o":["\\(\\tau=RC\\)","\\(\\tau=\\frac{R}{C}\\)","\\(\\tau=\\frac{C}{R}\\)","\\(\\tau=\\frac{1}{RC}\\)"],"a":0},{"q":"La loi des mailles traduit :","o":["la conservation de l’energie electrique","la conservation de la charge","la loi des gaz parfaits","la regle de Hund"],"a":0},{"q":"Dans un condensateur ideal, la grandeur continue si le courant reste fini est :","o":["\\(u_C(t)\\)","\\(i_C(t)\\)","\\(p_C(t)\\)","\\(R\\)"],"a":0},{"q":"La fonction de transfert d’un RC passe-bas vaut :","o":["\\(H(j\\omega)=\\frac{1}{1+jRC\\omega}\\)","\\(H(j\\omega)=jRC\\omega\\)","\\(H(j\\omega)=R+jL\\omega\\)","\\(H(j\\omega)=1+jRC\\omega\\)"],"a":0},{"q":"A la coupure d’un passe-bas du premier ordre, le gain vaut :","o":["\\(\\frac{1}{\\sqrt{2}}\\)","\\(0\\)","\\(1\\)","\\(2\\)"],"a":0},{"q":"Pour un RLC serie libre, l’inconnue \\(q(t)\\) verifie :","o":["\\(L\\ddot q+R\\dot q+\\frac{q}{C}=0\\)","\\(Rq+LC=0\\)","\\(\\dot q=0\\) toujours","\\(PV=nRT\\)"],"a":0},{"q":"Dans une resistance, la puissance dissipee vaut :","o":["\\(P_J=Ri^2\\)","\\(E_L=\\frac{1}{2}Li^2\\)","\\(E_C=\\frac{1}{2}Cu^2\\)","\\(\\frac{q}{C}\\)"],"a":0},{"q":"En regime sinusoidal force, deriver revient a multiplier par :","o":["\\(j\\omega\\)","\\(\\omega^2\\)","\\(\\frac{1}{j\\omega}\\)","\\(R\\)"],"a":0},{"q":"Le facteur de qualite \\(Q\\) d’un RLC est :","o":["sans unite","en ohm","en farad","en volt"],"a":0},{"q":"Thevenin remplace un reseau lineaire par :","o":["une source de tension et une resistance serie","une bobine seule","un condensateur seul","une source de courant ideale sans resistance"],"a":0}];
+var quizDone=false;
+function renderQuiz(){
+  if(quizDone) return;
+  var box=document.getElementById('quizBox');
+  box.innerHTML=quiz.map(function(q,idx){
+    return '<div class="quiz-card"><h3>Question '+(idx+1)+'</h3><p>'+q.q+'</p><div class="quiz-options">'+q.o.map(function(opt,i){
+      return '<button onclick="answerQuiz(this,'+idx+','+i+')">'+opt+'</button>';
+    }).join('')+'</div></div>';
+  }).join('');
+  if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([box]);
+}
+var score=0, answered={};
+function answerQuiz(btn,idx,i){
+  if(answered[idx]) return;
+  answered[idx]=true;
+  var buttons=btn.parentElement.querySelectorAll('button');
+  buttons.forEach(function(b,k){ if(k===quiz[idx].a)b.classList.add('correct'); });
+  if(i===quiz[idx].a){score++;} else {btn.classList.add('wrong');}
+  document.getElementById('quizScore').textContent='Score : '+score+' / '+Object.keys(answered).length;
+}
+(function init(){
+  var theme=localStorage.getItem('physichem_pcsi_theme')||'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
+  drawHero();
+  updateProgress();
+})();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+</body>
+</html>

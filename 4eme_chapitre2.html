@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4e · Chapitre 2 — Ombre et lumière · PhysiChem Omnis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+/* === PHYSICHEN 4ème — ORANGE NEON === */
+:root{
+  --bg:#fff8f2;--bg2:#fff2e6;--surface:rgba(255,255,255,.92);--surface2:#ffffff;
+  --line:rgba(255,106,0,.16);--line2:rgba(255,106,0,.32);
+  --text:#1a0800;--muted:#7a4020;--soft:#c86020;
+  --accent:#ff6a00;--accent2:#ff9a4a;--accent-bg:rgba(255,106,0,.09);
+  --neon:#ff6a00;--neon2:#ffaa00;--ok:#00bb55;--danger:#ff2255;--violet:#aa44ff;
+  --shadow:0 20px 60px rgba(255,106,0,.14);--shadow2:0 8px 28px rgba(255,106,0,.10);
+  --radius:24px;--side:250px;
+}
+[data-theme="dark"]{
+  --bg:#120800;--bg2:#1c0e00;--surface:rgba(28,14,0,.90);--surface2:#240f00;
+  --line:rgba(255,106,0,.22);--line2:rgba(255,106,0,.38);
+  --text:#fff5ee;--muted:#cc8855;--soft:#ff9a4a;
+  --accent:#ff7a1a;--accent2:#ffbb44;--accent-bg:rgba(255,106,0,.15);
+  --shadow:0 20px 60px rgba(0,0,0,.45);--shadow2:0 8px 28px rgba(0,0,0,.30);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Instrument Sans',sans-serif;background:radial-gradient(circle at 90% 4%,rgba(255,106,0,.16),transparent 28%),linear-gradient(135deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh;line-height:1.7}
+a{color:inherit;text-decoration:none}
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.side{position:sticky;top:0;height:100vh;padding:20px 16px;border-right:1px solid var(--line);background:rgba(255,255,255,.82);backdrop-filter:blur(22px);overflow-y:auto}
+[data-theme="dark"] .side{background:rgba(18,8,0,.85)}
+.brand{display:flex;gap:11px;align-items:center;margin-bottom:20px}
+.logo{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#ff6a00,#ffcc00);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 0 22px rgba(255,106,0,.55),0 4px 12px rgba(255,106,0,.30)}
+.brand h1{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.03em}
+.brand p{font-size:11px;color:var(--muted)}
+.level-card{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:14px;margin-bottom:16px;box-shadow:var(--shadow2)}
+.level-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.level-pill{padding:4px 12px;border-radius:999px;background:linear-gradient(90deg,#ff6a00,#ffcc00);color:#fff;font-weight:900;font-size:11px;box-shadow:0 0 14px rgba(255,106,0,.50)}
+.progress{height:5px;background:rgba(255,106,0,.13);border-radius:999px;overflow:hidden}
+.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff6a00,#ffcc00);border-radius:999px;transition:width .4s ease;box-shadow:0 0 8px rgba(255,106,0,.60)}
+.pct{margin-top:7px;font-size:11px;color:var(--muted)}
+.nav-title{font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,106,0,.60);margin:10px 4px}
+.tab{width:100%;border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:14px;margin:3px 0;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:.18s}
+.tab:hover{background:rgba(255,106,0,.09);color:var(--text)}
+.tab.active{background:linear-gradient(90deg,rgba(255,106,0,.16),rgba(255,170,0,.08));color:var(--text);box-shadow:inset 4px 0 0 var(--accent);border:1px solid rgba(255,106,0,.22)}
+
+/* MAIN */
+.main{min-width:0}
+.topbar{height:60px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(255,248,242,.78);backdrop-filter:blur(18px);position:sticky;top:0;z-index:30}
+[data-theme="dark"] .topbar{background:rgba(18,8,0,.78)}
+.crumb{font-size:13px;color:var(--muted)}.crumb strong{color:var(--accent)}
+.top-actions{margin-left:auto;display:flex;gap:9px}
+.pill-btn{border:1px solid var(--line2);background:var(--surface2);padding:7px 13px;border-radius:999px;font-weight:800;cursor:pointer;color:var(--text);font-size:12px;transition:.18s}
+.pill-btn:hover{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+
+/* HERO */
+.hero{padding:24px 32px 18px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:stretch;max-width:1160px}
+.hero-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px 24px;box-shadow:var(--shadow)}
+.hero-badge{display:inline-flex;gap:7px;align-items:center;background:linear-gradient(90deg,#ff6a00,#ffcc00);color:#fff;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:900;margin-bottom:9px;box-shadow:0 0 16px rgba(255,106,0,.45)}
+.teacher{display:block;margin-bottom:7px;color:var(--muted);font-weight:700;font-size:11px}
+.hero h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.8vw,46px);line-height:1;font-weight:700;letter-spacing:-.04em}
+.hero h2 em{font-style:normal;color:var(--accent)}
+.intro{max-width:760px;margin-top:10px;color:var(--muted);font-size:14px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.stat{padding:11px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,106,0,.04)}
+.stat strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1}
+.stat span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.hero-canvas-wrap{background:#0a0612;border:1px solid rgba(255,106,0,.45);border-radius:24px;overflow:hidden;box-shadow:0 0 30px rgba(255,106,0,.25),var(--shadow)}
+.missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;max-width:1160px;margin-top:14px}
+.mission{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow2)}
+.mission span{display:inline-flex;padding:3px 9px;border-radius:999px;background:var(--accent-bg);color:var(--accent);font-weight:900;font-size:10px;margin-bottom:7px;border:1px solid var(--line2)}
+.mission:nth-child(2) span{background:rgba(255,170,0,.12);color:#cc8800}
+.mission:nth-child(3) span{background:rgba(170,68,255,.10);color:#8822cc}
+.mission h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.03em}
+.mission p{color:var(--muted);font-size:13px;margin-top:4px}
+
+/* PANELS */
+.panel{display:none;padding:8px 32px 60px;max-width:1200px}
+.panel.active{display:block;animation:fadein .22s ease}
+@keyframes fadein{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION */
+.section{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+.section h2{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.04em;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.section h2::before{content:'';display:inline-block;width:12px;height:12px;background:linear-gradient(135deg,var(--accent),var(--neon2));border-radius:3px;flex-shrink:0;box-shadow:0 0 8px var(--accent)}
+.section h3{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.03em;margin:16px 0 6px}
+.section p,.section li{color:var(--muted);font-size:14.5px}
+
+/* TOC */
+.course-grid{display:grid;grid-template-columns:195px minmax(0,1fr);gap:20px}
+.toc{position:sticky;top:78px;align-self:start;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.64);padding:11px}
+[data-theme="dark"] .toc{background:rgba(255,255,255,.04)}
+.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-weight:700;font-size:12px;margin:2px 0;border-left:3px solid transparent;transition:.16s}
+.toc a:nth-child(1){border-color:#ff6a00}.toc a:nth-child(2){border-color:#ffaa00}.toc a:nth-child(3){border-color:#ff3366}.toc a:nth-child(4){border-color:#aa44ff}.toc a:nth-child(5){border-color:#00bb55}
+.toc a:hover{background:var(--accent-bg);color:var(--text)}
+
+/* BOXES */
+.box{border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.62);padding:14px 16px;margin:11px 0}
+.box strong{color:var(--text)}
+[data-theme="dark"] .box{background:rgba(255,255,255,.04)}
+.def{border-left:4px solid var(--accent)}
+.method{border-left:4px solid var(--neon2)}
+.warn{border-left:4px solid var(--danger)}
+.formula{font-family:'JetBrains Mono',monospace;background:linear-gradient(135deg,rgba(255,106,0,.08),rgba(255,170,0,.05));border:1px solid rgba(255,106,0,.22);border-radius:16px;padding:15px;text-align:center;margin:12px 0;color:var(--text);overflow:auto;box-shadow:0 0 18px rgba(255,106,0,.07)}
+[data-theme="dark"] .formula{background:rgba(255,106,0,.10)}
+
+/* TABLE */
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:15px;overflow:hidden;margin:13px 0}
+.table th,.table td{padding:10px 13px;border-bottom:1px solid var(--line);text-align:left}
+.table th{background:rgba(255,106,0,.11);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.table tr:last-child td{border-bottom:0}
+
+/* SIMS */
+.sim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.sim-card{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.62);overflow:hidden;box-shadow:var(--shadow2)}
+[data-theme="dark"] .sim-card{background:rgba(255,255,255,.04)}
+.sim-head{padding:14px 16px;border-bottom:1px solid var(--line)}
+.sim-head h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.sim-head p{color:var(--muted);font-size:12px;margin-top:3px}
+.sim-body{padding:15px}
+.control{display:grid;gap:5px;margin:8px 0}
+.control label{font-size:11.5px;color:var(--muted);font-weight:800}
+.control select,.control input{width:100%;padding:9px 11px;border-radius:11px;border:1px solid var(--line2);background:var(--surface2);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:13px}
+input[type=range]{accent-color:var(--accent)}
+.result{border:1px solid var(--line);border-radius:13px;background:var(--accent-bg);padding:11px 13px;margin-top:9px;color:var(--muted);font-size:13px}
+.labcanvas{width:100%;height:200px;background:#0a0612;border-radius:14px;border:1px solid rgba(255,106,0,.28);display:block}
+.iframe-wrap{position:relative;width:100%;padding-bottom:60%;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000}
+.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* FLASHCARDS */
+.fc-mode-bar{display:flex;gap:8px;margin-bottom:16px}
+.fcm{padding:7px 15px;border-radius:11px;border:1px solid var(--line2);background:var(--surface2);cursor:pointer;font-weight:700;font-size:12.5px;color:var(--muted);transition:.18s}
+.fcm.active{background:linear-gradient(90deg,var(--accent),var(--neon2));color:#fff;border-color:transparent;box-shadow:0 0 16px rgba(255,106,0,.40)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.flip{min-height:155px;perspective:1000px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;min-height:155px;transition:transform .55s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;background:var(--surface2);padding:15px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow2)}
+.back{transform:rotateY(180deg);background:var(--accent-bg);border-color:var(--line2)}
+.face small{color:var(--accent);font-weight:900;font-size:10.5px}
+.face p{margin-top:7px;color:var(--text);font-weight:700;font-size:13.5px}
+/* Completion mode */
+#compBox .q-row{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;background:var(--surface2);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#compBox .q-row label{font-weight:700;font-size:13px;flex:1;min-width:180px}
+#compBox input{border:1px solid var(--line2);border-radius:9px;padding:6px 10px;font-family:'Instrument Sans',sans-serif;background:var(--surface2);color:var(--text);width:200px}
+#compBox .q-row.ok{border-color:var(--ok);background:rgba(0,187,85,.07)}
+#compBox .q-row.ko{border-color:var(--danger);background:rgba(255,34,85,.07)}
+/* Chrono mode */
+#chronoBox{text-align:center;padding:20px}
+#chronoTimer{font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:700;color:var(--accent);line-height:1}
+#chronoFront{font-size:20px;font-weight:700;margin:14px 0 8px;color:var(--text)}
+#chronoBack{color:var(--muted);min-height:36px;font-size:14px}
+.chrono-btns{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.ck-btn{padding:11px 22px;border-radius:13px;border:0;cursor:pointer;font-weight:800;font-size:14px}
+.ck-ok{background:linear-gradient(90deg,var(--ok),#00ee77);color:#fff;box-shadow:0 0 14px rgba(0,187,85,.40)}
+.ck-ko{background:linear-gradient(90deg,var(--danger),#ff5577);color:#fff;box-shadow:0 0 14px rgba(255,34,85,.40)}
+.ck-reveal{background:var(--accent-bg);color:var(--accent);border:1px solid var(--line2);padding:9px 18px;border-radius:11px;cursor:pointer;font-weight:700}
+
+/* EXERCISES */
+.exo{border:1px solid var(--line);border-radius:18px;padding:15px;background:rgba(255,255,255,.62);margin:9px 0}
+[data-theme="dark"] .exo{background:rgba(255,255,255,.04)}
+.tag{display:inline-flex;padding:3px 9px;border-radius:999px;background:var(--accent-bg);color:var(--accent);font-weight:900;font-size:10.5px;margin-bottom:6px;border:1px solid var(--line2)}
+.btn{border:1px solid var(--line2);border-radius:11px;background:var(--surface2);padding:8px 13px;cursor:pointer;font-weight:800;color:var(--text);display:inline-flex;gap:7px;align-items:center;margin-top:8px;font-size:13px;transition:.18s}
+.btn:hover{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.correction{display:none;border-top:1px solid var(--line);margin-top:9px;padding-top:9px;color:var(--muted);font-size:14px}
+.correction.show{display:block}
+
+/* QUIZ */
+.quiz-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:var(--surface2);margin-bottom:13px}
+.option{display:block;width:100%;text-align:left;border:1px solid var(--line2);border-radius:12px;background:rgba(255,255,255,.65);padding:10px 13px;margin:6px 0;cursor:pointer;color:var(--muted);font-weight:700;font-size:13.5px;transition:.18s}
+.option:hover{background:var(--accent-bg);border-color:var(--accent)}
+.option.ok{background:rgba(0,187,85,.13);border-color:rgba(0,187,85,.45);color:#007733}
+.option.ko{background:rgba(255,34,85,.10);border-color:rgba(255,34,85,.38);color:#cc1133}
+
+/* CHATBOTS */
+.chat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.chat-card{border:1px solid var(--line);border-radius:20px;padding:15px;background:var(--surface2);box-shadow:var(--shadow2)}
+.chat-card h3{margin:0 0 5px;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.chat-card p{color:var(--muted);font-size:12px}
+.chat-card a{display:inline-flex;margin-top:9px;padding:7px 12px;border-radius:11px;background:linear-gradient(90deg,var(--accent),var(--neon2));color:#fff;font-weight:800;font-size:12px}
+.promptbox{margin-top:15px;border:1px dashed var(--line2);border-radius:18px;padding:13px;background:rgba(255,106,0,.04)}
+.copy-ok{font-size:12px;color:var(--ok);margin-left:9px;display:none}.copy-ok.show{display:inline}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mini-list li{margin:6px 0 6px 16px;color:var(--muted);font-size:14px}
+
+@media(max-width:960px){
+  .app{grid-template-columns:1fr}.side{position:relative;height:auto}
+  .hero-grid,.missions,.course-grid,.sim-grid,.cards,.chat-grid,.two-col{grid-template-columns:1fr}
+  .panel,.hero{padding-left:16px;padding-right:16px}.topbar{padding:0 16px}.toc{position:relative;top:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">PC</div><div><h1>PhysiChem</h1><p>M Borsali · LFC</p></div></div>
+    <div class="level-card">
+      <div class="level-row"><span class="level-pill">4ème</span><span style="color:var(--muted);font-weight:700;font-size:12px">Chap. 2</span></div>
+      <div class="progress"><span id="progressFill"></span></div>
+      <div class="pct" id="progressText">0 % du chapitre exploré</div>
+    </div>
+    <div class="nav-title">Sommaire</div>
+    <button class="tab active" data-tab="cours">📘 Cours</button>
+    <button class="tab" data-tab="sims">🎛️ Simulations</button>
+    <button class="tab" data-tab="outils">📐 Outils maths &amp; unités</button>
+    <button class="tab" data-tab="flash">🃏 Flashcards</button>
+    <button class="tab" data-tab="exos">🎯 Exercices</button>
+    <button class="tab" data-tab="quiz">❓ Quiz</button>
+    <button class="tab" data-tab="tp">🧪 TP</button>
+    <button class="tab" data-tab="chatbots">🤖 Chatbots</button>
+    <button class="tab" data-tab="superieur">🚀 Vers la 3e</button>
+  </aside>
+
+  <main class="main" id="top">
+    <div class="topbar">
+      <div class="crumb">Collège › 4ème › Optique › <strong>Ombre et lumière</strong></div>
+      <div class="top-actions">
+        <button class="pill-btn" onclick="switchTab('outils')">Relations clés</button>
+        <button class="pill-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <div class="hero-badge">4e · Chapitre 2</div>
+          <div class="teacher">M Borsali · Enseignant PC · LFC</div>
+          <h2>Ombre &amp; <em>lumière</em></h2>
+          <p class="intro">Comprendre comment la lumière se propage, distinguer sources primaires et objets diffusants, puis expliquer ombres, pénombres, phases de la Lune et éclipses avec des rayons lumineux.</p>
+          <div class="hero-stats">
+            <div class="stat"><strong>8</strong><span>notions clés</span></div>
+            <div class="stat"><strong>9</strong><span>exercices guidés</span></div>
+            <div class="stat"><strong>4</strong><span>simulations</span></div>
+          </div>
+        </div>
+        <div class="hero-canvas-wrap"><canvas id="heroCanvas" width="260" height="260"></canvas></div>
+      </div>
+      <div class="missions">
+        <article class="mission"><span>Mission 01</span><h3>Tracer</h3><p>Représenter un rayon lumineux par une droite orientée et construire un faisceau avec les rayons extrêmes.</p></article>
+        <article class="mission"><span>Mission 02</span><h3>Classer</h3><p>Distinguer source primaire, objet diffusant, corps transparent, translucide et opaque.</p></article>
+        <article class="mission"><span>Mission 03</span><h3>Expliquer</h3><p>Modéliser ombre propre, ombre portée, cône d'ombre, pénombre et éclipses.</p></article>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════ COURS ═══════════════════════ -->
+    <section class="panel active" id="cours">
+      <div class="section course-grid">
+        <nav class="toc">
+          <a href="#c1">I. Lumière</a>
+          <a href="#c2">II. Sources</a>
+          <a href="#c3">III. Ombres</a>
+          <a href="#c4">IV. Éclipses</a>
+          <a href="#c5">V. Bilan</a>
+        </nav>
+        <article>
+          <h2 id="c1">I. Qu'est-ce que la lumière ?</h2>
+          <p>La lumière est un signal qui permet la vision. En physique, on la modélise comme une onde électromagnétique capable de se propager dans le vide, comme la lumière du Soleil qui arrive jusqu'à la Terre.</p>
+          <p>La lumière se déplace à une vitesse extrêmement grande : environ \(300\,000\) km/s dans le vide. C'est la vitesse la plus rapide qui existe dans l'univers. À cette vitesse, la lumière du Soleil met environ 8 minutes pour atteindre la Terre, bien que le Soleil soit à 150 millions de kilomètres.</p>
+          <div class="box def"><p><strong>Définition — rayon lumineux :</strong> un rayon lumineux se représente par une droite munie d'une flèche. La flèche indique le sens de propagation de la lumière. Un rayon n'est pas un objet matériel : c'est un modèle géométrique qui représente le trajet de la lumière.</p></div>
+          <div class="box method"><p><strong>Propriété fondamentale :</strong> dans un milieu transparent et homogène, la lumière se propage en ligne droite. Cette propriété permet de construire les ombres avec une règle. C'est aussi ce qui explique qu'on ne peut pas voir autour d'un coin : la lumière ne courbe pas sa trajectoire dans l'air.</p></div>
+          <div class="box def"><p><strong>Faisceau lumineux :</strong> un faisceau est un ensemble de rayons lumineux. Un faisceau parallèle (ex. : laser) est formé de rayons tous parallèles. Un faisceau divergent est formé de rayons qui s'écartent les uns des autres, comme la lumière d'une ampoule.</p></div>
+          <div class="formula">\[ \text{milieu transparent et homogène} \Rightarrow \text{propagation rectiligne} \]</div>
+          <div class="box warn"><p><strong>Attention :</strong> la propagation rectiligne n'est valable que dans un milieu transparent et homogène. Si le milieu n'est pas homogène (par exemple, l'air chaud au-dessus d'une route en été), les rayons peuvent être déviés : c'est ce qui crée les mirages.</p></div>
+
+          <h2 id="c2">II. Sources de lumière et objets éclairés</h2>
+          <p>Une source primaire produit sa propre lumière. Un objet diffusant ne produit pas de lumière : il renvoie dans plusieurs directions une partie de la lumière reçue.</p>
+          <p>La distinction entre source primaire et objet diffusant est fondamentale. Le Soleil est une source primaire : il produit sa propre énergie lumineuse par des réactions nucléaires. La Lune, en revanche, est un objet diffusant : elle est visible uniquement parce qu'elle renvoie la lumière du Soleil. Si le Soleil s'éteignait, la Lune deviendrait invisible.</p>
+          <table class="table"><tr><th>Catégorie</th><th>Définition</th><th>Exemples</th></tr><tr><td>Source primaire</td><td>Produit la lumière qu'elle émet</td><td>Soleil, étoile, lampe allumée, flamme, laser, écran de téléphone allumé</td></tr><tr><td>Objet diffusant</td><td>Diffuse une lumière reçue</td><td>Lune, mur blanc, écran de cinéma, catadioptre, planète</td></tr><tr><td>Transparent</td><td>Laisse passer la lumière (on voit net à travers)</td><td>Air, eau claire, verre propre</td></tr><tr><td>Translucide</td><td>Laisse passer une partie de la lumière (on voit flou)</td><td>Papier calque, verre dépoli, tissu fin</td></tr><tr><td>Opaque</td><td>Ne laisse pas passer la lumière</td><td>Bois, carton, métal, corps humain</td></tr></table>
+          <div class="box warn"><p><strong>Erreur fréquente :</strong> la Lune n'est pas une source primaire. Elle est visible parce qu'elle diffuse la lumière du Soleil. De même, un mur éclairé par un projecteur n'est pas une source primaire : il diffuse la lumière reçue.</p></div>
+          <div class="box method"><p><strong>Astuce pour distinguer :</strong> demande-toi si l'objet est encore lumineux dans l'obscurité totale. Si oui, c'est une source primaire (une ampoule allumée, une étoile). Si non, c'est un objet diffusant (la Lune, un mur blanc). Un écran de téléphone allumé est une source primaire ; le même écran éteint n'est qu'un objet opaque.</p></div>
+
+          <h2 id="c3">III. Formation des ombres</h2>
+          <p>Quand un objet opaque intercepte la lumière, la zone qui ne reçoit pas de lumière forme une ombre. On distingue l'ombre propre sur l'objet, l'ombre portée sur un écran et le cône d'ombre dans l'espace.</p>
+          <p>Pour construire une ombre, on utilise les rayons extrêmes : ce sont les rayons tangents à l'objet, c'est-à-dire les rayons qui « frôlent » l'objet. La zone entre les deux rayons extrêmes, du côté opposé à la source, forme le cône d'ombre. Plus l'objet est proche de la source, plus l'ombre portée est grande ; plus l'objet est proche de l'écran, plus l'ombre est nette et de taille réduite.</p>
+          <div class="box def"><p><strong>Ombre propre :</strong> zone sombre sur l'objet lui-même, du côté opposé à la source. C'est la partie de l'objet qui ne reçoit pas directement la lumière de la source.</p></div>
+          <div class="box def"><p><strong>Ombre portée :</strong> zone sombre formée sur un écran placé derrière l'objet. Sa taille dépend de la distance entre l'objet et la source, et de la distance entre l'objet et l'écran.</p></div>
+          <div class="box method"><p><strong>Méthode — construire une ombre :</strong> 1. placer la source ; 2. placer l'objet opaque ; 3. tracer les deux rayons extrêmes tangents à l'objet ; 4. prolonger jusqu'à l'écran ; 5. colorier la zone non éclairée entre les deux intersections.</p></div>
+          <div class="formula">\[ H = h \times \frac{d_2}{d_1} \qquad \text{(taille de l'ombre portée — Thalès)} \]</div>
+          <p>Avec une source étendue (comme une ampoule à filament ou le Soleil), il peut aussi apparaître une zone de <strong>pénombre</strong> : elle reçoit une partie de la lumière seulement. La pénombre est la zone de transition entre la zone éclairée et l'ombre complète.</p>
+          <div class="box method"><p><strong>Application quotidienne :</strong> les ombres portées expliquent pourquoi nos silhouettes sont allongées le matin et le soir (Soleil bas sur l'horizon) et plus courtes à midi (Soleil haut dans le ciel). C'est aussi le principe du cadran solaire, qui utilise l'ombre d'un bâton pour indiquer l'heure.</p></div>
+
+          <h2 id="c4">IV. Ombres dans le système solaire</h2>
+          <p>Une éclipse se produit lorsque le Soleil, la Terre et la Lune sont alignés. Une éclipse solaire se produit lorsque la Lune cache le Soleil pour une zone de la Terre. Une éclipse lunaire se produit lorsque la Lune passe dans l'ombre de la Terre.</p>
+          <p>Les éclipses solaires totales sont rares en un lieu donné car le cône d'ombre de la Lune ne touche qu'une toute petite zone de la surface terrestre. La Lune est beaucoup plus petite que la Terre, son ombre ne couvre donc qu'un disque d'environ 200 km de diamètre.</p>
+          <div class="two-col">
+            <div class="box def"><p><strong>Éclipse solaire :</strong> Soleil — Lune — Terre. La Lune projette son cône d'ombre sur la Terre. Dans la zone d'ombre, le Soleil est complètement caché. Dans la pénombre, l'éclipse est partielle.</p></div>
+            <div class="box method"><p><strong>Éclipse lunaire :</strong> Soleil — Terre — Lune. La Terre projette son ombre sur la Lune. La Lune prend alors une couleur rougeâtre car la lumière du Soleil est légèrement déviée par l'atmosphère terrestre (c'est la « Lune de sang »).</p></div>
+          </div>
+          <div class="box warn"><p><strong>Sécurité :</strong> il ne faut JAMAIS regarder le Soleil directement, même pendant une éclipse, car ses rayons peuvent endommager définitivement la rétine. Il faut utiliser des lunettes spéciales ou une méthode indirecte (sténopé).</p></div>
+          <div class="box method"><p><strong>Pourquoi les éclipses ne se produisent-elles pas tous les mois ?</strong> Parce que l'orbite de la Lune autour de la Terre est inclinée d'environ 5° par rapport au plan de l'orbite terrestre autour du Soleil. L'alignement parfait ne se produit que lorsque la Lune traverse le plan de l'écliptique, environ deux fois par an.</p></div>
+
+          <h2 id="c5">V. Bilan à retenir</h2>
+          <ul>
+            <li>La lumière se propage en ligne droite dans un milieu transparent homogène.</li>
+            <li>Un rayon se trace avec une droite et une flèche.</li>
+            <li>Une source primaire émet sa propre lumière ; un objet diffusant renvoie une lumière reçue.</li>
+            <li>Un objet opaque crée une ombre propre, une ombre portée et un cône d'ombre.</li>
+            <li>Avec une source étendue, il peut y avoir une zone de pénombre.</li>
+            <li>Les éclipses s'expliquent par l'alignement Soleil-Terre-Lune et la propagation rectiligne.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ SIMS ═══════════════════════ -->
+    <section class="panel" id="sims">
+      <div class="section">
+        <h2>Simulations et laboratoire virtuel</h2>
+        <div class="sim-grid">
+          <article class="sim-card">
+            <div class="sim-head"><h3>☀️ Ombre portée — rayons extrêmes</h3><p>Déplace l'objet et observe la taille de l'ombre.</p></div>
+            <div class="sim-body">
+              <div class="control"><label>Position de l'objet : <span id="objPosLbl">milieu</span></label><input type="range" id="objPos" min="1" max="9" value="5"></div>
+              <canvas class="labcanvas" id="shadowCanvas"></canvas>
+              <div class="result" id="shadowResult">Plus l'objet se rapproche de la source, plus son ombre est grande.</div>
+            </div>
+          </article>
+          <article class="sim-card">
+            <div class="sim-head"><h3>🔮 Transparence des matériaux</h3><p>Transparent, translucide ou opaque ?</p></div>
+            <div class="sim-body">
+              <div class="control"><label>Matériau</label><select id="matSelect"><option value="transparent">Verre transparent</option><option value="translucide">Papier calque</option><option value="opaque">Carton opaque</option></select></div>
+              <canvas class="labcanvas" id="matCanvas"></canvas>
+              <div class="result" id="matResult">La lumière traverse entièrement un milieu transparent.</div>
+            </div>
+          </article>
+          <article class="sim-card">
+            <div class="sim-head"><h3>🌑 Éclipse solaire</h3><p>Déplace la Lune pour observer ombre et pénombre.</p></div>
+            <div class="sim-body">
+              <div class="control"><label>Position de la Lune : <span id="moonLbl">alignée</span></label><input type="range" id="moonY" min="60" max="180" value="120"></div>
+              <canvas class="labcanvas" id="eclipseCanvas"></canvas>
+              <div class="result" id="eclipseResult">Alignement parfait : éclipse solaire totale dans la zone d'ombre.</div>
+            </div>
+          </article>
+          <article class="sim-card">
+            <div class="sim-head"><h3>🧪 PhET — Vision des couleurs</h3><p>Lien entre lumière et perception visuelle.</p></div>
+            <div class="sim-body">
+              <p style="color:var(--muted);font-size:13px;margin-bottom:10px">Complément utile : explore les couleurs de la lumière visible et comment notre œil les perçoit.</p>
+              <div class="iframe-wrap"><iframe src="https://phet.colorado.edu/sims/html/color-vision/latest/color-vision_fr.html" allowfullscreen loading="lazy"></iframe></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ OUTILS ═══════════════════════ -->
+    <section class="panel" id="outils">
+      <div class="section">
+        <h2>Outils mathématiques et unités</h2>
+        <div class="two-col">
+          <div>
+            <h3>Grandeurs géométriques</h3>
+            <table class="table"><tr><th>Grandeur / outil</th><th>Symbole</th><th>Utilisation</th></tr><tr><td>Distance source-objet</td><td>\(d_1\)</td><td>Placer source et objet opaque</td></tr><tr><td>Distance source-écran</td><td>\(d_2\)</td><td>Calculer la taille de l'ombre</td></tr><tr><td>Taille de l'objet</td><td>\(h\)</td><td>Donnée du problème</td></tr><tr><td>Taille de l'ombre</td><td>\(H\)</td><td>Résultat à calculer</td></tr></table>
+          </div>
+          <div>
+            <h3>Constante importante</h3>
+            <div class="formula">\[ c \approx 3{,}00 \times 10^8\ \text{m·s}^{-1} \]</div>
+            <div class="formula">\[ v = \frac{d}{\Delta t} \]</div>
+            <p style="color:var(--muted);font-size:13px">La lumière du Soleil met environ 8 min pour atteindre la Terre (distance ≈ 150 millions de km).</p>
+          </div>
+        </div>
+        <h3>Calcul de la taille de l'ombre portée (Thalès)</h3>
+        <div class="formula">\[ \frac{h}{H} = \frac{d_1}{d_2} \Rightarrow H = h \times \frac{d_2}{d_1} \]</div>
+        <div class="box method"><p><strong>Exemple :</strong> un objet de hauteur \(h = 5\) cm est à \(d_1 = 10\) cm de la source. L'écran est à \(d_2 = 30\) cm de la source.<br>\(H = 5 \times \frac{30}{10} = 15\) cm. L'ombre portée mesure 15 cm.</p></div>
+        <div class="box warn"><p><strong>Piège :</strong> les distances \(d_1\) et \(d_2\) se mesurent toujours depuis la source, pas depuis l'objet. Vérifier que \(d_2 > d_1\) (l'écran est plus loin que l'objet).</p></div>
+        <div class="box method"><p><strong>Méthode de construction d'une ombre :</strong> 1. Placer la source S ; 2. Placer l'objet opaque ; 3. Tracer les deux rayons extrêmes tangents à l'objet issus de S ; 4. Prolonger jusqu'à l'écran ; 5. Colorier la zone non éclairée.</p></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ FLASHCARDS ═══════════════════════ -->
+    <section class="panel" id="flash">
+      <div class="section">
+        <h2>Flashcards</h2>
+        <div class="fc-mode-bar">
+          <button class="fcm active" onclick="setFCMode('libre',this)">🃏 Libre</button>
+          <button class="fcm" onclick="setFCMode('comp',this)">✏️ Complétion</button>
+          <button class="fcm" onclick="setFCMode('chrono',this)">⏱️ Chrono</button>
+        </div>
+        <div id="libreBox"><div class="cards" id="cards"></div></div>
+        <div id="compBox" style="display:none"></div>
+        <div id="chronoBox" style="display:none">
+          <div id="chronoTimer">2:00</div>
+          <div id="chronoFront">Chargement…</div>
+          <button class="ck-reveal" onclick="chronoReveal()">Voir la réponse</button>
+          <div id="chronoBack"></div>
+          <div class="chrono-btns">
+            <button class="ck-btn ck-ok" onclick="chronoNext(true)">✓ Je savais</button>
+            <button class="ck-btn ck-ko" onclick="chronoNext(false)">✗ À revoir</button>
+          </div>
+          <div id="chronoScore" style="margin-top:12px;color:var(--muted);font-size:13px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ EXOS ═══════════════════════ -->
+    <section class="panel" id="exos">
+      <div class="section">
+        <h2>Exercices progressifs</h2>
+
+        <div class="exo"><span class="tag">Niveau 1 · classer</span><h3>Sources primaires ou objets diffusants ?</h3><p>Classer les éléments suivants : Soleil, Lune, lampe allumée, mur blanc, flamme d'une bougie, écran de cinéma.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">Sources primaires : Soleil, lampe allumée, flamme d'une bougie. Objets diffusants : Lune, mur blanc, écran de cinéma.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 1 · classer</span><h3>Transparent, translucide ou opaque ?</h3><p>Classer : eau claire, papier calque, carton, verre propre, bois, verre dépoli, tissu épais.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">Transparent : eau claire, verre propre. Translucide : papier calque, verre dépoli. Opaque : carton, bois, tissu épais.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 1 · vrai/faux</span><h3>Affirmations à corriger</h3><p>a) La Lune est une source primaire. b) Un laser produit sa propre lumière. c) Le Soleil est un objet diffusant.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">a) Faux : la Lune diffuse la lumière du Soleil. b) Vrai : un laser est une source primaire. c) Faux : le Soleil produit sa propre lumière, c'est une source primaire.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 2 · tracer</span><h3>Construire une ombre portée</h3><p>Une petite lampe éclaire une balle devant un écran. Explique comment tracer l'ombre portée avec deux rayons particuliers. Que se passe-t-il si on rapproche la balle de la source ?</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">On trace les deux rayons extrêmes issus de la source, tangents à la balle. La zone de l'écran comprise entre leurs intersections est l'ombre portée. Si on rapproche la balle de la source, l'ombre portée devient plus grande.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 2 · distinguer</span><h3>Ombre propre et ombre portée</h3><p>Une balle est éclairée par une lampe. Où se trouve l'ombre propre ? Où se trouve l'ombre portée ? Explique la différence.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">L'ombre propre est sur la balle elle-même, du côté opposé à la lampe. L'ombre portée est sur l'écran ou le sol, derrière la balle. L'ombre propre est sur l'objet, l'ombre portée est sur une surface derrière l'objet.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 2 · calculer</span><h3>Taille de l'ombre — Thalès</h3><p>Un objet de \(h = 5\) cm de hauteur est placé à \(d_1 = 10\) cm d'une source lumineuse. Un écran est placé à \(d_2 = 30\) cm de la source. Calcule la taille de l'ombre portée.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">Par le théorème de Thalès : \(\dfrac{h}{H} = \dfrac{d_1}{d_2}\) donc \(H = h \times \dfrac{d_2}{d_1} = 5 \times \dfrac{30}{10} = 15\) cm. L'ombre portée mesure 15 cm.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 3 · éclipse</span><h3>Éclipse de Soleil</h3><p>Pourquoi une éclipse de Soleil n'est-elle pas visible partout sur Terre ? Explique à l'aide du cône d'ombre.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">Parce que le cône d'ombre de la Lune ne touche qu'une zone limitée de la surface terrestre (environ 200 km de diamètre). Dans la pénombre, l'éclipse est partielle. Les régions en dehors du cône de pénombre ne voient aucune éclipse.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 3 · pénombre</span><h3>Avec une source étendue</h3><p>Avec une source étendue (ampoule à filament), explique pourquoi on observe une zone de pénombre autour de l'ombre.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">Les différents points de la source étendue envoient des rayons qui contournent partiellement l'objet. La zone qui reçoit la lumière d'une partie de la source seulement est en pénombre. Plus la source est grande, plus la pénombre est étendue.</div></div>
+
+        <div class="exo"><span class="tag">Niveau 3 · synthèse</span><h3>Phases de la Lune</h3><p>Explique pourquoi la Lune présente des phases (pleine Lune, premier quartier, nouvelle Lune) en utilisant le fait qu'elle diffuse la lumière du Soleil.</p><button class="btn" onclick="toggleCorr(this)">▶ Voir la correction</button><div class="correction">La Lune diffuse la lumière du Soleil. Selon sa position par rapport à la Terre et au Soleil, on voit plus ou moins la moitié éclairée. Pleine Lune : la Terre est entre le Soleil et la Lune, on voit toute la face éclairée. Nouvelle Lune : la Lune est entre le Soleil et la Terre, on voit la face non éclairée. Quartiers : on voit la moitié de la face éclairée.</div></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ QUIZ ═══════════════════════ -->
+    <section class="panel" id="quiz">
+      <div class="section">
+        <h2>Quiz interactif</h2>
+        <div id="quizBox"></div>
+        <div class="result" id="quizScore" style="font-size:16px;font-weight:800">Score : 0 / 0</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ TP ═══════════════════════ -->
+    <section class="panel" id="tp">
+      <div class="section">
+        <h2>TP — Construire une ombre</h2>
+        <div class="two-col">
+          <div>
+            <h3>Objectif</h3>
+            <p>Vérifier expérimentalement que la lumière se propage en ligne droite et comprendre la formation d'une ombre. Observer l'influence de la position de l'objet sur la taille et la netteté de l'ombre.</p>
+            <h3 style="margin-top:14px">Matériel</h3>
+            <ul class="mini-list">
+              <li>Lampe ou lampe de smartphone</li>
+              <li>Objet opaque : balle, gomme ou figurine</li>
+              <li>Écran blanc (feuille de papier blanc sur support)</li>
+              <li>Règle graduée, crayon</li>
+              <li>Source étendue (ampoule) et source ponctuelle (petite LED)</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Protocole</h3>
+            <ol class="mini-list">
+              <li>Placer la source, l'objet opaque et l'écran alignés sur une table.</li>
+              <li>Observer l'ombre portée sur l'écran. Noter sa taille et sa netteté.</li>
+              <li>Rapprocher l'objet de la source : observer comment l'ombre change.</li>
+              <li>Rapprocher l'objet de l'écran : observer comment l'ombre change.</li>
+              <li>Remplacer la source ponctuelle par une source étendue : observer la pénombre.</li>
+              <li>Faire un schéma soigné avec les rayons extrêmes pour chaque situation.</li>
+              <li>Mesurer la taille de l'ombre pour deux positions différentes et vérifier la proportionnalité.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="box warn"><p><strong>Sécurité :</strong> ne jamais regarder directement une source lumineuse intense (lampe halogène, laser). Ne jamais pointer un laser vers les yeux de quelqu'un. Manipuler les sources chaudes avec précaution.</p></div>
+        <div class="box method"><p><strong>Conclusion attendue :</strong> la taille et la netteté de l'ombre dépendent de la position de l'objet et de la taille apparente de la source. Plus l'objet est proche de la source, plus l'ombre est grande. Avec une source étendue, on observe une zone de pénombre entre la zone éclairée et l'ombre.</p></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ CHATBOTS ═══════════════════════ -->
+    <section class="panel" id="chatbots">
+      <div class="section">
+        <h2>Chatbots externes</h2>
+        <p style="color:var(--muted);margin-bottom:14px">Ouvre l'assistant de ton choix, copie le prompt préparé, et pose ta question !</p>
+        <div class="chat-grid">
+          <div class="chat-card"><h3>ChatGPT</h3><p>Pour demander une explication progressive ou un exercice corrigé.</p><a href="https://chatgpt.com/" target="_blank" rel="noopener">Ouvrir →</a></div>
+          <div class="chat-card"><h3>Gemini</h3><p>Pour reformuler le cours et vérifier une méthode.</p><a href="https://gemini.google.com/" target="_blank" rel="noopener">Ouvrir →</a></div>
+          <div class="chat-card"><h3>Claude</h3><p>Pour travailler une rédaction courte et claire.</p><a href="https://claude.ai/" target="_blank" rel="noopener">Ouvrir →</a></div>
+          <div class="chat-card"><h3>Copilot</h3><p>Pour poser une question rapide avec exemple.</p><a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Ouvrir →</a></div>
+        </div>
+        <div class="promptbox">
+          <strong>Prompt à copier :</strong>
+          <p id="promptText" style="margin-top:8px;color:var(--muted);font-size:13px">Tu es un professeur de physique-chimie de collège expert en pédagogie. Explique-moi le chapitre de 4e "Ombre et lumière" simplement mais avec rigueur. Aide-moi à : 1) Comprendre la propagation rectiligne de la lumière et la modélisation par des rayons ; 2) Distinguer sources primaires (Soleil, lampe, laser) et objets diffusants (Lune, mur blanc) ; 3) Classer les matériaux en transparent, translucide et opaque avec des exemples concrets ; 4) Construire une ombre propre, une ombre portée et un cône d'ombre à l'aide des rayons extrêmes ; 5) Expliquer la pénombre avec une source étendue ; 6) Modéliser les éclipses solaires et lunaires par alignement Soleil-Terre-Lune. Donne-moi ensuite 5 exercices corrigés progressifs et pose-moi 3 questions de vérification.</p>
+          <button class="btn" style="margin-top:10px" onclick="copyPrompt()">📋 Copier le prompt</button>
+          <span class="copy-ok" id="copyOk">✓ Copié !</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ VERS 3E ═══════════════════════ -->
+    <section class="panel" id="superieur">
+      <div class="section">
+        <h2>Vers la 3e et le lycée</h2>
+        <p style="color:var(--muted);margin-bottom:14px">Ce chapitre prépare l'étude des signaux lumineux, de la vitesse de la lumière, des couleurs, des lentilles et des instruments d'optique.</p>
+        <div class="two-col">
+          <div class="box def"><p><strong>Ce que tu retrouveras bientôt :</strong> vitesse de propagation \(v = \frac{d}{\Delta t}\), année-lumière, signaux sonores et lumineux, lentilles convergentes et formation des images, synthèse additive des couleurs.</p></div>
+          <div class="box method"><p><strong>Pourquoi c'est important :</strong> les mêmes idées expliquent les éclipses, les appareils photo, l'œil, les télescopes et les communications par fibre optique. La propagation rectiligne est à la base de l'optique géométrique, qui permet de concevoir des lunettes, des microscopes et des lunettes astronomiques.</p></div>
+        </div>
+        <div class="formula">\[ v = \frac{d}{\Delta t} \qquad c \approx 3{,}00 \times 10^8\ \text{m·s}^{-1} \]</div>
+        <div class="box method"><p><strong>Mini-défi :</strong> la lumière du Soleil met environ 8 min pour atteindre la Terre. La distance Terre-Soleil est d'environ 150 millions de km. Vérifie ce résultat en calculant \(\Delta t = \frac{d}{c}\) avec \(c = 3 \times 10^8\) m/s.<br><em>Piste : convertir 150 millions de km en mètres, puis diviser par c.</em></p></div>
+        <div class="two-col" style="margin-top:12px">
+          <div class="box def"><p><strong>Au lycée :</strong> tu découvriras les lois de la réflexion et de la réfraction (lois de Snell-Descartes), la dispersion de la lumière par un prisme, les interférences et la diffraction. Ces phénomènes montrent que la propagation rectiligne n'est qu'une approximation valable à grande échelle.</p></div>
+          <div class="box warn"><p><strong>Attention :</strong> la propagation rectiligne n'est pas toujours vraie ! Quand la lumière rencontre un obstacle très fin ou passe par un très petit trou, elle peut être déviée : c'est la diffraction, que tu étudieras au lycée. C'est un modèle qui fonctionne bien à notre échelle mais qui a ses limites.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ═══════════════════════ TAB SYSTEM ═══════════════════════ */
+const TABS = ['cours','sims','outils','flash','exos','quiz','tp','chatbots','superieur'];
+const visited = new Set();
+
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById(id);
+  if (panel) panel.classList.add('active');
+  document.querySelectorAll('.tab[data-tab="'+id+'"]').forEach(t => t.classList.add('active'));
+  visited.add(id);
+  updateProgress();
+  setTimeout(() => {
+    const p2 = document.getElementById(id);
+    const topH = (document.querySelector('.topbar') || {offsetHeight:62}).offsetHeight;
+    if (p2) {
+      const y = p2.getBoundingClientRect().top + window.scrollY - topH - 4;
+      window.scrollTo({top: y, behavior: 'smooth'});
+    }
+  }, 30);
+  if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 100);
+  if (id === 'sims' && !window._simsInited) { initSims(); window._simsInited = true; }
+  if (id === 'quiz' && !window._quizInited) { buildQuiz(); window._quizInited = true; }
+  if (id === 'flash') renderCards();
+}
+
+document.querySelectorAll('.tab[data-tab]').forEach(btn =>
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab))
+);
+
+function updateProgress() {
+  const pct = Math.round(visited.size / TABS.length * 100);
+  const fill = document.getElementById('progressFill');
+  const txt = document.getElementById('progressText');
+  if (fill) fill.style.width = pct + '%';
+  if (txt) txt.textContent = pct + ' % du chapitre exploré';
+}
+
+function toggleTheme() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = dark ? '🌙' : '☀️';
+  if (window._heroRaf) { cancelAnimationFrame(window._heroRaf); window._heroRaf = null; }
+  initHeroCanvas();
+  if (window._simsInited) initSims();
+}
+
+/* ═══════════════════════ HERO CANVAS — Rayon lumineux ═══════════════════════ */
+function initHeroCanvas() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const W = canvas.width = canvas.offsetWidth || 260;
+  const H = canvas.height = canvas.offsetHeight || 260;
+  const ctx = canvas.getContext('2d');
+
+  // Rayons divergents depuis une source
+  const srcX = 45, srcY = H / 2;
+  const angles = [-40, -22, -8, 0, 8, 22, 40];
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0a0612';
+    ctx.fillRect(0, 0, W, H);
+
+    // Source neon
+    ctx.beginPath();
+    ctx.arc(srcX, srcY, 14, 0, Math.PI * 2);
+    const grad = ctx.createRadialGradient(srcX, srcY, 2, srcX, srcY, 14);
+    grad.addColorStop(0, '#fff8e0');
+    grad.addColorStop(0.4, '#ffcc00');
+    grad.addColorStop(1, 'rgba(255,106,0,0)');
+    ctx.fillStyle = grad;
+    ctx.shadowColor = '#ffcc00';
+    ctx.shadowBlur = 22;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#ffaa00';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#fff8e0';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('S', srcX, srcY + 4);
+
+    // Rayons animés
+    angles.forEach((ang, idx) => {
+      const rad = ang * Math.PI / 180;
+      const len = W - srcX - 30;
+      const ex = srcX + len;
+      const ey = srcY + Math.tan(rad) * len;
+      const alpha = idx === 3 ? 0.85 : 0.45 - Math.abs(ang) * 0.005;
+
+      // Rayon de base
+      ctx.beginPath();
+      ctx.moveTo(srcX + 14, srcY + Math.sin(rad) * 14);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = `rgba(255,${180 - idx * 10},0,${alpha})`;
+      ctx.lineWidth = idx === 3 ? 2.5 : 1.5;
+      ctx.shadowColor = '#ff9a00';
+      ctx.shadowBlur = idx === 3 ? 8 : 3;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Flèche animée sur le rayon principal
+      if (idx === 3) {
+        const progress = ((t * 0.008 + idx * 0.15) % 1);
+        const px = srcX + 14 + (ex - srcX - 14) * progress;
+        const py = srcY + (ey - srcY) * progress;
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffdd55';
+        ctx.shadowColor = '#ff9a00';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        // Pointe de flèche
+        const nx = Math.cos(rad), ny = Math.sin(rad);
+        ctx.beginPath();
+        ctx.moveTo(px + nx * 7, py + ny * 7);
+        ctx.lineTo(px - ny * 4, py + nx * 4);
+        ctx.lineTo(px + ny * 4, py - nx * 4);
+        ctx.closePath();
+        ctx.fillStyle = '#ffcc44';
+        ctx.fill();
+      }
+    });
+
+    // Objet opaque (disque)
+    const ox = W - 70, oy = H / 2, or2 = 22;
+    ctx.beginPath();
+    ctx.arc(ox, oy, or2, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a0800';
+    ctx.strokeStyle = '#ff6a00';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#ff6a00';
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Ombre portée
+    ctx.beginPath();
+    ctx.moveTo(W - 20, oy - 38);
+    ctx.lineTo(W - 20, oy + 38);
+    ctx.strokeStyle = 'rgba(255,106,0,0.25)';
+    ctx.lineWidth = 8;
+    ctx.shadowColor = 'rgba(255,106,0,0.2)';
+    ctx.shadowBlur = 4;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Labels
+    ctx.fillStyle = 'rgba(255,200,130,0.7)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('objet', ox, oy + 36);
+    ctx.fillText('ombre portée', W - 14, oy + 52);
+
+    t++;
+    window._heroRaf = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ═══════════════════════ CANVAS SIMULATIONS ═══════════════════════ */
+function initSims() {
+  // --- SIM 1: Ombre portée ---
+  const shadowCanvas = document.getElementById('shadowCanvas');
+  const sctx = shadowCanvas.getContext('2d');
+
+  function drawShadow() {
+    const pos = +document.getElementById('objPos').value; // 1-9
+    const labels = ['très proche source','proche source','','','milieu','','','proche écran','très proche écran'];
+    document.getElementById('objPosLbl').textContent = labels[pos-1] || 'milieu';
+
+    const W = shadowCanvas.width = shadowCanvas.offsetWidth;
+    const H = shadowCanvas.height;
+    sctx.clearRect(0,0,W,H);
+    sctx.fillStyle = '#0a0612';
+    sctx.fillRect(0,0,W,H);
+
+    const srcX = 35, srcY = H/2;
+    const screenX = W - 25;
+    const objX = srcX + (screenX - srcX - 60) * pos / 10 + 30;
+    const objR = 22;
+
+    // Calcul des rayons extrêmes (tangents à l'objet)
+    const ang = Math.asin(objR / (objX - srcX));
+    const topY = srcY - Math.tan(ang) * (objX - srcX) - objR * Math.cos(ang);
+    const botY = srcY + Math.tan(ang) * (objX - srcX) + objR * Math.cos(ang);
+
+    // Extension jusqu'à l'écran
+    const slope1 = (topY - srcY) / (objX - srcX);
+    const slope2 = (botY - srcY) / (objX - srcX);
+    const screenTop = srcY + slope1 * (screenX - srcX);
+    const screenBot = srcY + slope2 * (screenX - srcX);
+    const shadowSize = Math.abs(screenBot - screenTop);
+
+    // Zone éclairée (cône)
+    sctx.beginPath();
+    sctx.moveTo(srcX, srcY);
+    sctx.lineTo(screenX, screenTop);
+    sctx.lineTo(screenX, screenBot);
+    sctx.closePath();
+    sctx.fillStyle = 'rgba(255,200,80,0.06)';
+    sctx.fill();
+
+    // Cône d'ombre
+    sctx.beginPath();
+    sctx.moveTo(objX - objR*0.3, topY + 2);
+    sctx.lineTo(screenX, screenTop);
+    sctx.lineTo(screenX, screenBot);
+    sctx.lineTo(objX - objR*0.3, botY - 2);
+    sctx.closePath();
+    sctx.fillStyle = 'rgba(10,6,18,0.65)';
+    sctx.fill();
+
+    // Rayons extrêmes
+    sctx.shadowBlur = 6; sctx.shadowColor = '#ff9a00';
+    sctx.strokeStyle = 'rgba(255,150,0,0.70)'; sctx.lineWidth = 1.5;
+    sctx.beginPath(); sctx.moveTo(srcX, srcY); sctx.lineTo(screenX, screenTop); sctx.stroke();
+    sctx.beginPath(); sctx.moveTo(srcX, srcY); sctx.lineTo(screenX, screenBot); sctx.stroke();
+    sctx.shadowBlur = 0;
+
+    // Source
+    const grd = sctx.createRadialGradient(srcX,srcY,2,srcX,srcY,16);
+    grd.addColorStop(0,'#fff8e0'); grd.addColorStop(1,'rgba(255,106,0,0)');
+    sctx.beginPath(); sctx.arc(srcX,srcY,16,0,Math.PI*2);
+    sctx.fillStyle = grd; sctx.shadowColor='#ffcc00'; sctx.shadowBlur=18; sctx.fill(); sctx.shadowBlur=0;
+    sctx.fillStyle='#fff8e0'; sctx.font='bold 10px sans-serif'; sctx.textAlign='center';
+    sctx.fillText('S',srcX,srcY+4);
+
+    // Objet
+    sctx.beginPath(); sctx.arc(objX, srcY, objR, 0, Math.PI*2);
+    sctx.fillStyle = '#240f00'; sctx.strokeStyle = '#ff6a00'; sctx.lineWidth = 2;
+    sctx.shadowColor = '#ff6a00'; sctx.shadowBlur = 5;
+    sctx.fill(); sctx.stroke(); sctx.shadowBlur = 0;
+
+    // Écran
+    sctx.fillStyle = 'rgba(255,170,0,0.55)';
+    sctx.fillRect(screenX - 4, 12, 6, H - 24);
+    sctx.fillStyle = 'rgba(255,34,85,0.90)';
+    sctx.fillRect(screenX - 4, Math.min(screenTop,screenBot), 6, shadowSize);
+
+    // Labels
+    sctx.fillStyle = 'rgba(255,200,130,0.7)'; sctx.font = '9px sans-serif'; sctx.textAlign = 'center';
+    sctx.fillText('objet', objX, srcY + objR + 13);
+    sctx.fillText('ombre portée', screenX + 20, srcY);
+    sctx.fillStyle = 'rgba(255,150,0,0.6)';
+    sctx.fillText(`~${Math.round(shadowSize)} px`, screenX + 20, srcY + 15);
+
+    document.getElementById('shadowResult').innerHTML =
+      `Ombre portée ≈ <strong>${Math.round(shadowSize)} unités</strong>. ` +
+      (pos <= 3 ? 'Objet proche de la source → grande ombre.' :
+       pos >= 7 ? 'Objet proche de l\'écran → ombre plus petite et nette.' :
+       'Position intermédiaire.');
+  }
+
+  document.getElementById('objPos').addEventListener('input', drawShadow);
+  drawShadow();
+
+  // --- SIM 2: Matériaux ---
+  const matCanvas = document.getElementById('matCanvas');
+  const mctx = matCanvas.getContext('2d');
+
+  function drawMat() {
+    const v = document.getElementById('matSelect').value;
+    const W = matCanvas.width = matCanvas.offsetWidth;
+    const H = matCanvas.height;
+    mctx.clearRect(0,0,W,H);
+    mctx.fillStyle = '#0a0612'; mctx.fillRect(0,0,W,H);
+
+    const srcX = 40, srcY = H/2, barX = W/2 - 20, barW = 28;
+    const opacities = {transparent: 0.10, translucide: 0.48, opaque: 0.95};
+    const op = opacities[v];
+    const transmitted = 1 - op;
+
+    // Source
+    const grd = mctx.createRadialGradient(srcX,srcY,2,srcX,srcY,14);
+    grd.addColorStop(0,'#fff8e0'); grd.addColorStop(1,'rgba(255,106,0,0)');
+    mctx.beginPath(); mctx.arc(srcX,srcY,14,0,Math.PI*2);
+    mctx.fillStyle=grd; mctx.shadowColor='#ffcc00'; mctx.shadowBlur=16; mctx.fill(); mctx.shadowBlur=0;
+    mctx.fillStyle='#fff8e0'; mctx.font='bold 10px sans-serif'; mctx.textAlign='center';
+    mctx.fillText('S',srcX,srcY+4);
+
+    // Rayons incidents (avant le matériau)
+    for (let i = -2; i <= 2; i++) {
+      const y = srcY + i * 14;
+      mctx.beginPath(); mctx.moveTo(srcX+14, y); mctx.lineTo(barX, y);
+      mctx.strokeStyle = `rgba(255,200,60,${0.7 - Math.abs(i)*0.1})`;
+      mctx.lineWidth = 2; mctx.shadowColor='#ff9a00'; mctx.shadowBlur=4; mctx.stroke(); mctx.shadowBlur=0;
+    }
+
+    // Matériau
+    mctx.fillStyle = v === 'transparent' ? 'rgba(100,200,255,0.18)' :
+                     v === 'translucide' ? 'rgba(200,180,120,0.55)' : 'rgba(30,10,0,0.92)';
+    mctx.strokeStyle = '#ff6a00'; mctx.lineWidth = 1.5;
+    mctx.fillRect(barX, 12, barW, H-24);
+    mctx.strokeRect(barX, 12, barW, H-24);
+    mctx.fillStyle = 'rgba(255,200,100,0.75)'; mctx.font='bold 9px sans-serif'; mctx.textAlign='center';
+    mctx.fillText(v, barX+barW/2, H-6);
+
+    // Rayons transmis (après le matériau)
+    if (transmitted > 0.02) {
+      for (let i = -2; i <= 2; i++) {
+        const y = srcY + i * 14;
+        mctx.beginPath(); mctx.moveTo(barX+barW, y); mctx.lineTo(W-20, y);
+        mctx.strokeStyle = `rgba(255,200,60,${transmitted * (0.7 - Math.abs(i)*0.1)})`;
+        mctx.lineWidth = 2; mctx.shadowColor='#ff9a00'; mctx.shadowBlur=3; mctx.stroke(); mctx.shadowBlur=0;
+      }
+    }
+
+    // Rayons diffusés (translucide)
+    if (v === 'translucide') {
+      for (let i = 0; i < 5; i++) {
+        const ang = (i - 2) * 25 * Math.PI/180;
+        mctx.beginPath();
+        mctx.moveTo(barX+barW, srcY);
+        mctx.lineTo(barX+barW + Math.cos(ang)*50, srcY + Math.sin(ang)*50);
+        mctx.strokeStyle = 'rgba(255,150,30,0.25)'; mctx.lineWidth = 1;
+        mctx.stroke();
+      }
+    }
+
+    const msgs = {
+      transparent: 'La lumière traverse entièrement : on voit net à travers. Matériau transparent.',
+      translucide: 'Une partie de la lumière traverse, le reste est diffusé : on voit flou. Matériau translucide.',
+      opaque: 'La lumière ne traverse pas : une ombre nette se forme. Matériau opaque.'
+    };
+    document.getElementById('matResult').textContent = msgs[v];
+  }
+
+  document.getElementById('matSelect').addEventListener('change', drawMat);
+  drawMat();
+
+  // --- SIM 3: Éclipse ---
+  const eclipseCanvas = document.getElementById('eclipseCanvas');
+  const ectx = eclipseCanvas.getContext('2d');
+
+  function drawEclipse() {
+    const moonY = +document.getElementById('moonY').value;
+    const W = eclipseCanvas.width = eclipseCanvas.offsetWidth;
+    const H = eclipseCanvas.height;
+    ectx.clearRect(0,0,W,H);
+    ectx.fillStyle = '#0a0612'; ectx.fillRect(0,0,W,H);
+
+    const solX=55, solY=H/2, solR=32;
+    const lunX=W/2-10, lunY=moonY, lunR=16;
+    const terX=W-55, terY=H/2, terR=28;
+    const aligned = Math.abs(moonY - H/2) < 18;
+
+    // Soleil
+    const sg = ectx.createRadialGradient(solX,solY,4,solX,solY,solR);
+    sg.addColorStop(0,'#fff8e0'); sg.addColorStop(0.5,'#ffcc00'); sg.addColorStop(1,'rgba(255,106,0,0.3)');
+    ectx.beginPath(); ectx.arc(solX,solY,solR,0,Math.PI*2);
+    ectx.fillStyle=sg; ectx.shadowColor='#ffcc00'; ectx.shadowBlur=24; ectx.fill(); ectx.shadowBlur=0;
+
+    // Cone d'ombre de la Lune
+    const coneTopY_lun = lunY - lunR;
+    const coneBotY_lun = lunY + lunR;
+    const slopeT = (coneTopY_lun - solY) / (lunX - solX);
+    const slopeB = (coneBotY_lun - solY) / (lunX - solX);
+    const shadowTopAtTerre = solY + slopeT * (terX - solX);
+    const shadowBotAtTerre = solY + slopeB * (terX - solX);
+
+    // Zone d'ombre (triangle)
+    ectx.beginPath();
+    ectx.moveTo(lunX, coneTopY_lun);
+    ectx.lineTo(terX + 15, shadowTopAtTerre);
+    ectx.lineTo(terX + 15, shadowBotAtTerre);
+    ectx.lineTo(lunX, coneBotY_lun);
+    ectx.closePath();
+    ectx.fillStyle = aligned ? 'rgba(10,6,18,0.55)' : 'rgba(10,6,18,0.20)';
+    ectx.fill();
+
+    // Rayons extrêmes
+    ectx.shadowBlur = 4; ectx.shadowColor = '#ff9a00';
+    ectx.strokeStyle = `rgba(255,160,30,${aligned ? 0.60 : 0.25})`; ectx.lineWidth = 1.5;
+    ectx.beginPath(); ectx.moveTo(solX,solY); ectx.lineTo(terX+15, shadowTopAtTerre); ectx.stroke();
+    ectx.beginPath(); ectx.moveTo(solX,solY); ectx.lineTo(terX+15, shadowBotAtTerre); ectx.stroke();
+    ectx.shadowBlur = 0;
+
+    // Lune
+    ectx.beginPath(); ectx.arc(lunX,lunY,lunR,0,Math.PI*2);
+    ectx.fillStyle='#443020'; ectx.strokeStyle='rgba(255,106,0,0.50)'; ectx.lineWidth=1.5;
+    ectx.shadowColor='#ff6a00'; ectx.shadowBlur=4; ectx.fill(); ectx.stroke(); ectx.shadowBlur=0;
+
+    // Terre
+    const tg = ectx.createRadialGradient(terX,terY,4,terX,terY,terR);
+    tg.addColorStop(0,'#2244aa'); tg.addColorStop(0.6,'#1133bb'); tg.addColorStop(1,'rgba(100,150,255,0.5)');
+    ectx.beginPath(); ectx.arc(terX,terY,terR,0,Math.PI*2);
+    ectx.fillStyle=tg; ectx.shadowColor='#4466ff'; ectx.shadowBlur=10; ectx.fill(); ectx.shadowBlur=0;
+    ectx.strokeStyle='rgba(100,150,255,0.60)'; ectx.lineWidth=1.5; ectx.stroke();
+
+    // Zone d'ombre sur la Terre
+    if (aligned) {
+      const shadowH = Math.abs(shadowBotAtTerre - shadowTopAtTerre);
+      const shadowMid = (shadowTopAtTerre + shadowBotAtTerre) / 2;
+      ectx.save();
+      ectx.beginPath(); ectx.arc(terX,terY,terR,0,Math.PI*2); ectx.clip();
+      ectx.fillStyle = 'rgba(10,6,18,0.60)';
+      ectx.fillRect(terX - terR, shadowMid - shadowH/2, terR*2, shadowH);
+      ectx.restore();
+    }
+
+    // Labels
+    ectx.fillStyle='rgba(255,200,130,0.80)'; ectx.font='bold 9px sans-serif'; ectx.textAlign='center';
+    ectx.fillText('Soleil',solX,solY+solR+12);
+    ectx.fillText('Lune',lunX,lunY+lunR+12);
+    ectx.fillText('Terre',terX,terY+terR+12);
+
+    document.getElementById('eclipseResult').innerHTML = aligned
+      ? 'Alignement : <strong>éclipse solaire</strong>. La Lune projette son ombre sur la Terre.'
+      : 'Pas d\'alignement parfait : aucune éclipse. L\'orbite de la Lune est inclinée de ~5°.';
+    document.getElementById('moonLbl').textContent = aligned ? 'alignée' : 'décalée';
+  }
+
+  document.getElementById('moonY').addEventListener('input', drawEclipse);
+  drawEclipse();
+}
+
+/* ═══════════════════════ FLASHCARDS ═══════════════════════ */
+const FLASH = [
+  ['Rayon lumineux','Droite orientée (avec flèche) qui représente le trajet de la lumière dans un milieu.'],
+  ['Propagation rectiligne','Dans un milieu transparent et homogène, la lumière se propage en ligne droite.'],
+  ['Faisceau lumineux','Ensemble de rayons : parallèle (laser), divergent (ampoule) ou convergent.'],
+  ['Source primaire','Objet qui produit la lumière qu\'il émet : Soleil, lampe allumée, laser, flamme.'],
+  ['Objet diffusant','Objet qui renvoie une lumière reçue : Lune, mur blanc, écran, catadioptre.'],
+  ['Corps transparent','Laisse passer la lumière entièrement : on voit net à travers. Ex. : air, verre.'],
+  ['Corps translucide','Laisse passer une partie de la lumière : on voit flou. Ex. : papier calque.'],
+  ['Corps opaque','Ne laisse pas passer la lumière : crée une ombre nette. Ex. : bois, métal.'],
+  ['Ombre propre','Zone sombre sur l\'objet lui-même, du côté opposé à la source.'],
+  ['Ombre portée','Zone sombre sur un écran derrière l\'objet. \\(H = h \\times \\frac{d_2}{d_1}\\)'],
+  ['Cône d\'ombre','Zone de l\'espace qui ne reçoit aucune lumière de la source ponctuelle.'],
+  ['Pénombre','Zone qui ne reçoit la lumière que d\'une partie d\'une source étendue.'],
+  ['Éclipse solaire','Alignement Soleil–Lune–Terre : la Lune projette son ombre sur la Terre.'],
+  ['Éclipse lunaire','Alignement Soleil–Terre–Lune : la Terre projette son ombre sur la Lune.'],
+  ['Vitesse de la lumière','\\(c \\approx 3{,}00 \\times 10^8\\ \\text{m·s}^{-1}\\) dans le vide.'],
+];
+
+let fcMode = 'libre';
+let chronoIdx = 0, chronoSec = 120, chronoScore = 0, chronoTotal = 0, chronoInterval = null;
+
+function setFCMode(mode, btn) {
+  fcMode = mode;
+  document.querySelectorAll('.fcm').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('libreBox').style.display = mode==='libre' ? '' : 'none';
+  document.getElementById('compBox').style.display = mode==='comp' ? '' : 'none';
+  document.getElementById('chronoBox').style.display = mode==='chrono' ? '' : 'none';
+  if (mode==='comp') buildComp();
+  if (mode==='chrono') startChrono();
+  if (mode==='libre') renderCards();
+}
+
+function renderCards() {
+  document.getElementById('cards').innerHTML = FLASH.map(([q,a]) =>
+    `<div class="flip" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="face front"><small>QUESTION</small><p>${q}</p></div>
+        <div class="face back"><small>RÉPONSE</small><p>${a}</p></div>
+      </div>
+    </div>`
+  ).join('');
+  if (window.MathJax) setTimeout(() => MathJax.typesetPromise(), 100);
+}
+
+function buildComp() {
+  const box = document.getElementById('compBox');
+  const items = FLASH.slice(0, 10);
+  box.innerHTML = items.map(([q,a],i) =>
+    `<div class="q-row" id="qrow${i}">
+      <label>${q}</label>
+      <input type="text" id="qinp${i}" placeholder="Ta réponse…" onkeydown="if(event.key==='Enter')checkComp(${i})">
+      <button class="btn" onclick="checkComp(${i})">✓</button>
+      <span id="qfb${i}" style="font-size:12px;color:var(--muted)"></span>
+    </div>`
+  ).join('') + `<button class="btn" style="margin-top:12px" onclick="buildComp()">🔄 Réinitialiser</button>`;
+  window._compItems = items;
+}
+
+function checkComp(i) {
+  const inp = document.getElementById('qinp'+i);
+  const row = document.getElementById('qrow'+i);
+  const fb = document.getElementById('qfb'+i);
+  const ans = inp.value.trim().toLowerCase();
+  const ref = window._compItems[i][1].toLowerCase();
+  const ok = ref.split(' ').some(w => w.length > 3 && ans.includes(w));
+  row.className = 'q-row ' + (ok ? 'ok' : 'ko');
+  fb.textContent = ok ? '✓ Bonne approche !' : '✗ Réponse : ' + window._compItems[i][1];
+  fb.style.color = ok ? 'var(--ok)' : 'var(--danger)';
+}
+
+function startChrono() {
+  chronoIdx = 0; chronoScore = 0; chronoTotal = 0;
+  clearInterval(chronoInterval);
+  showChronoCard();
+  chronoSec = 120;
+  document.getElementById('chronoTimer').textContent = '2:00';
+  chronoInterval = setInterval(() => {
+    chronoSec--;
+    const m = Math.floor(chronoSec/60), s = chronoSec%60;
+    const el = document.getElementById('chronoTimer');
+    el.textContent = m+':'+(s<10?'0':'')+s;
+    el.style.color = chronoSec < 20 ? 'var(--danger)' : 'var(--accent)';
+    if (chronoSec <= 0) { clearInterval(chronoInterval); el.textContent = '⏱ Fini !'; }
+  }, 1000);
+}
+
+function showChronoCard() {
+  if (chronoIdx >= FLASH.length) {
+    document.getElementById('chronoFront').textContent = '🎉 Terminé !';
+    document.getElementById('chronoBack').textContent = `Score : ${chronoScore} / ${chronoTotal}`;
+    clearInterval(chronoInterval);
+    return;
+  }
+  document.getElementById('chronoFront').textContent = FLASH[chronoIdx][0];
+  document.getElementById('chronoBack').textContent = '';
+}
+
+function chronoReveal() {
+  document.getElementById('chronoBack').textContent = FLASH[chronoIdx][1];
+}
+
+function chronoNext(knew) {
+  chronoTotal++;
+  if (knew) chronoScore++;
+  chronoIdx++;
+  document.getElementById('chronoScore').textContent = `Score : ${chronoScore} / ${chronoTotal}`;
+  showChronoCard();
+}
+
+/* ═══════════════════════ QUIZ ═══════════════════════ */
+const QUIZ = [
+  {q:'Dans un milieu transparent et homogène, la lumière se propage…',o:['en ligne droite','en zigzag','seulement en cercle'],a:0,e:'C\'est la propagation rectiligne de la lumière.'},
+  {q:'La Lune est…',o:['une source primaire','un objet diffusant','un objet transparent'],a:1,e:'La Lune diffuse la lumière du Soleil : elle n\'en produit pas.'},
+  {q:'Un rayon lumineux se représente par…',o:['une droite avec une flèche','un cercle coloré','une tache lumineuse'],a:0,e:'La flèche indique le sens de propagation de la lumière.'},
+  {q:'Un corps opaque…',o:['laisse passer toute la lumière','ne laisse pas passer la lumière','produit toujours de la lumière'],a:1,e:'Un corps opaque bloque la lumière et peut former une ombre.'},
+  {q:'L\'ombre portée se forme…',o:['sur l\'objet lui-même','sur un écran derrière l\'objet','dans la source lumineuse'],a:1,e:'L\'ombre portée est la zone sombre sur une surface derrière l\'objet.'},
+  {q:'Une éclipse solaire correspond à l\'alignement…',o:['Soleil–Lune–Terre','Soleil–Terre–Lune','Terre–Soleil–Lune'],a:0,e:'La Lune se place entre le Soleil et la Terre.'},
+  {q:'La pénombre apparaît avec…',o:['une source ponctuelle uniquement','une source étendue','un objet transparent'],a:1,e:'Une source étendue crée une zone de transition (pénombre) autour de l\'ombre.'},
+  {q:'Le cône d\'ombre est…',o:['la zone éclairée par la source','la zone de l\'espace privée de lumière','la zone de pénombre'],a:1,e:'Le cône d\'ombre est la région totalement privée de lumière de la source.'},
+  {q:'Un catadioptre est…',o:['une source primaire','un objet diffusant qui renvoie la lumière vers sa source','un corps transparent'],a:1,e:'Le catadioptre diffuse la lumière reçue vers l\'arrière, comme les réflecteurs de vélo.'},
+  {q:'Pourquoi nos ombres sont-elles plus longues le matin que à midi ?',o:['la propagation n\'est plus rectiligne','le Soleil est plus bas sur l\'horizon le matin','l\'air est plus froid le matin'],a:1,e:'Le Soleil bas crée des rayons plus inclinés, donc une ombre plus longue.'},
+  {q:'Une éclipse lunaire se produit quand…',o:['la Lune est entre le Soleil et la Terre','la Terre est entre le Soleil et la Lune','le Soleil est entre la Terre et la Lune'],a:1,e:'Lors d\'une éclipse lunaire, la Terre projette son ombre sur la Lune.'},
+  {q:'Le papier calque est…',o:['transparent','translucide','opaque'],a:1,e:'Le papier calque laisse passer une partie de la lumière mais on ne voit pas net à travers.'},
+];
+
+let _qscore = 0, _qanswered = 0;
+
+function buildQuiz() {
+  const box = document.getElementById('quizBox');
+  _qscore = 0; _qanswered = 0;
+  box.innerHTML = QUIZ.map((item, i) =>
+    `<div class="quiz-card" id="qc${i}">
+      <h3 style="font-family:'Space Grotesk',sans-serif;margin-bottom:8px">Question ${i+1} / ${QUIZ.length}</h3>
+      <p style="font-weight:700;margin-bottom:4px">${item.q}</p>
+      ${item.o.map((op,j) =>
+        `<button class="option" onclick="answerQ(this,${i},${j})">${op}</button>`
+      ).join('')}
+      <div style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--accent-bg);color:var(--muted);font-size:13px" id="qexp${i}">${item.e}</div>
+    </div>`
+  ).join('');
+  document.getElementById('quizScore').textContent = `Score : 0 / ${QUIZ.length}`;
+}
+
+function answerQ(btn, qi, ai) {
+  const card = document.getElementById('qc'+qi);
+  if (card.dataset.done) return;
+  card.dataset.done = '1';
+  _qanswered++;
+  if (ai === QUIZ[qi].a) { _qscore++; btn.classList.add('ok'); }
+  else { btn.classList.add('ko'); card.querySelectorAll('.option')[QUIZ[qi].a].classList.add('ok'); }
+  document.getElementById('qexp'+qi).style.display = 'block';
+  document.getElementById('quizScore').textContent = `Score : ${_qscore} / ${QUIZ.length}`;
+  updateProgress();
+}
+
+/* ═══════════════════════ UTILS ═══════════════════════ */
+function toggleCorr(btn) {
+  btn.nextElementSibling.classList.toggle('show');
+}
+
+async function copyPrompt() {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('promptText').innerText);
+    const ok = document.getElementById('copyOk');
+    ok.classList.add('show');
+    setTimeout(() => ok.classList.remove('show'), 1800);
+  } catch(e) {
+    alert('Sélectionne le texte manuellement pour le copier.');
+  }
+}
+
+/* ═══════════════════════ INIT ═══════════════════════ */
+switchTab('cours');
+initHeroCanvas();
+</script>
+</body>
+</html>

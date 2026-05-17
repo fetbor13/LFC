@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révisions · La Physique Chimie au LFC · M. Borsali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap">
+<style>
+:root{
+  --bg:#eef3f9;--bg-soft:#f7f9fd;--surface:#ffffff;--surface-2:#f9fbfe;
+  --text:#172033;--muted:#60708b;--subtle:#8a98ad;
+  --border:rgba(101,126,161,.2);--border-strong:rgba(101,126,161,.34);
+  --shadow:0 18px 50px rgba(34,61,100,.12);--shadow-sm:0 8px 24px rgba(34,61,100,.08);
+  --terminal:#4578df;--terminal-bg:#eaf0ff;--premiere:#2a9d73;--premiere-bg:#eaf8f1;
+  --seconde:#d47a35;--seconde-bg:#fff1e5;--pcsi:#b24b7e;--pcsi-bg:#fdebf4;--college:#7b62d6;--college-bg:#f0edff;
+  --ok:#239b66;--warn:#cf7d22;--danger:#d94e5d;--info:#1c90b8;
+}
+[data-theme="dark"]{
+  --bg:#0f1724;--bg-soft:#121d2d;--surface:#172235;--surface-2:#1d2a40;
+  --text:#e7eef8;--muted:#9badc7;--subtle:#71839f;
+  --border:rgba(142,166,207,.17);--border-strong:rgba(142,166,207,.32);
+  --shadow:0 18px 50px rgba(0,0,0,.34);--shadow-sm:0 8px 24px rgba(0,0,0,.25);
+  --terminal:#75a1ff;--terminal-bg:rgba(117,161,255,.12);--premiere:#57ca99;--premiere-bg:rgba(87,202,153,.12);
+  --seconde:#f0a15e;--seconde-bg:rgba(240,161,94,.13);--pcsi:#ee84b9;--pcsi-bg:rgba(238,132,185,.13);--college:#ad9bff;--college-bg:rgba(173,155,255,.13);
+  --ok:#57ca99;--warn:#f0a15e;--danger:#ff7885;--info:#63c4e4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:linear-gradient(180deg,var(--bg),var(--bg-soft));color:var(--text);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.55}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;min-height:60px;padding:0 28px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.brand-mark{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--terminal-bg),var(--college-bg));border:1px solid var(--border-strong)}
+.back-btn,.icon-btn{border:1.5px solid var(--border-strong);background:var(--surface);color:var(--muted);border-radius:8px;min-height:36px;display:inline-flex;align-items:center;justify-content:center;transition:.2s ease}
+.back-btn{gap:8px;padding:0 12px;font-size:13px;font-weight:700}
+.icon-btn{width:38px}
+.back-btn:hover,.icon-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);color:var(--text)}
+.top-actions{margin-left:auto;display:flex;gap:9px;align-items:center}
+.hero{padding:42px 28px 28px;border-bottom:1px solid var(--border)}
+.hero-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:28px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+h1{font-family:"Clash Display","Instrument Sans",sans-serif;font-size:clamp(30px,3.8vw,48px);line-height:1.04;margin:16px 0 14px;letter-spacing:0;max-width:760px}
+.hero p{max-width:700px;color:var(--muted);font-size:17px}
+.hero-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;box-shadow:var(--shadow-sm)}
+.hero-panel h2{font-family:"Clash Display",sans-serif;font-size:20px;margin-bottom:12px}
+.revision-visual{position:relative;min-height:300px;overflow:hidden;background:linear-gradient(135deg,var(--surface),var(--surface-2));border-color:color-mix(in srgb,var(--terminal) 24%,var(--border))}
+.revision-visual::before{content:"";position:absolute;inset:18px;border:1px dashed color-mix(in srgb,var(--terminal) 28%,transparent);border-radius:50%;animation:spinSlow 16s linear infinite}
+.revision-visual::after{content:"";position:absolute;inset:54px;border:1px dashed color-mix(in srgb,var(--college) 24%,transparent);border-radius:50%;animation:spinSlow 22s linear reverse infinite}
+.revision-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:136px;height:136px;border-radius:50%;display:grid;place-items:center;text-align:center;background:linear-gradient(135deg,var(--terminal-bg),var(--college-bg));border:1px solid var(--border-strong);box-shadow:var(--shadow-sm)}
+.revision-core strong{display:block;font-family:"Clash Display",sans-serif;font-size:18px;color:var(--text)}
+.revision-core span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.orbit-card{position:absolute;z-index:3;display:flex;align-items:center;gap:8px;min-width:116px;padding:10px 11px;border:1px solid var(--border);border-radius:8px;background:color-mix(in srgb,var(--surface) 88%,transparent);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px);font-weight:900;color:var(--text);animation:floatCard 4.5s ease-in-out infinite}
+.orbit-card small{display:block;color:var(--subtle);font-size:11px;font-weight:800;margin-top:1px}
+.orbit-card:nth-of-type(3){left:18px;top:34px;color:var(--terminal)}
+.orbit-card:nth-of-type(4){right:18px;top:48px;color:var(--premiere);animation-delay:.7s}
+.orbit-card:nth-of-type(5){left:24px;bottom:82px;color:var(--seconde);animation-delay:1.2s}
+.orbit-card:nth-of-type(6){right:22px;bottom:78px;color:var(--college);animation-delay:1.8s}
+.revision-pulse{position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:var(--terminal);transform:translate(-50%,-50%);box-shadow:0 0 0 0 color-mix(in srgb,var(--terminal) 34%,transparent);animation:pulseDot 2s ease-out infinite}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulseDot{70%{box-shadow:0 0 0 22px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.streak-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mini-stat{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px}
+.mini-stat strong{display:block;font-family:"Clash Display",sans-serif;font-size:28px;line-height:1;color:var(--terminal)}
+.mini-stat span{display:block;margin-top:6px;color:var(--subtle);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.layout{max-width:1180px;margin:0 auto;padding:28px;display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px}
+.rail{position:sticky;top:82px;align-self:start;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-sm)}
+.panel-pad{padding:18px}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.panel-title h2,.panel-title h3{font-family:"Clash Display",sans-serif;font-size:18px}
+.level-tabs{display:grid;gap:8px}
+.level-btn{width:100%;border:1.5px solid var(--border);background:var(--surface-2);border-radius:8px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text);font-weight:800;transition:.2s ease}
+.level-btn span{color:var(--subtle);font-size:12px;font-weight:700}
+.level-btn.active{background:var(--level-bg);border-color:var(--level-color);color:var(--level-color)}
+.level-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.searchbox{display:flex;align-items:center;gap:8px;border:1.5px solid var(--border-strong);border-radius:8px;background:var(--surface);padding:0 11px}
+.searchbox input{width:100%;height:40px;border:0;outline:0;background:transparent;color:var(--text)}
+.select{width:100%;height:40px;border:1.5px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--text);padding:0 10px}
+.quick-list{display:grid;gap:8px}
+.quick-btn{border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:11px 12px;text-align:left;display:flex;gap:10px;align-items:center;font-weight:800;color:var(--text)}
+.quick-btn small{display:block;color:var(--subtle);font-weight:600;margin-top:2px}
+.quick-btn:hover{border-color:var(--level-color,var(--terminal));box-shadow:var(--shadow-sm)}
+.content{display:flex;flex-direction:column;gap:18px}
+.overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;box-shadow:var(--shadow-sm)}
+.metric strong{display:block;font-family:"Clash Display",sans-serif;font-size:32px;line-height:1;color:var(--metric,var(--terminal))}
+.metric span{display:block;margin-top:8px;color:var(--subtle);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:8px 0 2px}
+.section-head h2{font-family:"Clash Display",sans-serif;font-size:26px}
+.section-head p{color:var(--muted);font-size:14px;max-width:560px}
+.tool-row{display:grid;grid-template-columns:1.4fr 180px 160px;gap:10px}
+.level-summary{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.mastery-card{padding:18px}
+.mastery-card h3{font-family:"Clash Display",sans-serif;font-size:20px;margin-bottom:8px}
+.big-progress{height:13px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden;margin:12px 0}
+.big-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--level-color),var(--info));border-radius:99px;transition:width .45s ease}
+.mastery-note{color:var(--muted);font-size:14px}
+.reco-list{display:grid;gap:10px}
+.reco{border:1px solid var(--border);border-left:4px solid var(--level-color,var(--terminal));background:var(--surface);border-radius:8px;padding:13px}
+.reco strong{display:block;margin-bottom:3px}
+.reco p{color:var(--muted);font-size:14px}
+.themes{display:grid;gap:14px}
+.theme-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.theme-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border);background:linear-gradient(90deg,var(--level-bg),transparent)}
+.theme-header h3{font-family:"Clash Display",sans-serif;font-size:19px}
+.theme-header span{color:var(--muted);font-size:13px;font-weight:800}
+.chapter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px}
+.chapter-card{position:relative;display:flex;flex-direction:column;gap:12px;min-height:184px;padding:15px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);transition:.2s ease}
+.chapter-card:hover{border-color:var(--level-color);box-shadow:var(--shadow-sm);transform:translateY(-2px)}
+.chapter-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.chapter-kicker{font-size:12px;color:var(--level-color);font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.chapter-card h4{font-size:17px;line-height:1.22;margin-top:4px}
+.chapter-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:8px;background:var(--level-bg);border:1px solid var(--border);font-size:20px;flex:0 0 auto}
+.chapter-card p{color:var(--muted);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.tag{border:1px solid var(--border);background:var(--surface);border-radius:7px;padding:4px 7px;color:var(--muted);font-size:12px;font-weight:700}
+.progress-line{display:flex;align-items:center;gap:10px}
+.progress-track{flex:1;height:7px;border-radius:99px;background:var(--surface);border:1px solid var(--border);overflow:hidden}
+.progress-fill{display:block;height:100%;width:0;background:var(--level-color);border-radius:99px}
+.pct{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;color:var(--text);min-width:38px;text-align:right}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.action{height:34px;border:1px solid var(--border-strong);background:var(--surface);border-radius:8px;color:var(--muted);font-size:12px;font-weight:800;display:grid;place-items:center}
+.action:hover{color:var(--level-color);border-color:var(--level-color)}
+.session-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.session{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;box-shadow:var(--shadow-sm)}
+.session h3{font-family:"Clash Display",sans-serif;font-size:18px;margin-bottom:8px}
+.session p{color:var(--muted);font-size:14px;min-height:66px}
+.session button,.primary-btn{margin-top:14px;width:100%;height:40px;border:0;border-radius:8px;background:var(--level-color,var(--terminal));color:white;font-weight:900}
+.generated-plan{display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;box-shadow:var(--shadow-sm)}
+.generated-plan.show{display:block}
+.plan-steps{display:grid;gap:9px;margin-top:12px}
+.plan-step{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);background:var(--surface-2);border-radius:8px;padding:12px}
+.plan-step b{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--level-bg);color:var(--level-color);flex:0 0 auto}
+.plan-step strong{display:block}
+.plan-step span{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--border-strong);border-radius:8px;background:var(--surface-2)}
+.footer-zone{padding:14px 0 30px;color:var(--subtle);font-size:13px;text-align:center}
+@media(max-width:980px){
+  .hero-inner,.layout,.level-summary{grid-template-columns:1fr}
+  .rail{position:static}
+  .overview,.session-grid{grid-template-columns:repeat(2,1fr)}
+  .tool-row{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .topbar{padding:0 14px}.brand span{display:none}.hero{padding:32px 16px 20px}.layout{padding:16px}
+  .chapter-grid,.overview,.session-grid,.streak-grid{grid-template-columns:1fr}
+  .revision-visual{min-height:340px}
+  .orbit-card{min-width:106px}
+  .chapter-card{min-height:0}.actions{grid-template-columns:repeat(2,1fr)}
+  .section-head{display:block}.section-head p{margin-top:4px}
+}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <a href="index.html" class="back-btn" aria-label="Retour à l'accueil">← Accueil</a>
+  <div class="brand"><div class="brand-mark">⚗️</div><span>La Physique Chimie au LFC · Révisions</span></div>
+  <div id="stuInfo" style="display:none;margin-left:12px;padding:5px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);font-size:13px;font-weight:800;color:var(--terminal)"></div>
+  <div class="top-actions">
+    <button class="icon-btn" onclick="print()" title="Imprimer une feuille de route" aria-label="Imprimer">⎙</button>
+    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Changer de thème" aria-label="Changer de thème">🌙</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow">La Physique Chimie au LFC · M. Borsali · Le Cercle d'El Abilli</span>
+      <h1>Un tableau de bord complet pour reprendre, consolider et viser juste.</h1>
+      <p>Tous les niveaux du collège au PCSI — la progression enregistrée dans les chapitres est lue automatiquement et des parcours courts, ciblés ou type épreuve sont proposés selon les besoins.</p>
+    </div>
+    <aside class="hero-panel revision-visual" aria-label="Radar dynamique de revision">
+      <div class="revision-core">
+        <div><strong>Réviser</strong><span>méthode</span></div>
+      </div>
+      <div class="revision-pulse" aria-hidden="true"></div>
+      <div class="orbit-card">📚 <span>Cours<small>reprendre</small></span></div>
+      <div class="orbit-card">⚡ <span>Cartes<small>mémoriser</small></span></div>
+      <div class="orbit-card">🎯 <span>Quiz<small>vérifier</small></span></div>
+      <div class="orbit-card">📝 <span>Exos<small>rédiger</small></span></div>
+      <div class="streak-grid" style="position:absolute;left:14px;right:14px;bottom:14px;z-index:4">
+        <div class="mini-stat"><strong id="heroChapters">0</strong><span>ressources</span></div>
+        <div class="mini-stat"><strong id="heroDone">0</strong><span>travaillés</span></div>
+        <div class="mini-stat"><strong id="heroWeak">0</strong><span>priorités</span></div>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="rail">
+    <section class="panel panel-pad">
+      <div class="panel-title"><h2>Niveaux</h2></div>
+      <div class="level-tabs" id="levelTabs"></div>
+    </section>
+
+    <section class="panel panel-pad">
+      <div class="panel-title"><h3>Accès rapide</h3></div>
+      <div class="quick-list">
+        <button class="quick-btn" onclick="launchSmart('quiz')">🎯 <span>Quiz ciblé<small>chapitre prioritaire</small></span></button>
+        <button class="quick-btn" onclick="launchSmart('flashcards')">⚡ <span>Flashcards<small>réactivation courte</small></span></button>
+        <button class="quick-btn" onclick="launchSmart('annales')">📝 <span>Exercice type<small>rédaction et méthode</small></span></button>
+        <button class="quick-btn" onclick="generatePlan('balanced')">🧭 <span>Plan du jour<small>30 à 45 minutes</small></span></button>
+      </div>
+    </section>
+
+    <section class="panel panel-pad">
+      <div class="panel-title"><h3>Données</h3></div>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Les scores restent dans le navigateur de l'élève.</p>
+      <button class="quick-btn" onclick="resetData()" style="color:var(--danger)">♻ <span>Réinitialiser<small>progression locale</small></span></button>
+    </section>
+  </aside>
+
+  <section class="content">
+    <div class="overview">
+      <div class="metric" style="--metric:var(--terminal)"><strong id="metricMastery">0%</strong><span>maîtrise moyenne</span></div>
+      <div class="metric" style="--metric:var(--premiere)"><strong id="metricWorked">0</strong><span>chapitres actifs</span></div>
+      <div class="metric" style="--metric:var(--seconde)"><strong id="metricExos">0</strong><span>exercices faits</span></div>
+      <div class="metric" style="--metric:var(--college)"><strong id="metricReady">0</strong><span>chapitres solides</span></div>
+    </div>
+
+    <div class="tool-row">
+      <label class="searchbox">⌕ <input id="searchInput" type="search" placeholder="Rechercher : pH, lentilles, énergie, mouvement..." oninput="render()"></label>
+      <select class="select" id="themeFilter" onchange="render()"></select>
+      <select class="select" id="statusFilter" onchange="render()">
+        <option value="all">Tous les statuts</option>
+        <option value="todo">À démarrer</option>
+        <option value="weak">Priorités</option>
+        <option value="progress">En cours</option>
+        <option value="solid">Solides</option>
+      </select>
+    </div>
+
+    <section class="level-summary">
+      <div class="panel mastery-card">
+        <h3 id="currentLevelTitle">Tous niveaux</h3>
+        <div class="big-progress"><span id="levelProgress"></span></div>
+        <p class="mastery-note" id="levelNote">Analyse de la progression en cours.</p>
+      </div>
+      <div class="panel panel-pad">
+        <div class="panel-title"><h3>Priorités</h3></div>
+        <div class="reco-list" id="recoList"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Parcours de révision</h2>
+          <p>Trois formats pour adapter la séance au temps disponible, au niveau de fatigue et à l'objectif de l'élève.</p>
+        </div>
+      </div>
+      <div class="session-grid">
+        <article class="session">
+          <h3>Réactivation express</h3>
+          <p>Un chapitre fragile, flashcards, puis mini-quiz. Idéal en début d'heure ou en autonomie.</p>
+          <button onclick="generatePlan('express')">Préparer</button>
+        </article>
+        <article class="session">
+          <h3>Séance équilibrée</h3>
+          <p>Deux chapitres, alternance cours-exercices, bilan final et objectif mesurable.</p>
+          <button onclick="generatePlan('balanced')">Préparer</button>
+        </article>
+        <article class="session">
+          <h3>Mode épreuve</h3>
+          <p>Questions rapides, exercice rédigé, vérification des unités, méthode et vocabulaire.</p>
+          <button onclick="generatePlan('exam')">Préparer</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel panel-pad" id="ateliers">
+      <div class="panel-title"><h2>Ateliers transversaux</h2></div>
+      <div class="session-grid">
+        <article class="session" id="maths-pures">
+          <h3>Maths pures par niveau</h3>
+          <p>Calcul littéral, équations, fonctions, vecteurs, trigonométrie, dérivation, intégration et nombres complexes selon le niveau choisi.</p>
+          <button onclick="setThemeAndSearch('Maths pures','')">Voir les fiches</button>
+        </article>
+        <article class="session" id="conversions">
+          <h3>Conversions et unités</h3>
+          <p>Unités SI, puissances de dix, volumes, masses, vitesses, pressions, énergie, concentration et cohérence dimensionnelle.</p>
+          <button onclick="setThemeAndSearch('Conversions et unités','')">Voir les fiches</button>
+        </article>
+        <article class="session" id="pcsi-focus">
+          <h3>PCSI</h3>
+          <p>Un niveau à part entière : outils, mécanique, optique, électrocinétique, thermodynamique, chimie des solutions et atomistique.</p>
+          <button onclick="setLevel('pcsi')">Ouvrir PCSI</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="generated-plan" id="generatedPlan">
+      <div class="panel-title"><h2 id="planTitle">Plan généré</h2><button class="icon-btn" onclick="document.getElementById('generatedPlan').classList.remove('show')" aria-label="Fermer">×</button></div>
+      <div class="plan-steps" id="planSteps"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2 id="chaptersTitle">Tous les chapitres</h2>
+          <p id="chaptersSubtitle">Filtres, progression et actions rapides pour chaque notion du programme.</p>
+        </div>
+      </div>
+      <div class="themes" id="themeContainer"></div>
+    </section>
+
+    <div class="footer-zone">La Physique Chimie au LFC · M. Borsali · Le Cercle d'El Abilli · 2026-2027 — révision structurée de la 5e à la PCSI.</div>
+  </section>
+</main>
+
+<script>
+/* Auth guard — redirect to index.html if not logged in with @lfcaire.net */
+(function(){
+  var curr=localStorage.getItem('physichem_current');
+  if(!curr){window.location.replace('index.html');return;}
+  try{
+    var students=JSON.parse(localStorage.getItem('physichem_students')||'[]');
+    if(!students.find(function(s){return s.email===curr;})){
+      window.location.replace('index.html');
+    }
+  }catch(e){window.location.replace('index.html');}
+})();
+
+const LEVELS = {
+  all:{label:"Tous niveaux",short:"Tous",color:"var(--terminal)",bg:"var(--terminal-bg)",icon:"◎"},
+  terminale:{label:"Terminale spécialité",short:"Terminale",color:"var(--terminal)",bg:"var(--terminal-bg)",icon:"🎓"},
+  premiere:{label:"1ère spécialité",short:"1ère",color:"var(--premiere)",bg:"var(--premiere-bg)",icon:"📗"},
+  seconde:{label:"Seconde",short:"2nde",color:"var(--seconde)",bg:"var(--seconde-bg)",icon:"📙"},
+  pcsi:{label:"PCSI",short:"PCSI",color:"var(--pcsi)",bg:"var(--pcsi-bg)",icon:"🧠"},
+  college:{label:"Collège",short:"Collège",color:"var(--college)",bg:"var(--college-bg)",icon:"📔"}
+};
+
+const DATA = {
+  terminale:[
+    {theme:"Constitution et transformations",items:[
+      ch("chap1","01","Réactions acido-basiques","pH, Ka, couples acide-base, solutions tampon.","Term_chapitre1.html","🧪",["pH","Ka","équilibre"]),
+      ch("chap2","02","Analyse spectrale","Spectres UV-visible, IR, RMN et identification.","Term_chapitre2.html","🔬",["UV","IR","RMN"]),
+      ch("chap3","03","Les dosages","Étalonnage, titrage pH-métrique, conductimétrique.","Term_chapitre3.html","⚖️",["titrage","équivalence"]),
+      ch("chap4","04","Cinétique chimique","Vitesse, temps de demi-réaction, catalyse.","Term_chapitre4.html","⏱",["vitesse","catalyse"]),
+      ch("chap5","05","Radioactivité","Noyaux, décroissance, activité, datation.","Term_chapitre5.html","☢️",["noyau","datation"]),
+      ch("chap6","06","Évolution spontanée","Quotient de réaction, constante K, sens d'évolution.","Term_chapitre6.html","⚡",["Qr","K"]),
+      ch("chap7","07","Transformations forcées","Piles, électrolyse et oxydoréduction.","Term_chapitre7.html","🔋",["pile","électrolyse"]),
+      ch("chap8","08","Synthèse organique","Stratégie, protection, rendement, chimie verte.","Term_chapitre8.html","🧬",["organique","rendement"])
+    ]},
+    {theme:"Mouvement et interactions",items:[
+      ch("chap9","09","Cinématique du point","Position, vitesse, accélération, quantité de mouvement.","Term_chapitre9.html","📐",["vecteurs","vitesse"]),
+      ch("chap10","10","Champ de forces","Gravitation, pesanteur, champ électrique.","Term_chapitre10.html","🌍",["champ","forces"]),
+      ch("chap11","11","Planètes et satellites","Lois de Kepler, mouvement circulaire, orbites.","Term_chapitre11.html","🪐",["Kepler","orbite"]),
+      ch("chap12","12","Mécanique des fluides","Pression, Archimède, Bernoulli.","Term_chapitre12.html","💧",["pression","Bernoulli"])
+    ]},
+    {theme:"Énergie et thermodynamique",items:[
+      ch("chap13","13","Énergie interne","Premier principe, échanges thermiques, travail.","Term_chapitre13.html","🌡",["Q","W","énergie"]),
+      ch("chap14","14","Transferts thermiques","Conduction, convection, rayonnement.","Term_chapitre14.html","♨️",["transferts","flux"]),
+      ch("chap19","19","Circuit capacitif RC","Condensateur, charge, décharge, constante de temps.","Term_chapitre19.html","🔌",["RC","condensateur"])
+    ]},
+    {theme:"Ondes et signaux",items:[
+      ch("chap15","15","Ondes dans la matière","Ondes progressives, célérité, périodicité.","Term_chapitre15.html","〰️",["onde","célérité"]),
+      ch("chap16","16","Propriétés des ondes","Diffraction, interférences, effet Doppler.","Term_chapitre16.html","🌈",["diffraction","Doppler"]),
+      ch("chap17","17","Lunette astronomique","Vergence, grossissement, construction optique.","Term_chapitre17.html","🔭",["optique","vergence"]),
+      ch("chap18","18","Interaction lumière-matière","Photon, effet photoélectrique, dualité.","Term_chapitre18.html","💡",["photon","quantique"])
+    ]},
+    {theme:"Maths pures",items:[
+      ch("math_terminale","M-T","Maths pures · Terminale","Dérivation, primitives, équations différentielles simples, logarithme, exponentielle, vecteurs et trigonométrie.","revision.html#maths-pures","∫",["dérivée","primitive","vecteurs"]),
+      ch("conv_terminale","C-T","Conversions et unités · Terminale","Analyse dimensionnelle, unités SI, énergie, puissance, pression, concentration, incertitudes et écriture scientifique.","revision.html#conversions","⇄",["SI","dimension","incertitudes"])
+    ]}
+  ],
+  premiere:[
+    {theme:"Constitution et transformations",items:[
+      ch("1ere_chap1","01","La mole","Quantité de matière, masse molaire, Avogadro.","1ere_chapitre1.html","⚗️",["mole","molaire"]),
+      ch("1ere_chap2","02","Oxydoréduction","Oxydants, réducteurs, demi-équations.","1ere_chapitre2.html","🔋",["redox","électrons"]),
+      ch("1ere_chap3","03","Tableau d'avancement","Avancement, réactif limitant, état final.","1ere_chapitre3.html","📊",["avancement","limitant"]),
+      ch("1ere_chap4","04","Titrage colorimétrique","Équivalence, indicateurs, exploitation.","1ere_chapitre4.html","🧫",["titrage","équivalence"]),
+      ch("1ere_chap5","05","Structure et polarité","Liaisons, électronégativité, géométrie.","1ere_chapitre5.html","🔗",["liaison","polarité"]),
+      ch("1ere_chap6","06","Cohésion de la matière","Solides, interactions, dissolution.","1ere_chapitre6.html","🧲",["solide","dissolution"]),
+      ch("1ere_chap7","07","Structure organique","Formules, groupes caractéristiques, IR.","1ere_chapitre7.html","🧬",["groupes","IR"]),
+      ch("1ere_chap8","08","Synthèse organique","Protocole, reflux, CCM, rendement.","1ere_chapitre8.html","🔬",["CCM","rendement"]),
+      ch("1ere_chap9","09","Combustions","Combustion complète, CO2, pouvoir calorifique.","1ere_chapitre9.html","🔥",["combustion","CO2"])
+    ]},
+    {theme:"Mouvement et interactions",items:[
+      ch("1ere_chap10","10","Interactions et champs","Gravitation, Coulomb, champs vectoriels.","1ere_chapitre10.html","🌍",["Coulomb","champ"],["chap10"]),
+      ch("1ere_chap11","11","Fluide au repos","Pression, loi de Mariotte, statique.","1ere_chapitre11.html","💧",["pression","Mariotte"],["chap11"]),
+      ch("1ere_chap12","12","Mouvement d'un système","Vecteur vitesse, variation, forces.","1ere_chapitre12.html","🏃",["vitesse","Newton"],["chap12"])
+    ]},
+    {theme:"Énergie",items:[
+      ch("1ere_chap13","13","Énergie électrique","Courant, puissance, effet Joule, rendement.","1ere_chapitre13.html","🔌",["puissance","Joule"],["chap13"]),
+      ch("1ere_chap14","14","Énergie mécanique","Travail, Ec, Epp, théorème de l'énergie cinétique.","1ere_chapitre14.html","⚙️",["travail","TEC"],["chap14"])
+    ]},
+    {theme:"Ondes et signaux",items:[
+      ch("1ere_chap15","15","Ondes mécaniques","Propagation, célérité, retard, périodicité.","1ere_chapitre15.html","〰️",["onde","retard"],["chap15"]),
+      ch("1ere_chap16","16","Lentilles convergentes","Focale, vergence, conjugaison, image.","1ere_chapitre16.html","🔭",["lentille","image"],["chap16"]),
+      ch("1ere_chap17","17","Couleurs et lumière","Trichromie, synthèses additive et soustractive.","1ere_chapitre17.html","🌈",["RVB","couleurs"],["chap17"]),
+      ch("1ere_chap18","18","Optique ondulatoire","Ondes électromagnétiques, photon, E=hf.","1ere_chapitre18.html","💡",["Planck","photon"],["chap18"])
+    ]},
+    {theme:"Maths pures",items:[
+      ch("math_1ere","M-1","Maths pures · 1ère","Calcul littéral, fonctions, proportionnalité, trigonométrie, vecteurs, produit scalaire et lecture graphique.","revision.html#maths-pures","∑",["fonctions","vecteurs","trigo"]),
+      ch("conv_1ere","C-1","Conversions et unités · 1ère","Mole, concentration, volumes, énergie, puissance, pression, masse volumique et notation scientifique.","revision.html#conversions","⇄",["mole","pression","énergie"])
+    ]}
+  ],
+  seconde:[
+    {theme:"Constitution de la matière",items:[
+      ch("2nde_ch1","01","Solutions et mélanges","Solvant, soluté, concentration, dilution.","2nde_chapitre1.html","💧",["solution","dilution"]),
+      ch("2nde_ch2","02","Échelle microscopique","Atomes, ions, molécules, modèle atomique.","2nde_chapitre2.html","⚛️",["atome","ion"]),
+      ch("2nde_ch3","03","Corps purs et mélanges","Identification, changements d'état, tests.","2nde_chapitre3.html","🔬",["corps pur","mélange"]),
+      ch("2nde_ch4","04","Lumière et couleurs","Réfraction, dispersion, spectres, couleur.","2nde_chapitre4.html","🌈",["lumière","spectre"]),
+      ch("2nde_ch5","05","Ondes sonores","Fréquence, période, niveau sonore.","2nde_chapitre5.html","🎧",["son","fréquence"])
+    ]},
+    {theme:"Transformations",items:[
+      ch("2nde_ch6","06","Transformations physiques","États, énergie, changement d'état.","2nde_chapitre6.html","🧊",["état","énergie"]),
+      ch("2nde_ch7","07","Transformations chimiques","Équation, conservation, réactifs.","2nde_chapitre7.html","🧪",["équation","réactif"]),
+      ch("2nde_ch8","08","Transformations nucléaires","Isotopes, réactions nucléaires, énergie.","2nde_chapitre8.html","☢️",["isotope","noyau"]),
+      ch("2nde_ch9","09","Oxydoréduction","Transfert d'électrons, oxydant, réducteur.","2nde_chapitre9.html","🔋",["redox","électrons"])
+    ]},
+    {theme:"Mouvement et énergie",items:[
+      ch("2nde_ch10","10","Description du mouvement","Référentiel, trajectoire, vitesse.","2nde_chapitre10.html","🏃",["mouvement","vitesse"]),
+      ch("2nde_ch11","11","Forces et principe d'inertie","Actions, forces, modèle de Newton.","2nde_chapitre11.html","🧭",["force","inertie"]),
+      ch("2nde_ch12","12","Gravitation","Interaction gravitationnelle, poids.","2nde_chapitre12.html","🌍",["gravitation","poids"]),
+      ch("2nde_ch13","13","Énergie et puissance","Énergie, conversions, rendement.","2nde_chapitre13.html","⚙️",["énergie","rendement"])
+    ]},
+    {theme:"Électricité et enjeux",items:[
+      ch("2nde_ch14","14","Circuits électriques","Courant, tension, lois des circuits.","2nde_chapitre14.html","🔌",["courant","tension"]),
+      ch("2nde_ch15","15","Puissance électrique","Puissance, énergie, effet Joule.","2nde_chapitre15.html","💡",["puissance","Joule"]),
+      ch("2nde_ch16","16","Enjeux énergétiques","Production, stockage, bilan énergétique.","2nde_chapitre16.html","🌱",["énergie","climat"])
+    ]},
+    {theme:"Maths pures",items:[
+      ch("math_2nde","M-2","Maths pures · 2nde","Équations, puissances de dix, fonctions affines, vecteurs, trigonométrie du triangle rectangle et graphiques.","revision.html#maths-pures","π",["équations","vecteurs","graphes"]),
+      ch("conv_2nde","C-2","Conversions et unités · 2nde","Longueur, masse, volume, concentration, vitesse, énergie, puissance et unités composées.","revision.html#conversions","⇄",["vitesse","volume","concentration"])
+    ]}
+  ],
+  pcsi:[
+    {theme:"Outils et méthodes",items:[
+      ch("pcsi_ch1","01","Outils mathématiques PCSI","Équations différentielles, développements limités, complexes, intégrales, analyse vectorielle.","PCSI_chapitre1.html","🧮",["DL","complexes","ED"]),
+      ch("pcsi_ch2","02","Analyse dimensionnelle","Homogénéité, ordres de grandeur, incertitudes, changements d'unités.","PCSI_chapitre2.html","📏",["dimension","incertitudes"]),
+      ch("pcsi_ch3","03","Mesures et exploitation","Régression, linéarisation, propagation des incertitudes, validation expérimentale.","PCSI_chapitre3.html","📊",["régression","mesure"])
+    ]},
+    {theme:"Mécanique",items:[
+      ch("pcsi_ch4","04","Cinématique du point","Repères, bases mobiles, coordonnées cartésiennes, polaires et cylindriques.","PCSI_chapitre4.html","📐",["cinématique","repères"]),
+      ch("pcsi_ch5","05","Dynamique newtonienne","Lois de Newton, forces usuelles, oscillateur harmonique, frottements.","PCSI_chapitre5.html","⚙️",["Newton","oscillateur"]),
+      ch("pcsi_ch6","06","Énergie mécanique","Travail, puissance, énergie potentielle, intégrale première, portraits de phase.","PCSI_chapitre6.html","🏔",["travail","énergie"]),
+      ch("pcsi_ch7","07","Mouvement dans un champ central","Moment cinétique, force centrale, trajectoires, gravitation.","PCSI_chapitre7.html","🪐",["moment","central"])
+    ]},
+    {theme:"Électrocinétique et optique",items:[
+      ch("pcsi_ch8","08","Circuits linéaires","Lois de Kirchhoff, dipôles, régimes transitoires, circuits RC/RL/RLC.","PCSI_chapitre8.html","🔌",["Kirchhoff","RLC"]),
+      ch("pcsi_ch9","09","Régime sinusoïdal forcé","Impédances complexes, filtrage, résonance, diagrammes de Bode.","PCSI_chapitre9.html","〰️",["impédance","Bode"]),
+      ch("pcsi_ch10","10","Optique géométrique","Stigmatisme, lentilles, instruments, constructions et grandissement.","PCSI_chapitre10.html","🔭",["lentilles","image"]),
+      ch("pcsi_ch11","11","Ondes et interférences","Phase, chemin optique, interférences à deux ondes, cohérence.","PCSI_chapitre11.html","🌈",["phase","interférences"])
+    ]},
+    {theme:"Thermodynamique",items:[
+      ch("pcsi_ch12","12","Systèmes thermodynamiques","Équilibre, gaz parfait, phases condensées, équations d'état.","PCSI_chapitre12.html","🌡",["gaz parfait","état"]),
+      ch("pcsi_ch13","13","Premier principe","Énergie interne, travail, chaleur, bilans sur transformations.","PCSI_chapitre13.html","♨️",["premier principe","bilan"]),
+      ch("pcsi_ch14","14","Second principe","Entropie, irréversibilités, machines thermiques, rendement.","PCSI_chapitre14.html","🔥",["entropie","machine"])
+    ]},
+    {theme:"Chimie",items:[
+      ch("pcsi_ch15","15","Architecture de la matière","Atomistique, configuration électronique, classification, liaisons.","PCSI_chapitre15.html","⚛️",["atomistique","liaison"]),
+      ch("pcsi_ch16","16","Transformations chimiques","Avancement, équilibre, quotient réactionnel, constantes.","PCSI_chapitre16.html","⚗️",["équilibre","avancement"]),
+      ch("pcsi_ch17","17","Solutions aqueuses","Acide-base, précipitation, oxydoréduction, diagrammes de prédominance.","PCSI_chapitre17.html","🧪",["pH","redox"]),
+      ch("pcsi_ch18","18","Cinétique chimique","Vitesses, ordre, temps de demi-réaction, mécanismes simples.","PCSI_chapitre18.html","⏱",["cinétique","ordre"])
+    ]},
+    {theme:"Maths pures",items:[
+      ch("math_pcsi","M-P","Maths pures · PCSI","Algèbre linéaire utile, complexes, fonctions usuelles, équations différentielles, intégrales et développements limités.","revision.html#maths-pures","∇",["complexes","DL","intégrales"]),
+      ch("conv_pcsi","C-P","Conversions et unités · PCSI","Dimensions, unités composées, constantes, ordres de grandeur, incertitudes et systèmes d'unités.","revision.html#conversions","⇄",["dimension","unités","OG"])
+    ]}
+  ],
+  college:[
+    {theme:"5e · Découvrir et mesurer",items:[
+      ch("5e_ch1","5e-1","Grandeurs physiques","Mesures, unités, masse, volume, température.","college_5eme_ch1.html","📏",["unités","mesure"]),
+      ch("5e_ch2","5e-2","Mélanges","Mélanges homogènes, hétérogènes, séparation.","college_5eme_ch2.html","🥣",["mélange","séparation"]),
+      ch("5e_ch3","5e-3","États de la matière","Solide, liquide, gaz, changements d'état.","college_5eme_ch3.html","🧊",["états","température"]),
+      ch("5e_ch4","5e-4","Lumière et vision","Sources, propagation, ombres, vision.","college_5eme_ch4.html","🔦",["lumière","ombre"]),
+      ch("5e_ch5","5e-5","Mouvement","Trajectoire, vitesse, observation.","college_5eme_ch5.html","🚲",["vitesse","trajet"])
+    ]},
+    {theme:"4e · Modéliser",items:[
+      ch("4e_ch1","4e-1","Grandeurs et mesures","Conversions, ordres de grandeur, méthode.","college_4eme_ch1.html","📐",["conversion","unités"]),
+      ch("4e_ch2","4e-2","Ombres et lumière","Propagation rectiligne, éclipses, ombres.","college_4eme_ch2.html","🌘",["ombre","éclipse"]),
+      ch("4e_ch3","4e-3","Molécules","Atomes, molécules, modèles et transformations.","college_4eme_ch3.html","⚛️",["molécule","atome"]),
+      ch("4e_ch4","4e-4","Intensité et tension","Mesures électriques, multimètre, lois simples.","college_4eme_ch4.html","🔌",["intensité","tension"]),
+      ch("4e_ch5","4e-5","Vitesse de la lumière","Propagation, distance, année-lumière.","college_4eme_ch5.html","✨",["lumière","distance"]),
+      ch("4e_ch6","4e-6","Combustions","Réactifs, produits, sécurité, dioxyde de carbone.","college_4eme_ch6.html","🔥",["combustion","CO2"])
+    ]},
+    {theme:"3e · Préparer le lycée",items:[
+      ch("3e_ch1","3e-1","Atomes et électrons","Constitution de l'atome, ions, charges.","college_3eme_ch1.html","⚛️",["atome","ion"]),
+      ch("3e_ch2","3e-2","Mouvement et vitesse","Vitesse moyenne, graphiques, sécurité.","college_3eme_ch2.html","🏁",["vitesse","graphique"]),
+      ch("3e_ch3","3e-3","Énergie","Formes, conversions, conservation, rendement.","college_3eme_ch3.html","⚙️",["conversion","rendement"]),
+      ch("3e_ch4","3e-4","Acides, bases et pH","pH, ions, solutions acides et basiques.","college_3eme_ch4.html","🧪",["pH","ions"]),
+      ch("3e_ch5","3e-5","Forces","Actions mécaniques, représentation, poids.","college_3eme_ch5.html","🧲",["force","poids"]),
+      ch("3e_ch6","3e-6","Masse volumique","Masse, volume, densité, identification.","college_3eme_ch6.html","⚖️",["masse","volume"]),
+      ch("3e_ch7","3e-7","Puissance électrique","Puissance, énergie, facture, sécurité.","college_3eme_ch7.html","💡",["puissance","énergie"])
+    ]},
+    {theme:"Maths pures",items:[
+      ch("math_college","M-C","Maths pures · Collège","Proportionnalité, fractions, puissances de dix, équations simples, graphiques, Pythagore et trigonométrie.","revision.html#maths-pures","√",["fractions","équations","Pythagore"]),
+      ch("conv_college","C-C","Conversions et unités · Collège","Longueur, masse, volume, durée, vitesse, énergie, puissance et tableaux de conversion.","revision.html#conversions","⇄",["unités","vitesse","volume"])
+    ]}
+  ]
+};
+
+let state = {level:"all"};
+
+function ch(key,num,title,desc,link,icon,tags,aliases=[]){return {key,num,title,desc,link,icon,tags,aliases};}
+function flatChapters(level=state.level){
+  const levels = level==="all" ? Object.keys(DATA) : [level];
+  return levels.flatMap(lvl => DATA[lvl].flatMap(group => group.items.map(item => ({...item,theme:group.theme,level:lvl}))));
+}
+function safeJSON(key){try{return JSON.parse(localStorage.getItem(key)||"{}")}catch{return {}}}
+function getMasteryFor(item){
+  const mastery=safeJSON("physichem_mastery");
+  const keys=[item.key,...(item.aliases||[])];
+  const best=keys.map(k=>mastery[k]||{}).sort((a,b)=>scoreOf(b)-scoreOf(a))[0]||{};
+  /* Cross-connect: si le chapitre a été ouvert depuis index.html, il compte comme démarré */
+  if(scoreOf(best)===0){
+    const curr=localStorage.getItem("physichem_current");
+    if(curr){
+      const prog=safeJSON("physichem_progress");
+      if(prog[curr]&&prog[curr][item.link]) return {cours:0.25,_visited:true};
+    }
+  }
+  return best;
+}
+function scoreOf(d){return Math.round((((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4)*100)}
+function enriched(level=state.level){return flatChapters(level).map(item=>({...item,score:scoreOf(getMasteryFor(item))}))}
+function statusOf(score){if(score===0)return "todo"; if(score<50)return "weak"; if(score<85)return "progress"; return "solid";}
+function levelStyle(level){
+  const cfg=LEVELS[level==="all"?"all":level];
+  document.documentElement.style.setProperty("--level-color",cfg.color);
+  document.documentElement.style.setProperty("--level-bg",cfg.bg);
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+
+function init(){
+  const theme=localStorage.getItem("physichem_theme")||"light";
+  document.documentElement.setAttribute("data-theme",theme);
+  document.getElementById("themeBtn").textContent=theme==="dark"?"☀️":"🌙";
+  /* Afficher le nom de l'élève connecté */
+  const curr=localStorage.getItem("physichem_current");
+  if(curr){
+    try{
+      const students=JSON.parse(localStorage.getItem("physichem_students")||"[]");
+      const stu=students.find(s=>s.email===curr);
+      if(stu){
+        const el=document.getElementById("stuInfo");
+        el.textContent="👤 "+stu.name;
+        el.style.display="block";
+      }
+    }catch(e){}
+  }
+  renderLevelTabs();
+  render();
+}
+function toggleTheme(){
+  const next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  document.getElementById("themeBtn").textContent=next==="dark"?"☀️":"🌙";
+  localStorage.setItem("physichem_theme",next);
+}
+function renderLevelTabs(){
+  const counts={all:flatChapters("all").length,...Object.fromEntries(Object.keys(DATA).map(l=>[l,flatChapters(l).length]))};
+  document.getElementById("levelTabs").innerHTML=Object.entries(LEVELS).map(([key,lvl])=>`
+    <button class="level-btn ${state.level===key?"active":""}" style="--level-color:${lvl.color};--level-bg:${lvl.bg}" onclick="setLevel('${key}')">
+      <b>${lvl.icon} ${lvl.short}</b><span>${counts[key]} chap.</span>
+    </button>`).join("");
+}
+function setLevel(level){
+  state.level=level;
+  renderLevelTabs();
+  render();
+}
+function setThemeAndSearch(theme, query){
+  document.getElementById("searchInput").value=query||"";
+  document.getElementById("statusFilter").value="all";
+  render();
+  const select=document.getElementById("themeFilter");
+  if([...select.options].some(option=>option.value===theme))select.value=theme;
+  render();
+  document.getElementById("themeContainer").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function updateThemeFilter(items){
+  const select=document.getElementById("themeFilter");
+  const current=select.value||"all";
+  const themes=[...new Set(items.map(i=>i.theme))];
+  select.innerHTML=`<option value="all">Tous les thèmes</option>`+themes.map(t=>`<option value="${escapeHTML(t)}">${escapeHTML(t)}</option>`).join("");
+  select.value=themes.includes(current)?current:"all";
+}
+function render(){
+  levelStyle(state.level);
+  const allItems=enriched(state.level);
+  updateThemeFilter(allItems);
+  const query=document.getElementById("searchInput").value.trim().toLowerCase();
+  const theme=document.getElementById("themeFilter").value;
+  const status=document.getElementById("statusFilter").value;
+  const filtered=allItems.filter(item=>{
+    const hay=[item.title,item.desc,item.theme,item.level,item.num,...item.tags].join(" ").toLowerCase();
+    const okQuery=!query||hay.includes(query);
+    const okTheme=theme==="all"||item.theme===theme;
+    const okStatus=status==="all"||statusOf(item.score)===status;
+    return okQuery&&okTheme&&okStatus;
+  });
+  renderStats(allItems);
+  renderSummary(allItems);
+  renderRecommendations(allItems);
+  renderChapters(filtered);
+}
+function renderStats(items){
+  const scores=items.map(i=>i.score);
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+  const worked=items.filter(i=>i.score>0).length;
+  const solid=items.filter(i=>i.score>=85).length;
+  const exos={...safeJSON("physichem_exo_status"),...safeJSON("physichem_vb_status")};
+  const done=Object.values(exos).filter(v=>v==="done"||v===true).length;
+  document.getElementById("metricMastery").textContent=avg+"%";
+  document.getElementById("metricWorked").textContent=worked;
+  document.getElementById("metricExos").textContent=done;
+  document.getElementById("metricReady").textContent=solid;
+  document.getElementById("heroChapters").textContent=flatChapters("all").length;
+  document.getElementById("heroDone").textContent=enriched("all").filter(i=>i.score>0).length;
+  document.getElementById("heroWeak").textContent=enriched("all").filter(i=>i.score>0&&i.score<50).length;
+}
+function renderSummary(items){
+  const cfg=LEVELS[state.level];
+  const avg=items.length?Math.round(items.reduce((sum,i)=>sum+i.score,0)/items.length):0;
+  const label=state.level==="all"?"Tous niveaux":cfg.label;
+  const weak=items.filter(i=>i.score>0&&i.score<50).length;
+  const untouched=items.filter(i=>i.score===0).length;
+  document.getElementById("currentLevelTitle").textContent=label;
+  document.getElementById("levelProgress").style.width=avg+"%";
+  document.getElementById("levelNote").textContent=`${avg}% de maîtrise moyenne · ${weak} priorité(s) · ${untouched} chapitre(s) à démarrer.`;
+  document.getElementById("chaptersTitle").textContent=state.level==="all"?"Tous les chapitres":`Chapitres · ${cfg.label}`;
+}
+function renderRecommendations(items){
+  const activeWeak=items.filter(i=>i.score>0&&i.score<60).sort((a,b)=>a.score-b.score);
+  const untouched=items.filter(i=>i.score===0);
+  const top=activeWeak.slice(0,3);
+  const recos=[];
+  if(top.length){
+    top.forEach(i=>recos.push(`<div class="reco"><strong>${escapeHTML(i.title)} · ${i.score}%</strong><p>${escapeHTML(LEVELS[i.level].short)} · reprendre le cours, puis lancer les flashcards avant le quiz.</p></div>`));
+  } else if(untouched.length){
+    const first=untouched[0];
+    recos.push(`<div class="reco"><strong>Démarrage conseillé</strong><p>Commencer par ${escapeHTML(first.title)} pour créer une première trace de progression.</p></div>`);
+  } else {
+    recos.push(`<div class="reco"><strong>Base solide</strong><p>Passer en mode épreuve : exercice rédigé, unités, justification et rédaction scientifique.</p></div>`);
+  }
+  document.getElementById("recoList").innerHTML=recos.join("");
+}
+function renderChapters(items){
+  const root=document.getElementById("themeContainer");
+  if(!items.length){
+    root.innerHTML=`<div class="empty">Aucun chapitre ne correspond aux filtres actuels.</div>`;
+    return;
+  }
+  const groups=new Map();
+  items.forEach(item=>{
+    const key=state.level==="all"?`${LEVELS[item.level].short} · ${item.theme}`:item.theme;
+    if(!groups.has(key))groups.set(key,[]);
+    groups.get(key).push(item);
+  });
+  root.innerHTML=[...groups.entries()].map(([theme,chapters])=>`
+    <article class="theme-block">
+      <div class="theme-header"><h3>${escapeHTML(theme)}</h3><span>${chapters.length} chapitre(s)</span></div>
+      <div class="chapter-grid">${chapters.map(chapterCard).join("")}</div>
+    </article>`).join("");
+}
+function chapterCard(item){
+  const cfg=LEVELS[item.level];
+  const s=item.score;
+  return `<article class="chapter-card" style="--level-color:${cfg.color};--level-bg:${cfg.bg}">
+    <div class="chapter-top">
+      <div><div class="chapter-kicker">${escapeHTML(cfg.short)} · ${escapeHTML(item.num)}</div><h4>${escapeHTML(item.title)}</h4></div>
+      <div class="chapter-icon">${item.icon}</div>
+    </div>
+    <p>${escapeHTML(item.desc)}</p>
+    <div class="tags">${item.tags.map(t=>`<span class="tag">${escapeHTML(t)}</span>`).join("")}</div>
+    <div class="progress-line"><div class="progress-track"><span class="progress-fill" style="width:${s}%"></span></div><span class="pct">${s}%</span></div>
+    <div class="actions">
+      <a class="action" href="${item.link}">Cours</a>
+      <a class="action" href="${item.link}#flashcards">Cartes</a>
+      <a class="action" href="${item.link}#quiz">Quiz</a>
+      <a class="action" href="${item.link}#annales">Exos</a>
+    </div>
+  </article>`;
+}
+function pickPriority(){
+  const items=enriched(state.level);
+  const active=items.filter(i=>i.score>0).sort((a,b)=>a.score-b.score);
+  return active[0] || items[0] || enriched("all")[0];
+}
+function launchSmart(mode){
+  const item=pickPriority();
+  const anchors={quiz:"#quiz",flashcards:"#flashcards",annales:"#annales"};
+  window.location.href=item.link+(anchors[mode]||"");
+}
+function generatePlan(type){
+  const items=enriched(state.level);
+  const sorted=[...items].sort((a,b)=>a.score-b.score);
+  const first=sorted[0]||enriched("all")[0];
+  const second=sorted.find(i=>i.key!==first.key)||first;
+  const templates={
+    express:{title:"Réactivation express",steps:[
+      ["5 min",`Relire la fiche de ${first.title} et noter 3 définitions.`],
+      ["8 min",`Faire les flashcards de ${first.title} sans regarder le cours.`],
+      ["7 min",`Lancer le quiz puis corriger une erreur avec une phrase complète.`]
+    ]},
+    balanced:{title:"Séance équilibrée",steps:[
+      ["10 min",`Reprendre ${first.title} : formules, unités, vocabulaire.`],
+      ["15 min",`Traiter un exercice ou quiz sur ${first.title}.`],
+      ["10 min",`Basculer sur ${second.title} pour créer un lien entre deux notions.`],
+      ["5 min",`Écrire le bilan : une réussite, une erreur, une question.`]
+    ]},
+    exam:{title:"Mode épreuve",steps:[
+      ["8 min",`Questions rapides sur ${first.title} : définitions, unités, ordre de grandeur.`],
+      ["20 min",`Exercice rédigé sur ${first.title} ou ${second.title}.`],
+      ["10 min",`Correction méthodique : données, inconnue, relation, calcul, conclusion.`],
+      ["5 min",`Repérer une phrase de justification à améliorer.`]
+    ]}
+  };
+  const plan=templates[type]||templates.balanced;
+  document.getElementById("planTitle").textContent=plan.title;
+  document.getElementById("planSteps").innerHTML=plan.steps.map((s,i)=>`<div class="plan-step"><b>${i+1}</b><div><strong>${s[0]}</strong><span>${escapeHTML(s[1])}</span></div></div>`).join("")+
+    `<button class="primary-btn" onclick="window.location.href='${first.link}'">Ouvrir le premier chapitre</button>`;
+  document.getElementById("generatedPlan").classList.add("show");
+  document.getElementById("generatedPlan").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function resetData(){
+  if(!confirm("Supprimer la progression locale de ce navigateur ?"))return;
+  ["physichem_mastery","physichem_vb_status","physichem_exo_status","physichem_stats"].forEach(k=>localStorage.removeItem(k));
+  render();
+}
+window.addEventListener("load",init);
+</script>
+</body>
+</html>

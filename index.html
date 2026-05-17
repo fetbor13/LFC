@@ -1,0 +1,3340 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Physique Chimie au LFC — M. Borsali · Collège · Lycée · PCSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f7fb;
+  --surface:#ffffff;
+  --surface-2:#f8fbff;
+  --ink:#172033;
+  --muted:#61708a;
+  --soft:#8b99ad;
+  --line:rgba(74,98,138,.16);
+  --line-strong:rgba(74,98,138,.26);
+  --shadow:0 18px 55px rgba(30,58,110,.12);
+  --shadow-soft:0 10px 28px rgba(30,58,110,.08);
+  --terminale:#2f9fca;
+  --terminale-bg:#eaf7fb;
+  --premiere:#2ca66f;
+  --premiere-bg:#ebf8f1;
+  --seconde:#d07b35;
+  --seconde-bg:#fff2e7;
+  --college:#7567c7;
+  --college-bg:#f1effc;
+  --cpge:#c5483f;
+  --cpge-bg:#fff0ee;
+  --radius:8px;
+}
+[data-theme="dark"]{
+  --bg:#101722;
+  --surface:#172232;
+  --surface-2:#1d2a3d;
+  --ink:#e9f1fb;
+  --muted:#9aaabe;
+  --soft:#718198;
+  --line:rgba(148,171,210,.16);
+  --line-strong:rgba(148,171,210,.28);
+  --shadow:0 18px 55px rgba(0,0,0,.34);
+  --shadow-soft:0 10px 28px rgba(0,0,0,.24);
+  --terminale:#63caea;
+  --terminale-bg:rgba(99,202,234,.12);
+  --premiere:#64d99c;
+  --premiere-bg:rgba(100,217,156,.12);
+  --seconde:#f1a15d;
+  --seconde-bg:rgba(241,161,93,.13);
+  --college:#a69af0;
+  --college-bg:rgba(166,154,240,.13);
+  --cpge:#ee7368;
+  --cpge-bg:rgba(238,115,104,.13);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Instrument Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    linear-gradient(120deg,rgba(47,159,202,.08),transparent 32%),
+    linear-gradient(240deg,rgba(208,123,53,.08),transparent 30%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 58px,rgba(74,98,138,.055) 59px),
+    var(--bg);
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  height:72px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:0 28px;
+  background:color-mix(in srgb,var(--surface) 88%,transparent);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(18px);
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:210px}
+.brand-mark{width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--terminale-bg),var(--college-bg));border:1px solid var(--line-strong);box-shadow:var(--shadow-soft)}
+.brand strong{display:block;font-size:18px}
+.brand small{display:block;color:var(--soft);font-size:11px;margin-top:1px}
+.command{
+  flex:1;
+  max-width:640px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  background:var(--surface-2);
+}
+.command span{color:var(--soft)}
+.command input{width:100%;border:0;outline:0;background:transparent;color:var(--ink)}
+.command output{font-size:12px;color:var(--soft);white-space:nowrap}
+.top-actions{display:flex;gap:8px;align-items:center}
+.top-actions a,.top-actions button,.mini-btn{
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  background:var(--surface);
+  color:var(--ink);
+  padding:10px 13px;
+  cursor:pointer;
+  font-weight:700;
+  transition:.2s ease;
+}
+.top-actions a:hover,.top-actions button:hover,.mini-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft)}
+.app{
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+  gap:0;
+  max-width:1500px;
+  margin:0 auto;
+}
+.sidebar{
+  position:sticky;
+  top:72px;
+  height:calc(100vh - 72px);
+  padding:22px 16px;
+  border-right:1px solid var(--line);
+}
+.sidebar a{
+  display:grid;
+  grid-template-columns:28px 1fr auto;
+  align-items:center;
+  gap:8px;
+  padding:11px 10px;
+  border-radius:8px;
+  color:var(--muted);
+  margin-bottom:6px;
+  border:1px solid transparent;
+}
+.sidebar a:hover,.sidebar a.active{background:var(--surface);border-color:var(--line);color:var(--ink);box-shadow:var(--shadow-soft)}
+.sidebar em{font-style:normal;font-size:11px;color:var(--soft)}
+.side-card{
+  margin-top:20px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+}
+.side-card strong{display:block;font-size:13px;margin-bottom:6px}
+.side-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.content{min-width:0}
+.hero{
+  min-height:560px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 430px;
+  align-items:stretch;
+  gap:34px;
+  padding:54px 42px 34px;
+  border-bottom:1px solid var(--line);
+}
+.hero-copy{align-self:center;position:relative;z-index:1}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.hero h1{font-size:clamp(40px,6vw,76px);line-height:1.02;margin:18px 0 18px;font-weight:800}
+.hero p{max-width:680px;margin:0;color:var(--muted);font-size:18px;line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.hero-actions button,.hero-actions a{border-radius:8px;padding:13px 18px;font-weight:800;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer}
+.hero-actions .primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hero-scene{
+  position:relative;
+  overflow:hidden;
+  min-height:420px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.18)),
+    repeating-linear-gradient(0deg,rgba(74,98,138,.08) 0,rgba(74,98,138,.08) 1px,transparent 1px,transparent 28px),
+    repeating-linear-gradient(90deg,rgba(74,98,138,.08) 0,rgba(74,98,138,.08) 1px,transparent 1px,transparent 28px),
+    var(--surface);
+  box-shadow:var(--shadow);
+}
+[data-theme="dark"] .hero-scene{background:repeating-linear-gradient(0deg,rgba(148,171,210,.08) 0,rgba(148,171,210,.08) 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,rgba(148,171,210,.08) 0,rgba(148,171,210,.08) 1px,transparent 1px,transparent 28px),var(--surface)}
+#scienceCanvas{position:absolute;inset:0;width:100%;height:100%}
+.scene-label{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.scene-label div{
+  padding:12px;
+  border-radius:8px;
+  background:color-mix(in srgb,var(--surface) 86%,transparent);
+  border:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+.scene-label strong{display:block;font-size:20px}
+.scene-label span{font-size:11px;color:var(--soft);font-weight:700}
+.level-launch{
+  padding:26px 42px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  border-bottom:1px solid var(--line);
+}
+.level-tile{
+  min-height:108px;
+  text-align:left;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+  padding:14px;
+  cursor:pointer;
+  transition:.22s ease;
+}
+.level-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.level-tile[data-accent="terminale"]{border-color:color-mix(in srgb,var(--terminale) 34%,var(--line))}
+.level-tile[data-accent="premiere"]{border-color:color-mix(in srgb,var(--premiere) 34%,var(--line))}
+.level-tile[data-accent="seconde"]{border-color:color-mix(in srgb,var(--seconde) 34%,var(--line))}
+.level-tile[data-accent="college"]{border-color:color-mix(in srgb,var(--college) 34%,var(--line))}
+.level-tile[data-accent="cpge"]{border-color:color-mix(in srgb,var(--cpge) 34%,var(--line))}
+.level-symbol{width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);font-size:22px;border:1px solid var(--line)}
+.level-tile strong{display:block;font-size:15px}
+.level-tile small{display:block;color:var(--soft);margin-top:4px;line-height:1.35}
+.level-tile em{font-style:normal;color:var(--soft);font-size:12px;font-weight:800}
+.section{
+  padding:54px 42px;
+  border-bottom:1px solid var(--line);
+}
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:24px;
+}
+.section-title{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.section-title span{
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-soft);
+  font-size:25px;
+}
+.section h2{font-size:32px;margin:0 0 4px;font-weight:800}
+.section p.lead{margin:0;color:var(--muted)}
+.section-meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  padding:7px 10px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.theme-band{
+  margin-top:16px;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--surface) 88%,transparent);
+}
+.theme-band-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:16px;
+  padding-bottom:13px;
+  border-bottom:1px solid var(--line);
+}
+.theme-kicker{display:block;font-size:11px;font-weight:800;color:var(--soft);text-transform:uppercase}
+.theme-band h3{font-size:20px;margin:3px 0 0}
+.theme-band-head strong{color:var(--muted);font-size:12px}
+.chapter-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
+}
+.chapter-card{
+  min-height:214px;
+  display:flex;
+  flex-direction:column;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  padding:15px;
+  position:relative;
+  overflow:hidden;
+  transition:.2s ease;
+}
+.chapter-card::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:var(--terminale);
+  opacity:.85;
+}
+[data-level="premiere"].chapter-card::before,[data-accent="premiere"] .chapter-card::before{background:var(--premiere)}
+[data-level="seconde"].chapter-card::before,[data-accent="seconde"] .chapter-card::before{background:var(--seconde)}
+[data-level="college"].chapter-card::before,[data-accent="college"] .chapter-card::before{background:var(--college)}
+[data-level="cpge"].chapter-card::before,[data-accent="cpge"] .chapter-card::before{background:var(--cpge)}
+.chapter-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);border-color:var(--line-strong)}
+.chapter-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.chapter-num{font-size:10px;font-weight:800;color:var(--soft);text-transform:uppercase}
+.chapter-icon{font-size:25px}
+.chapter-card h4{font-size:16px;line-height:1.3;margin:0 0 9px;padding-left:2px}
+.chapter-card p{font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 14px}
+.chapter-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.chapter-tags span{font-size:10px;font-weight:800;color:var(--soft);border:1px solid var(--line);border-radius:8px;padding:3px 7px;background:var(--surface-2)}
+.chapter-foot{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:800}
+.chapter-card.is-placeholder{border-style:dashed;background:color-mix(in srgb,var(--surface) 76%,var(--surface-2))}
+.chapter-card.is-locked{cursor:default;opacity:.78}
+.college-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.college-tabs button{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);padding:10px 13px;font-weight:800;cursor:pointer;color:var(--muted)}
+.college-tabs button.active{background:var(--college-bg);color:var(--college);border-color:color-mix(in srgb,var(--college) 34%,var(--line))}
+.college-panel{display:none}
+.college-panel.active{display:block}
+.revision-zone,.prof-zone{
+  padding:54px 42px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.34));
+}
+[data-theme="dark"] .revision-zone,[data-theme="dark"] .prof-zone{background:transparent}
+.revision-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.revision-tile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+  padding:16px;
+  transition:.2s ease;
+}
+.revision-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft)}
+.revision-tile span{font-size:26px}
+.revision-tile strong{display:block}
+.revision-tile small{display:block;color:var(--soft);margin-top:2px}
+.prof-console{
+  display:grid;
+  grid-template-columns:minmax(260px,360px) 1fr;
+  gap:18px;
+  margin-top:22px;
+}
+.prof-login,.resource-grid{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+  padding:18px;
+}
+.prof-login p{color:var(--muted);line-height:1.6;margin:8px 0 18px}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.resource{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface-2);
+  padding:14px;
+}
+.resource span{font-size:25px}
+.resource strong{display:block;margin-top:8px}
+.resource small{display:block;color:var(--soft);margin-top:3px}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:80;align-items:center;justify-content:center;background:rgba(12,18,30,.52);backdrop-filter:blur(12px)}
+.modal-overlay.open{display:flex}
+.modal{
+  width:min(440px,92vw);
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.modal h3{font-size:22px;margin:0}
+.modal p{margin:0 0 16px;color:var(--muted);line-height:1.6}
+.modal input{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface-2);padding:12px;color:var(--ink);outline:0;margin-bottom:10px}
+.modal .close{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;width:34px;height:34px;cursor:pointer}
+#profDashboard{display:none;margin-top:18px}
+#profDashboard.visible{display:grid}
+.teacher-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.teacher-stats div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px}
+.teacher-stats strong{display:block;font-size:24px}
+.teacher-stats span{font-size:12px;color:var(--soft);font-weight:800}
+.no-results{display:none;margin:18px 0 0;padding:18px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--surface);color:var(--muted)}
+footer{padding:28px 42px;color:var(--soft);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{font-weight:800;color:var(--muted);margin-left:14px}
+@media(max-width:1100px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:sticky;height:auto;top:72px;z-index:40;display:flex;overflow-x:auto;gap:8px;border-right:0;border-bottom:1px solid var(--line);background:var(--bg);padding:10px 16px}
+  .sidebar a{min-width:150px;margin:0}
+  .side-card{display:none}
+  .hero{grid-template-columns:1fr}
+  .level-launch{grid-template-columns:repeat(2,1fr)}
+  .revision-grid,.prof-console{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .topbar{height:auto;min-height:72px;flex-wrap:wrap;padding:12px 16px}
+  .brand{min-width:0}
+  .command{order:3;flex-basis:100%;max-width:none}
+  .top-actions a{display:none}
+  .hero,.section,.revision-zone,.prof-zone,footer{padding-left:18px;padding-right:18px}
+  .hero{padding-top:32px}
+  .hero-scene{min-height:320px}
+  .scene-label{grid-template-columns:1fr}
+  .level-launch{grid-template-columns:1fr;padding:18px}
+  .section-head{display:block}
+  .section-meta{justify-content:flex-start;margin-top:14px}
+  .chapter-grid{grid-template-columns:1fr}
+  .revision-grid,.teacher-stats{grid-template-columns:1fr}
+}
+
+/* === SUPERWOW V3 START === */
+:root{
+  --glass:color-mix(in srgb,var(--surface) 78%,transparent);
+  --glass-strong:color-mix(in srgb,var(--surface) 92%,transparent);
+  --shine:rgba(255,255,255,.72);
+  --ink-rgb:23,32,51;
+}
+[data-theme="dark"]{
+  --glass:color-mix(in srgb,var(--surface) 72%,transparent);
+  --glass-strong:color-mix(in srgb,var(--surface) 86%,transparent);
+  --shine:rgba(255,255,255,.12);
+  --ink-rgb:233,241,251;
+}
+body{
+  overflow-x:hidden;
+  background:
+    linear-gradient(120deg,rgba(47,159,202,.11),transparent 29%),
+    linear-gradient(245deg,rgba(117,103,199,.10),transparent 34%),
+    linear-gradient(16deg,rgba(208,123,53,.10),transparent 30%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 58px,rgba(74,98,138,.05) 59px),
+    var(--bg);
+}
+.ambient-frame{
+  pointer-events:none;
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(90deg,rgba(47,159,202,.12),transparent 20%,transparent 80%,rgba(197,72,63,.10)),
+    repeating-linear-gradient(0deg,rgba(74,98,138,.045) 0,rgba(74,98,138,.045) 1px,transparent 1px,transparent 92px);
+  mask-image:linear-gradient(180deg,#000,transparent 84%);
+}
+.topbar{
+  height:78px;
+  padding:0 30px;
+  border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);
+  background:var(--glass);
+  box-shadow:0 10px 30px rgba(16,32,62,.06);
+}
+.brand-mark{
+  width:46px;
+  height:46px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(135deg,rgba(47,159,202,.22),rgba(117,103,199,.18)),
+    var(--surface);
+}
+.brand-mark::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(from 90deg,transparent,rgba(47,159,202,.35),rgba(44,166,111,.25),transparent);
+  animation:spin-soft 8s linear infinite;
+}
+.brand-mark span,.brand-mark{isolation:isolate}
+@keyframes spin-soft{to{transform:rotate(360deg)}}
+.brand strong{font-size:19px}
+.brand small{font-weight:700}
+.command{
+  min-height:48px;
+  background:var(--glass-strong);
+  border-color:color-mix(in srgb,var(--terminale) 26%,var(--line));
+  box-shadow:inset 0 1px 0 var(--shine),0 12px 30px rgba(38,72,120,.08);
+}
+.command:focus-within{
+  border-color:var(--terminale);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--terminale) 17%,transparent),0 16px 36px rgba(38,72,120,.12);
+}
+.top-actions a,.top-actions button,.mini-btn{
+  background:var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.quick-dock{
+  position:fixed;
+  z-index:60;
+  right:18px;
+  bottom:18px;
+  display:flex;
+  gap:8px;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--glass);
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+}
+.quick-dock a,.quick-dock button{
+  min-width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+  cursor:pointer;
+  font-weight:800;
+}
+.quick-dock a:hover,.quick-dock button:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft)}
+.sidebar{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 42%,transparent),transparent);
+}
+.sidebar a{
+  min-height:48px;
+  background:color-mix(in srgb,var(--surface) 38%,transparent);
+}
+.sidebar a.active{
+  background:var(--glass-strong);
+  border-color:var(--line-strong);
+}
+.side-card{
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--terminale) 12%,transparent),transparent),
+    var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.hero{
+  min-height:560px;
+  position:relative;
+  grid-template-columns:minmax(0,1fr) minmax(320px,430px);
+  gap:30px;
+  padding-top:52px;
+  padding-bottom:34px;
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  left:42px;
+  right:42px;
+  top:34px;
+  height:1px;
+  background:linear-gradient(90deg,var(--terminale),var(--premiere),var(--seconde),var(--college),var(--cpge));
+  opacity:.7;
+}
+.hero-copy{
+  max-width:760px;
+  align-self:center;
+  text-align:center;
+  justify-self:center;
+}
+.eyebrow{
+  min-height:34px;
+  background:var(--glass-strong);
+  border-color:color-mix(in srgb,var(--terminale) 28%,var(--line));
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.hero h1{
+  max-width:720px;
+  margin-left:auto;
+  margin-right:auto;
+  font-size:clamp(36px,4.7vw,62px);
+  text-wrap:balance;
+}
+.hero h1 .wordmark{
+  display:inline-block;
+  background:linear-gradient(90deg,var(--terminale),var(--college),var(--cpge));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.hero p{
+  max-width:600px;
+  margin-left:auto;
+  margin-right:auto;
+  font-size:17px;
+}
+.hero-actions{
+  justify-content:center;
+}
+.hero-actions .primary{
+  background:linear-gradient(135deg,var(--ink),color-mix(in srgb,var(--terminale) 42%,var(--ink)));
+  box-shadow:0 16px 34px rgba(30,58,110,.18);
+}
+.path-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(110px,1fr));
+  gap:10px;
+  max-width:620px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:28px;
+}
+.path-strip div{
+  min-height:86px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--glass-strong);
+  padding:13px;
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.path-strip strong{display:block;font-size:22px}
+.path-strip span{display:block;color:var(--soft);font-size:12px;font-weight:800;margin-top:3px}
+.hero-scene{
+  min-height:410px;
+  align-self:center;
+  border-color:color-mix(in srgb,var(--terminale) 24%,var(--line));
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--surface) 78%,transparent),color-mix(in srgb,var(--surface-2) 55%,transparent)),
+    repeating-linear-gradient(0deg,rgba(74,98,138,.10) 0,rgba(74,98,138,.10) 1px,transparent 1px,transparent 30px),
+    repeating-linear-gradient(90deg,rgba(74,98,138,.10) 0,rgba(74,98,138,.10) 1px,transparent 1px,transparent 30px);
+  box-shadow:inset 0 1px 0 var(--shine),0 28px 80px rgba(30,58,110,.18);
+}
+.hero-scene::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(47,159,202,.22),transparent 36%),
+    radial-gradient(ellipse at 80% 32%,rgba(117,103,199,.20),transparent 34%),
+    linear-gradient(135deg,transparent,rgba(44,166,111,.10));
+}
+.scene-scanline{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:90px;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent);
+  animation:scan 5s ease-in-out infinite alternate;
+}
+@keyframes scan{from{transform:translateY(-60px)}to{transform:translateY(260px)}}
+.lab-dashboard{
+  position:absolute;
+  top:18px;
+  left:18px;
+  right:18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.lab-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--surface) 76%,transparent);
+  backdrop-filter:blur(14px);
+  padding:12px;
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.lab-card small{display:block;color:var(--soft);font-weight:800;font-size:10px}
+.lab-card strong{display:block;font-size:18px;margin-top:2px}
+.spectrum-line{
+  height:9px;
+  border-radius:8px;
+  margin-top:10px;
+  background:linear-gradient(90deg,var(--terminale),var(--premiere),var(--seconde),var(--college),var(--cpge));
+  box-shadow:0 0 24px color-mix(in srgb,var(--terminale) 30%,transparent);
+}
+.scene-label{
+  bottom:18px;
+}
+.scene-label div{
+  background:color-mix(in srgb,var(--surface) 76%,transparent);
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.level-launch{
+  position:relative;
+  padding-top:30px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 34%,transparent),transparent);
+}
+.level-tile{
+  min-height:130px;
+  position:relative;
+  overflow:hidden;
+  background:var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.level-tile::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:4px;
+  background:var(--terminale);
+}
+.level-tile[data-accent="premiere"]::after{background:var(--premiere)}
+.level-tile[data-accent="seconde"]::after{background:var(--seconde)}
+.level-tile[data-accent="college"]::after{background:var(--college)}
+.level-tile[data-accent="cpge"]::after{background:var(--cpge)}
+.level-symbol{
+  background:linear-gradient(135deg,var(--surface),var(--surface-2));
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.experience-strip{
+  padding:28px 42px 38px;
+  border-bottom:1px solid var(--line);
+}
+.experience-grid{
+  display:grid;
+  grid-template-columns:1.2fr .9fr .9fr;
+  gap:12px;
+}
+.experience-card{
+  min-height:132px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--glass-strong);
+  padding:18px;
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.experience-card strong{display:block;font-size:20px;margin-bottom:8px}
+.experience-card p{margin:0;color:var(--muted);line-height:1.55}
+.experience-card .mini-map{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+.mini-map span{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  font-weight:800;
+  color:var(--muted);
+}
+.section{
+  position:relative;
+}
+.section::before{
+  content:"";
+  position:absolute;
+  left:42px;
+  top:0;
+  width:120px;
+  height:3px;
+  border-radius:8px;
+  background:var(--terminale);
+}
+#premiere::before{background:var(--premiere)}
+#seconde::before{background:var(--seconde)}
+#college::before{background:var(--college)}
+#pcsi::before{background:var(--cpge)}
+.section-title span{
+  background:var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.pill{
+  background:var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.theme-band{
+  padding:20px;
+  background:
+    linear-gradient(135deg,rgba(47,159,202,.055),transparent 34%),
+    var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.theme-band[data-accent="premiere"]{background:linear-gradient(135deg,rgba(44,166,111,.06),transparent 34%),var(--glass-strong)}
+.theme-band[data-accent="seconde"]{background:linear-gradient(135deg,rgba(208,123,53,.07),transparent 34%),var(--glass-strong)}
+.theme-band[data-accent="college"]{background:linear-gradient(135deg,rgba(117,103,199,.07),transparent 34%),var(--glass-strong)}
+.theme-band[data-accent="cpge"]{background:linear-gradient(135deg,rgba(197,72,63,.07),transparent 34%),var(--glass-strong)}
+.theme-band-head{
+  min-height:62px;
+}
+.chapter-grid{
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+}
+.chapter-card{
+  min-height:234px;
+  padding:17px;
+  background:
+    linear-gradient(145deg,color-mix(in srgb,var(--surface) 96%,transparent),color-mix(in srgb,var(--surface-2) 88%,transparent)),
+    var(--surface);
+  box-shadow:inset 0 1px 0 var(--shine);
+}
+.chapter-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.20),transparent);
+  transform:translateX(-120%);
+  transition:transform .55s ease;
+}
+.chapter-card:hover::after{transform:translateX(120%)}
+.chapter-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 22px 48px rgba(30,58,110,.14);
+}
+.chapter-top,.chapter-card h4,.chapter-card p,.chapter-tags,.chapter-foot{position:relative;z-index:1}
+.chapter-num{
+  padding:4px 8px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface-2);
+}
+.chapter-icon{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--surface);
+}
+.chapter-card h4{
+  font-size:17px;
+  text-wrap:balance;
+}
+.chapter-tags span{
+  background:var(--glass-strong);
+}
+.chapter-foot{
+  color:var(--ink);
+}
+.chapter-card.is-placeholder::before{opacity:.48}
+.chapter-card.is-placeholder .chapter-foot span:first-child{color:var(--seconde)}
+.chapter-card.is-locked .chapter-foot span:first-child{color:var(--cpge)}
+.revision-zone,.prof-zone{
+  background:
+    linear-gradient(135deg,rgba(117,103,199,.065),transparent 38%),
+    transparent;
+}
+.revision-tile,.prof-login,.resource-grid,.resource,.teacher-stats div,.modal{
+  background:var(--glass-strong);
+  box-shadow:inset 0 1px 0 var(--shine),var(--shadow-soft);
+}
+.revision-tile{
+  min-height:104px;
+}
+.resource{
+  min-height:116px;
+}
+.modal-overlay{
+  background:rgba(12,18,30,.62);
+}
+.modal{
+  border-color:color-mix(in srgb,var(--terminale) 24%,var(--line));
+}
+@media(max-width:1100px){
+  .hero{grid-template-columns:1fr}
+  .experience-grid{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .quick-dock{left:12px;right:12px;justify-content:center}
+  .hero::before{left:18px;right:18px}
+  .path-strip{grid-template-columns:repeat(2,1fr)}
+  .lab-dashboard{grid-template-columns:1fr}
+  .scene-label{position:relative;left:auto;right:auto;bottom:auto;margin:18px}
+  .hero-scene{min-height:520px}
+  .experience-strip{padding-left:18px;padding-right:18px}
+}
+/* === SUPERWOW V3 END === */
+
+/* === ENHANCED CARDS + STUDENT SYSTEM === */
+/* Level tint per data-level */
+[data-level="terminale"].chapter-card{background-image:linear-gradient(to right,rgba(47,159,202,.09) 0%,transparent 32%)}
+[data-level="premiere"].chapter-card{background-image:linear-gradient(to right,rgba(44,166,111,.09) 0%,transparent 32%)}
+[data-level="seconde"].chapter-card{background-image:linear-gradient(to right,rgba(208,123,53,.09) 0%,transparent 32%)}
+[data-level="college"].chapter-card{background-image:linear-gradient(to right,rgba(117,103,199,.10) 0%,transparent 32%)}
+[data-level="cpge"].chapter-card{background-image:linear-gradient(to right,rgba(197,72,63,.10) 0%,transparent 32%)}
+/* Thicker left border */
+.chapter-card::before{width:5px}
+[data-level="terminale"].chapter-card:hover{border-color:color-mix(in srgb,var(--terminale) 38%,var(--line))}
+[data-level="premiere"].chapter-card:hover{border-color:color-mix(in srgb,var(--premiere) 38%,var(--line))}
+[data-level="seconde"].chapter-card:hover{border-color:color-mix(in srgb,var(--seconde) 38%,var(--line))}
+[data-level="college"].chapter-card:hover{border-color:color-mix(in srgb,var(--college) 38%,var(--line))}
+[data-level="cpge"].chapter-card:hover{border-color:color-mix(in srgb,var(--cpge) 38%,var(--line))}
+/* Visited card indicator */
+.visit-badge{
+  position:absolute;top:9px;right:9px;z-index:4;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--premiere);color:#fff;
+  display:grid;place-items:center;
+  font-size:12px;font-weight:900;
+  border:2px solid var(--surface);
+  box-shadow:0 2px 8px rgba(44,166,111,.4);
+  pointer-events:none;
+}
+.chapter-card.chapter-visited::before{box-shadow:3px 0 12px rgba(44,166,111,.28)}
+.chapter-card.chapter-visited{border-color:color-mix(in srgb,var(--premiere) 26%,var(--line))}
+/* Student modal tabs */
+.student-tabs{display:flex;gap:6px;margin-bottom:16px}
+.student-tab{flex:1;padding:9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface-2);color:var(--muted);font-weight:800;cursor:pointer;transition:.18s}
+.student-tab.active{background:var(--glass-strong);color:var(--ink);border-color:var(--line-strong);box-shadow:inset 0 1px 0 var(--shine)}
+.student-panel{display:none}
+.student-panel.active{display:block}
+.stu-field{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface-2);padding:11px;color:var(--ink);outline:0;margin-bottom:9px;font:inherit}
+.stu-field:focus{border-color:var(--terminale);box-shadow:0 0 0 3px color-mix(in srgb,var(--terminale) 14%,transparent)}
+.stu-err{color:var(--cpge);font-size:12px;min-height:16px;margin-bottom:8px;font-weight:700}
+.stu-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--ink),color-mix(in srgb,var(--terminale) 44%,var(--ink)));color:var(--bg);border:0;border-radius:8px;font-weight:900;cursor:pointer;font-size:14px;font:inherit;font-weight:900;transition:.2s}
+.stu-btn:hover{opacity:.88;transform:translateY(-1px)}
+/* Revision tiles enhanced */
+.revision-tile{min-height:118px;flex-direction:column;align-items:flex-start;gap:6px}
+.rev-bar{height:5px;border-radius:4px;background:var(--terminale);width:100%;margin-top:4px;opacity:.55;transition:.3s}
+[data-accent="premiere"] .rev-bar{background:var(--premiere)}
+[data-accent="seconde"]  .rev-bar{background:var(--seconde)}
+[data-accent="college"]  .rev-bar{background:var(--college)}
+[data-accent="cpge"]     .rev-bar{background:var(--cpge)}
+/* Student topbar btn highlight */
+#studentBtn.logged-in{color:var(--terminale)!important;border-color:var(--terminale)!important}
+/* Locked chapter cards */
+.chapter-card.chapter-locked{cursor:not-allowed;opacity:.70;filter:grayscale(20%)}
+.chapter-card.chapter-locked::before{background:var(--soft)!important;box-shadow:none!important}
+.chapter-card.chapter-locked:hover{transform:none!important;box-shadow:none!important;border-color:var(--line)!important}
+.chapter-card.chapter-locked::after{display:none}
+.lock-badge{
+  position:absolute;top:9px;right:9px;z-index:4;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--soft);color:#fff;
+  display:grid;place-items:center;
+  font-size:12px;border:2px solid var(--surface);
+  pointer-events:none;
+}
+/* Lock banner shown when not logged in */
+.auth-banner{
+  display:none;
+  margin:0 42px 0;
+  padding:14px 18px;
+  border-radius:8px;
+  border:1px solid color-mix(in srgb,var(--terminale) 30%,var(--line));
+  background:color-mix(in srgb,var(--terminale) 8%,var(--surface));
+  color:var(--ink);
+  font-size:13px;
+  font-weight:700;
+  align-items:center;
+  gap:14px;
+}
+.auth-banner.visible{display:flex}
+.auth-banner button{
+  margin-left:auto;flex-shrink:0;
+  padding:8px 14px;border:1px solid var(--terminale);
+  border-radius:8px;background:var(--terminale);color:#fff;
+  font-weight:800;cursor:pointer;font-size:12px;
+}
+@media(max-width:720px){.auth-banner{margin:0 18px}}
+/* === END ENHANCED CARDS + STUDENT SYSTEM === */
+
+</style>
+</head>
+<body>
+<div class="ambient-frame" aria-hidden="true"></div>
+<nav class="quick-dock" aria-label="Accès rapides">
+  <a href="#terminale" title="Terminale">T</a>
+  <a href="#premiere" title="Première">1</a>
+  <a href="#seconde" title="Seconde">2</a>
+  <a href="#college" title="Collège">C</a>
+  <a href="revision.html" title="Révisions">R</a>
+</nav>
+<div class="topbar">
+  <a class="brand" href="#home">
+    <span class="brand-mark">⚛️</span>
+    <span><strong>La Physique Chimie au LFC</strong><small>M. Borsali · Le Cercle d'El Abilli · 2026-2027</small></span>
+  </a>
+  <label class="command" aria-label="Recherche de chapitre">
+    <span>⌕</span>
+    <input id="searchInput" type="search" placeholder="Rechercher un chapitre, une notion, un niveau...">
+    <output id="searchCount">79 cartes</output>
+  </label>
+  <div class="top-actions">
+    <a href="revision.html">Révisions</a>
+    <button type="button" id="studentBtn" onclick="openStudentModal()">👤 Mon espace</button>
+    <button type="button" onclick="openProfModal()">Prof</button>
+    <button type="button" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <a href="#terminale" data-nav="terminale">
+    <span>🎓</span>
+    <strong>Terminale</strong>
+    <em>19</em>
+  </a>
+<a href="#premiere" data-nav="premiere">
+    <span>📗</span>
+    <strong>Première</strong>
+    <em>18</em>
+  </a>
+<a href="#seconde" data-nav="seconde">
+    <span>📙</span>
+    <strong>Seconde</strong>
+    <em>16</em>
+  </a>
+<a href="#college" data-nav="college">
+    <span>📔</span>
+    <strong>Collège</strong>
+    <em>15</em>
+  </a>
+<a href="#pcsi" data-nav="pcsi">
+    <span>🔬</span>
+    <strong>PCSI</strong>
+    <em>22</em>
+  </a>
+    <a href="#revisions" data-nav="revisions"><span>📖</span><strong>Révisions</strong><em>go</em></a>
+    <a href="#professeurs" data-nav="professeurs"><span>🏫</span><strong>Prof</strong><em>safe</em></a>
+    <div class="side-card">
+      <strong>Parcours clair</strong>
+      <p>Les élèves choisissent un niveau, puis un thème, puis un chapitre. Tout reste accessible sans perdre le fil.</p>
+    </div>
+  </aside>
+
+  <main class="content">
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <span class="eyebrow">Physique-Chimie · Collège · Lycée · PCSI</span>
+        <h1><span class="wordmark">La Physique Chimie au LFC</span></h1>
+        <p>M. Borsali · Le Cercle d’El Abilli · 2026-2027 — Collège, Lycée, PCSI.</p>
+        <div class="hero-actions">
+          <button class="primary" type="button" onclick="jumpTo('#terminale')">Commencer en Terminale</button>
+          <a href="revision.html">Ouvrir les révisions</a>
+          <button type="button" onclick="openStudentModal()">👤 Mon espace</button>
+          <button type="button" onclick="openProfModal()">Espace prof</button>
+        </div>
+        <div class="path-strip" aria-label="Résumé des parcours">
+          <div><strong>19</strong><span>Terminale</span></div>
+          <div><strong>18</strong><span>Première</span></div>
+          <div><strong>16</strong><span>Seconde</span></div>
+          <div><strong>15</strong><span>Collège</span></div>
+        </div>
+      </div>
+      <div class="hero-scene" aria-label="Visualisation dynamique des niveaux">
+        <canvas id="scienceCanvas"></canvas>
+        <div class="scene-scanline" aria-hidden="true"></div>
+        <div class="lab-dashboard" aria-hidden="true">
+          <div class="lab-card"><small>PARCOURS</small><strong>Collège → PCSI</strong><div class="spectrum-line"></div></div>
+          <div class="lab-card"><small>ACCÈS</small><strong>90 cartes</strong><div class="spectrum-line"></div></div>
+        </div>
+        <div class="scene-label">
+          <div><strong>68</strong><span>chapitres collège-lycée</span></div>
+          <div><strong>22</strong><span>cartes PCSI prêtes</span></div>
+          <div><strong>1</strong><span>recherche globale</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="level-launch" aria-label="Choix rapide du niveau">
+      <button class="level-tile" data-accent="terminale" onclick="jumpTo('#terminale')">
+    <span class="level-symbol">🎓</span>
+    <span>
+      <strong>Terminale</strong>
+      <small>19 chapitres · Spécialité physique-chimie</small>
+    </span>
+    <em>Tle</em>
+  </button>
+<button class="level-tile" data-accent="premiere" onclick="jumpTo('#premiere')">
+    <span class="level-symbol">📗</span>
+    <span>
+      <strong>Première</strong>
+      <small>18 chapitres · Spécialité, méthodes et TP</small>
+    </span>
+    <em>1ère</em>
+  </button>
+<button class="level-tile" data-accent="seconde" onclick="jumpTo('#seconde')">
+    <span class="level-symbol">📙</span>
+    <span>
+      <strong>Seconde</strong>
+      <small>16 chapitres · Bases du lycée</small>
+    </span>
+    <em>2nde</em>
+  </button>
+<button class="level-tile" data-accent="college" onclick="jumpTo('#college')">
+    <span class="level-symbol">📔</span>
+    <span>
+      <strong>Collège</strong>
+      <small>15 chapitres · 5 chapitres par niveau</small>
+    </span>
+    <em>5e-3e</em>
+  </button>
+<button class="level-tile" data-accent="cpge" onclick="jumpTo('#pcsi')">
+    <span class="level-symbol">🔬</span>
+    <span>
+      <strong>PCSI</strong>
+      <small>22 chapitres · Transition vers la prépa</small>
+    </span>
+    <em>CPGE</em>
+  </button>
+    </section>
+
+    <div class="auth-banner" id="authBanner">
+      <span>🔒</span>
+      <span>Les chapitres sont réservés aux élèves du LFC. Connectez-vous avec votre adresse <strong>@lfcaire.net</strong> pour accéder aux cours.</span>
+      <button type="button" onclick="openStudentModal()">Se connecter / S'inscrire</button>
+    </div>
+
+    <section class="experience-strip" aria-label="Organisation des espaces">
+      <div class="experience-grid">
+        <div class="experience-card">
+          <strong>Choisir un niveau</strong>
+          <p>Les élèves arrivent directement sur une carte lisible des parcours, sans mélange entre collège, lycée, PCSI et espace professeur.</p>
+          <div class="mini-map"><span>T</span><span>1</span><span>2</span><span>5</span><span>4</span><span>3</span></div>
+        </div>
+        <div class="experience-card">
+          <strong>Aller au chapitre</strong>
+          <p>Chaque carte garde son lien réel vers le fichier de cours correspondant.</p>
+          <div class="mini-map"><span>01</span><span>02</span><span>03</span></div>
+        </div>
+        <div class="experience-card">
+          <strong>Réviser vite</strong>
+          <p>La zone révisions reste visible et séparée pour les élèves qui veulent s’entraîner.</p>
+          <div class="mini-map"><span>R</span><span>Q</span><span>B</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="terminale" data-section="terminale">
+      <div class="section-head">
+        <div class="section-title"><span>🎓</span><div><h2>Terminale Spécialité</h2><p class="lead">19 chapitres, dans l'ordre du parcours élève.</p></div></div>
+        <div class="section-meta"><span class="pill">Bac</span><span class="pill">Annales</span><span class="pill">Méthodes</span></div>
+      </div>
+      <article class="theme-band" data-accent="terminale">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 1</span>
+        <h3>⚗️ Constitution & transformations de la matière</h3>
+      </div>
+      <strong>8 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="Term_chapitre1.html" data-title="chapitre 01 réactions acido-basiques ph, ka, henderson-hasselbalch, solutions tampon. ph ka tampon" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">🧪</span>
+    </div>
+    <h4>Réactions acido-basiques</h4>
+    <p>pH, Ka, Henderson-Hasselbalch, solutions tampon.</p>
+    <div class="chapter-tags"><span>pH</span><span>Ka</span><span>Tampon</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre2.html" data-title="chapitre 02 analyse spectrale spectres uv-visible, ir, rmn, identification. uv-vis ir rmn" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">🔬</span>
+    </div>
+    <h4>Analyse spectrale</h4>
+    <p>Spectres UV-visible, IR, RMN, identification.</p>
+    <div class="chapter-tags"><span>UV-Vis</span><span>IR</span><span>RMN</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre3.html" data-title="chapitre 03 les dosages étalonnage, titrage ph-métrique et conductimétrique. titrage étalonnage" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">⚖️</span>
+    </div>
+    <h4>Les dosages</h4>
+    <p>Étalonnage, titrage pH-métrique et conductimétrique.</p>
+    <div class="chapter-tags"><span>Titrage</span><span>Étalonnage</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre4.html" data-title="chapitre 04 cinétique chimique vitesse, ordre 1, t½, catalyse. vitesse ordre 1" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">⏱️</span>
+    </div>
+    <h4>Cinétique chimique</h4>
+    <p>Vitesse, ordre 1, t½, catalyse.</p>
+    <div class="chapter-tags"><span>Vitesse</span><span>Ordre 1</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre5.html" data-title="chapitre 05 la radioactivité noyaux, α β γ, loi de décroissance, datation. α β γ datation" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">☢️</span>
+    </div>
+    <h4>La radioactivité</h4>
+    <p>Noyaux, α β γ, loi de décroissance, datation.</p>
+    <div class="chapter-tags"><span>α β γ</span><span>Datation</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre6.html" data-title="chapitre 06 évolution spontanée quotient qr, constante k, sens d&#39;évolution. qr équilibre" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 06</span>
+      <span class="chapter-icon">⚡</span>
+    </div>
+    <h4>Évolution spontanée</h4>
+    <p>Quotient Qr, constante K, sens d&#39;évolution.</p>
+    <div class="chapter-tags"><span>Qr</span><span>Équilibre</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre7.html" data-title="chapitre 07 transformations forcées piles, électrolyse, oxydoréduction. piles électrolyse" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 07</span>
+      <span class="chapter-icon">🔋</span>
+    </div>
+    <h4>Transformations forcées</h4>
+    <p>Piles, électrolyse, oxydoréduction.</p>
+    <div class="chapter-tags"><span>Piles</span><span>Électrolyse</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre8.html" data-title="chapitre 08 synthèse organique stratégies, protection/déprotection, chimie verte. synthèse organique" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 08</span>
+      <span class="chapter-icon">🧬</span>
+    </div>
+    <h4>Synthèse organique</h4>
+    <p>Stratégies, protection/déprotection, chimie verte.</p>
+    <div class="chapter-tags"><span>Synthèse</span><span>Organique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="terminale">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 2</span>
+        <h3>🚀 Mouvement & interactions</h3>
+      </div>
+      <strong>4 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="Term_chapitre9.html" data-title="chapitre 09 cinématique du point position, vitesse, accélération, quantité de mouvement. vecteurs newton" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 09</span>
+      <span class="chapter-icon">📐</span>
+    </div>
+    <h4>Cinématique du point</h4>
+    <p>Position, vitesse, accélération, quantité de mouvement.</p>
+    <div class="chapter-tags"><span>Vecteurs</span><span>Newton</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre10.html" data-title="chapitre 10 champ de forces gravitation, pesanteur, champ électrique. gravitation champ e" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 10</span>
+      <span class="chapter-icon">🌍</span>
+    </div>
+    <h4>Champ de forces</h4>
+    <p>Gravitation, pesanteur, champ électrique.</p>
+    <div class="chapter-tags"><span>Gravitation</span><span>Champ E</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre11.html" data-title="chapitre 11 planètes &amp; satellites lois de kepler, mcu, satellites. kepler orbite" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 11</span>
+      <span class="chapter-icon">🪐</span>
+    </div>
+    <h4>Planètes &amp; Satellites</h4>
+    <p>Lois de Kepler, MCU, satellites.</p>
+    <div class="chapter-tags"><span>Kepler</span><span>Orbite</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre12.html" data-title="chapitre 12 mécanique des fluides pression, archimède, bernoulli. bernoulli fluides" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 12</span>
+      <span class="chapter-icon">💧</span>
+    </div>
+    <h4>Mécanique des fluides</h4>
+    <p>Pression, Archimède, Bernoulli.</p>
+    <div class="chapter-tags"><span>Bernoulli</span><span>Fluides</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="terminale">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 3</span>
+        <h3>🔥 Énergie & thermodynamique</h3>
+      </div>
+      <strong>2 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="Term_chapitre13.html" data-title="chapitre 13 énergie interne 1er principe, échanges q et w, enthalpie. 1er principe enthalpie" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 13</span>
+      <span class="chapter-icon">🌡️</span>
+    </div>
+    <h4>Énergie interne</h4>
+    <p>1er principe, échanges Q et W, enthalpie.</p>
+    <div class="chapter-tags"><span>1er principe</span><span>Enthalpie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre14.html" data-title="chapitre 14 transferts thermiques conduction, convection, rayonnement. conduction rayonnement" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 14</span>
+      <span class="chapter-icon">♨️</span>
+    </div>
+    <h4>Transferts thermiques</h4>
+    <p>Conduction, convection, rayonnement.</p>
+    <div class="chapter-tags"><span>Conduction</span><span>Rayonnement</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="terminale">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 4</span>
+        <h3>🌊 Ondes & signaux</h3>
+      </div>
+      <strong>4 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="Term_chapitre15.html" data-title="chapitre 15 ondes dans la matière ondes progressives, célérité, périodicité. célérité période" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 15</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Ondes dans la matière</h4>
+    <p>Ondes progressives, célérité, périodicité.</p>
+    <div class="chapter-tags"><span>Célérité</span><span>Période</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre16.html" data-title="chapitre 16 propriétés des ondes diffraction, interférences, effet doppler. diffraction doppler" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 16</span>
+      <span class="chapter-icon">🌈</span>
+    </div>
+    <h4>Propriétés des ondes</h4>
+    <p>Diffraction, interférences, effet Doppler.</p>
+    <div class="chapter-tags"><span>Diffraction</span><span>Doppler</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre17.html" data-title="chapitre 17 lunette astronomique vergence, grossissement, construction. optique lentilles" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 17</span>
+      <span class="chapter-icon">🔭</span>
+    </div>
+    <h4>Lunette astronomique</h4>
+    <p>Vergence, grossissement, construction.</p>
+    <div class="chapter-tags"><span>Optique</span><span>Lentilles</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="Term_chapitre18.html" data-title="chapitre 18 interaction lumière-matière photoélectrique, photon, dualité onde-corpuscule. photon quantum" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 18</span>
+      <span class="chapter-icon">💡</span>
+    </div>
+    <h4>Interaction lumière-matière</h4>
+    <p>Photoélectrique, photon, dualité onde-corpuscule.</p>
+    <div class="chapter-tags"><span>Photon</span><span>Quantum</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="terminale">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 5</span>
+        <h3>🔌 Électricité</h3>
+      </div>
+      <strong>1 chapitre</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="Term_chapitre19.html" data-title="chapitre 19 circuit capacitif condensateur, charge/décharge rc. rc condensateur" data-level="terminale">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 19</span>
+      <span class="chapter-icon">🔌</span>
+    </div>
+    <h4>Circuit capacitif</h4>
+    <p>Condensateur, charge/décharge RC.</p>
+    <div class="chapter-tags"><span>RC</span><span>Condensateur</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+    </section>
+
+    <section class="section" id="premiere" data-section="premiere">
+      <div class="section-head">
+        <div class="section-title"><span>📗</span><div><h2>Première Spécialité</h2><p class="lead">18 fichiers de cours relus et renommés d'après leur contenu réel.</p></div></div>
+        <div class="section-meta"><span class="pill">Chimie</span><span class="pill">Physique</span><span class="pill">Ondes</span></div>
+      </div>
+      <article class="theme-band" data-accent="premiere">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 1</span>
+        <h3>⚗️ Constitution & transformations de la matière</h3>
+      </div>
+      <strong>9 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="1ere_chapitre1.html" data-title="chapitre 01 la mole et la spectroscopie masse molaire · la mole et la quantité de matière · concentrations matière" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">🧪</span>
+    </div>
+    <h4>La mole et la spectroscopie</h4>
+    <p>Masse molaire · La mole et la quantité de matière · Concentrations</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre2.html" data-title="chapitre 02 réactions d&#39;oxydoréduction couples oxydant/réducteur · écriture des demi-équations électroniques · équation bilan d&#39;une réaction rédox chimie physique" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">⚡</span>
+    </div>
+    <h4>Réactions d&#39;oxydoréduction</h4>
+    <p>Couples oxydant/réducteur · Écriture des demi-équations électroniques · Équation bilan d&#39;une réaction rédox</p>
+    <div class="chapter-tags"><span>Chimie</span><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre3.html" data-title="chapitre 03 tableau d&#39;avancement la transformation chimique · tableau d&#39;avancement · avancement maximal x_max chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">⚖️</span>
+    </div>
+    <h4>Tableau d&#39;avancement</h4>
+    <p>La transformation chimique · Tableau d&#39;avancement · Avancement maximal x_max</p>
+    <div class="chapter-tags"><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre4.html" data-title="chapitre 04 titrage colorimétrique principe du titrage · l&#39;équivalence · repérage colorimétrique de l&#39;équivalence chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">⚖️</span>
+    </div>
+    <h4>Titrage colorimétrique</h4>
+    <p>Principe du titrage · L&#39;équivalence · Repérage colorimétrique de l&#39;équivalence</p>
+    <div class="chapter-tags"><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre5.html" data-title="chapitre 05 structure et polarité des molécules schéma de lewis · géométrie vsepr · électronégativité χ chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">⚛️</span>
+    </div>
+    <h4>Structure et polarité des molécules</h4>
+    <p>Schéma de Lewis · Géométrie VSEPR · Électronégativité χ</p>
+    <div class="chapter-tags"><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre6.html" data-title="chapitre 06 cohésion de la matière types d&#39;interactions et cohésion · dissolution — 3 étapes · solubilité matière chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 06</span>
+      <span class="chapter-icon">💧</span>
+    </div>
+    <h4>Cohésion de la matière</h4>
+    <p>Types d&#39;interactions et cohésion · Dissolution — 3 étapes · Solubilité</p>
+    <div class="chapter-tags"><span>Matière</span><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre7.html" data-title="chapitre 07 structure des entités organiques molécules organiques — le carbone · types de formules · groupes fonctionnels et familles matière chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 07</span>
+      <span class="chapter-icon">⚛️</span>
+    </div>
+    <h4>Structure des entités organiques</h4>
+    <p>Molécules organiques — le carbone · Types de formules · Groupes fonctionnels et familles</p>
+    <div class="chapter-tags"><span>Matière</span><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre8.html" data-title="chapitre 08 synthèse organique la synthèse chimique · protocole de synthèse — 3 étapes · rendement de la synthèse chimie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 08</span>
+      <span class="chapter-icon">🧬</span>
+    </div>
+    <h4>Synthèse organique</h4>
+    <p>La synthèse chimique · Protocole de synthèse — 3 étapes · Rendement de la synthèse</p>
+    <div class="chapter-tags"><span>Chimie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre9.html" data-title="chapitre 09 réactions de combustion la combustion · combustion complète · combustion incomplète chimie physique" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 09</span>
+      <span class="chapter-icon">🔥</span>
+    </div>
+    <h4>Réactions de combustion</h4>
+    <p>La combustion · Combustion complète · Combustion incomplète</p>
+    <div class="chapter-tags"><span>Chimie</span><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="premiere">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 2</span>
+        <h3>🚀 Mouvement & interactions</h3>
+      </div>
+      <strong>3 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="1ere_chapitre10.html" data-title="chapitre 10 interactions fondamentales et champs les 4 interactions fondamentales · loi de gravitation universelle · interaction électrostatique — loi de coulomb physique" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 10</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Interactions fondamentales et champs</h4>
+    <p>Les 4 interactions fondamentales · Loi de gravitation universelle · Interaction électrostatique — Loi de Coulomb</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre11.html" data-title="chapitre 11 description d&#39;un fluide au repos la pression dans un fluide · loi fondamentale de la statique des fluides · loi de mariotte (gaz parfait isotherme) physique" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 11</span>
+      <span class="chapter-icon">💧</span>
+    </div>
+    <h4>Description d&#39;un fluide au repos</h4>
+    <p>La pression dans un fluide · Loi fondamentale de la statique des fluides · Loi de Mariotte (gaz parfait isotherme)</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre12.html" data-title="chapitre 12 mouvement d&#39;un système description du mouvement · vecteur vitesse et méthode des milieux · vecteur variation de vitesse δv⃗ physique" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 12</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Mouvement d&#39;un système</h4>
+    <p>Description du mouvement · Vecteur vitesse et méthode des milieux · Vecteur variation de vitesse Δv⃗</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="premiere">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 3</span>
+        <h3>🔥 Énergie</h3>
+      </div>
+      <strong>2 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="1ere_chapitre13.html" data-title="chapitre 13 aspects énergétiques des phénomènes électriques courant électrique et tension · puissance et énergie électrique · effet joule énergie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 13</span>
+      <span class="chapter-icon">🔥</span>
+    </div>
+    <h4>Aspects énergétiques des phénomènes électriques</h4>
+    <p>Courant électrique et tension · Puissance et énergie électrique · Effet Joule</p>
+    <div class="chapter-tags"><span>Énergie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre14.html" data-title="chapitre 14 aspects énergétiques des systèmes mécaniques travail d&#39;une force · énergies cinétique et potentielle · théorème de l&#39;énergie cinétique énergie" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 14</span>
+      <span class="chapter-icon">🔥</span>
+    </div>
+    <h4>Aspects énergétiques des systèmes mécaniques</h4>
+    <p>Travail d&#39;une force · Énergies cinétique et potentielle · Théorème de l&#39;énergie cinétique</p>
+    <div class="chapter-tags"><span>Énergie</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="premiere">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 4</span>
+        <h3>🌊 Ondes & signaux</h3>
+      </div>
+      <strong>4 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="1ere_chapitre15.html" data-title="chapitre 15 ondes mécaniques onde mécanique progressive · célérité et retard · onde mécanique périodique énergie ondes" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 15</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Ondes mécaniques</h4>
+    <p>Onde mécanique progressive · Célérité et retard · Onde mécanique périodique</p>
+    <div class="chapter-tags"><span>Énergie</span><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre16.html" data-title="chapitre 16 lentilles minces convergentes la lentille mince convergente · images réelle et virtuelle · relation de conjugaison ondes" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 16</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Lentilles minces convergentes</h4>
+    <p>La lentille mince convergente · Images réelle et virtuelle · Relation de conjugaison</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre17.html" data-title="chapitre 17 couleurs et lumière trichromie · synthèse additive · synthèse soustractive ondes" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 17</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Couleurs et lumière</h4>
+    <p>Trichromie · Synthèse additive · Synthèse soustractive</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="1ere_chapitre18.html" data-title="chapitre 18 optique ondulatoire ondes électromagnétiques · le photon · interaction onde-matière ondes" data-level="premiere">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 18</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Optique ondulatoire</h4>
+    <p>Ondes électromagnétiques · Le photon · Interaction onde-matière</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+    </section>
+
+    <section class="section" id="seconde" data-section="seconde">
+      <div class="section-head">
+        <div class="section-title"><span>📙</span><div><h2>Seconde</h2><p class="lead">16 fichiers de cours relus et alignés avec leur contenu réel.</p></div></div>
+        <div class="section-meta"><span class="pill">Matière</span><span class="pill">Mouvement</span><span class="pill">Signaux</span></div>
+      </div>
+      <article class="theme-band" data-accent="seconde">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 1</span>
+        <h3>🧪 Constitution & transformations de la matière</h3>
+      </div>
+      <strong>8 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="2nde_chapitre1.html" data-title="chapitre 01 corps purs et mélanges corps pur · mélange et proportions · identification d&#39;espèces chimiques par des méthodes physiques matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">📙</span>
+    </div>
+    <h4>Corps purs et mélanges</h4>
+    <p>Corps pur · Mélange et Proportions · Identification d&#39;espèces chimiques par des méthodes physiques</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre2.html" data-title="chapitre 02 solutions aqueuses notion de solution · réalisation de solutions · dosage par étalonnage matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">🧪</span>
+    </div>
+    <h4>Solutions aqueuses</h4>
+    <p>Notion de solution · Réalisation de solutions · Dosage par étalonnage</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre3.html" data-title="chapitre 03 de l&#39;atome à l&#39;élément chimique du macroscopique au microscopique · l&#39;atome et sa structure · l&#39;élément chimique et les isotopes matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">⚛️</span>
+    </div>
+    <h4>De l&#39;atome à l&#39;élément chimique</h4>
+    <p>Du macroscopique au microscopique · L&#39;atome et sa structure · L&#39;élément chimique et les isotopes</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre4.html" data-title="chapitre 04 vers des entités plus stables le cortège électronique de l&#39;atome · la classification périodique des éléments · les entités chimiquement stables matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">⚛️</span>
+    </div>
+    <h4>Vers des entités plus stables</h4>
+    <p>Le cortège électronique de l&#39;atome · La classification périodique des éléments · Les entités chimiquement stables</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre5.html" data-title="chapitre 05 la quantité de matière masse d&#39;une entité chimique · nombre d&#39;entités dans un échantillon · la mole et la constante d&#39;avogadro matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">🧪</span>
+    </div>
+    <h4>La quantité de matière</h4>
+    <p>Masse d&#39;une entité chimique · Nombre d&#39;entités dans un échantillon · La mole et la constante d&#39;Avogadro</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre6.html" data-title="chapitre 06 transformation physique changement d&#39;état · modélisation microscopique · transfert thermique matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 06</span>
+      <span class="chapter-icon">📙</span>
+    </div>
+    <h4>Transformation physique</h4>
+    <p>Changement d&#39;état · Modélisation microscopique · Transfert thermique</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre7.html" data-title="chapitre 07 transformation chimique réaction chimique · équation de la réaction · le réactif limitant matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 07</span>
+      <span class="chapter-icon">📙</span>
+    </div>
+    <h4>Transformation chimique</h4>
+    <p>Réaction chimique · Équation de la réaction · Le réactif limitant</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre8.html" data-title="chapitre 08 transformation nucléaire isotopes · réaction nucléaire · fusion et fission nucléaires matière" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 08</span>
+      <span class="chapter-icon">📙</span>
+    </div>
+    <h4>Transformation nucléaire</h4>
+    <p>Isotopes · Réaction nucléaire · Fusion et fission nucléaires</p>
+    <div class="chapter-tags"><span>Matière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="seconde">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 2</span>
+        <h3>🚀 Mouvement & interactions</h3>
+      </div>
+      <strong>3 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="2nde_chapitre9.html" data-title="chapitre 09 décrire un mouvement système et référentiel · trajectoire · vitesse physique" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 09</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Décrire un mouvement</h4>
+    <p>Système et référentiel · Trajectoire · Vitesse</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre10.html" data-title="chapitre 10 modéliser une action sur un système actions mécaniques et forces · caractéristiques d&#39;une force · le poids physique" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 10</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Modéliser une action sur un système</h4>
+    <p>Actions mécaniques et forces · Caractéristiques d&#39;une force · Le poids</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre11.html" data-title="chapitre 11 principe d&#39;inertie énoncé du principe d&#39;inertie · cas du point immobile · mouvement rectiligne uniforme (mru) physique" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 11</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Principe d&#39;inertie</h4>
+    <p>Énoncé du principe d&#39;inertie · Cas du point immobile · Mouvement rectiligne uniforme (MRU)</p>
+    <div class="chapter-tags"><span>Physique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      <article class="theme-band" data-accent="seconde">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">Thème 3</span>
+        <h3>🌊 Ondes, lumière & signaux électriques</h3>
+      </div>
+      <strong>5 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card" href="2nde_chapitre12.html" data-title="chapitre 12 émission et perception d&#39;un son production d&#39;un son · propagation du son · vitesse du son ondes" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 12</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Émission et perception d&#39;un son</h4>
+    <p>Production d&#39;un son · Propagation du son · Vitesse du son</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre13.html" data-title="chapitre 13 spectres d&#39;émission lumière blanche et dispersion · spectres d&#39;émission · longueur d&#39;onde et couleur ondes" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 13</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Spectres d&#39;émission</h4>
+    <p>Lumière blanche et dispersion · Spectres d&#39;émission · Longueur d&#39;onde et couleur</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre14.html" data-title="chapitre 14 réfraction et réflexion de la lumière réflexion de la lumière · réfraction de la lumière · loi de snell-descartes pour la réfraction physique ondes" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 14</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Réfraction et réflexion de la lumière</h4>
+    <p>Réflexion de la lumière · Réfraction de la lumière · Loi de Snell-Descartes pour la réfraction</p>
+    <div class="chapter-tags"><span>Physique</span><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre15.html" data-title="chapitre 15 lentilles minces convergentes lentilles convergentes et divergentes · foyer et distance focale · formation d&#39;une image ondes" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 15</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Lentilles minces convergentes</h4>
+    <p>Lentilles convergentes et divergentes · Foyer et distance focale · Formation d&#39;une image</p>
+    <div class="chapter-tags"><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card" href="2nde_chapitre16.html" data-title="chapitre 16 lois de l&#39;électricité courant électrique et intensité · tension électrique · loi des nœuds et loi des mailles énergie ondes" data-level="seconde">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 16</span>
+      <span class="chapter-icon">〰️</span>
+    </div>
+    <h4>Lois de l&#39;électricité</h4>
+    <p>Courant électrique et intensité · Tension électrique · Loi des nœuds et loi des mailles</p>
+    <div class="chapter-tags"><span>Énergie</span><span>Ondes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+    </section>
+
+    <section class="section" id="college" data-section="college">
+      <div class="section-head">
+        <div class="section-title"><span>📔</span><div><h2>Collège</h2><p class="lead">5 chapitres en 5ème, 5 en 4ème, 5 en 3ème.</p></div></div>
+        <div class="section-meta"><span class="pill">5ème</span><span class="pill">4ème</span><span class="pill">3ème</span></div>
+      </div>
+      <div class="college-tabs">
+        <button class="active" type="button" onclick="showCollege('5',this)">🔵 5ème</button>
+        <button type="button" onclick="showCollege('4',this)">🟢 4ème</button>
+        <button type="button" onclick="showCollege('3',this)">🟠 3ème</button>
+      </div>
+      <div class="college-panel active" id="collegePanel5">
+
+        <article class="theme-band" data-accent="college">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">5ème</span>
+        <h3>⚡ Électricité, matière et mouvement</h3>
+      </div>
+      <strong>5 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="5eme_chapitre1.html" data-title="chapitre 01 les circuits electriques courant dipoles montages serie parallele courant circuits" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">🔌</span>
+    </div>
+    <h4>Les circuits électriques</h4>
+    <p>Courant, dipôles, montages série et parallèle.</p>
+    <div class="chapter-tags"><span>Courant</span><span>Circuits</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="5eme_chapitre2.html" data-title="chapitre 02 corps purs et melanges especes chimiques melanges homogenes heterogenes corps pur melanges" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">🔬</span>
+    </div>
+    <h4>Corps purs et mélanges</h4>
+    <p>Espèces chimiques, corps purs, mélanges homogènes et hétérogènes.</p>
+    <div class="chapter-tags"><span>Corps pur</span><span>Mélanges</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="5eme_chapitre3.html" data-title="chapitre 03 separation des constituants filtration distillation chromatographie decantation separation techniques" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">⚗️</span>
+    </div>
+    <h4>Séparation des constituants</h4>
+    <p>Filtration, distillation, chromatographie, décantation.</p>
+    <div class="chapter-tags"><span>Séparation</span><span>Techniques</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="5eme_chapitre4.html" data-title="chapitre 04 etats et changements d etat solide liquide gaz fusion vaporisation solidification etats changements" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">❄️</span>
+    </div>
+    <h4>États et changements d'état</h4>
+    <p>Solide, liquide, gaz. Fusion, vaporisation, solidification.</p>
+    <div class="chapter-tags"><span>États</span><span>Changements</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="5eme_chapitre5.html" data-title="chapitre 05 caracteriser le mouvement trajectoire vitesse mouvement uniforme non uniforme vitesse trajectoire" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Caractériser le mouvement</h4>
+    <p>Trajectoire, vitesse, mouvement uniforme et non uniforme.</p>
+    <div class="chapter-tags"><span>Vitesse</span><span>Trajectoire</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      </div>
+
+        
+      <div class="college-panel" id="collegePanel4">
+
+        <article class="theme-band" data-accent="college">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">4ème</span>
+        <h3>⚡ Électricité, optique, chimie et son</h3>
+      </div>
+      <strong>8 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="4eme_chapitre1.html" data-title="chapitre 01 electricite rappels de 5eme circuits courant continu dipoles conventions circuits rappels" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">🔌</span>
+    </div>
+    <h4>Électricité : rappels de 5ème</h4>
+    <p>Révisions circuits, courant continu, dipôles, conventions.</p>
+    <div class="chapter-tags"><span>Circuits</span><span>Rappels</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre2.html" data-title="chapitre 02 ombre et lumiere sources lumineuses propagation rectiligne ombres penombres lumiere ombres" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">🌑</span>
+    </div>
+    <h4>Ombre et lumière</h4>
+    <p>Sources lumineuses, propagation rectiligne, ombres et pénombres.</p>
+    <div class="chapter-tags"><span>Lumière</span><span>Ombres</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre3.html" data-title="chapitre 03 matiere et molecules atomes molecules formules chimiques modele moleculaire molecules atomes" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">🧬</span>
+    </div>
+    <h4>Matière et molécules</h4>
+    <p>Atomes, molécules, formules chimiques, modèle moléculaire.</p>
+    <div class="chapter-tags"><span>Molécules</span><span>Atomes</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre4.html" data-title="chapitre 04 lois de l intensite et des tensions loi des noeuds loi des mailles mesures intensite tension" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">⚡</span>
+    </div>
+    <h4>Lois de l'intensité et des tensions</h4>
+    <p>Loi des nœuds, loi des mailles, mesures en circuit.</p>
+    <div class="chapter-tags"><span>Intensité</span><span>Tension</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre5.html" data-title="chapitre 05 la vitesse de la lumiere mesure ordre de grandeur annee lumiere vitesse lumiere" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">🌌</span>
+    </div>
+    <h4>La vitesse de la lumière</h4>
+    <p>Mesure, ordre de grandeur, année-lumière, c = 3×10⁸ m/s.</p>
+    <div class="chapter-tags"><span>Vitesse</span><span>Lumière</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre6.html" data-title="chapitre 06 combustions et pollution reaction de combustion produits pollution atmospherique combustion pollution" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 06</span>
+      <span class="chapter-icon">🔥</span>
+    </div>
+    <h4>Combustions et pollution</h4>
+    <p>Réaction de combustion, produits, pollution atmosphérique.</p>
+    <div class="chapter-tags"><span>Combustion</span><span>Pollution</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre7.html" data-title="chapitre 07 loi d ohm et securite resistance puissance securite electrique ohm securite" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 07</span>
+      <span class="chapter-icon">🔧</span>
+    </div>
+    <h4>Loi d'Ohm et sécurité</h4>
+    <p>Résistance, loi d'Ohm, puissance, sécurité électrique.</p>
+    <div class="chapter-tags"><span>Ohm</span><span>Sécurité</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="4eme_chapitre8.html" data-title="chapitre 08 signaux sonores son frequence hauteur timbre intensite decibels son frequence" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 08</span>
+      <span class="chapter-icon">🎵</span>
+    </div>
+    <h4>Signaux sonores</h4>
+    <p>Son, fréquence, hauteur, timbre, intensité, décibels.</p>
+    <div class="chapter-tags"><span>Son</span><span>Fréquence</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      </div>
+
+        
+      <div class="college-panel" id="collegePanel3">
+
+        <article class="theme-band" data-accent="college">
+    <div class="theme-band-head">
+      <div>
+        <span class="theme-kicker">3ème</span>
+        <h3>⚛️ Atome, mécanique, énergie et électricité</h3>
+      </div>
+      <strong>7 chapitres</strong>
+    </div>
+    <div class="chapter-grid">
+      <a class="chapter-card " href="3eme_chapitre1.html" data-title="chapitre 01 constitution de l atome et ions protons neutrons electrons isotopes ions monoatomiques atome ions" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 01</span>
+      <span class="chapter-icon">⚛️</span>
+    </div>
+    <h4>Constitution de l'atome et ions</h4>
+    <p>Protons, neutrons, électrons, isotopes, ions monoatomiques.</p>
+    <div class="chapter-tags"><span>Atome</span><span>Ions</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre2.html" data-title="chapitre 02 mouvement et vitesse trajectoire vitesse moyenne calculs mouvement vitesse" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 02</span>
+      <span class="chapter-icon">🚀</span>
+    </div>
+    <h4>Mouvement et vitesse</h4>
+    <p>Description du mouvement, trajectoire, vitesse moyenne, calculs.</p>
+    <div class="chapter-tags"><span>Mouvement</span><span>Vitesse</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre3.html" data-title="chapitre 03 energie transferts et conversions formes thermiques mecaniques electriques conservation energie transferts" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 03</span>
+      <span class="chapter-icon">⚡</span>
+    </div>
+    <h4>Énergie : transferts et conversions</h4>
+    <p>Formes, transferts thermiques, mécaniques, électriques. Conservation.</p>
+    <div class="chapter-tags"><span>Énergie</span><span>Transferts</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre4.html" data-title="chapitre 04 acides bases et ph solutions acides basiques neutres indicateurs colores ph acides" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 04</span>
+      <span class="chapter-icon">🧪</span>
+    </div>
+    <h4>Acides, bases et pH</h4>
+    <p>Solutions acides, basiques, neutres. pH, indicateurs colorés.</p>
+    <div class="chapter-tags"><span>pH</span><span>Acides</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre5.html" data-title="chapitre 05 forces et gravitation poids interactions loi de gravitation universelle forces gravitation" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 05</span>
+      <span class="chapter-icon">🌍</span>
+    </div>
+    <h4>Forces et gravitation</h4>
+    <p>Forces, poids, interactions, loi de gravitation universelle.</p>
+    <div class="chapter-tags"><span>Forces</span><span>Gravitation</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre6.html" data-title="chapitre 06 la masse volumique definition calcul flotabilite tableau de valeurs masse vol flotaison" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 06</span>
+      <span class="chapter-icon">⚖️</span>
+    </div>
+    <h4>La masse volumique</h4>
+    <p>Définition, calcul, flotabilité, tableau de valeurs courantes.</p>
+    <div class="chapter-tags"><span>Masse vol.</span><span>Flotaison</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+      <a class="chapter-card " href="3eme_chapitre7.html" data-title="chapitre 07 puissance et electricite puissance electrique energie consommee facture developpement durable puissance electricite" data-level="college">
+    <div class="chapter-top">
+      <span class="chapter-num">Chapitre 07</span>
+      <span class="chapter-icon">💡</span>
+    </div>
+    <h4>Puissance et électricité</h4>
+    <p>Puissance électrique, énergie consommée, facture, développement durable.</p>
+    <div class="chapter-tags"><span>Puissance</span><span>Électricité</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">→</span>
+    </div>
+  </a>
+    </div>
+  </article>
+      </div>
+
+      
+    </section>
+
+    <section class="section" id="pcsi" data-section="pcsi">
+      <div class="section-head">
+        <div class="section-title"><span>🔬</span><div><h2>Passerelle PCSI</h2><p class="lead">Un parcours PCSI complet : outils, physique, chimie, méthodes, quiz et chatbots universitaires.</p></div></div>
+        <div class="section-meta"><span class="pill">22 chapitres</span><span class="pill">Méthodes</span><span class="pill">Prépa</span></div>
+      </div>
+      <article class="theme-band" data-accent="cpge">
+        <div class="theme-band-head"><div><span class="theme-kicker">Transversal</span><h3>∑ Outils transversaux PCSI</h3></div><strong>3 chapitres</strong></div>
+        <div class="chapter-grid"><a class="chapter-card" href="pcsi_outils_mathematiques.html" data-title="pcsi-m00 outils mathematiques equations differentielles complexes integrales matrices developpements limites vecteurs systemes lineaires methodes exercices" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-M00</span>
+      <span class="chapter-icon">∑</span>
+    </div>
+    <h4>Outils mathématiques</h4>
+    <p>Équations différentielles, complexes, intégrales, matrices, développements limités et méthodes de calcul.</p>
+    <div class="chapter-tags"><span>Éq. diff</span><span>Complexes</span><span>Matrices</span><span>DL</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_analyse_dimensionnelle.html" data-title="pcsi-m01 Analyse dimensionnelle Dimensions, homogénéité, Buckingham-Pi, similitude et nombres sans dimension en physique-chimie. analyse dimensionnelle dimensions unites homogeneite buckingham pi similitude reynolds chimie" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-M01</span>
+      <span class="chapter-icon">D</span>
+    </div>
+    <h4>Analyse dimensionnelle</h4>
+    <p>Dimensions, homogénéité, Buckingham-Pi, similitude et nombres sans dimension en physique-chimie.</p>
+    <div class="chapter-tags"><span>Dimensions</span><span>Buckingham</span><span>Similitude</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_mesures_incertitudes.html" data-title="pcsi-m02 Mesures et incertitudes Modèle de mesure, type A/B, propagation, incertitude élargie, compatibilité et rédaction de TP. mesures incertitudes gum type a type b propagation incertitude composee elargie compatibilite" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-M02</span>
+      <span class="chapter-icon">u</span>
+    </div>
+    <h4>Mesures et incertitudes</h4>
+    <p>Modèle de mesure, type A/B, propagation, incertitude élargie, compatibilité et rédaction de TP.</p>
+    <div class="chapter-tags"><span>GUM</span><span>Type A/B</span><span>Propagation</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+</div>
+      </article>
+
+      <article class="theme-band" data-accent="cpge">
+        <div class="theme-band-head"><div><span class="theme-kicker">Physique & chimie</span><h3>Parcours officiel PCSI</h3></div><strong>19 chapitres</strong></div>
+        <div class="chapter-grid"><a class="chapter-card" href="pcsi_chapitre1.html" data-title="pcsi-p01 electrocinétique lois des circuits kirchhoff dipoles r l c impedances complexes regime sinusoidal force rc rlc filtres thevenin norton methodes exercices chatbot quiz" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P01</span>
+      <span class="chapter-icon">⚡</span>
+    </div>
+    <h4>Électrocinétique — Lois des circuits</h4>
+    <p>Kirchhoff, dipôles R L C, impédances complexes, transitoire RC, filtres et chatbot universitaire intégré.</p>
+    <div class="chapter-tags"><span>RLC</span><span>Complexes</span><span>RC</span><span>Chatbot</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre2.html" data-title="pcsi-p02 oscillateurs harmoniques & amorti oscillateur libre, amortissement, regime sinusoidal force, resonance et facteur de qualite. oscillateur harmonique amorti second ordre resonance facteur qualite regime force equation differentielle" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P02</span>
+      <span class="chapter-icon">Ω</span>
+    </div>
+    <h4>Oscillateurs harmoniques & amorti</h4>
+    <p>Oscillateur libre, amortissement, régime sinusoïdal forcé, résonance et facteur de qualité.</p>
+    <div class="chapter-tags"><span>Second ordre</span><span>Résonance</span><span>Chatbot</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre3.html" data-title="pcsi-p03 ondes electromagnetiques champs, equations de maxwell, propagation dans le vide, polarisation et energie electromagnetique. ondes electromagnetiques maxwell champ electrique magnetique propagation polarisation poynting" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P03</span>
+      <span class="chapter-icon">∿</span>
+    </div>
+    <h4>Ondes électromagnétiques</h4>
+    <p>Champs, équations de Maxwell, propagation dans le vide, polarisation et énergie électromagnétique.</p>
+    <div class="chapter-tags"><span>Maxwell</span><span>Onde</span><span>Poynting</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre4.html" data-title="pcsi-p04 optique ondulatoire avancee chemin optique, coherence, interferences, michelson, diffraction et reseaux. optique ondulatoire coherence interference michelson diffraction reseau chemin optique phase" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P04</span>
+      <span class="chapter-icon">λ</span>
+    </div>
+    <h4>Optique ondulatoire avancée</h4>
+    <p>Chemin optique, cohérence, interférences, Michelson, diffraction et réseaux.</p>
+    <div class="chapter-tags"><span>Interférences</span><span>Michelson</span><span>Réseaux</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre5.html" data-title="pcsi-p05 cinematique & reperes reperes cartesien, polaire, cylindrique et spherique ; derivation vectorielle et reperes mobiles. cinematique reperes cylindrique spherique polaire vecteur rotation vitesse acceleration mobile" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P05</span>
+      <span class="chapter-icon">r</span>
+    </div>
+    <h4>Cinématique & repères</h4>
+    <p>Repères cartésien, polaire, cylindrique et sphérique ; dérivation vectorielle et repères mobiles.</p>
+    <div class="chapter-tags"><span>Repères</span><span>Vecteurs</span><span>Mobile</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre6.html" data-title="pcsi-p06 dynamique du point — theoremes lois de newton, quantite de mouvement, travail, puissance, energie et moment cinetique. dynamique point newton forces travail puissance energie conservative moment cinetique" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P06</span>
+      <span class="chapter-icon">F</span>
+    </div>
+    <h4>Dynamique du point — Théorèmes</h4>
+    <p>Lois de Newton, quantité de mouvement, travail, puissance, énergie et moment cinétique.</p>
+    <div class="chapter-tags"><span>Newton</span><span>Énergie</span><span>Forces</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre7.html" data-title="pcsi-p07 thermodynamique approfondie systemes, premier principe, entropie, second principe, machines thermiques et cycles. thermodynamique entropie second principe premier principe machines cycles carnot rendement" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P07</span>
+      <span class="chapter-icon">S</span>
+    </div>
+    <h4>Thermodynamique approfondie</h4>
+    <p>Systèmes, premier principe, entropie, second principe, machines thermiques et cycles.</p>
+    <div class="chapter-tags"><span>Entropie</span><span>Cycles</span><span>Carnot</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie1.html" data-title="pcsi-c01 structure electronique approfondie nombres quantiques, orbitales atomiques, configurations electroniques et periodicite. structure electronique orbitales atomiques nombres quantiques configuration pauli hund ionisation" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C01</span>
+      <span class="chapter-icon">ψ</span>
+    </div>
+    <h4>Structure électronique approfondie</h4>
+    <p>Nombres quantiques, orbitales atomiques, configurations électroniques et périodicité.</p>
+    <div class="chapter-tags"><span>OA</span><span>Quantique</span><span>Périodique</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie2.html" data-title="pcsi-c02 liaison chimique & solides lewis, geometrie, orbitales moleculaires, liaisons sigma/pi et cristaux. liaison chimique solides orbitales moleculaires sigma pi cristaux lewis vsepr" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C02</span>
+      <span class="chapter-icon">σ</span>
+    </div>
+    <h4>Liaison chimique & solides</h4>
+    <p>Lewis, géométrie, orbitales moléculaires, liaisons sigma/pi et cristaux.</p>
+    <div class="chapter-tags"><span>OM</span><span>Sigma/Pi</span><span>Cristaux</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie3.html" data-title="pcsi-c03 equilibres chimiques approfondis activites, quotient reactionnel, constante d’equilibre, potentiel chimique, nernst et diagrammes e-ph. equilibre chimique activite quotient reactionnel constante equilibre delta g nernst eph" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C03</span>
+      <span class="chapter-icon">K</span>
+    </div>
+    <h4>Équilibres chimiques approfondis</h4>
+    <p>Activités, quotient réactionnel, constante d’équilibre, potentiel chimique, Nernst et diagrammes E-pH.</p>
+    <div class="chapter-tags"><span>Équilibre</span><span>Nernst</span><span>E-pH</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie4.html" data-title="pcsi-c04 chimie organique — introduction stereochimie, effets electroniques, mecanismes reactionnels et reactivite des fonctions. chimie organique stereochimie mecanisme sn1 sn2 effets inductif mesomere fonctions" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C04</span>
+      <span class="chapter-icon">C</span>
+    </div>
+    <h4>Chimie organique — Introduction</h4>
+    <p>Stéréochimie, effets électroniques, mécanismes réactionnels et réactivité des fonctions.</p>
+    <div class="chapter-tags"><span>Stéréo</span><span>Mécanismes</span><span>SN1/SN2</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre8.html" data-title="pcsi-p08 Optique géométrique Rayons lumineux, lois de Descartes, lentilles minces, instruments et limites du modèle. optique geometrique descartes lentilles conjugaison grandissement instruments" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P08</span>
+      <span class="chapter-icon">L</span>
+    </div>
+    <h4>Optique géométrique</h4>
+    <p>Rayons lumineux, lois de Descartes, lentilles minces, instruments et limites du modèle.</p>
+    <div class="chapter-tags"><span>Descartes</span><span>Lentilles</span><span>Instruments</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre9.html" data-title="pcsi-p09 Induction électromagnétique Flux magnétique, loi de Faraday, loi de Lenz, auto-induction et énergie magnétique. induction electromagnetique flux faraday lenz auto induction energie magnetique" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P09</span>
+      <span class="chapter-icon">B</span>
+    </div>
+    <h4>Induction électromagnétique</h4>
+    <p>Flux magnétique, loi de Faraday, loi de Lenz, auto-induction et énergie magnétique.</p>
+    <div class="chapter-tags"><span>Flux</span><span>Faraday</span><span>Lenz</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre10.html" data-title="pcsi-p10 Statique des fluides et corps pur Pression, poussée d’Archimède, diagrammes d’état, transitions de phase et bilans énergétiques. statique fluides pression archimede corps pur phases changements etat clapeyron" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P10</span>
+      <span class="chapter-icon">ρ</span>
+    </div>
+    <h4>Statique des fluides et corps pur</h4>
+    <p>Pression, poussée d’Archimède, diagrammes d’état, transitions de phase et bilans énergétiques.</p>
+    <div class="chapter-tags"><span>Pression</span><span>Archimède</span><span>Phases</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chapitre11.html" data-title="pcsi-p11 Moment cinétique et solide Moments, forces centrales, conservation du moment cinétique et rotation autour d’un axe fixe. moment cinetique force centrale solide rotation moment inertie equilibre" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-P11</span>
+      <span class="chapter-icon">M</span>
+    </div>
+    <h4>Moment cinétique et solide</h4>
+    <p>Moments, forces centrales, conservation du moment cinétique et rotation autour d’un axe fixe.</p>
+    <div class="chapter-tags"><span>Moment</span><span>Forces centrales</span><span>Solide</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie5.html" data-title="pcsi-c05 Acido-basicité et dosages pH, couples acide-base, domaines de prédominance, solutions tampons et dosages. acide base ph pka dosage equivalence tampon predominance" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C05</span>
+      <span class="chapter-icon">pH</span>
+    </div>
+    <h4>Acido-basicité et dosages</h4>
+    <p>pH, couples acide-base, domaines de prédominance, solutions tampons et dosages.</p>
+    <div class="chapter-tags"><span>pH</span><span>Dosages</span><span>Tampons</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie6.html" data-title="pcsi-c06 Précipitation et complexation Produit de solubilité, quotient ionique, complexes, constantes globales et effets de couplage. precipitation solubilite produit solubilite complexation ligand constante beta" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C06</span>
+      <span class="chapter-icon">Ks</span>
+    </div>
+    <h4>Précipitation et complexation</h4>
+    <p>Produit de solubilité, quotient ionique, complexes, constantes globales et effets de couplage.</p>
+    <div class="chapter-tags"><span>Ks</span><span>Complexes</span><span>Solubilité</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie7.html" data-title="pcsi-c07 Oxydoréduction et électrochimie Demi-équations, potentiel de Nernst, piles, électrolyse et influence du pH. oxydoreduction electrochimie nernst pile electrolyse potentiel faraday" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C07</span>
+      <span class="chapter-icon">E</span>
+    </div>
+    <h4>Oxydoréduction et électrochimie</h4>
+    <p>Demi-équations, potentiel de Nernst, piles, électrolyse et influence du pH.</p>
+    <div class="chapter-tags"><span>Nernst</span><span>Piles</span><span>Électrolyse</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+<a class="chapter-card" href="pcsi_chimie8.html" data-title="pcsi-c08 Cinétique chimique et thermochimie Lois de vitesse, ordres, Arrhenius, bilans enthalpiques et loi de Hess. cinetique chimique ordre vitesse arrhenius thermochimie enthalpie hess" data-level="cpge">
+    <div class="chapter-top">
+      <span class="chapter-num">PCSI-C08</span>
+      <span class="chapter-icon">k</span>
+    </div>
+    <h4>Cinétique chimique et thermochimie</h4>
+    <p>Lois de vitesse, ordres, Arrhenius, bilans enthalpiques et loi de Hess.</p>
+    <div class="chapter-tags"><span>Cinétique</span><span>Arrhenius</span><span>Hess</span></div>
+    <div class="chapter-foot">
+      <span>Ouvrir</span>
+      <span aria-hidden="true">&rarr;</span>
+    </div>
+  </a>
+</div>
+      </article>
+    </section>
+
+    <section class="revision-zone" id="revisions" data-section="revisions">
+      <div class="section-head">
+        <div class="section-title"><span>📖</span><div><h2>Révisions</h2><p class="lead">Un accès visible pour les élèves qui viennent travailler vite.</p></div></div>
+        <a class="mini-btn" href="revision.html">Ouvrir revision.html →</a>
+      </div>
+      <div class="revision-grid">
+        <a href="revision.html" class="revision-tile" data-accent="terminale">
+          <span>🎓</span>
+          <div><strong>Terminale</strong><small>19 chapitres · Spé Bac</small></div>
+          <div class="rev-bar"></div>
+        </a>
+        <a href="revision.html" class="revision-tile" data-accent="premiere">
+          <span>📗</span>
+          <div><strong>Première</strong><small>18 chapitres · Spé</small></div>
+          <div class="rev-bar"></div>
+        </a>
+        <a href="revision.html" class="revision-tile" data-accent="seconde">
+          <span>📙</span>
+          <div><strong>Seconde</strong><small>16 chapitres · Lycée</small></div>
+          <div class="rev-bar"></div>
+        </a>
+        <a href="revision.html" class="revision-tile" data-accent="college">
+          <span>📔</span>
+          <div><strong>Collège</strong><small>15 chapitres · 5e-3e</small></div>
+          <div class="rev-bar"></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="prof-zone" id="professeurs" data-section="professeurs">
+      <div class="section-head">
+        <div class="section-title"><span>🏫</span><div><h2>Espace professeur</h2><p class="lead">Même partie prof, séparée du parcours élève pour éviter la confusion.</p></div></div>
+        <button class="mini-btn" type="button" onclick="openProfModal()">Accéder →</button>
+      </div>
+      <div class="prof-console">
+        <div class="prof-login">
+          <strong>Console pédagogique</strong>
+          <p>Ressources, progressions, évaluations et suivi sont rassemblés ici.</p>
+          <button class="mini-btn" type="button" onclick="openProfModal()">Déverrouiller</button>
+        </div>
+        <div class="resource-grid">
+          <div class="resource"><span>📄</span><strong>Fiches</strong><small>Cours PDF</small></div>
+          <div class="resource"><span>🔬</span><strong>TP</strong><small>Protocoles</small></div>
+          <div class="resource"><span>📝</span><strong>Évaluations</strong><small>Sujets corrigés</small></div>
+          <div class="resource"><span>📊</span><strong>Progression</strong><small>Année</small></div>
+          <div class="resource"><span>🎯</span><strong>Compétences</strong><small>APP ANA REA</small></div>
+          <div class="resource"><span>📁</span><strong>Archives</strong><small>Ressources</small></div>
+        </div>
+      </div>
+      <div id="profDashboard" class="teacher-stats">
+        <div><strong>19</strong><span>Terminale</span></div>
+        <div><strong>18</strong><span>Première</span></div>
+        <div><strong>16</strong><span>Seconde</span></div>
+        <div><strong>15</strong><span>Collège</span></div>
+      </div>
+    </section>
+    <div class="no-results" id="noResults">Aucun chapitre ne correspond à cette recherche.</div>
+    <footer>
+      <span>© 2026-2027 La Physique Chimie au LFC · M. Borsali · Le Cercle d'El Abilli</span>
+      <span><a href="revision.html">Révisions</a><a href="#professeurs">Prof</a><a href="#home">Haut</a></span>
+    </footer>
+  </main>
+</div>
+
+<div class="modal-overlay" id="profModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Espace professeur</h3>
+      <button class="close" type="button" onclick="closeProfModal()">✕</button>
+    </div>
+    <p>Entrez le mot de passe pour afficher la console pédagogique.</p>
+    <input id="profPass" type="password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkProf()">
+    <button class="mini-btn" type="button" onclick="checkProf()">Accéder</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="studentModal">
+  <div class="modal" style="width:min(480px,94vw)">
+    <div class="modal-head">
+      <h3>👤 Mon espace élève</h3>
+      <button class="close" type="button" onclick="closeStudentModal()">✕</button>
+    </div>
+    <div id="stuAuthTabs">
+      <div class="student-tabs">
+        <button class="student-tab active" id="stuTabLogin" onclick="switchStudentTab('Login')">Se connecter</button>
+        <button class="student-tab" id="stuTabRegister" onclick="switchStudentTab('Register')">S'inscrire</button>
+      </div>
+      <div class="student-panel active" id="stuPanelLogin">
+        <input class="stu-field" id="stuLogEmail" type="email" placeholder="Email" autocomplete="email">
+        <input class="stu-field" id="stuLogPass" type="password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginStudent()">
+        <div class="stu-err" id="stuLogErr"></div>
+        <button class="stu-btn" type="button" onclick="loginStudent()">Se connecter</button>
+      </div>
+      <div class="student-panel" id="stuPanelRegister">
+        <input class="stu-field" id="stuRegName" type="text" placeholder="Prénom et nom" autocomplete="name">
+        <input class="stu-field" id="stuRegEmail" type="email" placeholder="prenom.nom@lfcaire.net" autocomplete="email">
+        <input class="stu-field" id="stuRegPass" type="password" placeholder="Mot de passe (4 car. min.)" autocomplete="new-password" onkeydown="if(event.key==='Enter')registerStudent()">
+        <div class="stu-err" id="stuRegErr"></div>
+        <button class="stu-btn" type="button" onclick="registerStudent()">Créer mon compte</button>
+        <p style="font-size:11px;color:var(--muted);margin:10px 0 0;text-align:center">Tout est stocké localement sur cet appareil. Aucune donnée n'est envoyée sur internet.</p>
+      </div>
+    </div>
+    <div id="stuDash" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+function jumpTo(target){
+  var el=document.querySelector(target);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleTheme(){
+  var current=document.documentElement.getAttribute('data-theme')||'light';
+  var next=current==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('physichem_theme',next);
+  document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';
+}
+function openProfModal(){
+  document.getElementById('profModal').classList.add('open');
+  setTimeout(function(){document.getElementById('profPass').focus();},60);
+}
+function closeProfModal(){
+  document.getElementById('profModal').classList.remove('open');
+}
+function checkProf(){
+  var input=document.getElementById('profPass');
+  var value=input.value.trim();
+  if(value==='Iliana13@13'){
+    closeProfModal();
+    document.getElementById('profDashboard').classList.add('visible');
+    jumpTo('#professeurs');
+  }else{
+    input.style.borderColor='var(--cpge)';
+  }
+}
+function showCollege(level,button){
+  document.querySelectorAll('.college-panel').forEach(function(panel){panel.classList.remove('active');});
+  document.getElementById('collegePanel'+level).classList.add('active');
+  document.querySelectorAll('.college-tabs button').forEach(function(btn){btn.classList.remove('active');});
+  button.classList.add('active');
+}
+function applySearch(){
+  var input=document.getElementById('searchInput');
+  var query=input.value.trim().toLowerCase();
+  var cards=Array.prototype.slice.call(document.querySelectorAll('.chapter-card'));
+  var visible=0;
+  cards.forEach(function(card){
+    var ok=!query||card.dataset.title.indexOf(query)!==-1;
+    card.style.display=ok?'flex':'none';
+    if(ok) visible++;
+  });
+  document.getElementById('searchCount').textContent=visible+' carte'+(visible>1?'s':'');
+  document.getElementById('noResults').style.display=visible?'none':'block';
+}
+function setupNavSpy(){
+  var links=Array.prototype.slice.call(document.querySelectorAll('.sidebar a[data-nav]'));
+  var sections=Array.prototype.slice.call(document.querySelectorAll('[data-section]'));
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting) return;
+      links.forEach(function(link){link.classList.remove('active');});
+      var active=document.querySelector('.sidebar a[data-nav="'+entry.target.dataset.section+'"]');
+      if(active) active.classList.add('active');
+    });
+  },{threshold:.25});
+  sections.forEach(function(section){observer.observe(section);});
+}
+function drawScience(){
+  var canvas=document.getElementById('scienceCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var colors=['#2f9fca','#2ca66f','#d07b35','#7567c7','#c5483f'];
+  var points=[];
+  function resize(){
+    var rect=canvas.getBoundingClientRect();
+    canvas.width=Math.max(1,Math.floor(rect.width*devicePixelRatio));
+    canvas.height=Math.max(1,Math.floor(rect.height*devicePixelRatio));
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    points=Array.from({length:34},function(_,i){
+      return {x:Math.random()*rect.width,y:Math.random()*rect.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,c:colors[i%colors.length],r:2+Math.random()*3};
+    });
+  }
+  function frame(){
+    var rect=canvas.getBoundingClientRect();
+    ctx.clearRect(0,0,rect.width,rect.height);
+    points.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<18||p.x>rect.width-18)p.vx*=-1;
+      if(p.y<18||p.y>rect.height-18)p.vy*=-1;
+    });
+    for(var i=0;i<points.length;i++){
+      for(var j=i+1;j<points.length;j++){
+        var a=points[i],b=points[j];
+        var dx=a.x-b.x,dy=a.y-b.y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<115){
+          ctx.strokeStyle='rgba(80,103,142,'+(1-d/115)*.32+')';
+          ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    points.forEach(function(p){
+      ctx.fillStyle=p.c;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  frame();
+}
+function drawSciencePremium(){
+  var canvas=document.getElementById('scienceCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var COLORS=['#2f9fca','#2ca66f','#d07b35','#7567c7','#c5483f'];
+  var FORMULAS=[
+    'E = mc²','F = ma','pH = -log[H⁺]','λ · f = c',
+    'ΔG = ΔH − TΔS','n = m/M','v = d/Δt','C = n/V',
+    'PV = nRT','U = RI','σ = U/I','Kₐ = [produits]/[réactifs]',
+    'ΔH < 0','τ = RC','F = k·q₁q₂/r²',
+    'λ = h/mv','A = εℓC','ω = 2πf'
+  ];
+  var particles=[], formulas=[], t=0;
+
+  function resize(){
+    var rect=canvas.getBoundingClientRect();
+    canvas.width=Math.max(1,Math.floor(rect.width*devicePixelRatio));
+    canvas.height=Math.max(1,Math.floor(rect.height*devicePixelRatio));
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    var w=rect.width, h=rect.height;
+    particles=Array.from({length:50},function(_,i){
+      return {
+        x:30+Math.random()*(w-60), y:30+Math.random()*(h-60),
+        vx:(Math.random()-.5)*.48, vy:(Math.random()-.5)*.42,
+        c:COLORS[i%5], r:2+Math.random()*4, level:i%5, pulse:Math.random()*Math.PI*2
+      };
+    });
+    formulas=FORMULAS.map(function(txt,i){
+      return {
+        text:txt, x:40+Math.random()*(w-100), y:40+Math.random()*(h-80),
+        vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.16,
+        alpha:0.13+Math.random()*0.16, phase:Math.random()*Math.PI*2,
+        size:10+Math.random()*7, c:COLORS[i%5]
+      };
+    });
+  }
+
+  function frame(){
+    var rect=canvas.getBoundingClientRect();
+    var w=rect.width, h=rect.height;
+    t++;
+    ctx.clearRect(0,0,w,h);
+
+    /* gradient background */
+    var grad=ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0,'rgba(47,159,202,.10)');
+    grad.addColorStop(.5,'rgba(117,103,199,.07)');
+    grad.addColorStop(1,'rgba(197,72,63,.10)');
+    ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
+
+    /* subtle grid */
+    ctx.strokeStyle='rgba(80,103,142,.07)'; ctx.lineWidth=1;
+    for(var gx=0;gx<w;gx+=32){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
+    for(var gy=0;gy<h;gy+=32){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
+
+    /* floating formulas */
+    formulas.forEach(function(f){
+      f.x+=f.vx; f.y+=f.vy;
+      if(f.x<-80) f.x=w+30; if(f.x>w+80) f.x=-30;
+      if(f.y<-30) f.y=h+20; if(f.y>h+30) f.y=-20;
+      var a=f.alpha*(0.65+0.35*Math.sin(t*.018+f.phase));
+      ctx.save();
+      ctx.globalAlpha=a;
+      ctx.font='italic bold '+f.size+'px "Instrument Sans",monospace';
+      ctx.fillStyle=f.c;
+      ctx.fillText(f.text,f.x,f.y);
+      ctx.restore();
+    });
+
+    /* update particles */
+    particles.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<18||p.x>w-18) p.vx*=-1;
+      if(p.y<18||p.y>h-18) p.vy*=-1;
+      p.pulse+=0.038;
+    });
+
+    /* connections within same level */
+    ctx.lineWidth=1;
+    for(var i=0;i<particles.length;i++){
+      for(var j=i+1;j<particles.length;j++){
+        var a2=particles[i],b=particles[j];
+        if(a2.level!==b.level) continue;
+        var dx=a2.x-b.x, dy=a2.y-b.y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<105){
+          ctx.strokeStyle=a2.c;
+          ctx.globalAlpha=(1-d/105)*.24;
+          ctx.beginPath(); ctx.moveTo(a2.x,a2.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          ctx.globalAlpha=1;
+        }
+      }
+    }
+
+    /* particles */
+    particles.forEach(function(p){
+      var r=p.r*(1+0.14*Math.sin(p.pulse));
+      ctx.save();
+      ctx.shadowColor=p.c; ctx.shadowBlur=10; ctx.globalAlpha=0.18;
+      ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,r*2.4,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.globalAlpha=0.88;
+      ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=1;
+    });
+
+    /* EM wave */
+    ctx.save();
+    ctx.strokeStyle='rgba(47,159,202,.30)'; ctx.lineWidth=1.6;
+    ctx.beginPath();
+    for(var x=0;x<w;x+=4){
+      var y=h*.66+Math.sin((x+t*.75)*.027)*15+Math.sin((x+t*.48)*.058)*6;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='rgba(208,123,53,.22)'; ctx.lineWidth=1.2;
+    ctx.beginPath();
+    for(var x2=0;x2<w;x2+=4){
+      var y2=h*.78+Math.sin((x2+t*.62)*.034)*10+Math.cos((x2+t*.38)*.072)*5;
+      x2===0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    requestAnimationFrame(frame);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  frame();
+}
+function setupCardMagnetism(){
+  document.querySelectorAll('.chapter-card,.level-tile,.revision-tile').forEach(function(card){
+    card.addEventListener('pointermove',function(event){
+      var rect=card.getBoundingClientRect();
+      var x=(event.clientX-rect.left)/rect.width-.5;
+      var y=(event.clientY-rect.top)/rect.height-.5;
+      card.style.transform='translateY(-4px) rotateX('+(-y*2.4)+'deg) rotateY('+(x*2.4)+'deg)';
+    });
+    card.addEventListener('pointerleave',function(){card.style.transform='';});
+  });
+}
+(function init(){
+  var theme=localStorage.getItem('physichem_theme')||'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeBtn').textContent=theme==='dark'?'☀️':'🌙';
+  document.getElementById('searchInput').addEventListener('input',applySearch);
+  document.getElementById('profModal').addEventListener('click',function(event){if(event.target===event.currentTarget)closeProfModal();});
+  applySearch();
+  setupNavSpy();
+  drawSciencePremium();
+  setupCardMagnetism();
+})();
+</script>
+<script>
+/* ===== STUDENT AUTH SYSTEM ===== */
+var STU_STORE='physichem_students';
+var STU_CURRENT='physichem_current';
+var STU_PROGRESS='physichem_progress';
+
+function stuGet(){try{return JSON.parse(localStorage.getItem(STU_STORE)||'[]');}catch(e){return[];}}
+function stuCurrent(){return localStorage.getItem(STU_CURRENT)||null;}
+function stuProgress(){try{return JSON.parse(localStorage.getItem(STU_PROGRESS)||'{}');}catch(e){return{};}}
+
+function openStudentModal(){
+  var curr=stuCurrent();
+  document.getElementById('stuAuthTabs').style.display=curr?'none':'';
+  document.getElementById('stuDash').style.display=curr?'block':'none';
+  if(curr) renderStudentDashboard();
+  document.getElementById('studentModal').classList.add('open');
+}
+function closeStudentModal(){
+  document.getElementById('studentModal').classList.remove('open');
+}
+function switchStudentTab(tab){
+  document.querySelectorAll('#studentModal .student-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('stuTab'+tab).classList.add('active');
+  document.querySelectorAll('#studentModal .student-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('stuPanel'+tab).classList.add('active');
+}
+
+function registerStudent(){
+  var name=document.getElementById('stuRegName').value.trim();
+  var email=document.getElementById('stuRegEmail').value.trim().toLowerCase();
+  var pass=document.getElementById('stuRegPass').value;
+  var err=document.getElementById('stuRegErr');
+  if(!name||!email||!pass){err.textContent='Tous les champs sont requis.';return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)){err.textContent='Email invalide.';return;}
+  if(!email.endsWith('@lfcaire.net')){err.textContent='Seul un email @lfcaire.net est accepté.';return;}
+  if(pass.length<4){err.textContent='Mot de passe trop court (4 car. min).';return;}
+  var students=stuGet();
+  if(students.find(function(s){return s.email===email;})){err.textContent='Cet email est déjà utilisé.';return;}
+  students.push({name:name,email:email,password:pass});
+  localStorage.setItem(STU_STORE,JSON.stringify(students));
+  localStorage.setItem(STU_CURRENT,email);
+  err.textContent='';
+  updateStudentBtn(students[students.length-1]);
+  renderStudentDashboard();
+  applyAuthLock();
+  updateVisitedCards();
+}
+
+function loginStudent(){
+  var email=document.getElementById('stuLogEmail').value.trim().toLowerCase();
+  var pass=document.getElementById('stuLogPass').value;
+  var err=document.getElementById('stuLogErr');
+  var found=stuGet().find(function(s){return s.email===email&&s.password===pass;});
+  if(!found){err.textContent='Email ou mot de passe incorrect.';return;}
+  if(!found.email.endsWith('@lfcaire.net')){err.textContent='Seul un compte @lfcaire.net est autorisé.';return;}
+  localStorage.setItem(STU_CURRENT,email);
+  err.textContent='';
+  updateStudentBtn(found);
+  renderStudentDashboard();
+  applyAuthLock();
+  updateVisitedCards();
+}
+
+function logoutStudent(){
+  localStorage.removeItem(STU_CURRENT);
+  ['stuLogEmail','stuLogPass','stuRegName','stuRegEmail','stuRegPass'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  ['stuLogErr','stuRegErr'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.textContent='';
+  });
+  document.getElementById('stuDash').style.display='none';
+  document.getElementById('stuAuthTabs').style.display='';
+  updateStudentBtn(null);
+  applyAuthLock();
+  updateVisitedCards();
+}
+
+function renderStudentDashboard(){
+  var email=stuCurrent();
+  if(!email) return;
+  var student=stuGet().find(function(s){return s.email===email;});
+  if(!student){logoutStudent();return;}
+  var progress=stuProgress();
+  var visited=progress[email]||{};
+  var total=document.querySelectorAll('.chapter-card[href]').length;
+  var visitedCount=Object.keys(visited).length;
+  var pct=total>0?Math.round(visitedCount/total*100):0;
+
+  var levels=[
+    {key:'terminale',label:'Tle',n:19},
+    {key:'premiere',label:'1ère',n:18},
+    {key:'seconde',label:'2nde',n:16},
+    {key:'college',label:'Coll.',n:15},
+    {key:'cpge',label:'PCSI',n:22}
+  ];
+  var lvlHTML='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:18px;">';
+  levels.forEach(function(lvl){
+    var cards=document.querySelectorAll('.chapter-card[data-level="'+lvl.key+'"]');
+    var cnt=0;
+    cards.forEach(function(c){if(visited[c.getAttribute('href')])cnt++;});
+    var lp=lvl.n>0?Math.round(cnt/lvl.n*100):0;
+    lvlHTML+='<div style="text-align:center;padding:10px 4px;border:1px solid var(--line);border-radius:8px;background:var(--'+lvl.key+'-bg);">'
+      +'<div style="font-size:17px;font-weight:900;color:var(--'+lvl.key+');">'+lp+'%</div>'
+      +'<div style="font-size:9px;font-weight:800;color:var(--muted);margin-top:2px;">'+lvl.label+'</div>'
+      +'<div style="height:4px;border-radius:4px;background:var(--line);margin-top:5px;overflow:hidden;">'
+        +'<div style="height:100%;width:'+lp+'%;background:var(--'+lvl.key+');transition:.6s;border-radius:4px;"></div>'
+      +'</div>'
+    +'</div>';
+  });
+  lvlHTML+='</div>';
+
+  var dash=document.getElementById('stuDash');
+  document.getElementById('stuAuthTabs').style.display='none';
+  dash.style.display='block';
+  dash.innerHTML=
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">'
+      +'<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--terminale),var(--college));display:grid;place-items:center;font-size:22px;flex-shrink:0;">&#128100;</div>'
+      +'<div><strong style="display:block;font-size:17px;">'+student.name+'</strong>'
+      +'<small style="color:var(--muted);font-size:12px;">'+student.email+'</small></div>'
+    +'</div>'
+    +'<div style="margin-bottom:18px;">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:7px;">'
+        +'<span style="font-size:13px;font-weight:800;">Progression globale</span>'
+        +'<span style="font-size:13px;color:var(--terminale);font-weight:800;">'+visitedCount+' / '+total+' chapitres</span>'
+      +'</div>'
+      +'<div style="height:10px;border-radius:8px;background:var(--line-strong);overflow:hidden;">'
+        +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--terminale),var(--college));transition:.7s;border-radius:8px;"></div>'
+      +'</div>'
+    +'</div>'
+    +lvlHTML
+    +'<button class="mini-btn" type="button" onclick="logoutStudent()" style="width:100%;text-align:center;padding:11px;">Se déconnecter</button>';
+}
+
+function updateStudentBtn(student){
+  var btn=document.getElementById('studentBtn');
+  if(!btn) return;
+  if(student){
+    btn.textContent='👤 '+student.name.split(' ')[0];
+    btn.classList.add('logged-in');
+  } else {
+    btn.textContent='👤 Mon espace';
+    btn.classList.remove('logged-in');
+  }
+}
+
+function updateVisitedCards(){
+  var email=stuCurrent();
+  var visited=email?(stuProgress()[email]||{}):{};
+  document.querySelectorAll('.chapter-card[href]').forEach(function(card){
+    var href=card.getAttribute('href');
+    var badge=card.querySelector('.visit-badge');
+    if(visited[href]){
+      card.classList.add('chapter-visited');
+      if(!badge){
+        badge=document.createElement('div');
+        badge.className='visit-badge';
+        badge.innerHTML='&#10003;';
+        card.appendChild(badge);
+      }
+    } else {
+      card.classList.remove('chapter-visited');
+      if(badge) badge.parentNode.removeChild(badge);
+    }
+  });
+}
+
+function markChapterVisited(href){
+  var email=stuCurrent();
+  if(!email||!href) return;
+  var progress=stuProgress();
+  if(!progress[email]) progress[email]={};
+  if(!progress[email][href]){
+    progress[email][href]=Date.now();
+    localStorage.setItem(STU_PROGRESS,JSON.stringify(progress));
+    updateVisitedCards();
+  }
+}
+
+function applyAuthLock(){
+  var loggedIn=!!stuCurrent();
+  var banner=document.getElementById('authBanner');
+  if(banner) banner.classList.toggle('visible',!loggedIn);
+  document.querySelectorAll('.chapter-card').forEach(function(card){
+    var existingLock=card.querySelector('.lock-badge');
+    if(loggedIn){
+      // Restore href
+      var saved=card.getAttribute('data-href');
+      if(saved){card.setAttribute('href',saved);card.removeAttribute('data-href');}
+      card.classList.remove('chapter-locked');
+      if(existingLock) existingLock.parentNode.removeChild(existingLock);
+    } else {
+      // Save and remove href
+      var href=card.getAttribute('href');
+      if(href&&href!=='#'&&!card.getAttribute('data-href')) card.setAttribute('data-href',href);
+      card.setAttribute('href','#');
+      card.classList.add('chapter-locked');
+      if(!existingLock){
+        var badge=document.createElement('div');
+        badge.className='lock-badge';
+        badge.innerHTML='&#128274;';
+        card.appendChild(badge);
+      }
+    }
+  });
+}
+
+document.addEventListener('click',function(e){
+  var card=e.target.closest&&e.target.closest('.chapter-card');
+  if(!card) return;
+  if(card.classList.contains('chapter-locked')){
+    e.preventDefault();
+    openStudentModal();
+    return;
+  }
+  var href=card.getAttribute('href');
+  if(href) markChapterVisited(href);
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+  var modal=document.getElementById('studentModal');
+  if(modal) modal.addEventListener('click',function(e){if(e.target===modal)closeStudentModal();});
+  var curr=stuCurrent();
+  if(curr){
+    var s=stuGet().find(function(x){return x.email===curr;});
+    if(s) updateStudentBtn(s);
+  }
+  applyAuthLock();
+  updateVisitedCards();
+});
+/* ===== END STUDENT AUTH SYSTEM ===== */
+</script>
+
+<style>
+.sci-quote{
+  font-size:10.5px;line-height:1.5;
+  padding:4px 0 4px 9px;
+  border-left:2px solid var(--terminale);
+  margin-bottom:7px;
+  color:var(--muted);
+}
+[data-level="premiere"] .sci-quote{border-color:var(--premiere)}
+[data-level="seconde"]  .sci-quote{border-color:var(--seconde)}
+[data-level="college"]  .sci-quote{border-color:var(--college)}
+[data-level="cpge"]     .sci-quote{border-color:var(--cpge)}
+.sci-quote em{font-style:italic;display:block;margin-bottom:2px}
+.sci-quote strong{font-size:9.5px;font-weight:800;opacity:.72;display:block}
+</style>
+<script>
+(function(){
+var Q={
+"Term_chapitre1.html":   {q:"L'acide et la base s'équilibrent, comme le ciel et la terre.",                                   a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"Term_chapitre2.html":   {q:"La lumière révèle la nature de toute chose sans la modifier.",                                   a:"Ibn al-Haytham (965–1040) · père de l'optique · Bassora"},
+"Term_chapitre3.html":   {q:"Mesurer avec précision, c'est penser avec rigueur.",                                             a:"Al-Biruni (973–1048) · physicien et astronome"},
+"Term_chapitre4.html":   {q:"La transformation de la matière obéit à des lois que la patience seule révèle.",                a:"Al-Razi (865–925) · père de la chimie expérimentale"},
+"Term_chapitre5.html":   {q:"Dans le noyau de la matière se cache une énergie qui dépasse l'imagination.",                   a:"El Abilli (1282–1356) · mathématicien et astronome · Tlemcen"},
+"Term_chapitre6.html":   {q:"Tout système tend vers son état le plus stable, comme l'eau vers les bas-fonds.",                a:"Ibn Rushd / Averroes (1126–1198) · philosophe · Cordoue"},
+"Term_chapitre7.html":   {q:"Forcer la nature à changer d'état, c'est comprendre ses secrets les plus profonds.",            a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"Term_chapitre8.html":   {q:"L'art de créer de nouvelles substances est le plus noble des arts humains.",                    a:"Al-Razi (865–925) · alchimiste et médecin"},
+"Term_chapitre9.html":   {q:"Le mouvement est la marque de toute chose vivante dans l'univers.",                             a:"Ibn Bajja / Avempace (1085–1138) · physicien-philosophe · Saragosse"},
+"Term_chapitre10.html":  {q:"Toute chose est attirée vers le centre de la Terre par une force invisible mais mesurable.",    a:"Al-Khazini (XIIe s.) · mécanicien et physicien"},
+"Term_chapitre11.html":  {q:"Les astres se meuvent selon des lois mathématiques inscrites dans le ciel.",                    a:"Al-Battani (858–929) · astronome · Al-Raqqa"},
+"Term_chapitre12.html":  {q:"L'eau, dans sa fluidité, enseigne à la science ses premières lois.",                            a:"El Maqqari (1578–1632) · savant et historien · Tlemcen"},
+"Term_chapitre13.html":  {q:"La chaleur est un mouvement invisible des parties les plus fines de la matière.",               a:"Ibn Sina / Avicenne (980–1037) · médecin et philosophe"},
+"Term_chapitre14.html":  {q:"La chaleur se transmet du plus chaud vers le plus froid, comme la sagesse du maître vers l'élève.",a:"Al-Kindi (801–873) · premier philosophe arabe"},
+"Term_chapitre15.html":  {q:"Le son est une vibration de l'air qui frappe l'oreille et touche l'âme.",                      a:"Al-Farabi (872–950) · musicien et savant · Farab"},
+"Term_chapitre16.html":  {q:"La lumière, telle une onde, contourne les obstacles et révèle sa nature profonde.",             a:"Ibn al-Haytham (965–1040) · Kitab al-Manazir"},
+"Term_chapitre17.html":  {q:"L'œil, armé de lentilles, peut atteindre les étoiles sans les toucher.",                       a:"Ibn al-Haytham (965–1040) · père de l'optique · Bassora"},
+"Term_chapitre18.html":  {q:"La lumière et la matière échangent de l'énergie grain par grain.",                              a:"Ibn Khaldun (1332–1406) · philosophe · élève d'El Abilli · Tlemcen"},
+"Term_chapitre19.html":  {q:"L'énergie accumulée attend, comme la connaissance dans un livre fermé.",                        a:"El Abilli (1282–1356) · mathématicien et astronome · Tlemcen"},
+
+"1ere_chapitre1.html":   {q:"Compter les atomes, c'est compter les briques de l'univers.",                                   a:"Al-Khawarizmi (780–850) · père de l'algèbre · Khwarezm"},
+"1ere_chapitre2.html":   {q:"L'oxydation et la réduction sont deux faces d'un même échange.",                                a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"1ere_chapitre3.html":   {q:"La méthode est la moitié de la science. Qui suit l'ordre trouve la solution.",                  a:"Al-Khawarizmi (780–850) · al-Kitab al-mukhtasar"},
+"1ere_chapitre4.html":   {q:"La couleur est le langage de la chimie. Quand elle change, la transformation est complète.",   a:"Al-Razi (865–925) · père de la chimie expérimentale"},
+"1ere_chapitre5.html":   {q:"La forme détermine la fonction. En chimie comme en architecture, la structure est tout.",       a:"Ibn Rushd / Averroes (1126–1198) · philosophe et médecin"},
+"1ere_chapitre6.html":   {q:"Ce qui maintient la matière ensemble est aussi mystérieux que ce qui la sépare.",               a:"El Maqqari (1578–1632) · savant · Tlemcen"},
+"1ere_chapitre7.html":   {q:"Dans chaque molécule organique, la vie a écrit ses instructions en atomes liés.",               a:"Ibn Sina / Avicenne (980–1037) · Al-Qanun fi al-Tibb"},
+"1ere_chapitre8.html":   {q:"Reproduire ce que la nature crée, c'est en comprendre les mécanismes secrets.",                a:"Jabir ibn Hayyan (721–815) · Kitab al-Kimya"},
+"1ere_chapitre9.html":   {q:"Le feu est la première réaction chimique que l'homme a apprivoisée.",                           a:"Al-Razi (865–925) · alchimiste · Rey"},
+"1ere_chapitre10.html":  {q:"L'univers est tissé d'interactions invisibles, plus réelles que tout ce qu'on peut toucher.",   a:"Al-Farabi (872–950) · al-Madina al-Fadila"},
+"1ere_chapitre11.html":  {q:"L'eau au repos révèle autant de secrets que l'eau en mouvement.",                               a:"Al-Khazini (XIIe s.) · Kitab Mizan al-Hikma"},
+"1ere_chapitre12.html":  {q:"Comprendre le mouvement, c'est comprendre le temps et l'espace à la fois.",                    a:"Ibn Bajja / Avempace (1085–1138) · physicien-philosophe"},
+"1ere_chapitre13.html":  {q:"L'énergie électrique, invisible et puissante, obéit à des lois d'une précision absolue.",      a:"El Abilli (1282–1356) · mathématicien · Tlemcen"},
+"1ere_chapitre14.html":  {q:"L'énergie ne disparaît jamais : elle change seulement de visage.",                              a:"Ibn Khaldun (1332–1406) · élève d'El Abilli · Tlemcen"},
+"1ere_chapitre15.html":  {q:"Une onde est un message que la matière envoie à distance sans se déplacer.",                   a:"Al-Farabi (872–950) · musicien et philosophe"},
+"1ere_chapitre16.html":  {q:"Une lentille bien taillée peut rassembler la lumière du soleil en un seul point.",              a:"Ibn al-Haytham (965–1040) · père de l'optique"},
+"1ere_chapitre17.html":  {q:"Les couleurs sont les habits de la lumière. Chacune cache une longueur d'onde.",               a:"Ibn al-Haytham (965–1040) · Kitab al-Manazir"},
+"1ere_chapitre18.html":  {q:"La lumière est à la fois rayon et onde. La nature aime les paradoxes.",                        a:"El Abilli (1282–1356) · savant universel · Tlemcen"},
+
+"2nde_chapitre1.html":   {q:"La pureté d'une substance, comme la pureté de l'esprit, s'obtient par un travail patient.",   a:"El Maqqari (1578–1632) · historien et savant · Tlemcen"},
+"2nde_chapitre2.html":   {q:"L'eau est la vie. Tout ce qu'elle dissout, elle le transporte et le transforme.",              a:"Al-Razi (865–925) · Livre des Secrets"},
+"2nde_chapitre3.html":   {q:"L'atome est l'ultime frontière du visible. Au-delà commence le mystère.",                      a:"Al-Biruni (973–1048) · physicien et astronome"},
+"2nde_chapitre4.html":   {q:"La nature cherche toujours l'équilibre, comme un sage entre deux extrêmes.",                   a:"Ibn Rushd / Averroes (1126–1198) · philosophe · Cordoue"},
+"2nde_chapitre5.html":   {q:"Compter est le premier acte de la science. Sans nombre, pas de connaissance exacte.",          a:"Al-Khawarizmi (780–850) · père de l'algèbre"},
+"2nde_chapitre6.html":   {q:"La glace, l'eau et la vapeur : un même être, trois visages. La matière est prodige.",          a:"Ibn Sina / Avicenne (980–1037) · médecin et philosophe"},
+"2nde_chapitre7.html":   {q:"Quand les atomes se reconfigurent, un nouveau monde naît de l'ancien.",                        a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"2nde_chapitre8.html":   {q:"Dans le cœur de l'atome se cachent des forces qui dépassent toute réaction chimique.",         a:"El Abilli (1282–1356) · mathématicien et astronome · Tlemcen"},
+"2nde_chapitre9.html":   {q:"Décrire le mouvement, c'est lire la page que la nature écrit avec le temps.",                  a:"Ibn Bajja / Avempace (1085–1138) · physicien-philosophe"},
+"2nde_chapitre10.html":  {q:"Toute action a une cause. Trouver la cause, c'est comprendre la loi.",                         a:"Al-Khazini (XIIe s.) · Livre de la Balance de la Sagesse"},
+"2nde_chapitre11.html":  {q:"Un corps en repos préfère y rester. C'est la loi que la nature s'impose à elle-même.",         a:"Ibn Bajja / Avempace (1085–1138) · De Motu"},
+"2nde_chapitre12.html":  {q:"Le son est l'âme de la musique et le corps de la parole.",                                     a:"Al-Farabi (872–950) · Kitab al-Musiqa al-Kabir"},
+"2nde_chapitre13.html":  {q:"Chaque élément chante sa propre mélodie de lumière, reconnaissable entre toutes.",             a:"Ibn al-Haytham (965–1040) · père de l'optique · Bassora"},
+"2nde_chapitre14.html":  {q:"La lumière obéit à des règles géométriques que l'esprit seul peut découvrir.",                 a:"Ibn al-Haytham (965–1040) · Kitab al-Manazir"},
+"2nde_chapitre15.html":  {q:"L'optique est la science qui rapproche l'horizon et agrandit le monde.",                       a:"Ibn al-Haytham (965–1040) · père de l'optique"},
+"2nde_chapitre16.html":  {q:"L'électricité obéit à des lois aussi exactes que celles de la géométrie.",                    a:"El Abilli (1282–1356) · philosophe et mathématicien · Tlemcen"},
+
+"5eme_chapitre1.html":   {q:"Le courant suit le chemin le plus simple, comme l'eau suit la pente.",                          a:"El Maqqari (1578–1632) · savant et lettré · Tlemcen"},
+"5eme_chapitre2.html":   {q:"La nature mélange tout. La science apprend à séparer et à comprendre.",                        a:"Al-Razi (865–925) · père de la chimie expérimentale"},
+"5eme_chapitre3.html":   {q:"Séparer pour comprendre, puis réunir pour créer : telle est la méthode scientifique.",         a:"Jabir ibn Hayyan (721–815) · Kitab al-Kimya"},
+"5eme_chapitre4.html":   {q:"L'eau peut être solide, liquide ou gaz. La matière, elle, est toujours présente.",             a:"Ibn Sina / Avicenne (980–1037) · Al-Qanun fi al-Tibb"},
+"5eme_chapitre5.html":   {q:"Le mouvement révèle la vie. L'immobilité absolue n'existe pas dans la nature.",                a:"Ibn Bajja / Avempace (1085–1138) · physicien-philosophe"},
+
+"4eme_chapitre1.html":   {q:"L'électricité a toujours existé dans la nature. L'homme a appris à la maîtriser.",             a:"El Abilli (1282–1356) · mathématicien et astronome · Tlemcen"},
+"4eme_chapitre2.html":   {q:"Là où la lumière ne passe pas, l'ombre attend. L'une ne peut exister sans l'autre.",           a:"Ibn al-Haytham (965–1040) · père de l'optique · Bassora"},
+"4eme_chapitre3.html":   {q:"Tout ce que nous voyons est fait d'atomes invisibles qui s'associent en molécules.",           a:"Al-Biruni (973–1048) · physicien et astronome"},
+"4eme_chapitre4.html":   {q:"Les lois de l'électricité sont d'une logique implacable : rien ne se perd, rien ne se crée.",  a:"El Maqqari (1578–1632) · savant · Tlemcen"},
+"4eme_chapitre5.html":   {q:"La lumière voyage si vite que l'esprit humain peine à en saisir la vitesse.",                  a:"Ibn al-Haytham (965–1040) · Kitab al-Manazir"},
+"4eme_chapitre6.html":   {q:"Le feu libère ce que la matière a accumulé. Mais la nature garde ses comptes.",                a:"Al-Razi (865–925) · alchimiste et médecin"},
+"4eme_chapitre7.html":   {q:"Tension, résistance, intensité : un trio indissociable qui régit tout circuit.",                a:"El Abilli (1282–1356) · mathématicien · Tlemcen"},
+"4eme_chapitre8.html":   {q:"La musique est la mathématique que l'oreille peut entendre et que l'âme ressent.",             a:"Al-Farabi (872–950) · Kitab al-Musiqa al-Kabir"},
+
+"3eme_chapitre1.html":   {q:"L'atome est si petit que des milliards d'entre eux tiendraient dans un grain de sable.",       a:"Al-Biruni (973–1048) · physicien et astronome"},
+"3eme_chapitre2.html":   {q:"La vitesse est le rapport entre l'espace parcouru et le temps : une loi simple et universelle.",a:"Ibn Bajja / Avempace (1085–1138) · physicien-philosophe · Saragosse"},
+"3eme_chapitre3.html":   {q:"L'énergie est comme l'argent : elle peut changer de forme mais ne disparaît jamais.",          a:"Ibn Khaldun (1332–1406) · élève d'El Abilli · Tlemcen"},
+"3eme_chapitre4.html":   {q:"L'acide ronge, la base dissout, le neutre préserve. La nature cherche l'équilibre.",           a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"3eme_chapitre5.html":   {q:"La Terre attire tout vers elle. C'est la première loi que l'on observe dans la nature.",       a:"Al-Khazini (XIIe s.) · Livre de la Balance de la Sagesse"},
+"3eme_chapitre6.html":   {q:"La densité d'un corps révèle sa nature. Le bon scientifique lit la masse dans le volume.",     a:"El Maqqari (1578–1632) · historien et savant · Tlemcen"},
+"3eme_chapitre7.html":   {q:"L'énergie électrique éclaire nos maisons et fait tourner nos machines. Elle mérite d'être comprise.",a:"El Abilli (1282–1356) · savant universel · Tlemcen"},
+
+"pcsi_outils_mathematiques.html":  {q:"Les mathématiques sont la langue dans laquelle Dieu a écrit l'univers.",             a:"Al-Khawarizmi (780–850) · père de l'algèbre · Khwarezm"},
+"pcsi_analyse_dimensionnelle.html":{q:"Une équation sans unités est une phrase sans sens. L'analyse dimensionnelle est la grammaire de la physique.", a:"Al-Biruni (973–1048) · physicien"},
+"pcsi_mesures_incertitudes.html":  {q:"Toute mesure contient une incertitude. Le sage sait l'évaluer et la maîtriser.",     a:"El Abilli (1282–1356) · mathématicien · Tlemcen"},
+
+"pcsi_chapitre1.html":   {q:"Les lois des circuits sont d'une précision mathématique absolue. C'est la beauté de la physique.",a:"El Abilli (1282–1356) · philosophe et mathématicien · Tlemcen"},
+"pcsi_chapitre2.html":   {q:"Tout système perturbé cherche à retrouver son équilibre en oscillant.",                        a:"Al-Farabi (872–950) · musicien et philosophe · Farab"},
+"pcsi_chapitre3.html":   {q:"La lumière, les ondes radio, les rayons X : une seule réalité vue à différentes échelles.",   a:"Ibn al-Haytham (965–1040) · père de l'optique"},
+"pcsi_chapitre4.html":   {q:"La diffraction prouve que la lumière est une onde. L'expérience a toujours le dernier mot.",   a:"Ibn al-Haytham (965–1040) · Kitab al-Manazir"},
+"pcsi_chapitre5.html":   {q:"Tout mouvement est relatif. Choisir le bon repère, c'est choisir le bon point de vue.",        a:"Al-Biruni (973–1048) · physicien et géographe"},
+"pcsi_chapitre6.html":   {q:"Force, masse et accélération : trois mots qui résument la mécanique de l'univers.",            a:"Al-Khazini (XIIe s.) · mécanicien et physicien"},
+"pcsi_chapitre7.html":   {q:"Le désordre croît toujours. L'entropie est la flèche du temps.",                              a:"Ibn Khaldun (1332–1406) · historien et philosophe · élève de Tlemcen"},
+"pcsi_chapitre8.html":   {q:"Les rayons lumineux tracent dans l'espace des lignes que la géométrie seule décrit.",          a:"Ibn al-Haytham (965–1040) · père de l'optique · Bassora"},
+"pcsi_chapitre9.html":   {q:"Un champ magnétique variable crée un courant électrique. La nature génère de l'énergie du mouvement.",a:"El Abilli (1282–1356) · mathématicien et astronome · Tlemcen"},
+"pcsi_chapitre10.html":  {q:"La pression d'un fluide agit dans toutes les directions avec une égalité parfaite.",           a:"Al-Khazini (XIIe s.) · Kitab Mizan al-Hikma"},
+"pcsi_chapitre11.html":  {q:"Quand un corps tourne, quelque chose se conserve. La nature n'oublie jamais ses comptes.",     a:"Al-Biruni (973–1048) · physicien et astronome"},
+
+"pcsi_chimie1.html":     {q:"Les électrons habitent des niveaux d'énergie précis, comme des étudiants dans leurs salles.",  a:"Al-Khawarizmi (780–850) · père de l'algèbre · Khwarezm"},
+"pcsi_chimie2.html":     {q:"Ce qui maintient les atomes ensemble dans un solide est aussi fort que l'amitié entre savants.",a:"El Maqqari (1578–1632) · savant et historien · Tlemcen"},
+"pcsi_chimie3.html":     {q:"L'équilibre chimique est un dialogue perpétuel entre réactifs et produits.",                   a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"pcsi_chimie4.html":     {q:"La chimie organique est la chimie de la vie elle-même.",                                       a:"Ibn Sina / Avicenne (980–1037) · médecin et philosophe"},
+"pcsi_chimie5.html":     {q:"La précision du dosage révèle la rigueur de l'esprit scientifique.",                           a:"Al-Biruni (973–1048) · physicien et astronome"},
+"pcsi_chimie6.html":     {q:"Quand les ions se rencontrent, la précipitation est leur façon de choisir leur partenaire.",   a:"Al-Razi (865–925) · Livre des Secrets"},
+"pcsi_chimie7.html":     {q:"L'électrochimie marie la chimie et l'électricité dans une union féconde.",                     a:"Jabir ibn Hayyan (721–815) · père de la chimie"},
+"pcsi_chimie8.html":     {q:"La vitesse d'une réaction et son bilan énergétique : les deux questions essentielles du chimiste.",a:"El Abilli (1282–1356) · savant universel · Tlemcen"}
+};
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll(".chapter-card[href]").forEach(function(card){
+    var key=card.getAttribute("href");
+    if(!Q[key])return;
+    var d=document.createElement("div");
+    d.className="sci-quote";
+    d.innerHTML="<em>&laquo; "+Q[key].q+" &raquo;</em><strong>&mdash; "+Q[key].a+"</strong>";
+    var h=card.querySelector("h4");
+    if(h)h.parentNode.insertBefore(d,h);
+  });
+});
+})();
+</script>
+</body>
+</html>
