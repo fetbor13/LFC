@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Terminale Spé · Chapitre 4 — Description d'un mouvement</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{--blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;--bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--side:286px;--rad:8px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+.rail{width:var(--side);min-width:var(--side);background:linear-gradient(180deg,#0f2027 0%,#134e4a 100%);color:#e2e8f0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem}
+.brand-mark{background:linear-gradient(135deg,var(--accent),var(--blue));color:#fff;font-weight:800;font-size:1.05rem;width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:linear-gradient(90deg,var(--accent),#0f766e);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;border-radius:var(--rad);cursor:pointer;font-size:.9rem;transition:background .18s}
+.icon-btn:hover{background:rgba(255,255,255,.18);color:#fff}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;max-width:calc(100vw - var(--side))}
+#readProgress{position:fixed;top:0;left:var(--side);right:0;height:3px;background:var(--accent);transform-origin:left;transform:scaleX(0);transition:transform .1s;z-index:999}
+.hero{background:linear-gradient(135deg,#0f2027 0%,#134e4a 40%,#0f766e 100%);padding:2rem 2.5rem;display:flex;gap:2rem;align-items:center;min-height:200px;flex-shrink:0}
+.hero-card{flex:1;min-width:0}
+.eyebrow{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#5eead4;letter-spacing:.1em;margin-bottom:.35rem}
+.instructor{font-size:.75rem;color:#94a3b8;margin-bottom:.5rem}
+.hero-card h2{font-size:1.9rem;color:#fff;line-height:1.15;margin-bottom:.6rem}
+.hero-card h2 span{color:#5eead4}
+.hero-copy{font-size:.88rem;color:#cbd5e1;line-height:1.6;max-width:480px;margin-bottom:1rem}
+.hero-grid{display:flex;gap:1.2rem;flex-wrap:wrap}
+.metric{background:rgba(255,255,255,.1);border-radius:var(--rad);padding:.5rem .9rem;text-align:center;min-width:80px}
+.metric b{display:block;font-size:1.4rem;color:#5eead4;line-height:1}
+.metric span{font-size:.65rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em}
+.real-hero-img{width:220px;flex-shrink:0}
+.real-hero-img img{width:100%;border-radius:10px;object-fit:cover;height:160px;border:2px solid rgba(255,255,255,.15)}
+.panels{flex:1;overflow-y:auto;padding:1.5rem 2rem 3rem}
+.panel{display:none}.panel.active{display:block}
+.content-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.4rem 1.6rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .2s}
+.content-card:hover{box-shadow:0 4px 16px rgba(15,118,110,.1)}
+.section-title{font-size:1.15rem;font-weight:700;color:var(--dark);border-left:4px solid var(--accent);padding-left:.75rem;margin-bottom:1rem}
+.key-formula{position:relative;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #10b981;border-radius:var(--rad);padding:.9rem 1.1rem 1rem;margin:.75rem 0;box-shadow:0 0 12px rgba(16,185,129,.18)}
+.key-formula::before{content:'★ À retenir';position:absolute;top:-11px;left:14px;background:linear-gradient(90deg,#059669,#10b981);color:#fff;font-size:.62rem;font-weight:800;padding:.15rem .55rem;border-radius:4px;letter-spacing:.08em;text-transform:uppercase;animation:kfP4 2.5s ease-in-out infinite}
+@keyframes kfP4{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.key-formula p{margin:0;font-size:.95rem}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.75rem;margin:.75rem 0}
+.formula-box{background:var(--light);border:1px solid #99f6e4;border-radius:var(--rad);padding:.75rem 1rem}
+.formula-box .label{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.formula-box .expr{font-size:1rem;color:var(--dark);font-weight:600}
+.formula-box .unit{font-size:.73rem;color:var(--muted);margin-top:.2rem}
+.accordion{border:1px solid var(--border);border-radius:var(--rad);margin:.75rem 0;overflow:hidden}
+.accordion summary{cursor:pointer;padding:.75rem 1rem;background:var(--light);font-weight:600;font-size:.88rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.accordion summary::after{content:'▶';font-size:.7rem;transition:transform .2s}
+.accordion[open] summary::after{transform:rotate(90deg)}
+.accordion .acc-body{padding:1rem 1.1rem;background:#fff;font-size:.87rem}
+.info-box{background:#eff6ff;border:1.5px solid #93c5fd;border-radius:var(--rad);padding:.85rem 1rem;margin:.6rem 0;font-size:.86rem;color:#1e3a5f}
+.warn-box{background:#fef9c3;border:1.5px solid #fbbf24;border-radius:var(--rad);padding:.85rem 1rem;margin:.6rem 0;font-size:.86rem;color:#713f12}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+table.data-table{width:100%;border-collapse:collapse;font-size:.83rem;margin:.75rem 0}
+table.data-table th{background:var(--dark);color:#fff;padding:.4rem .75rem;text-align:left}
+table.data-table td{border:1px solid var(--border);padding:.4rem .75rem}
+table.data-table tr:nth-child(even) td{background:var(--light)}
+.toc{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}
+.toc-item{background:var(--light);border:1px solid #99f6e4;border-radius:20px;padding:.3rem .75rem;font-size:.76rem;font-weight:600;color:var(--dark);cursor:pointer;transition:background .18s}
+.toc-item:hover{background:#ccfbf1;border-color:var(--accent)}
+.toc-item .num{background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-grid;place-items:center;font-size:.62rem;font-weight:700;margin-right:.3rem}
+.fc-wrap{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1rem 0}
+.fc-card{width:100%;max-width:520px;min-height:160px;perspective:800px;cursor:pointer}
+.fc-inner{width:100%;height:100%;min-height:160px;position:relative;transform-style:preserve-3d;transition:transform .45s}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--rad);padding:1.5rem;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.97rem;font-weight:600}
+.fc-front{background:linear-gradient(135deg,#0f2027,#134e4a);color:#fff}
+.fc-back{background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:var(--dark);transform:rotateY(180deg);border:2px solid var(--accent)}
+.fc-controls{display:flex;gap:.75rem;align-items:center}
+.fc-btn{background:var(--card);border:1.5px solid var(--border);border-radius:var(--rad);padding:.45rem 1.1rem;font-size:.85rem;cursor:pointer;color:var(--text);font-weight:600;transition:background .18s}
+.fc-btn:hover{background:var(--light)}
+#fcCounter{font-size:.78rem;color:var(--muted)}
+.quiz-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.3rem 1.5rem}
+.quiz-q{font-size:1rem;font-weight:700;margin-bottom:.9rem;color:var(--dark)}
+.quiz-opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.85rem}
+.quiz-opt{background:var(--light);border:1.5px solid var(--border);border-radius:6px;padding:.55rem .9rem;cursor:pointer;font-size:.88rem;transition:background .18s;text-align:left}
+.quiz-opt:hover{background:#d1fae5;border-color:var(--accent)}
+.quiz-opt.correct{background:#d1fae5;border-color:#059669;font-weight:700}
+.quiz-opt.wrong{background:#fee2e2;border-color:#dc2626}
+.quiz-explain{background:#f0fdfa;border-left:3px solid var(--accent);padding:.6rem .9rem;font-size:.83rem;color:var(--dark);border-radius:0 4px 4px 0;margin-bottom:.6rem;display:none}
+.quiz-nav{display:flex;gap:.75rem;align-items:center}
+.quiz-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--rad);padding:.45rem 1.1rem;font-size:.83rem;font-weight:600;cursor:pointer;transition:opacity .18s}
+.quiz-btn:hover{opacity:.85}
+#quizScore{font-size:.78rem;color:var(--muted)}
+.exo-card{border:1px solid var(--border);border-radius:var(--rad);margin:.75rem 0;overflow:hidden}
+.exo-head{background:linear-gradient(90deg,var(--dark),var(--blue));color:#fff;padding:.65rem 1rem;font-size:.85rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.exo-head span{font-size:.7rem;opacity:.8}
+.exo-body{padding:1rem 1.1rem;font-size:.87rem;background:#fff}
+.exo-toggle{background:var(--light);border:1px solid var(--border);border-radius:5px;padding:.35rem .8rem;font-size:.78rem;cursor:pointer;margin-top:.75rem;font-weight:600;color:var(--dark)}
+.exo-answer{margin-top:.65rem;background:#ecfdf5;border-left:3px solid var(--accent);padding:.75rem 1rem;border-radius:0 4px 4px 0;font-size:.85rem;display:none}
+.tag{display:inline-block;background:var(--light);color:var(--accent);border:1px solid #99f6e4;border-radius:4px;font-size:.67rem;font-weight:700;padding:.15rem .45rem;margin:.2rem .2rem 0 0;text-transform:uppercase}
+.footer-nav{display:flex;justify-content:space-between;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}
+.footer-nav a{background:var(--card);border:1.5px solid var(--border);border-radius:var(--rad);padding:.55rem 1rem;font-size:.83rem;font-weight:600;color:var(--text);transition:background .18s}
+.footer-nav a:hover{background:var(--light);border-color:var(--accent);color:var(--accent);text-decoration:none}
+.mm-wrap{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:var(--rad);padding:1.2rem;overflow:hidden;border:1.5px solid rgba(94,234,212,.2)}
+.mm-wrap svg{width:100%;max-width:720px;display:block;margin:0 auto}
+.sim-outer{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:10px;padding:1rem;margin:.75rem 0}
+.sim-outer h4{color:#5eead4;font-size:.85rem;font-weight:700;margin-bottom:.65rem;text-transform:uppercase;letter-spacing:.05em}
+.sim-outer iframe{width:100%;height:340px;border:none;border-radius:6px;background:#000}
+.sim-outer p{color:#94a3b8;font-size:.76rem;margin:.5rem 0 0}
+.ece-grid,.prepa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem;margin-top:.75rem}
+.ece-card,.prepa-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem}
+.ece-card h4,.prepa-card h4{font-size:.9rem;font-weight:700;margin-bottom:.4rem;color:var(--dark)}
+.ece-card p,.prepa-card p{font-size:.8rem;color:var(--muted);margin:0}
+</style>
+</head>
+<body>
+<div id="readProgress"></div>
+
+<aside class="rail">
+  <div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+  <div class="level-card">
+    <div class="level-row"><span class="badge">Terminale Spé</span><span class="micro">Chap. 04</span></div>
+    <div class="progress"><span id="masteryBar"></span></div>
+    <div class="micro" style="margin-top:8px"><span id="progressText">0%</span> du chapitre exploré</div>
+  </div>
+  <div class="nav-label">Sommaire</div>
+  <nav class="tablist" role="tablist">
+    <button class="tab active" data-tab="cours"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+    <button class="tab" data-tab="outils"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+    <button class="tab" data-tab="exercices"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+    <button class="tab" data-tab="flashcards"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+    <button class="tab" data-tab="mindmap"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+    <button class="tab" data-tab="simulations"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+    <button class="tab" data-tab="quiz"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+    <button class="tab" data-tab="ece"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+    <button class="tab" data-tab="prepa"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+  </nav>
+  <div class="tools">
+    <button class="icon-btn" id="themeBtn">🌙</button>
+    <button class="icon-btn" onclick="window.print()">⎙</button>
+    <button class="icon-btn" onclick="copyPrompt()">⌘</button>
+  </div>
+</aside>
+
+<div class="main">
+  <section class="hero">
+    <div class="hero-card">
+      <div class="eyebrow">Terminale Spé · Chapitre 04</div>
+      <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+      <h2>Description d'un <span>mouvement</span></h2>
+      <p class="hero-copy">Référentiel, vecteur position, vitesse et accélération — les outils mathématiques pour décrire et analyser tout mouvement en mécanique classique.</p>
+      <div class="hero-grid">
+        <div class="metric"><b>6</b><span>sections</span></div>
+        <div class="metric"><b>3</b><span>vecteurs clés</span></div>
+        <div class="metric"><b>5</b><span>exercices corrigés</span></div>
+      </div>
+    </div>
+    <figure class="real-hero-img">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Muybridge_horse_gallop_animated_2.gif/320px-Muybridge_horse_gallop_animated_2.gif" alt="Chronophotographie"/>
+    </figure>
+  </section>
+
+  <div class="panels" id="panelsRoot">
+
+    <!-- ════════════ COURS ════════════ -->
+    <div class="panel active" id="tab-cours">
+      <div class="toc">
+        <span class="toc-item" onclick="goSection('s1')"><span class="num">I</span>Référentiel</span>
+        <span class="toc-item" onclick="goSection('s2')"><span class="num">II</span>Vecteur position</span>
+        <span class="toc-item" onclick="goSection('s3')"><span class="num">III</span>Vecteur vitesse</span>
+        <span class="toc-item" onclick="goSection('s4')"><span class="num">IV</span>Vecteur accélération</span>
+        <span class="toc-item" onclick="goSection('s5')"><span class="num">V</span>Mvt rectiligne</span>
+        <span class="toc-item" onclick="goSection('s6')"><span class="num">VI</span>Mvt circulaire</span>
+      </div>
+
+      <!-- I Référentiel -->
+      <div id="s1" class="content-card">
+        <div class="section-title">I — Le référentiel</div>
+        <h3>1. Définitions</h3>
+        <p>On étudie le mouvement d'un <strong>système</strong> modélisé par un <strong>point matériel</strong> (toute la masse au centre de gravité). Le mouvement d'un objet dépend du <strong>référentiel</strong> choisi — l'objet de référence par rapport auquel on l'étudie.</p>
+        <div class="key-formula">
+          <p>Un référentiel = un <strong>repère d'espace</strong> $(O;\,\vec{i},\vec{j},\vec{k})$ + un <strong>repère de temps</strong> (horloge)</p>
+        </div>
+        <h3>2. Les trois référentiels classiques</h3>
+        <table class="data-table">
+          <tr><th>Référentiel</th><th>Origine</th><th>Axes</th><th>Usage</th></tr>
+          <tr><td><strong>Terrestre</strong></td><td>Point fixe à la surface de la Terre</td><td>Tournent avec la Terre</td><td>Mouvements à la surface de la Terre</td></tr>
+          <tr><td><strong>Géocentrique</strong></td><td>Centre de la Terre</td><td>Pointent vers 3 étoiles lointaines (fixes)</td><td>Satellites, Lune</td></tr>
+          <tr><td><strong>Héliocentrique</strong></td><td>Centre du Soleil</td><td>Pointent vers 3 étoiles lointaines (fixes)</td><td>Planètes du système solaire</td></tr>
+        </table>
+        <div class="info-box">Dans le référentiel géocentrique, une personne immobile à la surface de la Terre décrit une trajectoire circulaire (rotation de la Terre). Dans le référentiel terrestre, elle est immobile.</div>
+      </div>
+
+      <!-- II Vecteur position -->
+      <div id="s2" class="content-card">
+        <div class="section-title">II — Le vecteur position</div>
+        <p>La position d'un point M à la date $t$ est donnée par son <strong>vecteur position</strong> $\overrightarrow{OM}(t)$ :</p>
+        <div class="key-formula">
+          <p>$$\overrightarrow{OM}(t) = x(t)\,\vec{i} + y(t)\,\vec{j} + z(t)\,\vec{k}$$</p>
+        </div>
+        <p>Les fonctions $x(t)$, $y(t)$, $z(t)$ sont les <strong>équations horaires</strong> du mouvement. La <strong>trajectoire</strong> est l'ensemble des positions successives du point M.</p>
+        <p><strong>Norme du vecteur position</strong> (distance OM) :</p>
+        <div class="formula-box" style="max-width:340px">
+          <div class="label">Distance OM(t)</div>
+          <div class="expr">$OM(t) = \sqrt{x(t)^2+y(t)^2+z(t)^2}$</div>
+          <div class="unit">en mètres (m)</div>
+        </div>
+      </div>
+
+      <!-- III Vecteur vitesse -->
+      <div id="s3" class="content-card">
+        <div class="section-title">III — Le vecteur vitesse</div>
+        <h3>1. Définition</h3>
+        <p>Le vecteur vitesse instantanée $\vec{v}(t)$ est la <strong>dérivée par rapport au temps</strong> du vecteur position :</p>
+        <div class="key-formula">
+          <p>$$\vec{v}(t) = \frac{d\overrightarrow{OM}(t)}{dt} \quad \Rightarrow \quad \vec{v}(t)\begin{cases}v_x(t)=\dfrac{dx(t)}{dt}\\[4pt]v_y(t)=\dfrac{dy(t)}{dt}\\[4pt]v_z(t)=\dfrac{dz(t)}{dt}\end{cases}$$</p>
+        </div>
+        <p>Le vecteur $\vec{v}(t)$ est <strong>tangent à la trajectoire</strong>, orienté dans le sens du mouvement. Sa norme (en m·s⁻¹) :</p>
+        <div class="formula-box" style="max-width:360px">
+          <div class="label">Valeur de la vitesse</div>
+          <div class="expr">$v(t) = \|\vec{v}(t)\| = \sqrt{v_x^2+v_y^2+v_z^2}$</div>
+          <div class="unit">en m·s⁻¹ · toujours positive</div>
+        </div>
+        <div class="warn-box">⚠ Les coordonnées $v_x, v_y, v_z$ peuvent être négatives. La <em>valeur</em> de la vitesse $v = \|\vec{v}\|$ est toujours positive ou nulle.</div>
+
+        <h3>2. Vitesse approchée sur une chronophotographie</h3>
+        <p>Sur une chronophotographie (points M₀, M₁, M₂, … espacés d'une durée Δt), la vitesse en $M_i$ est estimée par :</p>
+        <div class="key-formula">
+          <p>$$v_i = \frac{M_{i-1}M_{i+1}}{2\,\Delta t}$$</p>
+        </div>
+        <div class="info-box">On utilise les deux points <em>voisins</em> de M_i (avant et après) pour estimer la vitesse. Le vecteur $\vec{v}_i$ est tracé à partir de $M_i$, tangent à la trajectoire, dans le sens du mouvement.</div>
+      </div>
+
+      <!-- IV Vecteur accélération -->
+      <div id="s4" class="content-card">
+        <div class="section-title">IV — Le vecteur accélération</div>
+        <h3>1. Définition</h3>
+        <div class="key-formula">
+          <p>$$\vec{a}(t) = \frac{d\vec{v}(t)}{dt} = \frac{d^2\overrightarrow{OM}(t)}{dt^2} \quad \Rightarrow \quad \vec{a}(t)\begin{cases}a_x=\dfrac{dv_x}{dt}=\dfrac{d^2x}{dt^2}\\[4pt]a_y=\dfrac{dv_y}{dt}=\dfrac{d^2y}{dt^2}\\[4pt]a_z=\dfrac{dv_z}{dt}=\dfrac{d^2z}{dt^2}\end{cases}$$</p>
+        </div>
+        <p>La norme de l'accélération se mesure en <strong>m·s⁻²</strong> :</p>
+        <div class="formula-box" style="max-width:360px">
+          <div class="label">Valeur de l'accélération</div>
+          <div class="expr">$a(t) = \sqrt{a_x^2+a_y^2+a_z^2}$</div>
+          <div class="unit">en m·s⁻² · toujours positive</div>
+        </div>
+
+        <h3>2. Vecteur accélération sur une chronophotographie</h3>
+        <p>On construit $\vec{a}_i$ à partir du <strong>vecteur variation de vitesse</strong> $\Delta\vec{v}_i = \vec{v}_{i+1} - \vec{v}_{i-1}$ :</p>
+        <div class="formula-box" style="max-width:300px">
+          <div class="label">Valeur approchée</div>
+          <div class="expr">$a_i = \dfrac{\Delta v_i}{2\,\Delta t}$</div>
+          <div class="unit">Δvᵢ mesuré avec l'échelle des vitesses</div>
+        </div>
+
+        <details class="accordion">
+          <summary>📐 Exemple — Ballon de football lancé à 30°, v₀ = 20 m·s⁻¹</summary>
+          <div class="acc-body">
+            <p><strong>Équations horaires :</strong> $x(t)=0$, $y(t)=17t$, $z(t)=-4{,}9t^2+10t$</p>
+            <p><strong>Vitesse :</strong> $v_x=0$, $v_y=17\ \text{m·s}^{-1}$, $v_z=-9{,}8t+10\ \text{m·s}^{-1}$</p>
+            <p><strong>Accélération :</strong> $a_x=0$, $a_y=0$, $a_z=-9{,}8\ \text{m·s}^{-2}$</p>
+            <p>$\vec{a} = -9{,}8\,\vec{k}$ — le vecteur accélération est constant, vertical vers le bas : c'est la pesanteur.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- V Mouvement rectiligne -->
+      <div id="s5" class="content-card">
+        <div class="section-title">V — Le mouvement rectiligne</div>
+        <p>Trajectoire = une droite. On réduit l'étude à un seul axe $Ox$.</p>
+        <table class="data-table">
+          <tr><th>Type</th><th>Vecteur vitesse</th><th>Vecteur accélération</th><th>Évolution de v</th></tr>
+          <tr><td><strong>Uniforme (MRU)</strong></td><td>$\vec{v} = \text{constante}$</td><td>$\vec{a} = \vec{0}$</td><td>Constante</td></tr>
+          <tr><td><strong>Uniformément accéléré (MRUA)</strong></td><td>$\vec{v}$ et $\vec{a}$ dans le même sens</td><td>$\vec{a} = \text{constante} \neq \vec{0}$</td><td>Augmente régulièrement</td></tr>
+          <tr><td><strong>Uniformément ralenti (MRUR)</strong></td><td>$\vec{v}$ et $\vec{a}$ dans le sens opposé</td><td>$\vec{a} = \text{constante} \neq \vec{0}$</td><td>Diminue régulièrement</td></tr>
+        </table>
+        <div class="info-box">Pour un MRU : $x(t) = x_0 + v\cdot t$ (mouvement rectiligne uniforme → équation horaire linéaire). Pour un MRUA : $v(t) = v_0 + a\cdot t$ et $x(t) = x_0 + v_0 t + \frac{1}{2}at^2$.</div>
+      </div>
+
+      <!-- VI Mouvement circulaire -->
+      <div id="s6" class="content-card">
+        <div class="section-title">VI — Le mouvement circulaire</div>
+        <p>Trajectoire = un cercle de rayon $R$. On utilise le <strong>repère de Frenet</strong> $(M;\,\vec{u}_t, \vec{u}_n)$ :</p>
+        <ul style="font-size:.88rem;padding-left:1.2rem;line-height:1.9">
+          <li>$\vec{u}_t$ : vecteur tangentiel, tangent à la trajectoire, dans le sens du mouvement.</li>
+          <li>$\vec{u}_n$ : vecteur normal, perpendiculaire à $\vec{u}_t$, orienté <strong>vers l'intérieur</strong> de la trajectoire.</li>
+        </ul>
+
+        <h3>Mouvement circulaire non uniforme</h3>
+        <div class="key-formula">
+          <p>$$\vec{a}(t) = \underbrace{\frac{v(t)^2}{R}\,\vec{u}_n}_{\text{accélération normale}} + \underbrace{\frac{dv(t)}{dt}\,\vec{u}_t}_{\text{accélération tangentielle}}$$</p>
+        </div>
+
+        <h3>Mouvement circulaire uniforme (MCU)</h3>
+        <p>La norme de la vitesse est constante ($dv/dt = 0$) mais la direction change. L'accélération n'est pas nulle !</p>
+        <div class="key-formula">
+          <p>$$\vec{v} = v\,\vec{u}_t \qquad \vec{a} = \frac{v^2}{R}\,\vec{u}_n \qquad a = \frac{v^2}{R}$$</p>
+        </div>
+        <p>L'accélération est <strong>centripète</strong> (dirigée vers le centre du cercle). Sa norme : $a = v^2/R$ en m·s⁻².</p>
+
+        <details class="accordion">
+          <summary>📐 Exemple — Satellite SPOT : R = 7200 km, T = 1 h 41 min</summary>
+          <div class="acc-body">
+            <p><strong>Données :</strong> $R = 7{,}20\times10^6\ \text{m}$, $T = 101\times60 = 6060\ \text{s}$.</p>
+            <p><strong>Vitesse :</strong> $v = \dfrac{2\pi R}{T} = \dfrac{2\pi\times7{,}20\times10^6}{6060} \approx 7{,}47\times10^3\ \text{m·s}^{-1}$</p>
+            <p><strong>Accélération :</strong> $a = \dfrac{v^2}{R} = \dfrac{(7{,}47\times10^3)^2}{7{,}20\times10^6} \approx 7{,}7\ \text{m·s}^{-2}$</p>
+            <p>Ce résultat est cohérent avec $g \approx 9{,}8\ \text{m·s}^{-2}$ à la surface : à 820 km d'altitude, la pesanteur diminue.</p>
+          </div>
+        </accordion>
+      </div>
+
+      <div class="footer-nav">
+        <a href="Term_chapitre3.html">← Chap. 3 — Dosages par titrage</a>
+        <a href="Term_chapitre5.html">Chap. 5 — Deuxième loi de Newton →</a>
+      </div>
+    </div><!-- /cours -->
+
+
+    <!-- ════════════ OUTILS ════════════ -->
+    <div class="panel" id="tab-outils">
+      <div class="content-card">
+        <div class="section-title">Toutes les relations du chapitre</div>
+        <div class="formula-grid">
+          <div class="formula-box"><div class="label">Vecteur position</div><div class="expr">$\overrightarrow{OM}(t) = x\vec{i}+y\vec{j}+z\vec{k}$</div><div class="unit">m</div></div>
+          <div class="formula-box"><div class="label">Norme OM</div><div class="expr">$OM=\sqrt{x^2+y^2+z^2}$</div><div class="unit">m</div></div>
+          <div class="formula-box"><div class="label">Vecteur vitesse</div><div class="expr">$\vec{v}=\dfrac{d\overrightarrow{OM}}{dt}$</div><div class="unit">m·s⁻¹</div></div>
+          <div class="formula-box"><div class="label">Composantes vitesse</div><div class="expr">$v_x=dx/dt$, $v_y=dy/dt$</div><div class="unit">m·s⁻¹</div></div>
+          <div class="formula-box"><div class="label">Norme vitesse</div><div class="expr">$v=\sqrt{v_x^2+v_y^2+v_z^2}$</div><div class="unit">m·s⁻¹ · toujours ≥ 0</div></div>
+          <div class="formula-box"><div class="label">Vitesse (chronophoto)</div><div class="expr">$v_i = M_{i-1}M_{i+1}/(2\Delta t)$</div><div class="unit">m·s⁻¹</div></div>
+          <div class="formula-box"><div class="label">Vecteur accélération</div><div class="expr">$\vec{a}=d\vec{v}/dt=d^2\overrightarrow{OM}/dt^2$</div><div class="unit">m·s⁻²</div></div>
+          <div class="formula-box"><div class="label">Norme accélération</div><div class="expr">$a=\sqrt{a_x^2+a_y^2+a_z^2}$</div><div class="unit">m·s⁻² · toujours ≥ 0</div></div>
+          <div class="formula-box"><div class="label">Accélérat. (chronophoto)</div><div class="expr">$a_i = \Delta v_i/(2\Delta t)$</div><div class="unit">m·s⁻²</div></div>
+          <div class="formula-box"><div class="label">MRU équation horaire</div><div class="expr">$x(t)=x_0+v\cdot t$</div><div class="unit">$\vec{a}=\vec{0}$</div></div>
+          <div class="formula-box"><div class="label">MRUA équation horaire</div><div class="expr">$x(t)=x_0+v_0 t+\frac{1}{2}at^2$</div><div class="unit">$\vec{a}=\text{cste}\neq\vec{0}$</div></div>
+          <div class="formula-box"><div class="label">MCU — accélération centripète</div><div class="expr">$a = v^2/R$</div><div class="unit">dirigée vers le centre · m·s⁻²</div></div>
+          <div class="formula-box"><div class="label">MCU — vitesse orbitale</div><div class="expr">$v = 2\pi R/T$</div><div class="unit">R en m, T en s</div></div>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="section-title">Pièges fréquents</div>
+        <div class="warn-box">🔴 La valeur de la vitesse $v = \|\vec{v}\|$ est toujours positive. Les composantes $v_x, v_y$ peuvent être négatives (si le mouvement va dans le sens négatif de l'axe).</div>
+        <div class="warn-box">🔴 Pour un MCU : $\vec{a} \neq \vec{0}$ même si $v$ = constante ! La direction change donc $\vec{v}$ varie → $\vec{a} \neq \vec{0}$.</div>
+        <div class="warn-box">🔴 Ne pas confondre mouvement ralenti et accélération nulle. Ralenti = $\vec{v}$ et $\vec{a}$ de sens opposés, mais $\vec{a} \neq \vec{0}$.</div>
+        <div class="warn-box">🔴 La formule $v_i = M_{i-1}M_{i+1}/(2\Delta t)$ utilise bien les deux voisins et la durée $2\Delta t$ (pas $\Delta t$).</div>
+      </div>
+    </div><!-- /outils -->
+
+
+    <!-- ════════════ EXERCICES ════════════ -->
+    <div class="panel" id="tab-exercices">
+
+      <div class="exo-card">
+        <div class="exo-head">Exercice 1 — Chronophotographie d'un cycliste <span>Vitesse approchée</span></div>
+        <div class="exo-body">
+          <p>Sur une chronophotographie, on relève les positions d'un cycliste sur l'axe $x$ : $x_0 = 0$, $x_1 = 2{,}4\ \text{m}$, $x_2 = 4{,}9\ \text{m}$, $x_3 = 7{,}5\ \text{m}$, $x_4 = 10{,}2\ \text{m}$. L'intervalle de temps entre deux images est $\Delta t = 0{,}20\ \text{s}$.</p>
+          <ol style="padding-left:1.2rem;line-height:1.9;font-size:.87rem">
+            <li>Calculer la vitesse approchée $v_1$ au point $M_1$.</li>
+            <li>Calculer la vitesse approchée $v_2$ au point $M_2$.</li>
+            <li>Le mouvement est-il uniforme, accéléré ou ralenti ? Justifier.</li>
+          </ol>
+          <button class="exo-toggle" onclick="toggleAnswer(this)">Voir la correction</button>
+          <div class="exo-answer">
+            <p><strong>1.</strong> $v_1 = \dfrac{x_2 - x_0}{2\Delta t} = \dfrac{4{,}9 - 0}{2\times0{,}20} = \dfrac{4{,}9}{0{,}40} = 12{,}25\ \text{m·s}^{-1}$</p>
+            <p><strong>2.</strong> $v_2 = \dfrac{x_3 - x_1}{2\Delta t} = \dfrac{7{,}5 - 2{,}4}{0{,}40} = \dfrac{5{,}1}{0{,}40} = 12{,}75\ \text{m·s}^{-1}$</p>
+            <p><strong>3.</strong> $v_1 < v_2$ : la vitesse augmente → mouvement <strong>accéléré</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exo-card">
+        <div class="exo-head">Exercice 2 — Équations horaires d'un tir balistique <span>Dérivation · Vecteurs</span></div>
+        <div class="exo-body">
+          <p>Un objet est lancé avec les équations horaires : $y(t) = 15t\ \text{m}$ et $z(t) = -4{,}9t^2 + 12t\ \text{m}$.</p>
+          <ol style="padding-left:1.2rem;line-height:1.9;font-size:.87rem">
+            <li>Dériver pour obtenir les composantes du vecteur vitesse $\vec{v}(t)$.</li>
+            <li>Calculer la vitesse initiale $v_0 = \|\vec{v}(0)\|$.</li>
+            <li>Dériver encore pour obtenir le vecteur accélération $\vec{a}(t)$. Quelle est sa valeur numérique ?</li>
+            <li>À quelle date l'objet atteint-il son altitude maximale ? Quelle est cette altitude ?</li>
+          </ol>
+          <button class="exo-toggle" onclick="toggleAnswer(this)">Voir la correction</button>
+          <div class="exo-answer">
+            <p><strong>1.</strong> $v_y = dy/dt = 15\ \text{m·s}^{-1}$ ; $v_z = dz/dt = -9{,}8t + 12\ \text{m·s}^{-1}$</p>
+            <p><strong>2.</strong> $v_0 = \sqrt{15^2 + 12^2} = \sqrt{225+144} = \sqrt{369} \approx 19{,}2\ \text{m·s}^{-1}$</p>
+            <p><strong>3.</strong> $a_y = 0$, $a_z = -9{,}8\ \text{m·s}^{-2}$. Valeur : $a = 9{,}8\ \text{m·s}^{-2}$ (pesanteur).</p>
+            <p><strong>4.</strong> Altitude max quand $v_z = 0$ : $-9{,}8t+12=0 \Rightarrow t = 12/9{,}8 \approx 1{,}22\ \text{s}$.</p>
+            <p>$z_{max} = -4{,}9\times(1{,}22)^2 + 12\times1{,}22 = -4{,}9\times1{,}49 + 14{,}66 \approx 7{,}38\ \text{m}$</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exo-card">
+        <div class="exo-head">Exercice 3 — MCU : Lune autour de la Terre <span>Mouvement circulaire uniforme</span></div>
+        <div class="exo-body">
+          <p>La Lune décrit une orbite quasi-circulaire autour de la Terre de rayon $R = 3{,}84\times10^8\ \text{m}$. Sa période de révolution est $T = 27{,}3\ \text{jours}$.</p>
+          <ol style="padding-left:1.2rem;line-height:1.9;font-size:.87rem">
+            <li>Calculer la vitesse orbitale de la Lune en m·s⁻¹.</li>
+            <li>Calculer la norme de son accélération centripète.</li>
+            <li>Dans quel référentiel ce mouvement est-il étudié ? Justifier.</li>
+          </ol>
+          <button class="exo-toggle" onclick="toggleAnswer(this)">Voir la correction</button>
+          <div class="exo-answer">
+            <p><strong>1.</strong> $T = 27{,}3\times24\times3600 = 2{,}36\times10^6\ \text{s}$</p>
+            <p>$v = \dfrac{2\pi R}{T} = \dfrac{2\pi\times3{,}84\times10^8}{2{,}36\times10^6} \approx 1{,}02\times10^3\ \text{m·s}^{-1}$</p>
+            <p><strong>2.</strong> $a = v^2/R = (1{,}02\times10^3)^2/(3{,}84\times10^8) \approx 2{,}71\times10^{-3}\ \text{m·s}^{-2}$</p>
+            <p><strong>3.</strong> Référentiel <strong>géocentrique</strong> : centré sur la Terre, axes fixes vers les étoiles. Le référentiel terrestre tourne avec la Terre et n'est pas adapté à l'étude de la Lune.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exo-card">
+        <div class="exo-head">Exercice 4 — Identification du type de mouvement <span>Analyse · Classification</span></div>
+        <div class="exo-body">
+          <p>On donne les équations horaires suivantes pour un point M :</p>
+          <p style="margin:.3rem 0 .3rem 1rem">(a) $x(t) = 5t\ \text{m}$</p>
+          <p style="margin:.3rem 0 .3rem 1rem">(b) $x(t) = 3t^2 + 2t\ \text{m}$</p>
+          <p style="margin:.3rem 0 .3rem 1rem">(c) $x(t) = -2t^2 + 8t\ \text{m}$</p>
+          <p>Pour chaque cas, déterminer le type de mouvement, la vitesse et l'accélération (en précisant si uniforme, accéléré ou ralenti).</p>
+          <button class="exo-toggle" onclick="toggleAnswer(this)">Voir la correction</button>
+          <div class="exo-answer">
+            <p><strong>(a)</strong> $v = dx/dt = 5\ \text{m·s}^{-1}$ (constante) · $a = dv/dt = 0$. → <strong>MRU</strong> (mouvement rectiligne uniforme).</p>
+            <p><strong>(b)</strong> $v = 6t+2$ (croissante) · $a = 6\ \text{m·s}^{-2} > 0$. $\vec{v}$ et $\vec{a}$ dans le même sens. → <strong>Mouvement rectiligne uniformément accéléré</strong>.</p>
+            <p><strong>(c)</strong> $v = -4t+8$. Pour $t &lt; 2\ \text{s}$ : $v > 0$ et décroissante. $a = -4\ \text{m·s}^{-2}$. $\vec{v}$ et $\vec{a}$ de sens opposés → <strong>Mouvement rectiligne uniformément ralenti</strong> (jusqu'à $t=2\ \text{s}$ où l'objet s'arrête).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exo-card">
+        <div class="exo-head">Exercice 5 — Satellite SPOT (type Bac) <span>MCU · Niveau Bac</span></div>
+        <div class="exo-body">
+          <p>Le satellite SPOT a un mouvement circulaire uniforme de rayon $R = 7200\ \text{km}$ dans le référentiel géocentrique. Sa période est $T = 1\ \text{h}\ 41\ \text{min}$.</p>
+          <ol style="padding-left:1.2rem;line-height:1.9;font-size:.87rem">
+            <li>Convertir $T$ en secondes.</li>
+            <li>Calculer la vitesse orbitale $v$ du satellite.</li>
+            <li>Calculer la norme de l'accélération centripète $a$.</li>
+            <li>Décrire la direction et le sens de l'accélération. Quel phénomène physique est à l'origine de cette accélération ?</li>
+          </ol>
+          <button class="exo-toggle" onclick="toggleAnswer(this)">Voir la correction</button>
+          <div class="exo-answer">
+            <p><strong>1.</strong> $T = (1\times60 + 41)\times60 = 101\times60 = 6060\ \text{s}$</p>
+            <p><strong>2.</strong> $v = \dfrac{2\pi R}{T} = \dfrac{2\pi\times7{,}200\times10^6}{6060} \approx 7{,}47\times10^3\ \text{m·s}^{-1} = 7{,}47\ \text{km·s}^{-1}$</p>
+            <p><strong>3.</strong> $a = \dfrac{v^2}{R} = \dfrac{(7{,}47\times10^3)^2}{7{,}200\times10^6} = \dfrac{5{,}58\times10^7}{7{,}2\times10^6} \approx 7{,}7\ \text{m·s}^{-2}$</p>
+            <p><strong>4.</strong> L'accélération est centripète : dirigée vers le centre de la Terre, perpendiculaire à la trajectoire. C'est la <strong>pesanteur</strong> (force gravitationnelle Terre-satellite) qui fournit cette accélération centripète.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /exercices -->
+
+
+    <!-- ════════════ FLASHCARDS ════════════ -->
+    <div class="panel" id="tab-flashcards">
+      <div class="content-card">
+        <div class="section-title">Flashcards — Description d'un mouvement</div>
+        <div class="fc-wrap">
+          <div class="fc-card" id="fcCard" onclick="flipFlash()">
+            <div class="fc-inner">
+              <div class="fc-front" id="fcFront"></div>
+              <div class="fc-back" id="fcBack"></div>
+            </div>
+          </div>
+          <div class="fc-controls">
+            <button class="fc-btn" onclick="prevFlash()">◀ Précédente</button>
+            <span id="fcCounter">1/15</span>
+            <button class="fc-btn" onclick="nextFlash()">Suivante ▶</button>
+          </div>
+          <p style="font-size:.76rem;color:var(--muted);text-align:center;margin-top:.25rem">Cliquez pour retourner</p>
+        </div>
+      </div>
+    </div><!-- /flashcards -->
+
+
+    <!-- ════════════ MINDMAP ════════════ -->
+    <div class="panel" id="tab-mindmap">
+      <div class="content-card">
+        <div class="section-title">Carte mentale — Description d'un mouvement</div>
+        <div class="mm-wrap">
+          <svg viewBox="0 0 720 500" xmlns="http://www.w3.org/2000/svg">
+            <defs><style>.ml{stroke-width:2.5;fill:none;stroke-dasharray:400;stroke-dashoffset:400;animation:mmD4 1.1s ease forwards}.ml2{stroke-width:1.5;fill:none;stroke-dasharray:120;stroke-dashoffset:120;animation:mmD4 .6s ease forwards}.mn{opacity:0;animation:mmF4 .5s ease forwards}@keyframes mmD4{to{stroke-dashoffset:0}}@keyframes mmF4{to{opacity:1}}</style></defs>
+            <g class="mn" style="animation-delay:.05s"><ellipse cx="360" cy="250" rx="72" ry="34" fill="#0d9488"/><text x="360" y="246" fill="#fff" text-anchor="middle" font-size="11.5" font-weight="800">Description</text><text x="360" y="261" fill="#5eead4" text-anchor="middle" font-size="10.5">du mouvement</text></g>
+            <!-- Référentiel (cyan, top-left) -->
+            <line x1="360" y1="250" x2="110" y2="95" class="ml" stroke="#06b6d4" style="animation-delay:.2s"/>
+            <g class="mn" style="animation-delay:.5s"><rect x="10" y="68" width="140" height="54" rx="8" fill="#0e7490"/><text x="80" y="91" fill="#fff" text-anchor="middle" font-size="10.5" font-weight="700">Référentiel</text><text x="80" y="107" fill="#a5f3fc" text-anchor="middle" font-size="9">terrestre · géocentrique</text></g>
+            <!-- Vecteur position (green, top-right) -->
+            <line x1="360" y1="250" x2="590" y2="95" class="ml" stroke="#22c55e" style="animation-delay:.3s"/>
+            <g class="mn" style="animation-delay:.6s"><rect x="560" y="68" width="145" height="54" rx="8" fill="#166534"/><text x="632" y="91" fill="#fff" text-anchor="middle" font-size="10.5" font-weight="700">Vecteur position</text><text x="632" y="107" fill="#86efac" text-anchor="middle" font-size="9">OM(t) · équations horaires</text></g>
+            <!-- Vecteur vitesse (amber, bottom-left) -->
+            <line x1="360" y1="250" x2="110" y2="390" class="ml" stroke="#f59e0b" style="animation-delay:.35s"/>
+            <g class="mn" style="animation-delay:.65s"><rect x="10" y="365" width="140" height="54" rx="8" fill="#92400e"/><text x="80" y="388" fill="#fff" text-anchor="middle" font-size="10.5" font-weight="700">Vecteur vitesse</text><text x="80" y="404" fill="#fde68a" text-anchor="middle" font-size="9">v=dOM/dt · tangente</text></g>
+            <line x1="110" y1="390" x2="55" y2="455" class="ml2" stroke="#f59e0b" style="animation-delay:.8s"/>
+            <g class="mn" style="animation-delay:1s"><rect x="5" y="450" width="110" height="30" rx="5" fill="#78350f"/><text x="60" y="462" fill="#fde68a" text-anchor="middle" font-size="8">chronophotographie</text><text x="60" y="474" fill="#fde68a" text-anchor="middle" font-size="8">vᵢ = MᵢMᵢ₊₁/2Δt</text></g>
+            <!-- Vecteur accélération (purple, bottom-right) -->
+            <line x1="360" y1="250" x2="590" y2="390" class="ml" stroke="#a78bfa" style="animation-delay:.4s"/>
+            <g class="mn" style="animation-delay:.7s"><rect x="560" y="365" width="145" height="54" rx="8" fill="#4c1d95"/><text x="632" y="388" fill="#fff" text-anchor="middle" font-size="10.5" font-weight="700">Vecteur accélération</text><text x="632" y="404" fill="#ddd6fe" text-anchor="middle" font-size="9">a=dv/dt · m·s⁻²</text></g>
+            <!-- MCU (pink, bottom-center) -->
+            <line x1="360" y1="250" x2="360" y2="410" class="ml" stroke="#f472b6" style="animation-delay:.45s"/>
+            <g class="mn" style="animation-delay:.75s"><rect x="278" y="398" width="164" height="52" rx="8" fill="#9d174d"/><text x="360" y="420" fill="#fff" text-anchor="middle" font-size="10.5" font-weight="700">MCU — Centripète</text><text x="360" y="437" fill="#fbcfe8" text-anchor="middle" font-size="9">a=v²/R · v=2πR/T</text></g>
+          </svg>
+        </div>
+      </div>
+    </div><!-- /mindmap -->
+
+
+    <!-- ════════════ SIMULATIONS ════════════ -->
+    <div class="panel" id="tab-simulations">
+      <div class="content-card">
+        <div class="section-title">Simulations interactives</div>
+        <div class="sim-outer">
+          <h4>🎯 PhET — Projectile Motion</h4>
+          <iframe src="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_fr.html" allowfullscreen loading="lazy"></iframe>
+          <p><strong>Objectif :</strong> Observer les équations horaires d'un tir parabolique. Faire varier l'angle et la vitesse initiale. Mini-mission : trouver l'angle qui maximise la portée et vérifier avec les équations horaires.</p>
+        </div>
+        <div class="sim-outer">
+          <h4>🏃 PhET — The Moving Man</h4>
+          <iframe src="https://phet.colorado.edu/sims/html/moving-man/latest/moving-man_en.html" allowfullscreen loading="lazy"></iframe>
+          <p><strong>Objectif :</strong> Visualiser la relation entre position, vitesse et accélération sur un axe. Observer les signes des vecteurs pour un mouvement accéléré vs ralenti.</p>
+        </div>
+      </div>
+    </div><!-- /simulations -->
+
+
+    <!-- ════════════ QUIZ ════════════ -->
+    <div class="panel" id="tab-quiz">
+      <div class="content-card">
+        <div class="section-title">Quiz — Description d'un mouvement</div>
+        <div class="quiz-card">
+          <div class="quiz-q" id="quizQ"></div>
+          <div class="quiz-opts" id="quizOpts"></div>
+          <div class="quiz-explain" id="quizEx"></div>
+          <div class="quiz-nav">
+            <button class="quiz-btn" onclick="nextQuiz()">Question suivante</button>
+            <span id="quizScore"></span>
+          </div>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="section-title">Chatbot IA</div>
+        <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--rad);padding:.9rem 1rem;font-size:.82rem;font-family:monospace;margin:.75rem 0" id="promptBox">Tu es un assistant en physique-chimie Terminale Spécialité. Chapitre : Description d'un mouvement. Aide-moi à maîtriser : référentiels (terrestre, géocentrique, héliocentrique), vecteur position, vecteur vitesse (dérivée, chronophotographie), vecteur accélération, MRU/MRUA/MRUR, mouvement circulaire uniforme (centripète, a=v²/R). Réponds avec formules LaTeX, unités, exemples numériques et pièges.</div>
+        <button class="quiz-btn" style="font-size:.8rem;padding:.4rem .9rem" onclick="copyPrompt()">Copier le prompt</button>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.75rem">
+          <a href="https://chat.openai.com" target="_blank" style="background:#10a37f;color:#fff;padding:.4rem .9rem;border-radius:5px;font-size:.8rem;font-weight:600">ChatGPT</a>
+          <a href="https://claude.ai" target="_blank" style="background:#b25c00;color:#fff;padding:.4rem .9rem;border-radius:5px;font-size:.8rem;font-weight:600">Claude</a>
+          <a href="https://gemini.google.com" target="_blank" style="background:#4285f4;color:#fff;padding:.4rem .9rem;border-radius:5px;font-size:.8rem;font-weight:600">Gemini</a>
+          <a href="https://copilot.microsoft.com" target="_blank" style="background:#0078d4;color:#fff;padding:.4rem .9rem;border-radius:5px;font-size:.8rem;font-weight:600">Copilot</a>
+        </div>
+      </div>
+    </div><!-- /quiz -->
+
+
+    <!-- ════════════ ECE ════════════ -->
+    <div class="panel" id="tab-ece">
+      <div class="content-card">
+        <div class="section-title">ECE — Compétences expérimentales</div>
+        <div class="ece-grid">
+          <div class="ece-card"><h4>📷 Analyse de chronophotographie</h4><p>Mesurer les positions, calculer les vitesses approchées $v_i = M_{i-1}M_{i+1}/(2\Delta t)$, construire les vecteurs vitesse à l'échelle.</p><span class="tag">REA</span><span class="tag">ANA</span></div>
+          <div class="ece-card"><h4>📐 Vecteur accélération</h4><p>Construire $\Delta\vec{v}_i = \vec{v}_{i+1} - \vec{v}_{i-1}$, calculer $a_i = \Delta v_i/(2\Delta t)$, dessiner $\vec{a}_i$ à partir de $M_i$.</p><span class="tag">REA</span><span class="tag">VAL</span></div>
+          <div class="ece-card"><h4>🎯 Vidéo-pointage</h4><p>Utiliser un logiciel de pointage (Tracker, Aviméca) pour extraire les positions à intervalles réguliers et calculer vitesse et accélération.</p><span class="tag">APP</span><span class="tag">ANA</span></div>
+          <div class="ece-card"><h4>🔬 Identifier le type de mouvement</h4><p>À partir des vecteurs vitesses construits : MRU (vecteurs de même norme), accéléré (norme croissante), ralenti (norme décroissante).</p><span class="tag">ANA</span><span class="tag">COM</span></div>
+        </div>
+      </div>
+    </div><!-- /ece -->
+
+
+    <!-- ════════════ PREPA ════════════ -->
+    <div class="panel" id="tab-prepa">
+      <div class="content-card">
+        <div class="section-title">Vers la prépa PCSI</div>
+        <div class="prepa-grid">
+          <div class="prepa-card"><h4>🔢 Cinématique en coordonnées cylindriques</h4><p>En PCSI, on exprime la position en coordonnées polaires $(r, \theta)$. Le vecteur vitesse s'écrit $\vec{v} = \dot{r}\,\vec{e}_r + r\dot{\theta}\,\vec{e}_\theta$. Utile pour les problèmes de planètes et satellites.</p><span class="tag">PCSI Méca S1</span></div>
+          <div class="prepa-card"><h4>📐 Repère de Frenet général</h4><p>En PCSI, le vecteur accélération se décompose en accélération tangentielle $a_t = \dot{v}$ et normale $a_n = v^2/R$ (rayon de courbure). Applicable à toute trajectoire courbe.</p><span class="tag">PCSI Méca S1</span></div>
+          <div class="prepa-card"><h4>🌍 Référentiels non galiléens</h4><p>En PCSI, la Terre n'est pas strictement un référentiel galiléen. On introduit les forces fictives : force d'inertie d'entraînement et force de Coriolis (rotation terrestre).</p><span class="tag">PCSI Méca S2</span></div>
+          <div class="prepa-card"><h4>∫ Primitives et intégration</html></h4><p>Si $\vec{a}(t)$ est connue, on obtient $\vec{v}(t)$ par intégration (avec conditions initiales), puis $\overrightarrow{OM}(t)$ par une deuxième intégration. Technique fondamentale en PCSI.</p><span class="tag">PCSI Maths</span></div>
+        </div>
+      </div>
+    </div><!-- /prepa -->
+
+  </div><!-- /panels -->
+</div><!-- /main -->
+
+<script>
+const tabs=[...document.querySelectorAll('.tab')];
+function switchTab(id){tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+id));localStorage.setItem('term4_tab',id);updateProgress();typeset();}
+tabs.forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+(function(){const s=localStorage.getItem('term4_tab');if(s)switchTab(s);}());
+function updateProgress(){const done=new Set(JSON.parse(localStorage.getItem('term4_seen')||'[]'));const a=document.querySelector('.tab.active')?.dataset.tab||'cours';done.add(a);localStorage.setItem('term4_seen',JSON.stringify([...done]));const pct=Math.round(done.size/tabs.length*100);document.getElementById('masteryBar').style.width=pct+'%';document.getElementById('progressText').textContent=pct+'%';}
+updateProgress();
+(function(){const bar=document.getElementById('readProgress');const root=document.getElementById('panelsRoot');root.addEventListener('scroll',()=>{const h=root.scrollHeight-root.clientHeight;bar.style.transform='scaleX('+(h>0?root.scrollTop/h:0)+')';},{passive:true});}());
+function typeset(){if(window.MathJax&&MathJax.typesetPromise){const el=document.querySelector('.panel.active');if(el)MathJax.typesetPromise([el]).catch(()=>{});}}
+function goSection(id){switchTab('cours');setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+function toggleAnswer(btn){const ans=btn.nextElementSibling;const open=ans.style.display==='block';ans.style.display=open?'none':'block';btn.textContent=open?'Voir la correction':'Masquer la correction';}
+
+const flash=[
+  ['Définition d\'un référentiel ?','Un objet de référence + un repère d\'espace $(O;\\vec{i},\\vec{j},\\vec{k})$ + un repère de temps (horloge)'],
+  ['Quel référentiel pour étudier la Lune ou un satellite ?','Référentiel <strong>géocentrique</strong> : centré sur la Terre, axes fixes vers les étoiles'],
+  ['Définition du vecteur position $\\overrightarrow{OM}(t)$ ?','$\\overrightarrow{OM}(t) = x(t)\\vec{i}+y(t)\\vec{j}+z(t)\\vec{k}$ · Les fonctions x(t), y(t), z(t) sont les équations horaires'],
+  ['Relation entre vecteur vitesse et position ?','$\\vec{v}(t) = \\dfrac{d\\overrightarrow{OM}(t)}{dt}$ · dérivée par rapport au temps'],
+  ['Direction du vecteur vitesse ?','Tangent à la trajectoire, orienté dans le sens du mouvement'],
+  ['Formule de la vitesse approchée sur une chronophotographie ?','$v_i = \\dfrac{M_{i-1}M_{i+1}}{2\\Delta t}$ · on utilise les deux points voisins'],
+  ['Relation entre vecteur accélération et vitesse ?','$\\vec{a}(t) = \\dfrac{d\\vec{v}(t)}{dt} = \\dfrac{d^2\\overrightarrow{OM}(t)}{dt^2}$'],
+  ['Vecteur accélération sur une chronophotographie ?','$\\vec{a}_i = \\Delta\\vec{v}_i/(2\\Delta t)$ avec $\\Delta\\vec{v}_i = \\vec{v}_{i+1} - \\vec{v}_{i-1}$'],
+  ['Caractéristiques du MRU (mouvement rectiligne uniforme) ?','$\\vec{v} = \\text{constante}$ · $\\vec{a} = \\vec{0}$ · vitesse constante'],
+  ['Mouvement accéléré vs ralenti — comment distinguer ?','Accéléré : $\\vec{v}$ et $\\vec{a}$ dans le <strong>même sens</strong> · Ralenti : sens <strong>opposés</strong>'],
+  ['Pour un MCU, l\'accélération est-elle nulle ?','Non ! $v$ = constante mais la direction change → $\\vec{a} \\neq \\vec{0}$. Accélération centripète $a = v^2/R$.'],
+  ['Formule de l\'accélération centripète (MCU) ?','$a = v^2/R$ · dirigée vers le centre du cercle · $\\vec{a} = (v^2/R)\\,\\vec{u}_n$'],
+  ['Comment calculer la vitesse orbitale d\'un satellite ?','$v = 2\\pi R/T$ · R = rayon de l\'orbite (m) · T = période (s)'],
+  ['Les vecteurs $\\vec{u}_t$ et $\\vec{u}_n$ du repère de Frenet ?','$\\vec{u}_t$ : tangentiel (sens du mouvement) · $\\vec{u}_n$ : normal (vers l\'intérieur de la trajectoire)'],
+  ['Pourquoi préciser le référentiel pour étudier un mouvement ?','Le mouvement dépend du référentiel : un objet peut être immobile dans un référentiel et en mouvement dans un autre'],
+];
+let fi=0,flipped=false;
+function renderFlash(){document.getElementById('fcFront').innerHTML=flash[fi][0];document.getElementById('fcBack').innerHTML=flash[fi][1];document.getElementById('fcCounter').textContent=(fi+1)+'/'+flash.length;document.getElementById('fcCard').classList.remove('flipped');flipped=false;if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('fcCard')]).catch(()=>{});}
+function flipFlash(){flipped=!flipped;document.getElementById('fcCard').classList.toggle('flipped',flipped);}
+function nextFlash(){fi=(fi+1)%flash.length;renderFlash();}
+function prevFlash(){fi=(fi-1+flash.length)%flash.length;renderFlash();}
+renderFlash();
+
+const quiz=[
+  {q:'Pour étudier le mouvement d\'un satellite artificiel, on utilise le référentiel :',o:['Géocentrique','Terrestre','Héliocentrique','Du satellite lui-même'],a:0,ex:'Le référentiel géocentrique est centré sur la Terre avec des axes fixes, adapté aux objets en orbite autour de la Terre.'},
+  {q:'Le vecteur vitesse $\\vec{v}(t)$ est :',o:['La dérivée du vecteur position par rapport au temps','Le quotient de la distance sur la durée','La dérivée de l\'accélération','Toujours horizontal'],a:0,ex:'$\\vec{v}(t) = d\\overrightarrow{OM}(t)/dt$. La vitesse est la dérivée temporelle de la position.'},
+  {q:'La direction du vecteur vitesse est :',o:['Tangente à la trajectoire, dans le sens du mouvement','Perpendiculaire à la trajectoire','Vers le centre de courbure','Verticale'],a:0,ex:'Le vecteur vitesse est toujours tangent à la trajectoire et orienté dans le sens du mouvement.'},
+  {q:'Sur une chronophotographie avec Δt = 0,1 s, la vitesse au point M₂ avec M₁M₃ = 3,0 cm vaut :',o:['15 cm/s = 0,15 m/s','30 cm/s','3,0 cm/s','1,5 cm/s'],a:0,ex:'$v_2 = M_1M_3/(2\\Delta t) = 3{,}0/(2\\times0{,}1) = 3{,}0/0{,}2 = 15$ cm/s.'},
+  {q:'Pour un MRU (mouvement rectiligne uniforme) :',o:['$\\vec{a} = \\vec{0}$ et $\\vec{v}$ = constante','$\\vec{a}$ = constante non nulle','La vitesse augmente régulièrement','La trajectoire est courbe'],a:0,ex:'MRU : vecteur vitesse constant (même direction, sens, norme) → $\\vec{a} = \\vec{0}$.'},
+  {q:'Un mouvement est ralenti quand :',o:['$\\vec{v}$ et $\\vec{a}$ sont de sens opposés','$\\vec{a} = \\vec{0}$','$\\vec{v}$ et $\\vec{a}$ sont dans le même sens','La trajectoire est circulaire'],a:0,ex:'Ralenti = la vitesse diminue = $\\vec{v}$ et $\\vec{a}$ de sens opposés (l\'accélération "freine" le mouvement).'},
+  {q:'Pour un MCU (mouvement circulaire uniforme), l\'accélération est :',o:['Centripète, dirigée vers le centre : $a = v²/R$','Nulle (vitesse constante)','Tangentielle uniquement','Vers l\'extérieur du cercle'],a:0,ex:'MCU : $v$ = constante mais direction change → $\\vec{a} \\neq \\vec{0}$. Accélération centripète : $a = v²/R$, dirigée vers le centre.'},
+  {q:'Un satellite orbite à R = 8000 km avec v = 7,0 km/s. Son accélération centripète vaut :',o:['a = v²/R = 6,1 m/s²','a = v/R = 0,875 m/s²','a = 2v/R','a = 9,8 m/s²'],a:0,ex:'$a = v²/R = (7000)²/(8\\times10^6) = 49\\times10^6/8\\times10^6 \\approx 6{,}1$ m/s².'},
+  {q:'Les équations horaires x(t) = 3t² donnent un mouvement :',o:['Uniformément accéléré ($a$ = 6 m/s²)','Uniforme','Ralenti','Circulaire'],a:0,ex:'$v = dx/dt = 6t$ (croissant) · $a = dv/dt = 6$ m/s² (constante, positive) → MRUA.'},
+  {q:'Le repère de Frenet utilise les vecteurs :',o:['$\\vec{u}_t$ tangentiel et $\\vec{u}_n$ normal (centripète)','$\\vec{i}$ et $\\vec{j}$ de l\'espace','$\\vec{v}$ et $\\vec{a}$','$\\vec{e}_r$ et $\\vec{e}_\\theta$'],a:0,ex:'Le repère de Frenet : $\\vec{u}_t$ tangent à la trajectoire (sens du mouvement) + $\\vec{u}_n$ perpendiculaire vers l\'intérieur.'},
+  {q:'La norme de la vitesse est toujours :',o:['Positive ou nulle','Peut être négative','Égale à la norme de l\'accélération','Constante'],a:0,ex:'$v = \\|\\vec{v}\\| = \\sqrt{v_x²+v_y²+v_z²} \\geq 0$ par définition d\'une norme. Les composantes $v_x, v_y$ peuvent être négatives.'},
+  {q:'Pour calculer la vitesse v d\'un satellite en orbite circulaire de rayon R et de période T :',o:['$v = 2\\pi R/T$','$v = R/T$','$v = RT/(2\\pi)$','$v = 2\\pi T/R$'],a:0,ex:'Un tour = distance $2\\pi R$ en temps $T$ → $v = 2\\pi R/T$.'},
+  {q:'Quelle est la différence entre le référentiel terrestre et géocentrique ?',o:['Terrestre tourne avec la Terre ; géocentrique a des axes fixes','Ils sont identiques','Géocentrique est centré sur le Soleil','Terrestre est inertiel, géocentrique non'],a:0,ex:'Terrestre : axes tournent avec la Terre (repère "solidaire"). Géocentrique : axes fixes vers des étoiles lointaines, centré sur la Terre.'},
+];
+let qi=0,score=0,answered=false;
+function renderQuiz(){if(qi>=quiz.length){document.querySelector('.quiz-card').innerHTML='<div style="text-align:center;padding:2rem"><div style="font-size:2.5rem;margin-bottom:.5rem">🎉</div><div style="font-size:1.25rem;font-weight:700;color:var(--dark)">Score : '+score+' / '+quiz.length+'</div><button class="quiz-btn" style="margin-top:1rem" onclick="resetQuiz()">Recommencer</button></div>';return;}
+const q=quiz[qi];document.getElementById('quizQ').textContent=(qi+1)+'/'+quiz.length+' — '+q.q;document.getElementById('quizOpts').innerHTML=q.o.map((o,i)=>'<button class="quiz-opt" onclick="answerQuiz('+i+')">'+'ABCD'[i]+'. '+o+'</button>').join('');document.getElementById('quizEx').style.display='none';document.getElementById('quizScore').textContent=score+' pt(s)';answered=false;if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.querySelector('.quiz-card')]).catch(()=>{});}
+function answerQuiz(i){if(answered)return;answered=true;const q=quiz[qi];[...document.querySelectorAll('.quiz-opt')][q.a].classList.add('correct');if(i!==q.a)[...document.querySelectorAll('.quiz-opt')][i].classList.add('wrong');else score++;const ex=document.getElementById('quizEx');ex.textContent=q.ex;ex.style.display='block';document.getElementById('quizScore').textContent=score+' pt(s)';}
+function nextQuiz(){if(answered){qi++;renderQuiz();}}
+function resetQuiz(){qi=0;score=0;answered=false;renderQuiz();}
+renderQuiz();
+
+(function(){const btn=document.getElementById('themeBtn');let dark=false;btn.addEventListener('click',()=>{dark=!dark;document.documentElement.style.setProperty('--bg',dark?'#0f172a':'#f8fafc');document.documentElement.style.setProperty('--card',dark?'#1e293b':'#ffffff');document.documentElement.style.setProperty('--text',dark?'#e2e8f0':'#1e293b');document.documentElement.style.setProperty('--border',dark?'#334155':'#e2e8f0');btn.textContent=dark?'☀️':'🌙';});}());
+function copyPrompt(){const t=document.getElementById('promptBox').textContent;navigator.clipboard.writeText(t).then(()=>alert('Prompt copié !')).catch(()=>{});}
+</script>
+</body>
+</html>
