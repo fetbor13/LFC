@@ -1,1 +1,0 @@
-## 2026-05-18 - Added aria-labels to close buttons\n**Learning:** Icon-only close buttons in modals lacked aria-labels, making them inaccessible to screen readers.\n**Action:** Always verify icon-only interactive elements have descriptive aria-labels, and added `aria-label="Fermer"` to modal close buttons.
