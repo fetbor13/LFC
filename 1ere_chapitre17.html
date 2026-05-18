@@ -1,1117 +1,181 @@
-﻿<!DOCTYPE html>
-<html lang="fr" data-theme="light">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>1ʳᵉ Spé · Chapitre 17 — Couleurs et lumière | PhysiChem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>
-(function(){var t=localStorage.getItem('pco_theme')||'light';
-document.documentElement.setAttribute('data-theme',t);})();
-</script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
+/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --bg:#fbf5f7;--bg2:#f3eaf0;--surface:#ffffff;--surface2:#fdf8fb;
-  --blue:#9f4f68;--blue2:#b96a82;--blue3:#d4899f;
-  --text:#1a0a12;--text2:#5a2d42;--text3:#8a5a6a;
-  --border:rgba(159,79,104,0.15);--border2:rgba(159,79,104,0.30);
-  --ok:#2d9e6b;--ok-bg:#eaf7f0;--ok-bd:rgba(45,158,107,0.3);
-  --warn:#c07820;--warn-bg:#fdf5ea;--warn-bd:rgba(192,120,32,0.3);
-  --prop:#6b5fad;--prop-bg:#f0eefb;--prop-bd:rgba(107,95,173,0.3);
-  --radius:14px;--radius-sm:9px;
-  --shadow:0 2px 16px rgba(159,79,104,0.10);
-  --shadow-md:0 6px 28px rgba(159,79,104,0.16);
-}
-[data-theme="dark"]{
-  --bg:#12060c;--bg2:#1a0d14;--surface:#1f1018;--surface2:#261520;
-  --blue:#d4899f;--blue2:#b96a82;--blue3:#9f4f68;
-  --text:#f5e8ee;--text2:#c9a0b2;--text3:#8a5a6a;
-  --border:rgba(212,137,159,0.15);--border2:rgba(212,137,159,0.28);
-  --ok:#3dbd82;--ok-bg:#0d2b1e;--ok-bd:rgba(61,189,130,0.25);
-  --warn:#e09040;--warn-bg:#2a1e0a;--warn-bd:rgba(224,144,64,0.25);
-  --prop:#9b8fe8;--prop-bg:#1a1830;--prop-bd:rgba(155,143,232,0.25);
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
-.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;box-shadow:var(--shadow)}
-.back-btn{font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--border2);transition:.2s}
-.back-btn:hover{background:var(--bg2)}
-.breadcrumb{font-size:12px;color:var(--text3);flex:1}
-.breadcrumb strong{color:var(--blue);font-weight:700}
-.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.mastery-mini{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3)}
-.mastery-mini-bar{width:80px;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
-.mastery-mini-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:3px;transition:.4s;width:0%}
-.pct-pill{font-size:11px;font-weight:700;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2px 8px}
-.th-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px}
-.layout{display:flex;flex:1;padding-top:52px}
-.rail{width:64px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;position:fixed;top:52px;bottom:0;left:0;z-index:90;overflow-y:auto}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;width:56px;border-radius:10px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:9.5px;font-weight:600;font-family:'Inter',sans-serif;transition:.18s;text-align:center;line-height:1.2}
-.tab:hover{background:var(--bg2);color:var(--blue2)}
-.tab.active{background:var(--bg2);color:var(--blue);box-shadow:inset 0 0 0 1.5px var(--border2)}
-.tab-icon{font-size:18px}
-.main{margin-left:64px;flex:1;overflow-y:auto}
-.hero{background:linear-gradient(135deg,var(--bg2) 0%,var(--surface) 100%);border-bottom:1px solid var(--border);padding:28px 32px 0;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap}
-.hero-text{flex:1;min-width:260px;padding-bottom:28px}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
-.hero-title{font-size:clamp(22px,3.5vw,34px);font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px}
-.hero-title em{color:var(--blue);font-style:normal}
-.hero-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px}
-.mastery-row{display:flex;align-items:center;gap:10px}
-.mastery-bar{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
-#masteryBar{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.4s;width:0%}
-#masteryTxt{font-size:12px;font-weight:700;color:var(--blue);min-width:34px}
-.hero-canvas-wrap{width:320px;height:180px;border-radius:14px;overflow:hidden;flex-shrink:0;border:1.5px solid var(--border2)}
-.panel{display:none;min-height:calc(100vh - 52px)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
 .panel.active{display:block}
-.panel-inner{max-width:920px;margin:0 auto;padding:32px 24px 48px}
-.sec-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.box{border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;border-left:4px solid transparent;font-size:14px;line-height:1.65}
-.box-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-.box.def{background:var(--prop-bg);border-left-color:var(--prop);}.box.def .box-label{color:var(--prop)}
-.box.ok{background:var(--ok-bg);border-left-color:var(--ok);}.box.ok .box-label{color:var(--ok)}
-.box.warn{background:var(--warn-bg);border-left-color:var(--warn);}.box.warn .box-label{color:var(--warn)}
-.box.prop{background:var(--prop-bg);border-left-color:var(--prop);}.box.prop .box-label{color:var(--prop)}
-.formula-block{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px 18px;margin:12px 0;font-family:'IBM Plex Mono',monospace;font-size:15px;text-align:center;overflow-x:auto;color:var(--blue)}
-.tbl-wrap{overflow-x:auto;margin:14px 0}
-table{width:100%;border-collapse:collapse;font-size:13.5px}
-th,td{padding:9px 14px;border:1px solid var(--border);text-align:left}
-thead th{background:var(--bg2);font-weight:700;color:var(--blue2)}
-tbody tr:nth-child(even){background:var(--surface2)}
-.exbox{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin:14px 0}
-.exbox-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;margin-bottom:8px}
-/* COLOR SWATCHES */
-.color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
-.color-swatch{border-radius:10px;padding:14px 10px;text-align:center;font-size:12px;font-weight:700;border:1.5px solid rgba(0,0,0,.08)}
-/* FC */
-.fc-mode-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.fc-mode-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:.18s;font-family:'Inter',sans-serif}
-.fc-mode-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-.fc-section{display:none}.fc-section.active{display:block}
-.fc-count{font-size:12px;color:var(--text3);margin-bottom:10px;font-weight:600}
-.card-scene{width:100%;max-width:480px;margin:0 auto 18px;height:220px;perspective:1000px;cursor:pointer}
-.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:.6s}
-.card-3d.flipped{transform:rotateY(180deg)}
-.card-face{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;box-shadow:var(--shadow-md)}
-.card-front{background:linear-gradient(135deg,var(--blue2),var(--blue3));color:#fff}
-.card-back{background:var(--surface);border:2px solid var(--border2);transform:rotateY(180deg);color:var(--text)}
-.card-q-icon{font-size:28px;margin-bottom:8px}
-.card-q-text{font-size:17px;font-weight:700;line-height:1.4}
-.card-hint{font-size:11px;margin-top:10px;opacity:.7}
-.card-a-text{font-size:15px;line-height:1.6;color:var(--text2)}
-.fc-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.fc-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.18s}
-.fc-btn:hover{background:var(--bg2)}.fc-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.comp-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:12px;font-size:14px}
-.comp-item input{border:none;border-bottom:2px solid var(--blue3);background:transparent;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);width:100px;padding:2px 4px;outline:none}
-.comp-check{margin-top:8px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--blue);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.comp-fb{font-size:12px;margin-top:6px;font-weight:600}
-.chrono-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.chrono-display{font-size:22px;font-weight:800;color:var(--blue);font-family:'IBM Plex Mono',monospace;min-width:52px}
-.chrono-prog{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.chrono-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.5s linear}
-.chrono-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:22px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;font-weight:600;margin-bottom:14px}
-.chrono-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn-knew{padding:9px 20px;border-radius:8px;background:var(--ok);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
-.btn-didnt{padding:9px 20px;border-radius:8px;background:var(--warn);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
-.chrono-result{display:none;text-align:center}
-.result-big{font-size:42px;font-weight:900;color:var(--blue)}
-.quiz-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.quiz-prog-bar{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
-.quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.3s}
-.quiz-prog-lbl{font-size:12px;color:var(--text3);font-weight:600;min-width:48px}
-.score-pill{font-size:13px;font-weight:800;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 12px}
-.q-block{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
-.q-text{font-size:15px;font-weight:700;margin-bottom:14px;line-height:1.5}
-.q-opts{display:grid;gap:8px}
-.q-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-size:13.5px;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;color:var(--text);transition:.18s}
-.q-opt:hover{border-color:var(--blue3);background:var(--bg2)}
-.q-opt.good{background:var(--ok-bg)!important;border-color:var(--ok)!important;color:var(--ok)!important;font-weight:700}
-.q-opt.bad{background:#ffeaea!important;border-color:#e05a5a!important;color:#c02020!important}
-[data-theme="dark"] .q-opt.bad{background:#2a0a0a!important;border-color:#e05a5a!important;color:#ff8080!important}
-.q-corr{font-size:13px;color:var(--ok);font-weight:600;margin-top:8px;display:none;line-height:1.5}
-.quiz-final{display:none;text-align:center;padding:28px 16px}
-.final-big{font-size:52px;font-weight:900;color:var(--blue)}
-.final-msg{font-size:15px;color:var(--text2);margin:8px 0 22px}
-.restart-btn{padding:10px 24px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
-.exo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
-.exo-header{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
-.exo-title{font-size:15px;font-weight:700;flex:1}
-.exo-badges{display:flex;gap:6px;flex-wrap:wrap}
-.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;border:1px solid transparent}
-.badge-diff{background:var(--bg2);color:var(--text2);border-color:var(--border)}
-.badge-comp{background:var(--prop-bg);color:var(--prop);border-color:var(--prop-bd)}
-.exo-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
-.exo-body.open{display:block}
-.corr-toggle{margin-top:12px;padding:7px 16px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.corr-body{display:none;margin-top:10px;padding:12px;background:var(--ok-bg);border-radius:8px;border:1px solid var(--ok-bd);font-size:13.5px;line-height:1.65}
-.corr-body.open{display:block}
-.sim-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:18px;margin-bottom:18px}
-.sim-title{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--blue)}
-.sim-btn{padding:8px 18px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px}
-.sim-canvas{width:100%;height:180px;border-radius:10px;background:var(--bg);margin-top:10px;display:block}
-#mmCanvas{width:100%;border-radius:14px;background:var(--bg);display:block}
-.ece-proto{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.7}
-.ece-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
-.ece-step-num{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-#eceCanvas{width:100%;height:220px;border-radius:10px;background:var(--bg);display:block;margin:12px 0}
-.terminal-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:580px){.terminal-grid{grid-template-columns:1fr}}
-.term-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:18px}
-.term-card h4{font-size:14px;font-weight:800;color:var(--blue);margin-bottom:10px}
-.mini-challenge{background:var(--prop-bg);border:1.5px solid var(--prop-bd);border-radius:var(--radius);padding:18px;margin:20px 0}
-.mini-challenge h3{font-size:16px;font-weight:800;color:var(--prop);margin-bottom:10px}
-.rel-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
-.rel-table th{background:var(--bg2);color:var(--blue2);font-weight:700;padding:9px 14px;border:1px solid var(--border);text-align:center}
-.rel-table td{padding:9px 14px;border:1px solid var(--border);text-align:center}
-/* couleur circles */
-.add-circles{display:flex;justify-content:center;gap:0;margin:18px 0;position:relative;height:160px}
-.add-circle{position:absolute;width:110px;height:110px;border-radius:50%;mix-blend-mode:screen;opacity:0.85}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <a href="index.html" class="back-btn">← Retour</a>
-  <div class="breadcrumb">Première Spé › Ondes et signaux › <strong>Chapitre 17</strong></div>
-  <div class="topbar-right">
-    <div class="mastery-mini"><div class="mastery-mini-bar"><div class="mastery-mini-fill" id="mmFill"></div></div></div>
-    <span class="pct-pill" id="pctPill">0 %</span>
-    <button class="th-btn" id="thBtn" onclick="toggleTheme()">🌙</button>
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
+    <div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · Enseignant SPC</p>
+    </div>
+  </div>
+
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">1ʳᵉ Spé</span>
+      <span class="micro">Chap. 17</span>
+    </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+  </div>
+
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
+
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
   </div>
 </div>
 
-<div class="layout">
-<nav class="rail">
-  <button class="tab active" onclick="go('cours',this)"><span class="tab-icon">📚</span>cours</button>
-  <button class="tab" onclick="go('reldim',this)"><span class="tab-icon">📐</span>reldim</button>
-  <button class="tab" onclick="go('exo',this)"><span class="tab-icon">✏️</span>exo</button>
-  <button class="tab" onclick="go('fc',this)"><span class="tab-icon">🃏</span>fc</button>
-  <button class="tab" onclick="go('quiz',this)"><span class="tab-icon">🧠</span>quiz</button>
-  <button class="tab" onclick="go('mm',this)"><span class="tab-icon">🗺</span>mm</button>
-  <button class="tab" onclick="go('sim',this)"><span class="tab-icon">🎬</span>sim</button>
-  <button class="tab" onclick="go('ece',this)"><span class="tab-icon">🔬</span>ece</button>
-  <button class="tab" onclick="go('terminal',this)"><span class="tab-icon">🚀</span>tle</button>
-</nav>
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
 
-<div class="main">
-<div class="hero">
-  <div class="hero-text">
-    <div class="hero-badge">🌊 Ondes et signaux · Chap. 17</div>
-    <h1 class="hero-title">Couleurs <em>et lumière</em></h1>
-    <p class="hero-sub">Synthèse additive RVB · Synthèse soustractive CMJ · Absorption, transmission, diffusion · Couleur d'un objet sous éclairage coloré</p>
-    <div class="mastery-row">
-      <span style="font-size:12px;color:var(--text3);font-weight:600">Maîtrise</span>
-      <div class="mastery-bar"><div id="masteryBar"></div></div>
-      <span id="masteryTxt">0 %</span>
-    </div>
-  </div>
-  <div class="hero-canvas-wrap">
-    <canvas id="heroCanvas" width="320" height="180"></canvas>
-  </div>
-</div>
-
-<!-- ═══ COURS ═══ -->
-<div class="panel active" id="p-cours">
-<div class="panel-inner">
-
-  <h2 class="sec-title">🎯 Pourquoi ce chapitre ?</h2>
-  <div class="box prop"><div class="box-label">Idée directrice</div>
-    <p>La couleur n'est pas une propriété intrinsèque d'un objet. Elle dépend de la lumière incidente, des radiations absorbées, transmises ou diffusées par la matière, puis de l'interprétation par l'œil et le cerveau. Ce chapitre distingue deux raisonnements souvent confondus : mélanger des <strong>lumières</strong> (synthèse additive) et mélanger des <strong>pigments ou filtres</strong> (synthèse soustractive).</p>
-  </div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 I. Vision des couleurs — Trichromie</h2>
-  <p style="margin-bottom:10px">L'œil humain possède trois types de cônes sensibles à trois domaines spectraux :</p>
-  <div class="color-grid">
-    <div class="color-swatch" style="background:#ff000044;color:#c00">Cônes L<br><small>sensibles au rouge (~700 nm)</small></div>
-    <div class="color-swatch" style="background:#00aa0044;color:#006600">Cônes M<br><small>sensibles au vert (~550 nm)</small></div>
-    <div class="color-swatch" style="background:#0000ff44;color:#0000cc">Cônes S<br><small>sensibles au bleu (~440 nm)</small></div>
-  </div>
-  <div class="box def"><div class="box-label">Trichromie</div>
-    <p>La <strong>trichromie</strong> modélise la perception colorée humaine à partir de trois stimulations relatives. Deux lumières de compositions spectrales différentes peuvent provoquer la même sensation colorée (métamérie).</p>
-  </div>
-  <div class="box warn"><div class="box-label">À ne pas confondre</div>
-    <p>Les trois lumières <strong>primaires</strong> (pour la synthèse additive) sont rouge, vert, bleu. Les trois couleurs <strong>primaires des pigments</strong> (synthèse soustractive) sont cyan, magenta, jaune.</p>
-  </div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 II. Lumière et spectre visible</h2>
-  <div class="box def"><div class="box-label">Lumière monochromatique</div>
-    <p>Contient une <strong>seule radiation</strong>, caractérisée par sa longueur d'onde \(\lambda\). Le laser est un exemple courant.</p>
-  </div>
-  <div class="box def"><div class="box-label">Lumière polychromatique</div>
-    <p>Contient <strong>plusieurs radiations</strong> de longueurs d'onde différentes. La lumière blanche est polychromatique.</p>
-  </div>
-  <div class="formula-block">\[\lambda_{\mathrm{visible}}\approx 400\,\mathrm{nm}\text{ à }800\,\mathrm{nm}\]</div>
-  <div class="tbl-wrap"><table><thead><tr><th>Couleur</th><th>Longueur d'onde (nm)</th></tr></thead><tbody>
-    <tr><td>Violet</td><td>400 – 420</td></tr>
-    <tr><td>Bleu</td><td>420 – 490</td></tr>
-    <tr><td>Vert</td><td>490 – 575</td></tr>
-    <tr><td>Jaune-orange</td><td>575 – 620</td></tr>
-    <tr><td>Rouge</td><td>620 – 800</td></tr>
-  </tbody></table></div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 III. Interactions lumière-matière</h2>
-  <div class="tbl-wrap"><table><thead><tr><th>Phénomène</th><th>Signification</th><th>Exemple</th></tr></thead><tbody>
-    <tr><td><strong>Absorption</strong></td><td>Une radiation est captée par la matière (énergie absorbée).</td><td>Un filtre rouge absorbe vert et bleu.</td></tr>
-    <tr><td><strong>Transmission</strong></td><td>La lumière traverse le milieu transparent ou translucide.</td><td>Un verre coloré transmet certaines radiations.</td></tr>
-    <tr><td><strong>Diffusion</strong></td><td>La lumière est renvoyée dans de nombreuses directions par la matière.</td><td>Une feuille blanche diffuse presque toutes les radiations visibles.</td></tr>
-  </tbody></table></div>
-  <div class="box ok"><div class="box-label">Raisonnement fiable</div>
-    <p>1. Identifier la lumière incidente. 2. Déterminer ce qui est absorbé. 3. Ce qui reste est transmis (filtre) ou diffusé (objet opaque). 4. Conclure sur la couleur perçue.</p>
-  </div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 IV. Synthèse additive</h2>
-  <p style="margin-bottom:10px">La <strong>synthèse additive</strong> concerne le <strong>mélange de lumières</strong> colorées. C'est le modèle des écrans, vidéoprojecteurs et éclairages colorés. Chaque lumière apporte de l'énergie supplémentaire : le résultat est plus clair.</p>
-  <div class="formula-block">\[\text{rouge}+\text{vert}=\text{jaune}\qquad\text{vert}+\text{bleu}=\text{cyan}\qquad\text{bleu}+\text{rouge}=\text{magenta}\]</div>
-  <div class="formula-block">\[\text{rouge}+\text{vert}+\text{bleu}=\text{blanc}\]</div>
-  <div class="tbl-wrap"><table><thead><tr><th>Mélange</th><th>Couleur obtenue</th><th>Application</th></tr></thead><tbody>
-    <tr><td>R + V</td><td>Jaune</td><td>Pixel jaune sur un écran</td></tr>
-    <tr><td>V + B</td><td>Cyan</td><td>Éclairage scénique</td></tr>
-    <tr><td>B + R</td><td>Magenta</td><td>Vidéoprojecteur</td></tr>
-    <tr><td>R + V + B</td><td>Blanc</td><td>Écran blanc</td></tr>
-    <tr><td>Aucune lumière</td><td>Noir</td><td>Écran éteint</td></tr>
-  </tbody></table></div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 V. Synthèse soustractive</h2>
-  <p style="margin-bottom:10px">La <strong>synthèse soustractive</strong> concerne les <strong>filtres et pigments</strong>. Chaque filtre ou pigment absorbe (retire) certaines radiations à la lumière incidente. Le résultat est plus sombre.</p>
-  <div class="tbl-wrap"><table><thead><tr><th>Filtre / Pigment</th><th>Radiation absorbée</th><th>Radiations transmises / diffusées</th><th>Complémentaire</th></tr></thead><tbody>
-    <tr><td style="color:#00aaaa;font-weight:700">Cyan</td><td>Rouge</td><td>Vert + bleu</td><td>Complémentaire du rouge</td></tr>
-    <tr><td style="color:#cc00cc;font-weight:700">Magenta</td><td>Vert</td><td>Rouge + bleu</td><td>Complémentaire du vert</td></tr>
-    <tr><td style="color:#aaaa00;font-weight:700">Jaune</td><td>Bleu</td><td>Rouge + vert</td><td>Complémentaire du bleu</td></tr>
-  </tbody></table></div>
-  <div class="formula-block">\[\text{cyan}+\text{magenta}+\text{jaune}\approx\text{noir (idéal)}\]</div>
-  <div class="exbox"><div class="exbox-label">Exemple — filtres superposés</div>
-    <p>Lumière blanche → filtre cyan → filtre jaune.</p>
-    <p>Le filtre cyan laisse passer vert + bleu (absorbe rouge).</p>
-    <p>Le filtre jaune laisse passer rouge + vert (absorbe bleu).</p>
-    <p>La radiation commune aux deux transmissions est le <strong>vert</strong> : la lumière finale est verte.</p>
-  </div>
-
-  <h2 class="sec-title" style="margin-top:28px">🔹 VI. Couleur d'un objet sous éclairage</h2>
-  <p style="margin-bottom:10px">Un objet opaque diffuse (renvoie) certaines radiations et en absorbe d'autres. La couleur perçue est celle des radiations diffusées <strong>qui se trouvent effectivement dans la lumière incidente</strong>.</p>
-  <div class="exbox"><div class="exbox-label">Tee-shirt rouge sous éclairage cyan</div>
-    <p>En lumière blanche : le tee-shirt diffuse surtout le rouge, absorbe vert et bleu → paraît rouge.</p>
-    <p>En lumière cyan (vert + bleu) : le tee-shirt ne reçoit pas de rouge à diffuser → paraît <strong>très sombre (quasi noir)</strong>.</p>
-    <p>En lumière rouge seule : le tee-shirt diffuse le rouge reçu → paraît rouge vif.</p>
-  </div>
-  <div class="box warn"><div class="box-label">Piège classique</div>
-    <p>Dire qu'un objet « possède » une couleur sans préciser l'éclairage est incomplet. La couleur perçue résulte de la <em>chaîne complète</em> : source lumineuse → interaction avec la matière → réception par l'œil.</p>
-  </div>
-
-</div>
-</div>
-
-<!-- ═══ RELDIM ═══ -->
-<div class="panel" id="p-reldim">
-<div class="panel-inner">
-  <h2 class="sec-title">📐 Tableau de synthèse</h2>
-
-  <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--blue2)">Synthèse additive (lumières)</h3>
-  <table class="rel-table"><thead><tr><th>Mélange</th><th>Résultat</th></tr></thead><tbody>
-    <tr><td>Rouge + Vert</td><td>Jaune</td></tr>
-    <tr><td>Vert + Bleu</td><td>Cyan</td></tr>
-    <tr><td>Bleu + Rouge</td><td>Magenta</td></tr>
-    <tr><td>Rouge + Vert + Bleu</td><td>Blanc</td></tr>
-    <tr><td>Aucune lumière</td><td>Noir</td></tr>
-  </tbody></table>
-
-  <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--blue2)">Synthèse soustractive (filtres / pigments)</h3>
-  <table class="rel-table"><thead><tr><th>Filtre</th><th>Absorbe</th><th>Transmet</th></tr></thead><tbody>
-    <tr><td>Cyan</td><td>Rouge</td><td>Vert + Bleu</td></tr>
-    <tr><td>Magenta</td><td>Vert</td><td>Rouge + Bleu</td></tr>
-    <tr><td>Jaune</td><td>Bleu</td><td>Rouge + Vert</td></tr>
-    <tr><td>Cyan + Magenta</td><td>Rouge + Vert</td><td>Bleu</td></tr>
-    <tr><td>Cyan + Jaune</td><td>Rouge + Bleu</td><td>Vert</td></tr>
-    <tr><td>Magenta + Jaune</td><td>Vert + Bleu</td><td>Rouge</td></tr>
-    <tr><td>Cyan + Magenta + Jaune</td><td>Tout (idéal)</td><td>Noir</td></tr>
-  </tbody></table>
-
-  <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--blue2)">Couleurs complémentaires</h3>
-  <table class="rel-table"><thead><tr><th>Couleur</th><th>Complémentaire</th></tr></thead><tbody>
-    <tr><td>Rouge</td><td>Cyan</td></tr>
-    <tr><td>Vert</td><td>Magenta</td></tr>
-    <tr><td>Bleu</td><td>Jaune</td></tr>
-  </tbody></table>
-  <p style="font-size:13px;color:var(--text3);margin-top:8px">Deux couleurs complémentaires donnent du blanc en synthèse additive et du noir en synthèse soustractive.</p>
-
-  <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--blue2)">Spectre visible — repères</h3>
-  <div class="formula-block">\[\lambda_{\mathrm{bleu}}\approx 450\,\mathrm{nm}\quad\lambda_{\mathrm{vert}}\approx 550\,\mathrm{nm}\quad\lambda_{\mathrm{rouge}}\approx 700\,\mathrm{nm}\]</div>
-</div>
-</div>
-
-<!-- ═══ EXO ═══ -->
-<div class="panel" id="p-exo">
-<div class="panel-inner">
-  <h2 class="sec-title">✏️ Exercices progressifs</h2>
-
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 1 — Filtres colorés superposés</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐</span><span class="badge badge-comp">APP</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> Une lumière blanche traverse successivement un filtre cyan puis un filtre jaune.</p>
-      <p>1. Que transmet le filtre cyan ?</p>
-      <p>2. Parmi ce qui sort du filtre cyan, que transmet le filtre jaune ?</p>
-      <p>3. Quelle est la couleur finale transmise ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> Le filtre cyan absorbe le rouge et transmet <strong>vert + bleu</strong>.</p>
-        <p><strong>2.</strong> Le filtre jaune absorbe le bleu et transmet rouge + vert. Parmi vert + bleu, il transmet uniquement le <strong>vert</strong>.</p>
-        <p><strong>3.</strong> La lumière finale transmise est <strong>verte</strong>.</p>
-        <p><em>Méthode :</em> Pour des filtres en série, on cherche l'intersection des ensembles de radiations transmises par chaque filtre.</p>
-      </div>
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">1ʳᵉ Spé · Chap. 17</div>
+    <h1 class="hero-title">Couleurs et lum<span>ière | PhysiChem</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
     </div>
   </div>
 
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 2 — Objet coloré sous éclairage coloré</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐</span><span class="badge badge-comp">APP · REA</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> Un objet magenta est éclairé par une lumière verte.</p>
-      <p>1. Quelles radiations un objet magenta diffuse-t-il normalement (en lumière blanche) ?</p>
-      <p>2. La lumière verte contient-elle ces radiations ?</p>
-      <p>3. Quelle couleur perçoit-on ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> Un objet magenta diffuse rouge + bleu (il absorbe le vert).</p>
-        <p><strong>2.</strong> La lumière verte ne contient ni rouge ni bleu.</p>
-        <p><strong>3.</strong> L'objet ne reçoit pas les radiations qu'il pourrait diffuser : il paraît <strong>très sombre (quasi noir)</strong>.</p>
-        <p><em>Méthode :</em> La couleur d'un objet ne peut s'exprimer que si la lumière incidente contient les radiations que l'objet diffuse.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 3 — Pixel d'écran RVB</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">REA · ANA</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> Un pixel d'écran allume ses sous-pixels rouge et bleu, mais pas le vert.</p>
-      <p>1. S'agit-il de synthèse additive ou soustractive ?</p>
-      <p>2. Quelle couleur le pixel affiche-t-il ?</p>
-      <p>3. Que faudrait-il allumer pour obtenir du blanc ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> Un écran émet de la lumière : il s'agit de <strong>synthèse additive</strong>.</p>
-        <p><strong>2.</strong> En synthèse additive, bleu + rouge = <strong>magenta</strong>.</p>
-        <p><strong>3.</strong> Pour obtenir du blanc, il faut allumer rouge + vert + bleu simultanément.</p>
-        <p><em>Méthode :</em> Sur un écran, chaque pixel est composé de 3 sous-pixels émettant R, V et B. C'est leur combinaison qui produit toutes les teintes.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 4 — Mélange de pigments</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">ANA · VAL</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> On mélange un pigment cyan et un pigment magenta (éclairage blanc).</p>
-      <p>1. Quelles radiations le pigment cyan absorbe-t-il ?</p>
-      <p>2. Quelles radiations le pigment magenta absorbe-t-il ?</p>
-      <p>3. Quelle radiation reste disponible pour être diffusée ? De quelle couleur est le mélange ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> Le pigment cyan absorbe le <strong>rouge</strong>.</p>
-        <p><strong>2.</strong> Le pigment magenta absorbe le <strong>vert</strong>.</p>
-        <p><strong>3.</strong> Il reste le <strong>bleu</strong>, non absorbé par les deux pigments. Le mélange paraît <strong>bleu</strong>.</p>
-        <p><em>Méthode :</em> En synthèse soustractive, on liste ce qui est absorbé par chacun et on cherche ce qui reste de la lumière blanche incidente.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 5 — Spectre et longueur d'onde</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">APP · REA</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> Classer les radiations suivantes du rouge au violet : \(700\,\mathrm{nm}\), \(450\,\mathrm{nm}\), \(550\,\mathrm{nm}\).</p>
-      <p>1. Donner la couleur de chaque radiation.</p>
-      <p>2. Quel est l'ordre croissant de longueur d'onde dans le spectre visible ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> \(700\,\mathrm{nm}\) : rouge. \(550\,\mathrm{nm}\) : vert. \(450\,\mathrm{nm}\) : bleu-violet.</p>
-        <p><strong>2.</strong> Du violet au rouge, la longueur d'onde croît : \(450 < 550 < 700\,\mathrm{nm}\). C'est l'ordre de l'arc-en-ciel.</p>
-        <p><em>Méthode :</em> Les longueurs d'onde les plus courtes correspondent aux couleurs froides (violet, bleu) et les plus longues aux couleurs chaudes (rouge).</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="exo-card">
-    <div class="exo-header" onclick="toggleExo(this)">
-      <span class="exo-title">Exo 6 — Scène de spectacle éclairée</span>
-      <div class="exo-badges"><span class="badge badge-diff">⭐⭐⭐</span><span class="badge badge-comp">ANA · VAL · COM</span></div>
-      <span style="font-size:18px;color:var(--text3)">▾</span>
-    </div>
-    <div class="exo-body">
-      <p><strong>Énoncé :</strong> Sur scène, un projecteur rouge et un projecteur vert éclairent un danseur portant un costume blanc et des chaussures noires.</p>
-      <p>1. Quelle est la couleur du fond de scène blanc sous cet éclairage ?</p>
-      <p>2. Quelle est la couleur des chaussures noires ?</p>
-      <p>3. Le danseur porte une écharpe rouge. Comment apparaît-elle sous le projecteur vert seul ?</p>
-      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-      <div class="corr-body">
-        <p><strong>1.</strong> Le fond blanc diffuse toutes les radiations reçues. Il reçoit rouge + vert → en synthèse additive : rouge + vert = <strong>jaune</strong>. Le fond paraît jaune.</p>
-        <p><strong>2.</strong> Les chaussures noires absorbent toutes les radiations : elles restent <strong>noires</strong> quel que soit l'éclairage.</p>
-        <p><strong>3.</strong> L'écharpe rouge diffuse le rouge mais absorbe le vert. Sous le projecteur vert seul, elle ne reçoit pas de rouge à diffuser : elle paraît <strong>sombre</strong>.</p>
-        <p><em>Méthode :</em> Toujours décomposer la lumière incidente et comparer avec les radiations diffusées par l'objet.</p>
-      </div>
-    </div>
-  </div>
-
-</div>
-</div>
-
-<!-- ═══ FC ═══ -->
-<div class="panel" id="p-fc">
-<div class="panel-inner">
-  <h2 class="sec-title">🃏 Flashcards — Couleurs et lumière</h2>
-  <div class="fc-mode-row">
-    <button class="fc-mode-btn on" onclick="switchFC('libre',this)">📖 Révision libre</button>
-    <button class="fc-mode-btn" onclick="switchFC('completion',this)">✍️ Complétion</button>
-    <button class="fc-mode-btn" onclick="switchFC('chrono',this)">⏱ Chrono 2 min</button>
-  </div>
-  <div class="fc-section active" id="fc-libre">
-    <div class="fc-count" id="fc-count">Carte 1 / 15</div>
-    <div class="card-scene" onclick="flipCard()">
-      <div class="card-3d" id="fc-card">
-        <div class="card-face card-front">
-          <div class="card-q-icon" id="fc-icon">❓</div>
-          <div class="card-q-text" id="fc-q">Chargement…</div>
-          <div class="card-hint">Cliquez pour retourner</div>
-        </div>
-        <div class="card-face card-back">
-          <div class="card-a-text" id="fc-a">Réponse…</div>
-        </div>
-      </div>
-    </div>
-    <div class="fc-nav">
-      <button class="fc-btn" onclick="prevCard()">← Préc.</button>
-      <button class="fc-btn primary" onclick="flipCard()">↻ Retourner</button>
-      <button class="fc-btn" onclick="nextCard()">Suiv. →</button>
-      <button class="fc-btn" onclick="shuffleCards()">🔀 Mélanger</button>
-    </div>
-  </div>
-  <div class="fc-section" id="fc-completion">
-    <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Score : <strong id="comp-score">0</strong></p>
-    <div id="comp-container"></div>
-  </div>
-  <div class="fc-section" id="fc-chrono">
-    <div class="chrono-bar">
-      <div class="chrono-display" id="chrono-time">2:00</div>
-      <div class="chrono-prog"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
-      <span style="font-size:12px;color:var(--text3);font-weight:600" id="chrono-counter">0/15</span>
-    </div>
-    <div class="chrono-card" id="chrono-card"><div id="chrono-q">Appuyez sur Démarrer</div></div>
-    <div class="chrono-acts" id="chrono-acts"><button class="btn-knew" onclick="startChrono()">▶ Démarrer</button></div>
-    <div class="chrono-result" id="chrono-result">
-      <div class="result-big" id="result-big">0/15</div>
-      <div style="font-size:14px;color:var(--text2);margin:8px 0 20px" id="result-sub">—</div>
-      <button class="fc-btn primary" onclick="startChrono()">🔄 Recommencer</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══ QUIZ ═══ -->
-<div class="panel" id="p-quiz">
-<div class="panel-inner">
-  <h2 class="sec-title">🧠 Quiz — 12 questions</h2>
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-    <span class="score-pill" id="scorePill">0 / 0</span>
-  </div>
-  <div class="quiz-prog-row">
-    <div class="quiz-prog-bar"><div class="quiz-prog-fill" id="qProgFill" style="width:0%"></div></div>
-    <span class="quiz-prog-lbl" id="qProgLbl">Q 1/12</span>
-  </div>
-  <div id="qContainer"></div>
-  <div class="quiz-final" id="qFinal">
-    <div class="final-big" id="finalBig">—</div>
-    <div class="final-msg" id="finalMsg">—</div>
-    <button class="restart-btn" onclick="startQuiz()">🔄 Recommencer</button>
-  </div>
-</div>
-</div>
-
-<!-- ═══ CARTE MENTALE ═══ -->
-<div class="panel" id="p-mm">
-<div class="panel-inner">
-  <h2 class="sec-title">🗺 Carte mentale — Couleurs et lumière</h2>
-  <canvas id="mmCanvas" height="500"></canvas>
-</div>
-</div>
-
-<!-- ═══ SIMULATEURS ═══ -->
-<div class="panel" id="p-sim">
-<div class="panel-inner">
-  <h2 class="sec-title">🎬 Simulateurs</h2>
-
-  <div class="sim-card">
-    <div class="sim-title">🔴🟢🔵 Mélangeur de lumières (synthèse additive)</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Cochez les lumières à mélanger :</p>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#ff4444;cursor:pointer">
-        <input type="checkbox" id="cbR" onchange="calcAdd()"> Rouge
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#44bb44;cursor:pointer">
-        <input type="checkbox" id="cbV" onchange="calcAdd()"> Vert
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#4488ff;cursor:pointer">
-        <input type="checkbox" id="cbB" onchange="calcAdd()"> Bleu
-      </label>
-    </div>
-    <canvas id="simAddCanvas" class="sim-canvas" height="120"></canvas>
-    <div class="sim-result" id="sim-add-result" style="margin-top:10px"></div>
-  </div>
-
-  <div class="sim-card">
-    <div class="sim-title">🖨️ Mélangeur de filtres (synthèse soustractive)</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Cochez les filtres appliqués (lumière blanche incidente) :</p>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#00aaaa;cursor:pointer">
-        <input type="checkbox" id="cbC" onchange="calcSub()"> Cyan
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#cc44cc;cursor:pointer">
-        <input type="checkbox" id="cbM" onchange="calcSub()"> Magenta
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#aaaa00;cursor:pointer">
-        <input type="checkbox" id="cbJ" onchange="calcSub()"> Jaune
-      </label>
-    </div>
-    <canvas id="simSubCanvas" class="sim-canvas" height="120"></canvas>
-    <div class="sim-result" id="sim-sub-result" style="margin-top:10px"></div>
-  </div>
-
-  <!-- PhET -->
-  <h3 style="font-size:15px;font-weight:700;margin:20px 0 10px;color:var(--blue2)">Simulation PhET — Vision des couleurs</h3>
-  <div style="border-radius:12px;overflow:hidden;border:1.5px solid var(--border2)">
-    <iframe src="https://phet.colorado.edu/sims/html/color-vision/latest/color-vision_fr.html" style="width:100%;height:420px;border:none" allowfullscreen loading="lazy"></iframe>
-  </div>
-  <p style="font-size:12px;color:var(--text3);margin-top:8px">Mission : observer comment les cônes R, V, B sont stimulés différemment selon la couleur de la lumière.</p>
-</div>
-</div>
-
-<!-- ═══ ECE ═══ -->
-<div class="panel" id="p-ece">
-<div class="panel-inner">
-  <h2 class="sec-title">🔬 ECE — Analyse de filtres colorés</h2>
-  <div class="ece-proto">
-    <div class="box-label" style="color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.08em;margin-bottom:10px">PROTOCOLE</div>
-    <div class="ece-step"><div class="ece-step-num">1</div><p>Installer la source de lumière blanche, les filtres et un spectroscope (ou papier blanc).</p></div>
-    <div class="ece-step"><div class="ece-step-num">2</div><p>Observer la lumière transmise par un filtre seul. Identifier les radiations présentes.</p></div>
-    <div class="ece-step"><div class="ece-step-num">3</div><p>Superposer deux filtres. Identifier la couleur transmise et comparer avec la prévision théorique.</p></div>
-    <div class="ece-step"><div class="ece-step-num">4</div><p>Éclaire un objet coloré successivement avec lumière blanche, rouge, verte et bleue. Relever la couleur perçue à chaque fois.</p></div>
-    <div class="ece-step"><div class="ece-step-num">5</div><p>Compléter le tableau de résultats et valider (ou invalider) le modèle de synthèse soustractive.</p></div>
-  </div>
-  <canvas id="eceCanvas"></canvas>
-  <h3 style="font-size:15px;font-weight:700;margin:16px 0 10px;color:var(--blue2)">Simulateur de filtres en série</h3>
-  <div class="sim-card" style="max-width:500px">
-    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Choisir les filtres en série (lumière blanche incidente) :</p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px">
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1C" onchange="calcECE()"> Cyan</label>
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1M" onchange="calcECE()"> Magenta</label>
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1J" onchange="calcECE()"> Jaune</label>
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1R" onchange="calcECE()"> Rouge</label>
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1V" onchange="calcECE()"> Vert</label>
-      <label style="font-size:13px;font-weight:600;cursor:pointer"><input type="checkbox" id="e1B" onchange="calcECE()"> Bleu</label>
-    </div>
-    <div class="sim-result" id="ece-result">Cocher au moins un filtre.</div>
-  </div>
-</div>
-</div>
-
-<!-- ═══ TERMINAL ═══ -->
-<div class="panel" id="p-terminal">
-<div class="panel-inner">
-  <h2 class="sec-title">🚀 Vers la Terminale</h2>
-  <div class="terminal-grid">
-    <div class="term-card">
-      <h4>Ce qui est réutilisé en Terminale</h4>
-      <ul style="font-size:13.5px;line-height:2;padding-left:16px">
-        <li>Interaction lumière-matière (absorption)</li>
-        <li>Notion de longueur d'onde</li>
-        <li>Spectrophotométrie (loi de Beer-Lambert)</li>
-        <li>Couleur complémentaire absorbée</li>
-      </ul>
-    </div>
-    <div class="term-card">
-      <h4>Ce qui devient plus difficile</h4>
-      <ul style="font-size:13.5px;line-height:2;padding-left:16px">
-        <li>Spectre d'absorption quantitatif</li>
-        <li>Loi de Beer-Lambert : \(A = \varepsilon\cdot l\cdot c\)</li>
-        <li>Longueur d'onde d'absorption maximale \(\lambda_{\max}\)</li>
-        <li>Dosage par spectrophotométrie</li>
-      </ul>
-    </div>
-  </div>
-  <div class="mini-challenge">
-    <h3>🎯 Mini-défi Terminale : spectrophotométrie</h3>
-    <p style="font-size:14px;line-height:1.7;margin-bottom:12px">Une solution de permanganate de potassium KMnO₄ est violette. En spectrophotométrie, on choisit la longueur d'onde où l'absorbance est maximale.</p>
-    <p style="font-size:14px;margin-bottom:8px"><strong>Question :</strong> Quelle couleur de lumière la solution KMnO₄ absorbe-t-elle le plus ? À quelle longueur d'onde approximative correspond \(\lambda_{\max}\) ?</p>
-    <button class="corr-toggle" onclick="toggleCorr(this)" style="margin-bottom:10px">Voir la réponse</button>
-    <div class="corr-body">
-      <p>Une solution <strong>violette</strong> absorbe sa couleur complémentaire. La complémentaire du violet est le <strong>jaune-vert</strong>.</p>
-      <p>La longueur d'onde d'absorption maximale est donc \(\lambda_{\max} \approx 525\,\mathrm{nm}\) (vert).</p>
-      <p>En Terminale, la loi de Beer-Lambert relie l'absorbance \(A\) à la concentration \(c\) :</p>
-      <div class="formula-block">\[A = \varepsilon \cdot l \cdot c\]</div>
-      <p>avec \(\varepsilon\) le coefficient d'extinction molaire, \(l\) la longueur du trajet optique. On mesure à \(\lambda_{\max}\) pour maximiser la sensibilité.</p>
-    </div>
-  </div>
-</div>
-</div>
-
-</div>
 </div>
 
 <script>
-window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},startup:{ready(){MathJax.startup.defaultReady();}}};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-<script>
-/* ═══ THEME ═══ */
-function toggleTheme(){
-  var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';
-  h.setAttribute('data-theme',n);
-  document.getElementById('thBtn').textContent=n==='dark'?'☀️':'🌙';
-  localStorage.setItem('pco_theme',n);
-  drawHero();drawMM();drawECECanvas();
-}
-
-/* ═══ TABS ═══ */
-var visited=new Set();
-function go(id,btn){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById('p-'+id).classList.add('active');
-  btn.classList.add('active');
-  visited.add(id);updateMastery();
-  if(id==='mm')setTimeout(drawMM,60);
-  if(id==='ece')setTimeout(drawECECanvas,60);
-  if(id==='sim')setTimeout(function(){calcAdd();calcSub();},60);
-  if(id==='quiz')setTimeout(function(){if(!quizStarted)startQuiz();},60);
-  if(id==='fc')setTimeout(function(){renderFC();if(window.MathJax)MathJax.typesetPromise();},60);
-}
-function updateMastery(){
-  var tot=9,n=visited.size,pct=Math.round(n/tot*100);
-  document.getElementById('masteryBar').style.width=pct+'%';
-  document.getElementById('masteryTxt').textContent=pct+' %';
-  document.getElementById('mmFill').style.width=pct+'%';
-  document.getElementById('pctPill').textContent=pct+' %';
-}
-visited.add('cours');updateMastery();
-
-/* ═══ HERO CANVAS — spectre arc-en-ciel animé avec cercles RVB ═══ */
-function drawHero(){
-  var c=document.getElementById('heroCanvas');if(!c)return;
-  var ctx=c.getContext('2d'),W=c.width,H=c.height;
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
-  // spectre horizontal
-  var grad=ctx.createLinearGradient(10,0,W-10,0);
-  grad.addColorStop(0,'#7000ff');grad.addColorStop(0.15,'#0000ff');
-  grad.addColorStop(0.3,'#00aaff');grad.addColorStop(0.45,'#00ff44');
-  grad.addColorStop(0.6,'#ffff00');grad.addColorStop(0.75,'#ff8800');
-  grad.addColorStop(1,'#ff0000');
-  ctx.fillStyle=grad;ctx.fillRect(10,H*0.05,W-20,H*0.28);
-  ctx.fillStyle='rgba(10,6,18,0.3)';ctx.fillRect(10,H*0.05,W-20,H*0.28);
-
-  // 3 cercles RVB animés (synthèse additive)
-  var t=Date.now()/1000;
-  var cx=W/2,cy=H*0.7,r=38;
-  var dx=Math.sin(t*0.7)*4,dy=Math.cos(t*0.5)*3;
-  ctx.globalCompositeOperation='screen';
-  // rouge
-  ctx.beginPath();ctx.arc(cx-20+dx,cy-12+dy,r,0,Math.PI*2);
-  var gr=ctx.createRadialGradient(cx-20+dx,cy-12+dy,0,cx-20+dx,cy-12+dy,r);
-  gr.addColorStop(0,'rgba(255,60,60,0.95)');gr.addColorStop(1,'rgba(255,0,0,0)');
-  ctx.fillStyle=gr;ctx.fill();
-  // vert
-  ctx.beginPath();ctx.arc(cx+20-dx,cy-12-dy,r,0,Math.PI*2);
-  var gg=ctx.createRadialGradient(cx+20-dx,cy-12-dy,0,cx+20-dx,cy-12-dy,r);
-  gg.addColorStop(0,'rgba(60,220,60,0.95)');gg.addColorStop(1,'rgba(0,200,0,0)');
-  ctx.fillStyle=gg;ctx.fill();
-  // bleu
-  ctx.beginPath();ctx.arc(cx,cy+20+dy,r,0,Math.PI*2);
-  var gb=ctx.createRadialGradient(cx,cy+20+dy,0,cx,cy+20+dy,r);
-  gb.addColorStop(0,'rgba(60,80,255,0.95)');gb.addColorStop(1,'rgba(0,40,255,0)');
-  ctx.fillStyle=gb;ctx.fill();
-  ctx.globalCompositeOperation='source-over';
-
-  // labels λ
-  ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='10px IBM Plex Mono';ctx.textAlign='left';
-  ctx.fillText('400 nm',12,H*0.05+H*0.28+14);
-  ctx.textAlign='right';ctx.fillText('800 nm',W-12,H*0.05+H*0.28+14);
-  ctx.fillStyle='rgba(212,137,159,0.7)';ctx.font='bold 10px Inter';ctx.textAlign='center';
-  ctx.fillText('Synthèse additive RVB',W/2,cy+70);
-  requestAnimationFrame(drawHero);
-}
-drawHero();
-
-/* ═══ FC ═══ */
-var FC=[
-  {icon:'👁',q:'Définir la trichromie',a:'Modélisation de la vision colorée humaine à partir de 3 types de cônes sensibles au rouge, vert et bleu.',formula:'3 cônes : R, V, [___]',blanks:['B'],answers:['B','bleu']},
-  {icon:'🌈',q:'Qu\'est-ce qu\'une lumière polychromatique ?',a:'Lumière contenant plusieurs radiations de longueurs d\'onde différentes. La lumière blanche est polychromatique.',formula:'Polychromatique = plusieurs [___]',blanks:['radiations'],answers:['radiations']},
-  {icon:'📏',q:'Domaine du spectre visible',a:'Environ 400 nm (violet) à 800 nm (rouge).',formula:'Visible : 400 à [___] nm',blanks:['800'],answers:['800']},
-  {icon:'➕',q:'Synthèse additive — définition',a:'Mélange de lumières colorées. Chaque source ajoute de l\'énergie. Résultat plus clair.',formula:'Additive = mélange de [___]',blanks:['lumières'],answers:['lumières','lumieres']},
-  {icon:'🔴🟢',q:'Rouge + vert (synthèse additive) = ?',a:'Jaune.',formula:'R + V = [___]',blanks:['jaune'],answers:['jaune']},
-  {icon:'🟢🔵',q:'Vert + bleu (synthèse additive) = ?',a:'Cyan.',formula:'V + B = [___]',blanks:['cyan'],answers:['cyan']},
-  {icon:'🔵🔴',q:'Bleu + rouge (synthèse additive) = ?',a:'Magenta.',formula:'B + R = [___]',blanks:['magenta'],answers:['magenta']},
-  {icon:'🖥',q:'Rouge + vert + bleu (synthèse additive) = ?',a:'Blanc.',formula:'R + V + B = [___]',blanks:['blanc'],answers:['blanc']},
-  {icon:'🎨',q:'Synthèse soustractive — définition',a:'Mélange de filtres ou pigments. Chaque filtre retire des radiations. Résultat plus sombre.',formula:'Soustractive = retire des [___]',blanks:['radiations'],answers:['radiations']},
-  {icon:'🟦',q:'Que transmet un filtre cyan ?',a:'Vert + bleu. Il absorbe le rouge.',formula:'Cyan transmet V + [___]',blanks:['B'],answers:['B','bleu']},
-  {icon:'🟣',q:'Que transmet un filtre magenta ?',a:'Rouge + bleu. Il absorbe le vert.',formula:'Magenta absorbe [___]',blanks:['vert'],answers:['vert']},
-  {icon:'🟨',q:'Que transmet un filtre jaune ?',a:'Rouge + vert. Il absorbe le bleu.',formula:'Jaune absorbe [___]',blanks:['bleu'],answers:['bleu']},
-  {icon:'👕',q:'Couleur d\'un objet rouge sous lumière cyan',a:'La lumière cyan (vert + bleu) ne contient pas de rouge : l\'objet paraît sombre (quasi noir).',formula:'Objet rouge + lumière cyan → [___]',blanks:['sombre'],answers:['sombre','noir']},
-  {icon:'⚠️',q:'Piège classique en couleurs',a:'Confondre synthèse additive (lumières) et soustractive (pigments). Sur écran : additif. En peinture : soustractif.',formula:'Écran = additif ≠ peinture = [___]',blanks:['soustractif'],answers:['soustractif']},
-  {icon:'🎯',q:'Couleur complémentaire du rouge',a:'Cyan. Rouge + cyan = blanc (additif). Cyan absorbe le rouge (soustractif).',formula:'Complémentaire du rouge = [___]',blanks:['cyan'],answers:['cyan']}
-];
-var fcIdx=0,fcOrder=FC.map(function(_,i){return i;}),fcFlipped=false;
-function renderFC(){
-  var d=FC[fcOrder[fcIdx]];
-  document.getElementById('fc-icon').textContent=d.icon;
-  document.getElementById('fc-q').innerHTML=d.q;
-  document.getElementById('fc-a').innerHTML=d.a;
-  document.getElementById('fc-count').textContent='Carte '+(fcIdx+1)+' / '+FC.length;
-  document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;
-  if(window.MathJax)MathJax.typesetPromise([document.getElementById('p-fc')]);
-}
-function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;}
-function nextCard(){fcIdx=(fcIdx+1)%FC.length;renderFC();}
-function prevCard(){fcIdx=(fcIdx-1+FC.length)%FC.length;renderFC();}
-function shuffleCards(){fcOrder.sort(function(){return Math.random()-.5;});fcIdx=0;renderFC();}
-function switchFC(mode,btn){
-  document.querySelectorAll('.fc-mode-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');
-  document.querySelectorAll('.fc-section').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('fc-'+mode).classList.add('active');
-  if(mode==='completion')buildCompletion();if(mode==='chrono')resetChrono();
-}
-function buildCompletion(){
-  var c=document.getElementById('comp-container');c.innerHTML='';var score=0;
-  FC.forEach(function(d,i){
-    var div=document.createElement('div');div.className='comp-item';
-    var ftext=d.formula.replace('[___]','<input type="text" id="cinp'+i+'" placeholder="…">');
-    div.innerHTML='<p style="font-weight:700;margin-bottom:8px">'+d.q+'</p><p>'+ftext+'</p>';
-    var btn=document.createElement('button');btn.className='comp-check';btn.textContent='Vérifier';
-    var fb=document.createElement('div');fb.className='comp-fb';
-    btn.onclick=function(){
-      var v=document.getElementById('cinp'+i).value.trim().toLowerCase();
-      var ok=d.answers.some(function(a){return v===a.toLowerCase();});
-      if(ok){fb.textContent='✅ Correct !';fb.style.color='var(--ok)';score++;document.getElementById('comp-score').textContent=score;}
-      else{fb.textContent='❌ Réponse : '+d.blanks[0];fb.style.color='var(--warn)';}
-    };
-    div.appendChild(btn);div.appendChild(fb);c.appendChild(div);
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
   });
-  if(window.MathJax)MathJax.typesetPromise([c]);
-}
-var chronoTimer=null,chronoIdx=0,chronoScore=0,chronoOrder=[];
-function resetChrono(){
-  clearInterval(chronoTimer);
-  document.getElementById('chrono-time').textContent='2:00';
-  document.getElementById('chrono-fill').style.width='100%';
-  document.getElementById('chrono-counter').textContent='0/'+FC.length;
-  document.getElementById('chrono-card').style.display='flex';
-  document.getElementById('chrono-acts').style.display='flex';
-  document.getElementById('chrono-result').style.display='none';
-  document.getElementById('chrono-q').textContent='Appuyez sur Démarrer';
-  document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';
-}
-function startChrono(){
-  clearInterval(chronoTimer);chronoScore=0;chronoIdx=0;
-  chronoOrder=FC.map(function(_,i){return i;}).sort(function(){return Math.random()-.5;});
-  document.getElementById('chrono-result').style.display='none';
-  document.getElementById('chrono-card').style.display='flex';
-  document.getElementById('chrono-acts').style.display='flex';
-  showChronoQ();
-  var total=120,elapsed=0;
-  chronoTimer=setInterval(function(){
-    elapsed++;var rem=total-elapsed;
-    var m=Math.floor(rem/60),s=rem%60;
-    document.getElementById('chrono-time').textContent=m+':'+(s<10?'0':'')+s;
-    document.getElementById('chrono-fill').style.width=(rem/total*100)+'%';
-    if(rem<=0){clearInterval(chronoTimer);showChronoResult();}
-  },1000);
-}
-function showChronoQ(){
-  if(chronoIdx>=FC.length){clearInterval(chronoTimer);showChronoResult();return;}
-  var d=FC[chronoOrder[chronoIdx]];
-  document.getElementById('chrono-q').innerHTML=d.q;
-  document.getElementById('chrono-counter').textContent=chronoIdx+'/'+FC.length;
-  document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="chronoKnew()">✅ Je savais</button><button class="btn-didnt" onclick="chronoDidnt()">❌ Je ne savais pas</button>';
-  if(window.MathJax)MathJax.typesetPromise([document.getElementById('chrono-card')]);
-}
-function chronoKnew(){chronoScore++;chronoIdx++;showChronoQ();}
-function chronoDidnt(){chronoIdx++;showChronoQ();}
-function showChronoResult(){
-  document.getElementById('chrono-card').style.display='none';
-  document.getElementById('chrono-acts').style.display='none';
-  document.getElementById('chrono-result').style.display='block';
-  document.getElementById('result-big').textContent=chronoScore+'/'+FC.length;
-  var pct=Math.round(chronoScore/FC.length*100);
-  document.getElementById('result-sub').textContent=pct>=80?'Excellent !':pct>=50?'Bien, continue !':'À retravailler.';
-}
-
-/* ═══ QUIZ ═══ */
-var QS=[
-  {q:'La synthèse additive concerne :',opts:['Des lumières colorées','Des pigments','Des colorants sur papier','Des filtres seulement'],ans:0,corr:'Les écrans utilisent la synthèse additive RVB.'},
-  {q:'Rouge + vert en synthèse additive donne :',opts:['Jaune','Cyan','Magenta','Noir'],ans:0,corr:'Rouge + vert est perçu comme jaune.'},
-  {q:'Rouge + vert + bleu en synthèse additive donne :',opts:['Blanc','Noir','Cyan','Jaune'],ans:0,corr:'Les trois primaires lumineuses donnent du blanc.'},
-  {q:'Un filtre cyan absorbe principalement :',opts:['Le rouge','Le bleu','Le vert','Toutes les radiations'],ans:0,corr:'Cyan transmet vert + bleu et absorbe rouge.'},
-  {q:'Un objet rouge éclairé par une lumière cyan paraît :',opts:['Sombre (quasi noir)','Rouge vif','Blanc','Jaune'],ans:0,corr:'La lumière cyan (vert+bleu) ne contient pas de rouge à diffuser.'},
-  {q:'La lumière blanche est :',opts:['Polychromatique','Monochromatique','Toujours laser','Invisible'],ans:0,corr:'Elle contient plusieurs radiations visibles.'},
-  {q:'Le visible correspond environ à :',opts:['400 à 800 nm','1 à 10 nm','1 à 10 m','10 à 20 Hz'],ans:0,corr:'C\'est l\'ordre de grandeur du spectre visible.'},
-  {q:'La synthèse soustractive concerne surtout :',opts:['Pigments et filtres','Écrans RVB','LED rouges et vertes','Lasers uniquement'],ans:0,corr:'Elle retire des radiations à la lumière incidente.'},
-  {q:'Un filtre jaune absorbe :',opts:['Le bleu','Le rouge','Le vert','Tout le spectre'],ans:0,corr:'Le filtre jaune absorbe le bleu, transmet rouge + vert.'},
-  {q:'La couleur complémentaire du rouge est :',opts:['Cyan','Jaune','Vert','Magenta'],ans:0,corr:'Cyan absorbe le rouge ; rouge + cyan = blanc en synthèse additive.'},
-  {q:'Une feuille blanche éclairée en lumière rouge paraît :',opts:['Rouge','Blanche','Noire','Cyan'],ans:0,corr:'Elle diffuse toutes les radiations reçues, ici uniquement le rouge.'},
-  {q:'Cyan + magenta + jaune (filtres) donnent idéalement :',opts:['Noir','Blanc','Bleu','Vert'],ans:0,corr:'Chaque filtre absorbe une primaire ; ensemble ils absorbent tout : noir.'}
-];
-var quizStarted=false,qIdx=0,qScore=0;
-function startQuiz(){
-  quizStarted=true;qIdx=0;qScore=0;
-  document.getElementById('scorePill').textContent='0 / '+QS.length;
-  document.getElementById('qFinal').style.display='none';showQ();
-}
-function showQ(){
-  var c=document.getElementById('qContainer');c.innerHTML='';
-  if(qIdx>=QS.length){showFinal();return;}
-  var d=QS[qIdx];
-  document.getElementById('qProgFill').style.width=Math.round(qIdx/QS.length*100)+'%';
-  document.getElementById('qProgLbl').textContent='Q '+(qIdx+1)+'/'+QS.length;
-  var qb=document.createElement('div');qb.className='q-block';
-  var qt=document.createElement('div');qt.className='q-text';qt.innerHTML=d.q;
-  var qo=document.createElement('div');qo.className='q-opts';
-  d.opts.forEach(function(opt,i){
-    var b=document.createElement('button');b.className='q-opt';b.innerHTML=opt;
-    b.onclick=function(){
-      document.querySelectorAll('.q-opt').forEach(function(x){x.style.pointerEvents='none';});
-      if(i===d.ans){b.classList.add('good');qScore++;}
-      else{b.classList.add('bad');qo.children[d.ans].classList.add('good');}
-      document.getElementById('scorePill').textContent=qScore+' / '+QS.length;
-      var corr=document.createElement('div');corr.className='q-corr';corr.style.display='block';corr.innerHTML='💡 '+d.corr;
-      qb.appendChild(corr);setTimeout(function(){qIdx++;showQ();},1800);
-    };
-    qo.appendChild(b);
-  });
-  qb.appendChild(qt);qb.appendChild(qo);c.appendChild(qb);
-  if(window.MathJax)MathJax.typesetPromise([c]);
-}
-function showFinal(){
-  document.getElementById('qContainer').innerHTML='';
-  document.getElementById('qProgFill').style.width='100%';
-  document.getElementById('qProgLbl').textContent='Terminé';
-  var f=document.getElementById('qFinal');f.style.display='block';
-  var pct=Math.round(qScore/QS.length*100);
-  document.getElementById('finalBig').textContent=qScore+'/'+QS.length;
-  document.getElementById('finalMsg').textContent=pct>=80?'Excellent !':pct>=50?'Bien ! Quelques notions à revoir.':'À retravailler. Revois le cours.';
-}
-
-/* ═══ CARTE MENTALE ═══ */
-function drawMM(){
-  var c=document.getElementById('mmCanvas');if(!c)return;
-  var W=c.parentElement.clientWidth||800;c.width=W;c.height=500;
-  var ctx=c.getContext('2d');
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,500);
-  var cx=W/2,cy=250;
-  ctx.fillStyle='#9f4f68';
-  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(cx-72,cy-28,144,56,14);else ctx.rect(cx-72,cy-28,144,56);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='bold 13px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('COULEURS',cx,cy-8);ctx.fillText('ET LUMIÈRE',cx,cy+10);
-  var branches=[
-    {label:'Spectre visible',nodes:['400–800 nm','Mono / Poly','λ et couleur'],col:'#4a90e2',angle:-100},
-    {label:'Vision',nodes:['Cônes R V B','Trichromie','Métamérie'],col:'#3daf82',angle:-40},
-    {label:'Additive',nodes:['R+V=Jaune','V+B=Cyan','R+V+B=Blanc'],col:'#ffb800',angle:20},
-    {label:'Soustractive',nodes:['Cyan (abs. R)','Magenta (abs. V)','Jaune (abs. B)'],col:'#e85a5a',angle:80},
-    {label:'Objets',nodes:['Absorption','Diffusion','Sous éclairage'],col:'#9b8fe8',angle:140},
-    {label:'Vers Terminale',nodes:['Beer-Lambert','λ max','Spectrophoto'],col:'#e87b3a',angle:200}
-  ];
-  branches.forEach(function(br){
-    var rad=br.angle*Math.PI/180,bx=cx+Math.cos(rad)*140,by=cy+Math.sin(rad)*110;
-    ctx.strokeStyle=br.col;ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(bx,by);ctx.stroke();
-    ctx.fillStyle=br.col+'33';ctx.strokeStyle=br.col;ctx.lineWidth=1.5;
-    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx-55,by-14,110,28,8);else ctx.rect(bx-55,by-14,110,28);ctx.fill();ctx.stroke();
-    ctx.fillStyle=br.col;ctx.font='bold 11px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(br.label,bx,by);
-    br.nodes.forEach(function(nd,j){
-      var nrad=rad+(j-1)*0.32,nx=bx+Math.cos(nrad)*95,ny=by+Math.sin(nrad)*70;
-      ctx.strokeStyle=br.col+'88';ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(nx,ny);ctx.stroke();
-      ctx.fillStyle='#1a0d14';ctx.strokeStyle=br.col+'66';ctx.lineWidth=1;
-      var tw=ctx.measureText(nd).width+16;
-      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(nx-tw/2,ny-10,tw,20,5);else ctx.rect(nx-tw/2,ny-10,tw,20);ctx.fill();ctx.stroke();
-      ctx.fillStyle='#d4899f';ctx.font='10px Inter,sans-serif';ctx.textAlign='center';
-      ctx.fillText(nd,nx,ny);
-    });
-  });
-}
-
-/* ═══ SIMULATEURS ═══ */
-function getAddColor(r,v,b){
-  if(!r&&!v&&!b)return{col:'#0a0612',txt:'Noir (aucune lumière)'};
-  if(r&&v&&b)return{col:'#ffffff',txt:'Blanc'};
-  if(r&&v)return{col:'#ffff00',txt:'Jaune'};
-  if(v&&b)return{col:'#00ffff',txt:'Cyan'};
-  if(r&&b)return{col:'#ff00ff',txt:'Magenta'};
-  if(r)return{col:'#ff3333',txt:'Rouge'};
-  if(v)return{col:'#33ff33',txt:'Vert'};
-  return{col:'#4488ff',txt:'Bleu'};
-}
-function calcAdd(){
-  var r=document.getElementById('cbR').checked,v=document.getElementById('cbV').checked,b=document.getElementById('cbB').checked;
-  var res=getAddColor(r,v,b);
-  var c=document.getElementById('simAddCanvas'),ctx=c.getContext('2d');
-  c.width=c.parentElement.clientWidth||400;
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  ctx.globalCompositeOperation='screen';
-  var cx=c.width/2,cy=c.height/2,rad=40;
-  if(r){var g=ctx.createRadialGradient(cx-30,cy-20,0,cx-30,cy-20,rad);g.addColorStop(0,'rgba(255,60,60,0.9)');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx-30,cy-20,rad,0,Math.PI*2);ctx.fill();}
-  if(v){var g2=ctx.createRadialGradient(cx+30,cy-20,0,cx+30,cy-20,rad);g2.addColorStop(0,'rgba(60,220,60,0.9)');g2.addColorStop(1,'transparent');ctx.fillStyle=g2;ctx.beginPath();ctx.arc(cx+30,cy-20,rad,0,Math.PI*2);ctx.fill();}
-  if(b){var g3=ctx.createRadialGradient(cx,cy+30,0,cx,cy+30,rad);g3.addColorStop(0,'rgba(60,80,255,0.9)');g3.addColorStop(1,'transparent');ctx.fillStyle=g3;ctx.beginPath();ctx.arc(cx,cy+30,rad,0,Math.PI*2);ctx.fill();}
-  ctx.globalCompositeOperation='source-over';
-  document.getElementById('sim-add-result').innerHTML='<b>Résultat : '+res.txt+'</b>';
-}
-function calcSub(){
-  var cy2=document.getElementById('cbC').checked,mag=document.getElementById('cbM').checked,jau=document.getElementById('cbJ').checked;
-  // lumière blanche = R+V+B. Chaque filtre enlève une couleur primaire.
-  var hasR=true,hasV=true,hasB=true;
-  if(cy2)hasR=false; // cyan absorbe R
-  if(mag)hasV=false; // magenta absorbe V
-  if(jau)hasB=false; // jaune absorbe B
-  var txt,col;
-  if(!hasR&&!hasV&&!hasB){txt='Noir';col='#0a0612';}
-  else if(hasR&&hasV&&hasB){txt='Blanc (aucun filtre)';col='#ffffff';}
-  else if(hasR&&hasV&&!hasB){txt='Jaune';col='#ffff00';}
-  else if(!hasR&&hasV&&hasB){txt='Cyan';col='#00ffff';}
-  else if(hasR&&!hasV&&hasB){txt='Magenta';col='#ff00ff';}
-  else if(hasR&&!hasV&&!hasB){txt='Rouge';col='#ff3333';}
-  else if(!hasR&&hasV&&!hasB){txt='Vert';col='#33ff33';}
-  else{txt='Bleu';col='#4488ff';}
-  var c=document.getElementById('simSubCanvas'),ctx=c.getContext('2d');
-  c.width=c.parentElement.clientWidth||400;
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var gr=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,60);
-  gr.addColorStop(0,col);gr.addColorStop(1,'transparent');
-  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(c.width/2,c.height/2,60,0,Math.PI*2);ctx.fill();
-  document.getElementById('sim-sub-result').innerHTML='<b>Résultat : '+txt+'</b>';
-}
-
-/* ═══ ECE CANVAS ═══ */
-function drawECECanvas(){
-  var c=document.getElementById('eceCanvas');if(!c)return;
-  c.width=c.parentElement.clientWidth||600;c.height=220;
-  var ctx=c.getContext('2d'),W=c.width,H=c.height;
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
-  // source blanche
-  var sx=W*0.1,sy=H/2;
-  var g=ctx.createRadialGradient(sx,sy,0,sx,sy,35);
-  g.addColorStop(0,'rgba(255,255,220,0.9)');g.addColorStop(1,'transparent');
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(sx,sy,35,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='rgba(255,255,200,0.8)';ctx.font='bold 10px Inter';ctx.textAlign='center';ctx.fillText('Lumière',sx,sy+42);ctx.fillText('blanche',sx,sy+54);
-
-  // rayon blanc
-  ctx.strokeStyle='rgba(255,255,200,0.4)';ctx.lineWidth=12;
-  ctx.beginPath();ctx.moveTo(sx+35,sy);ctx.lineTo(W*0.35,sy);ctx.stroke();
-
-  // filtre 1
-  var f1x=W*0.38;
-  ctx.fillStyle='rgba(0,200,200,0.5)';ctx.fillRect(f1x-6,sy-30,12,60);
-  ctx.fillStyle='#00eeee';ctx.font='bold 10px Inter';ctx.textAlign='center';ctx.fillText('Filtre',f1x,sy+40);ctx.fillText('Cyan',f1x,sy+52);
-  ctx.strokeStyle='rgba(0,200,200,0.3)';ctx.lineWidth=8;
-  ctx.beginPath();ctx.moveTo(f1x+6,sy);ctx.lineTo(W*0.56,sy);ctx.stroke();
-
-  // filtre 2
-  var f2x=W*0.59;
-  ctx.fillStyle='rgba(255,255,0,0.5)';ctx.fillRect(f2x-6,sy-30,12,60);
-  ctx.fillStyle='#dddd00';ctx.font='bold 10px Inter';ctx.textAlign='center';ctx.fillText('Filtre',f2x,sy+40);ctx.fillText('Jaune',f2x,sy+52);
-  ctx.strokeStyle='rgba(80,200,80,0.5)';ctx.lineWidth=5;
-  ctx.beginPath();ctx.moveTo(f2x+6,sy);ctx.lineTo(W*0.82,sy);ctx.stroke();
-
-  // écran
-  ctx.fillStyle='rgba(80,200,80,0.8)';ctx.fillRect(W*0.82,sy-30,14,60);
-  ctx.fillStyle='#44cc44';ctx.font='bold 10px Inter';ctx.textAlign='center';ctx.fillText('Vert',W*0.82+7,sy+40);
-  ctx.fillText('→ résultat',W*0.82+7,sy+52);
-}
-function calcECE(){
-  var c=document.getElementById('e1C').checked,m=document.getElementById('e1M').checked,j=document.getElementById('e1J').checked;
-  var r=document.getElementById('e1R').checked,v=document.getElementById('e1V').checked,b=document.getElementById('e1B').checked;
-  var hasR=true,hasV=true,hasB=true;
-  if(c)hasR=false;if(m)hasV=false;if(j)hasB=false;
-  if(r)hasV=false,hasB=false;
-  if(v)hasR=false,hasB=false;
-  if(b)hasR=false,hasV=false;
-  var txt;
-  if(!hasR&&!hasV&&!hasB)txt='Noir';
-  else if(hasR&&hasV&&hasB)txt='Blanc';
-  else if(hasR&&hasV)txt='Jaune';
-  else if(hasV&&hasB)txt='Cyan';
-  else if(hasR&&hasB)txt='Magenta';
-  else if(hasR)txt='Rouge';
-  else if(hasV)txt='Vert';
-  else txt='Bleu';
-  document.getElementById('ece-result').innerHTML='<b>Résultat : '+txt+'</b>';
-}
-
-/* ═══ EXO / CORR ═══ */
-function toggleExo(h){var b=h.nextElementSibling;b.classList.toggle('open');}
-function toggleCorr(btn){var d=btn.nextElementSibling;d.classList.toggle('open');}
-
-/* ═══ INIT ═══ */
-window.onload=function(){
-  var th=localStorage.getItem('pco_theme')||'light';
-  document.getElementById('thBtn').textContent=th==='dark'?'☀️':'🌙';
-  renderFC();
-};
-</script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
-<script>
-(function(){
-  function _scrollToPanel(){
-    var p=document.querySelector('.panel.active');
-    if(!p)return;
-    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
-    var off=nb?nb.offsetHeight+6:70;
-    var y=p.getBoundingClientRect().top+window.scrollY-off;
-    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
-  }
-  document.addEventListener('click',function(e){
-    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
-    if(b)setTimeout(_scrollToPanel,60);
-  },true);
-})();
+});
 </script>
 </body>
 </html>

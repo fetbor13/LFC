@@ -1,208 +1,181 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PCSI-P04 — Optique ondulatoire avancée</title>
-<script>
-window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }, svg: { fontCache: 'global' } };
-</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
-:root{--bg:#f6f7f9;--paper:#fff;--paper-2:#eef3f6;--ink:#17212e;--muted:#5b6674;--soft:#8490a1;--line:#dfe5eb;--line-strong:#c4ccd6;--accent:#7c3aed;--accent-bg:color-mix(in srgb,var(--accent) 12%,white);--shadow:0 18px 55px rgba(23,33,46,.12);--shadow-soft:0 12px 28px rgba(23,33,46,.08)}
-[data-theme="dark"]{--bg:#111827;--paper:#182232;--paper-2:#101827;--ink:#edf4ff;--muted:#b4c0ce;--soft:#8794a7;--line:#2a3648;--line-strong:#3a475b;--accent-bg:color-mix(in srgb,var(--accent) 14%,#182232);--shadow:0 20px 60px rgba(0,0,0,.28);--shadow-soft:0 12px 30px rgba(0,0,0,.18)}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 8%,transparent) 0 1px,transparent 1px 82px),linear-gradient(180deg,rgba(37,99,235,.05) 0 1px,transparent 1px 82px),var(--bg);color:var(--ink)}
-a{text-decoration:none;color:inherit}.progress{position:fixed;inset:0 0 auto 0;height:3px;z-index:40}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#2563eb)}
-.topbar{position:sticky;top:0;z-index:30;height:66px;display:flex;align-items:center;gap:14px;padding:0 24px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(18px)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:950}.brand-mark{width:34px;height:34px;border-radius:8px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:950}.crumb{font-size:13px;color:var(--muted)}.crumb strong{color:var(--accent)}.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}.pct{font-family:Consolas,monospace;font-size:12px;color:var(--soft)}
-.small-btn{border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:8px 12px;cursor:pointer;font-weight:900}.small-btn:hover{border-color:var(--accent);color:var(--accent)}
-.hero{border-bottom:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 82%,transparent),transparent)}.hero-inner{max-width:1280px;margin:0 auto;padding:54px 36px 42px;display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:34px;align-items:center}
-.badge{display:inline-flex;align-items:center;padding:6px 11px;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:8px;background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:0}
-h1{max-width:850px;margin:18px 0 16px;font-size:clamp(34px,5vw,64px);line-height:1.04;letter-spacing:0}h1 em{font-style:normal;color:var(--accent)}.hero p{max-width:740px;color:var(--muted);font-size:17px;line-height:1.72}.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.hero-stats span{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:9px 11px;color:var(--muted);font-size:13px}
-.identity{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow);padding:18px;display:grid;gap:10px}.identity .big{height:90px;border-radius:8px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent);font-size:52px;font-weight:950}.identity p{margin:0;font-size:13px;line-height:1.6}
-.tabs{position:sticky;top:66px;z-index:24;display:flex;gap:4px;overflow-x:auto;padding:0 24px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(18px)}.tabs button{border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);padding:15px 13px 12px;cursor:pointer;font-weight:950;white-space:nowrap}.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-panel{display:none}.tab-panel.active{display:block}.layout{max-width:1280px;margin:0 auto;padding:36px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:30px}.toc{position:sticky;top:132px;height:fit-content;border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--paper) 84%,transparent);padding:14px}.toc strong{display:block;font-size:11px;letter-spacing:0;text-transform:uppercase;color:var(--soft);margin-bottom:10px}.toc a{display:block;padding:8px 9px;border-radius:8px;color:var(--muted);font-size:13px;border-left:3px solid transparent}.toc a:hover{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent)}
-.content{min-width:0}.content h2{margin:42px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--accent);font-size:24px}.content h2:first-child{margin-top:0}.content h3{margin:28px 0 10px;font-size:18px}.content p,.content li{color:var(--muted);line-height:1.82;font-size:15px}.formula{overflow-x:auto;margin:18px 0;padding:18px 22px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);text-align:center;font-size:18px}
-.data-table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:8px;border:1px solid var(--line);background:var(--paper);margin:18px 0}.data-table th,.data-table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.data-table th{background:var(--paper-2);font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:0}.data-table td{color:var(--muted)}
-.note,.definition,.method,.warning,.example,.exercise-card,.quiz-card,.summary-card,.oral-card{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:var(--paper);padding:18px 20px;box-shadow:var(--shadow-soft);margin:18px 0}.warning{border-left-color:#c2410c}.method{border-left-color:#2563eb}.example{border-left-color:#15803d}.box-title{display:block;font-size:11px;color:var(--soft);font-weight:950;letter-spacing:0;text-transform:uppercase;margin-bottom:8px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.solution{display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:12px;color:var(--muted)}.solution.open{display:block}.flash-grid,.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.flash-card,.map div{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:14px;box-shadow:var(--shadow-soft)}.flash-card{cursor:pointer;min-height:145px}.flash-card .answer{display:none;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.flash-card.open .answer{display:block}.quiz-options{display:grid;gap:8px;margin-top:12px}.quiz-options button{border:1px solid var(--line);border-radius:8px;background:var(--paper-2);padding:10px;text-align:left;cursor:pointer;color:var(--ink)}.quiz-options button.correct{border-color:#15803d;background:color-mix(in srgb,#15803d 12%,var(--paper))}.quiz-options button.wrong{border-color:#c2410c;background:color-mix(in srgb,#c2410c 10%,var(--paper))}
-.chat-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);overflow:hidden}.chat-log{height:420px;overflow:auto;padding:16px;display:grid;gap:10px;background:var(--paper-2)}.chat-message{max-width:820px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.65;color:var(--muted);background:var(--paper)}.chat-message.user{margin-left:auto;color:var(--ink);border-color:color-mix(in srgb,var(--accent) 38%,var(--line));background:var(--accent-bg)}.chat-message.bot strong{color:var(--accent)}.chat-input-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px;border-top:1px solid var(--line)}.chat-input-row input{min-width:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:11px 12px}
-.soul-box{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:linear-gradient(135deg,var(--accent-bg),var(--paper));padding:20px 22px;box-shadow:var(--shadow-soft);margin:0 0 26px}
-.soul-box p{font-size:16px;line-height:1.9;color:var(--muted);margin:8px 0 14px}
-.soul-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
-.soul-grid span{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:10px 12px;color:var(--muted);font-size:13px;line-height:1.55}
-.lab-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);padding:18px;margin:16px 0}
-.lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.lab-grid label{display:block;font-size:12px;color:var(--soft);font-weight:900;margin-bottom:6px}
-.lab-grid input,.lab-grid select{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:10px}
-.lab-canvas{width:100%;height:280px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);display:block}
-.chat-explain{border:1px solid var(--line);border-radius:8px;background:var(--accent-bg);padding:12px 14px;color:var(--muted);line-height:1.7;margin:14px 0}
-@media(max-width:960px){.hero-inner{grid-template-columns:1fr;padding:42px 18px 28px}.layout{grid-template-columns:1fr;padding:28px 18px 70px}.toc{display:none}.grid-2{grid-template-columns:1fr}.tabs{top:66px;padding:0 12px}.topbar{padding:0 12px}.crumb{display:none}}
-@media print{.topbar,.tabs,.toc,.small-btn,.hero{display:none!important}body{background:white;color:black}.tab-panel{display:block}}
+/* ── BLOCK 1 : base layout & components ── */
+:root{
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="progress"><span id="progressTop"></span></div>
-<nav class="topbar"><a class="brand" href="index_wow.html"><span class="brand-mark">P</span><span>PhysiChem</span></a><div class="crumb">PCSI-P04 · <strong>Optique ondulatoire avancée</strong></div><div class="top-actions"><span class="pct" id="pctLabel">0%</span><button class="small-btn" id="themeBtn" onclick="toggleTheme()">Mode</button><a class="small-btn" href="index_wow.html">Index</a></div></nav>
-<header class="hero"><div class="hero-inner"><div><span class="badge">PCSI-P04 · Physique · Niveau supérieur</span><h1>Optique ondulatoire avancée <em>— PCSI</em></h1><p>Chemin optique, cohérence, interférences, Michelson, diffraction et réseaux.</p><div class="hero-stats"><span>Relier phase et chemin optique</span><span>Calculer une intensité d’interférence</span><span>Lire un dispositif de Michelson ou de réseau</span></div></div><div class="identity"><div class="big">λ</div><p><strong>Objectif pro.</strong> Cette page est construite comme une fiche de cours universitaire : définitions, relations, unités, méthodes de résolution et entraînement actif.</p></div></div></header>
-<nav class="tabs" aria-label="Onglets du chapitre"><button class="active" onclick="showTab('cours',this)">Cours</button><button onclick="showTab('methodes',this)">Méthodes</button><button onclick="showTab('applications',this)">Applications</button><button onclick="showTab('simulation',this)">Simulation</button><button onclick="showTab('exercices',this)">Exercices</button><button onclick="showTab('oral',this)">Oral</button><button onclick="showTab('quiz',this)">Quiz</button><button onclick="showTab('concours',this)">Concours</button><button onclick="showTab('chatbot',this)">Chatbot</button><button onclick="showTab('synthese',this)">Synthèse</button></nav>
-<section class="tab-panel active" id="tab-cours"><div class="layout"><aside class="toc"><strong>Plan</strong><a href="#phase">Phase, chemin optique et retard</a><a href="#interferences">Interférences à deux ondes</a><a href="#michelson">Interféromètre de Michelson</a><a href="#reseau">Diffraction et réseaux</a></aside><main class="content">
-<!-- PCSI PROGRAMME LOUCHART -->
-<div class="definition" id="programme-pcsi">
-  <span class="box-title">Repère programme PCSI</span>
-  <p><strong>Ancrage.</strong> Ondes PCSI : phénomène d’interférences, différence de marche, cohérence et ondes stationnaires.</p>
-  <p><strong>Cap à tenir.</strong> Comprendre que les franges sont une carte de phase : elles disent comment deux chemins se recomposent.</p>
-  <p class="pct">Référence de cadrage : <a href="http://b.louchart.free.fr/Enseignement_superieur/Classes_prepas/PCSI/Physique/Ondes.html" target="_blank" rel="noopener">B. Louchart — ressources PCSI</a> ; bloc ajouté comme synthèse pédagogique, sans reproduction des documents recensés.</p>
-</div>
-<div class="formula">\[ \delta=S_2M-S_1M,\qquad \Delta\varphi=\frac{2\pi}{\lambda}\delta,\qquad I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi \]</div>
-<table class="data-table">
-  <tr><th>Point de maîtrise</th><th>Ce que l’étudiant doit savoir faire</th></tr>
-  <tr><td><strong>Cohérence</strong></td><td>Vérifier que les ondes peuvent interférer durablement avant d’utiliser une formule de franges.</td></tr><tr><td><strong>Diffraction</strong></td><td>Relier ouverture, longueur d’onde et élargissement angulaire.</td></tr><tr><td><strong>Stationnaire</strong></td><td>Construire nœuds, ventres, modes propres et conditions aux limites.</td></tr>
-</table>
-<div class="method">
-  <span class="box-title">Méthode de travail inspirée du découpage PCSI</span>
-  <p>Avant un exercice, nommer le bloc du programme, écrire les hypothèses, poser les grandeurs avec leurs unités, choisir la relation directrice, puis terminer par un contrôle : homogénéité, signe, limite, ordre de grandeur et cohérence expérimentale.</p>
-</div>
-<!-- /PCSI PROGRAMME LOUCHART -->
-<div class="soul-box" id="fil-conducteur">
-        <span class="box-title">L’âme du chapitre</span>
-        <p>L’optique ondulatoire apprend à regarder la lumière comme une addition de phases. Deux rayons peuvent s’éteindre ou se renforcer non parce qu’ils sont faibles ou forts, mais parce qu’ils arrivent en rythme ou à contretemps.</p>
-        <div class="soul-grid"><span>La différence de marche est la mémoire géométrique du trajet.</span><span>La cohérence décide si les franges ont une existence durable.</span><span>Michelson et les réseaux transforment une phase invisible en mesure visible.</span></div>
-      </div>
 
-<h2 id="relations-pro">Relations centrales et lecture mathématique</h2><p>Avant de lire les détails, fixe les objets mathématiques : vecteurs, fonctions, amplitudes complexes, matrices ou grandeurs thermodynamiques. Les relations ci-dessous sont les repères à maîtriser, avec signification et unités.</p><table class="data-table"><tr><th>Objet</th><th>Relation mathématique</th><th>Lecture, grandeurs, unités</th></tr><tr><td>Chemin optique</td><td>\(L_{AB}=\int_A^B n(M)\,ds\)</td><td>Longueur optique en m.</td></tr><tr><td>Déphasage</td><td>\(\Delta\varphi=2\pi\delta/\lambda_0\)</td><td>Relie différence de marche et phase.</td></tr><tr><td>Interférences</td><td>\(I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi\)</td><td>Intensité en W.m(^{-2}).</td></tr><tr><td>Réseau</td><td>\(a(\sin\theta_m-\sin\theta_i)=m\lambda\)</td><td>Condition d’interférences constructives.</td></tr></table><h2 id="phase">1. Phase, chemin optique et retard</h2><p>En optique ondulatoire, la grandeur essentielle est la phase. Le chemin optique entre A et B est l’intégrale de l’indice le long du rayon.</p>
-        <div class="formula">\[ L_{AB}=\int_A^B n(M)\,\mathrm ds,\qquad \varphi=\omega t-\frac{2\pi}{\lambda_0}L+\varphi_0 \]</div>
-        <table class="data-table"><tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
-        <tr><td>\(L_{AB}\)</td><td>Chemin optique</td><td>m</td></tr>
-        <tr><td>\(n\)</td><td>Indice optique du milieu</td><td>sans unité</td></tr>
-        <tr><td>\(\lambda_0\)</td><td>Longueur d’onde dans le vide</td><td>m</td></tr>
-        <tr><td>\(\varphi\)</td><td>Phase</td><td>rad</td></tr></table>
-<h2 id="interferences">2. Interférences à deux ondes</h2><p>Deux ondes cohérentes de même fréquence interfèrent. L’intensité dépend du déphasage.</p>
-        <div class="formula">\[ I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi,\qquad \Delta\varphi=\frac{2\pi}{\lambda_0}\delta \]</div>
-        <p>Pour \(I_1=I_2=I_0\), on obtient \(I=2I_0(1+\cos\Delta\varphi)=4I_0\cos^2(\Delta\varphi/2)\).</p>
-        <table class="data-table"><tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
-        <tr><td>\(I\)</td><td>Intensité lumineuse</td><td>W.m\(^{-2}\)</td></tr>
-        <tr><td>\(\delta\)</td><td>Différence de chemin optique</td><td>m</td></tr>
-        <tr><td>\(\Delta\varphi\)</td><td>Déphasage</td><td>rad</td></tr></table>
-<h2 id="michelson">3. Interféromètre de Michelson</h2><p>Le Michelson sépare une onde en deux bras puis les recombine. En lame d’air d’épaisseur \(e\), la différence de marche normale vaut approximativement :</p>
-        <div class="formula">\[ \delta=2e\cos i \]</div>
-        <p>Les franges traduisent les lieux où \(\delta=m\lambda_0\) ou \(\delta=(m+\frac{1}{2})\lambda_0\).</p>
-        <table class="data-table"><tr><th>Condition</th><th>Observation</th></tr>
-        <tr><td>\(\delta=m\lambda_0\)</td><td>Interférence constructive</td></tr>
-        <tr><td>\(\delta=(m+\frac{1}{2})\lambda_0\)</td><td>Interférence destructive</td></tr></table>
-<h2 id="reseau">4. Diffraction et réseaux</h2><p>Un réseau de pas \(a\) impose une relation d’interférences constructives entre rayons issus de fentes successives.</p>
-        <div class="formula">\[ a(\sin\theta_m-\sin\theta_i)=m\lambda \]</div>
-        <p>La diffraction par une ouverture limite la finesse des images. L’ordre \(m\) est un entier relatif.</p>
-        <table class="data-table"><tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr>
-        <tr><td>\(a\)</td><td>Pas du réseau</td><td>m</td></tr>
-        <tr><td>\(\theta_i,\theta_m\)</td><td>Angles d’incidence et de diffraction</td><td>rad</td></tr>
-        <tr><td>\(m\)</td><td>Ordre d’interférence</td><td>sans unité</td></tr></table></main></div></section>
-<section class="tab-panel" id="tab-methodes"><div class="layout"><aside class="toc"><strong>Méthodes</strong><a href="#m1">Méthode 1</a><a href="#m2">Méthode 2</a><a href="#m3">Méthode 3</a></aside><main class="content"><h2>Comprendre avant d’appliquer</h2><p>Une méthode de niveau prépa n’est pas une recette : c’est un choix motivé par le modèle, les hypothèses et la grandeur cherchée.</p><div class="method" id="m1"><span class="box-title">Passer par la différence de marche</span><p><strong>Contexte.</strong> C’est la grandeur qui centralise toute l’information géométrique.</p><p><strong>Procédure.</strong> Calculer (delta), puis (Deltaarphi), puis l’intensité.</p><p><strong>Exemple guidé.</strong> En lame d’air de Michelson, (delta=2ecos i).</p></div><div class="method" id="m2"><span class="box-title">Tester la cohérence</span><p><strong>Contexte.</strong> Des interférences stables exigent des ondes cohérentes.</p><p><strong>Procédure.</strong> Comparer fréquences, polarisation, largeur spectrale et différence de marche.</p><p><strong>Exemple guidé.</strong> Une source trop large spectralement brouille les franges.</p></div><div class="method" id="m3"><span class="box-title">Lire un réseau</span><p><strong>Contexte.</strong> Un réseau transforme une condition de phase en sélection angulaire.</p><p><strong>Procédure.</strong> Identifier (a), (	heta_i), (	heta_m), l’ordre (m), puis vérifier (|sin	heta_m|le1).</p><p><strong>Exemple guidé.</strong> Tous les ordres mathématiques ne sont pas physiquement observables.</p></div></main></div></section><section class="tab-panel" id="tab-applications"><div class="layout"><aside class="toc"><strong>Applications</strong><a href="#a1">Cas 1</a><a href="#a2">Cas 2</a><a href="#a3">Cas 3</a></aside><main class="content"><h2>Applications détaillées</h2><h2 id="app-relations">Relations à garder sous les yeux</h2><p>Dans les applications, les grandeurs restent écrites avec leur notation mathématique : vecteurs, fonctions du temps, amplitudes complexes ou grandeurs thermodynamiques. Cette table sert de dictionnaire pendant la lecture.</p><table class="data-table"><tr><th>Objet</th><th>Relation mathématique</th><th>Lecture, grandeurs, unités</th></tr><tr><td>Chemin optique</td><td>\(L_{AB}=\int_A^B n(M)\,ds\)</td><td>Longueur optique en m.</td></tr><tr><td>Déphasage</td><td>\(\Delta\varphi=2\pi\delta/\lambda_0\)</td><td>Relie différence de marche et phase.</td></tr><tr><td>Interférences</td><td>\(I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi\)</td><td>Intensité en W.m(^{-2}).</td></tr><tr><td>Réseau</td><td>\(a(\sin\theta_m-\sin\theta_i)=m\lambda\)</td><td>Condition d’interférences constructives.</td></tr></table><p>Chaque application montre comment une relation mathématique devient un outil de compréhension : choix du modèle, données, interprétation, limite.</p><div class="example" id="a1"><span class="box-title">Michelson de mesure</span><p><strong>Situation.</strong> Déplacer un miroir de (d) modifie la marche de (2d).</p><p><strong>Ce qu’on comprend.</strong> Compter les franges permet de mesurer (lambda) ou une très petite variation de longueur.</p></div><div class="example" id="a2"><span class="box-title">Spectromètre à réseau</span><p><strong>Situation.</strong> La relation du réseau sépare les longueurs d’onde.</p><p><strong>Ce qu’on comprend.</strong> Plus le pas est petit, plus la dispersion angulaire est forte.</p></div><div class="example" id="a3"><span class="box-title">Limite de résolution</span><p><strong>Situation.</strong> La diffraction impose une taille minimale de tache.</p><p><strong>Ce qu’on comprend.</strong> Même un instrument parfait est limité par la nature ondulatoire de la lumière.</p></div></main></div></section><section class="tab-panel" id="tab-simulation"><div class="layout"><aside class="toc"><strong>Atelier</strong><a href="#lab">Simulation guidée</a><a href="#labRead">Lecture</a></aside><main class="content"><h2 id="lab">Atelier interactif</h2><div class="soul-box"><span class="box-title">Pourquoi simuler ?</span><p>Une simulation ne remplace pas le calcul. Elle donne une intuition : on change un paramètre, on observe la forme de la réponse, puis on revient à la relation mathématique pour comprendre ce qui s’est passé.</p></div><div class="lab-card"><div class="lab-grid"><div><label for="labA">Paramètre A</label><input id="labA" type="range" min="1" max="100" value="35" oninput="runPcsiLab()"></div><div><label for="labB">Paramètre B</label><input id="labB" type="range" min="1" max="100" value="55" oninput="runPcsiLab()"></div><div><label for="labMode">Lecture</label><select id="labMode" onchange="runPcsiLab()"><option value="shape">forme</option><option value="energy">énergie</option><option value="limit">limite</option></select></div></div><p class="pct" id="labResult"></p><canvas class="lab-canvas" id="labCanvas"></canvas></div><h2 id="labRead">Comment lire l’atelier ?</h2><p id="labText">Bouge les paramètres : l’objectif est de relier la courbe à la relation du cours, pas de mémoriser le dessin.</p></main></div></section>
-<section class="tab-panel" id="tab-exercices"><div class="layout"><aside class="toc"><strong>Exercices</strong><a href="#ex1">Exercice 1</a><a href="#ex2">Exercice 2</a><a href="#ex3">Exercice 3</a><a href="#ex4">Exercice 4</a><a href="#ex5">Exercice 5</a></aside><main class="content"><h2>Exercices de niveau PCSI</h2><p>Les exercices demandent une modélisation, une relation mathématique et une conclusion argumentée. Les corrections sont rédigées comme des raisonnements, pas comme des résultats jetés.</p><div class="exercise-card" id="ex1"><h3>1. Contraste</h3><p>Deux ondes ont \(I_1=I_0\), \(I_2=4I_0\). Calculer \(I_{\max}\) et \(I_{\min}\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(I_{\max}=(\sqrt{I_1}+\sqrt{I_2})^2=(1+2)^2I_0=9I_0\). \(I_{\min}=(2-1)^2I_0=I_0\).</div></div><div class="exercise-card" id="ex2"><h3>2. Michelson</h3><p>Un miroir de Michelson se déplace de \(0{,}30\,\mu\mathrm m\). Combien de franges défilent pour \(\lambda=600\,\mathrm{nm}\) ?</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">La marche varie de \(2d=0{,}60\,\mu\mathrm m=600\,\mathrm{nm}\), soit une longueur d’onde : une frange défile.</div></div><div class="exercise-card" id="ex3"><h3>3. Réseau</h3><p>Pour \(a=2{,}0\,\mu\mathrm m\), incidence normale et \(\lambda=500\,\mathrm{nm}\), calculer \(\theta_1\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(a\sin\theta_1=\lambda\), donc \(\sin\theta_1=0{,}25\), \(\theta_1\simeq14{,}5^\circ\).</div></div><div class="exercise-card" id="ex4"><h3>4. Phase</h3><p>Quelle différence de marche donne \(\Delta\varphi=3\pi\) ?</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(\delta=\Delta\varphi\lambda/(2\pi)=3\lambda/2\).</div></div><div class="exercise-card" id="ex5"><h3>5. Ordres observables</h3><p>Pour un réseau en incidence normale, quelle condition sur \(m\) permet l’observation ?</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">Il faut \(|m\lambda/a|\le1\), donc \(|m|\le a/\lambda\).</div></div></main></div></section><section class="tab-panel" id="tab-oral"><div class="layout"><aside class="toc"><strong>Oral</strong><a href="#oral1">Questions</a><a href="#oral2">Réflexes</a></aside><main class="content"><h2 id="oral1">Questions rapides de colle</h2><div class="grid-2"><div class="oral-card"><span class="box-title">Question</span>Explique : relier phase et chemin optique.</div><div class="oral-card"><span class="box-title">Question</span>Explique : calculer une intensité d’interférence.</div><div class="oral-card"><span class="box-title">Question</span>Explique : lire un dispositif de michelson ou de réseau.</div></div><h2 id="oral2">Réflexe de présentation</h2><div class="summary-card"><p>Commencer par le modèle, annoncer les hypothèses, écrire la relation centrale, définir les symboles et finir par une interprétation physique ou chimique.</p></div></main></div></section>
-<section class="tab-panel" id="tab-quiz"><div class="layout"><aside class="toc"><strong>Quiz</strong><a href="#quizBox">10+ questions</a></aside><main class="content"><h2>Quiz d’entraînement</h2><p>Au moins dix questions pour tester définitions, relations, unités et interprétation. Objectif : consolider avant les exercices longs.</p><div id="quizBox"></div><p id="quizScore" class="pct"></p></main></div></section><section class="tab-panel" id="tab-concours">
-  <div class="layout">
-    <aside class="toc"><strong>Concours</strong><a href="#concours-sf">Savoir-faire</a><a href="#concours-pieges">Pièges</a><a href="#concours-qcm">QCM</a><a href="#concours-colle">Colle</a></aside>
-    <main class="content">
-      <h2 id="concours-sf">Focus concours — Optique ondulatoire</h2>
-      <div class="method"><span class="box-title">Esprit du bloc</span>Ce complément transforme le chapitre en entraînement actif : savoir-faire à réciter, pièges à éviter, QCM de vérification et question de colle. Les exercices sont originaux et rédigés pour travailler le réflexe de concours.</div>
-      <table class="data-table"><tr><th>Savoir-faire</th><th>Ce qu'il faut savoir faire sans hésitation</th></tr><tr><td>Différence de marche</td><td>Passer de la géométrie à \(\delta\), puis au déphasage \(\varphi=\frac{2\pi\delta}{\lambda}\).</td></tr><tr><td>Interférences</td><td>Relier maximum/minimum à \(\delta=m\lambda\) ou \(\delta=(m+\frac12)\lambda\).</td></tr><tr><td>Cohérence</td><td>Vérifier cohérence temporelle et spatiale avant d'utiliser une formule de franges.</td></tr><tr><td>Diffraction</td><td>Distinguer la modulation d'interférences et l'enveloppe de diffraction.</td></tr></table>
-      <h2 id="concours-pieges">Pièges de cours</h2>
-      <div class="grid-2"><div class="warning"><span class="box-title">Piège classique</span>Déplacer un miroir de Michelson de \(e\) change souvent la marche de \(2e\).</div><div class="warning"><span class="box-title">Piège classique</span>La condition de frange brillante ne suffit pas si les sources ne sont pas cohérentes.</div><div class="warning"><span class="box-title">Piège classique</span>L'intensité n'est pas l'amplitude : on additionne les amplitudes, puis on calcule l'intensité.</div></div>
-      <h2 id="concours-qcm">QCM multi-réponses / Vrai-Faux</h2>
-      <p>Mode concours : chaque affirmation doit être jugée indépendamment. L'objectif est de repérer les erreurs fines, pas de deviner une seule bonne réponse.</p>
-      <table class="data-table"><tr><th>#</th><th>Affirmation</th><th>Correction</th></tr><tr><td>1</td><td>Deux ondes cohérentes peuvent donner une extinction même si chaque onde transporte de l'énergie.</td><td>Vrai</td></tr><tr><td>2</td><td>Un déphasage \(\pi\) entre deux ondes de même amplitude donne un maximum.</td><td>Faux</td></tr><tr><td>3</td><td>La diffraction limite la résolution d'un instrument.</td><td>Vrai</td></tr><tr><td>4</td><td>\(\delta=m\lambda\) correspond à une interférence constructive.</td><td>Vrai</td></tr></table>
-      <h2 id="concours-colle">Colle minute</h2>
-      <div class="exercise-card"><span class="box-title">PCSI-P04</span><p>Explique la chaîne logique : chemin optique \(\to\) différence de marche \(\to\) déphasage \(\to\) intensité observée.</p><button class="small-btn" onclick="toggleSolution(this)">Voir les attendus</button><div class="solution">Réponse attendue : commencer par les hypothèses, écrire la relation centrale en notation mathématique, définir chaque grandeur avec son unité, puis finir par une interprétation physique ou chimique et un contrôle de limite.</div></div>
-    </main>
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
+    <div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · PC · LFC</p>
+    </div>
   </div>
-</section>
 
-<section class="tab-panel" id="tab-chatbot"><div class="layout"><aside class="toc"><strong>Assistant externe</strong><a href="#chat">Question libre</a><a href="#chat">Assistant</a></aside><main class="content"><h2 id="chat">Chatbot externe — Optique ondulatoire avancée</h2><p class="chat-explain"><strong>Version simple.</strong> Cette page ne contient pas une IA enfermée dans le fichier HTML. Elle prépare une question propre, avec le contexte du chapitre, puis ouvre un assistant externe comme ChatGPT, Claude ou Perplexity. L'étudiant écrit sa question, clique sur un bouton, et l'assistant externe peut répondre à tout : cours, exercice, démonstration, approfondissement.</p><div class="chat-card"><div class="chat-log" id="chatLog"></div><div class="chat-input-row"><input id="chatInput" placeholder="Pose n’importe quelle question : cours, exercice, démonstration, unité, idée hors chapitre..." onkeydown="if(event.key==='Enter')sendChat()"><button class="small-btn" onclick="sendChat()">Préparer</button></div></div><div class="grid-2"><button class="small-btn" onclick="openExternalAssistant('chatgpt')">Ouvrir ChatGPT</button><button class="small-btn" onclick="openExternalAssistant('claude')">Ouvrir Claude</button><button class="small-btn" onclick="openExternalAssistant('perplexity')">Ouvrir Perplexity</button><button class="small-btn" onclick="copyExternalPrompt()">Copier le prompt</button></div><div class="chat-explain"><strong>Mode d'emploi.</strong> L'etudiant pose une question libre, puis utilise ChatGPT, Claude, Perplexity ou le bouton Copier le prompt. Le prompt contient deja le niveau PCSI, le chapitre, les relations importantes et la demande de rigueur mathematique.</div></main></div></section><section class="tab-panel" id="tab-synthese"><div class="layout"><aside class="toc"><strong>Synthèse</strong><a href="#sr">Relations</a><a href="#sm">Méthode</a><a href="#sc">Checklist</a></aside><main class="content">
-<!-- PCSI LOUCHART SYNTHESE -->
-<div class="summary-card" id="programme-check">
-  <span class="box-title">Checklist programme PCSI</span>
-  <p><strong>Bloc de rattachement.</strong> Ondes PCSI : phénomène d’interférences, différence de marche, cohérence et ondes stationnaires.</p>
-  <ul>
-    <li><strong>Cohérence.</strong> Vérifier que les ondes peuvent interférer durablement avant d’utiliser une formule de franges.</li><li><strong>Diffraction.</strong> Relier ouverture, longueur d’onde et élargissement angulaire.</li><li><strong>Stationnaire.</strong> Construire nœuds, ventres, modes propres et conditions aux limites.</li>
-  </ul>
-  <p><strong>Relation à réciter avec sens.</strong> \(\delta=S_2M-S_1M,\qquad \Delta\varphi=\frac{2\pi}{\lambda}\delta,\qquad I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi\)</p>
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">NIVEAU</span>
+      <span class="micro">Chap. X</span>
+    </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+  </div>
+
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
+
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
+  </div>
 </div>
-<!-- /PCSI LOUCHART SYNTHESE -->
-<h2 id="sr">Relations centrales</h2><table class="data-table"><tr><th>Objet</th><th>Relation mathématique</th><th>Lecture, grandeurs, unités</th></tr><tr><td>Chemin optique</td><td>\(L_{AB}=\int_A^B n(M)\,ds\)</td><td>Longueur optique en m.</td></tr><tr><td>Déphasage</td><td>\(\Delta\varphi=2\pi\delta/\lambda_0\)</td><td>Relie différence de marche et phase.</td></tr><tr><td>Interférences</td><td>\(I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi\)</td><td>Intensité en W.m(^{-2}).</td></tr><tr><td>Réseau</td><td>\(a(\sin\theta_m-\sin\theta_i)=m\lambda\)</td><td>Condition d’interférences constructives.</td></tr></table><h2 id="sm">Carte mentale enrichie</h2><div class="map"><div><strong>Chemin optique</strong><p>\(L_{AB}=\int_A^B n(M)\,ds\)<br>Longueur optique en m.</p></div><div><strong>Déphasage</strong><p>\(\Delta\varphi=2\pi\delta/\lambda_0\)<br>Relie différence de marche et phase.</p></div><div><strong>Interférences</strong><p>\(I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi\)<br>Intensité en W.m(^{-2}).</p></div><div><strong>Réseau</strong><p>\(a(\sin\theta_m-\sin\theta_i)=m\lambda\)<br>Condition d’interférences constructives.</p></div></div><h2 id="sc">Checklist de maîtrise</h2><div class="summary-card"><p>Je sais écrire les relations en notation mathématique, définir chaque grandeur, préciser les unités, choisir une méthode, traiter un exercice de niveau PCSI et expliquer le sens du résultat à l’oral.</p></div></main></div></section><script>
-const QUIZ=[["Une frange brillante verifie",["\\(\\delta=m\\lambda\\)","\\(\\delta=\\frac{\\lambda}{4}\\)","\\(I=0\\)","\\(m=0\\) seulement"],0],["Le chemin optique s’ecrit",["\\(\\mathcal L=\\int n\\,\\mathrm ds\\)","\\(\\int E\\,\\mathrm dt\\)","\\(PV\\)","\\(Ri\\)"],0],["Le dephasage associe a \\(\\delta\\) vaut",["\\(\\varphi=\\frac{2\\pi\\delta}{\\lambda}\\)","\\(\\frac{\\delta}{\\omega}\\)","\\(\\frac{\\lambda}{\\delta}\\)","\\(n\\lambda\\)"],0],["Si \\(I_1=I_2\\), l’intensite minimale vaut",["\\(0\\)","\\(I_0\\)","\\(4I_0\\)","\\(2I_0\\)"],0],["Dans un Michelson, deplacer un miroir de \\(d\\) change la marche de",["\\(2d\\)","\\(\\frac{d}{2}\\)","\\(d^2\\)","\\(0\\)"],0],["Un reseau impose typiquement",["une condition angulaire","une loi de Newton","une equation de gaz","une constante d’equilibre"],0],["L’ordre \\(m\\) d’un reseau est",["entier","toujours reel quelconque","une longueur","une energie"],0],["La diffraction limite",["la resolution","la conservation de charge","la masse","le pH"],0],["La coherence concerne",["la stabilite de phase","la masse volumique","le nombre de moles","la pression"],0],["Un dephasage \\(\\pi\\) donne pour deux ondes egales",["extinction","maximum","aucun effet","reseau impossible"],0]];
-const COACH={"title":"Optique ondulatoire avancee","code":"PCSI-P04","domain":"Physique","topics":["1. Phase, chemin optique et retard","2. Interferences a deux ondes","3. Interferometre de Michelson","4. Diffraction et reseaux"],"methods":["Passer systematiquement par la difference de marche \\(\\delta\\).","Transformer \\(\\delta\\) en dephasage avec \\(\\varphi=\\frac{2\\pi\\delta}{\\lambda}\\).","Verifier la coherence des sources avant d’utiliser une formule d’interference.","Reperer si l’on parle d’interferences, de diffraction, ou des deux."],"keywords":"optique ondulatoire coherence interference michelson diffraction reseau chemin optique phase"};
-function showTab(id,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');window.scrollTo({top:document.querySelector('.tabs').offsetTop,behavior:'smooth'});if(id==='simulation')setTimeout(runPcsiLab,80);if(id==='quiz')renderQuiz();if(id==='chatbot')seedChatbot();}
-function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme')||'light';const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('pcsi_theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'Clair':'Sombre';}
-function updateProgress(){const max=document.documentElement.scrollHeight-window.innerHeight;const pct=max>0?Math.round(window.scrollY/max*100):0;document.getElementById('progressTop').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+'%';}
-window.addEventListener('scroll',updateProgress);
-function toggleSolution(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'Masquer la correction':'Voir la correction';if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([sol]);}
-let quizDone=false,score=0,answered={};function renderQuiz(){if(quizDone)return;quizDone=true;document.getElementById('quizBox').innerHTML=QUIZ.map((q,idx)=>'<div class="quiz-card"><h3>Question '+(idx+1)+'</h3><p>'+q[0]+'</p><div class="quiz-options">'+q[1].map((opt,i)=>'<button onclick="answerQuiz(this,'+idx+','+i+')">'+opt+'</button>').join('')+'</div></div>').join('');if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('quizBox')]);}
-function answerQuiz(btn,idx,i){if(answered[idx])return;answered[idx]=true;const buttons=btn.parentElement.querySelectorAll('button');buttons.forEach((b,k)=>{if(k===QUIZ[idx][2])b.classList.add('correct')});if(i===QUIZ[idx][2])score++;else btn.classList.add('wrong');document.getElementById('quizScore').textContent='Score : '+score+' / '+Object.keys(answered).length;}
-function seedChatbot(){const log=document.getElementById('chatLog');if(!log||log.dataset.seeded)return;log.dataset.seeded='1';appendChat('bot','<strong>Assistant externe PCSI-P04.</strong><br>Écris une question libre, puis ouvre ChatGPT, Claude ou Perplexity, ou copie le prompt complet.');document.getElementById('chatInput').focus();}
-function appendChat(kind,text){const log=document.getElementById('chatLog');const div=document.createElement('div');div.className='chat-message '+kind;div.innerHTML=text;log.appendChild(div);log.scrollTop=log.scrollHeight;if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([div]);}
-const EXTERNAL_PROMPT_BASE="Tu es un professeur universitaire de physique-chimie en PCSI. Réponds en français, avec rigueur mathématique, définitions des grandeurs, unités, notation vectorielle si nécessaire, exemples et méthode. Chapitre: PCSI-P04 — Optique ondulatoire avancée. Relations centrales: Chemin optique: \\(L_{AB}=\\int_A^B n(M)\\,ds\\) ; Déphasage: \\(\\Delta\\varphi=2\\pi\\delta/\\lambda_0\\) ; Interférences: \\(I=I_1+I_2+2\\sqrt{I_1I_2}\\cos\\Delta\\varphi\\) ; Réseau: \\(a(\\sin\\theta_m-\\sin\\theta_i)=m\\lambda\\). Question étudiant: ";
-function buildExternalPrompt(){const input=document.getElementById('chatInput');const question=(input&&input.value.trim())||'Explique-moi ce chapitre avec exemples et exercices.';return EXTERNAL_PROMPT_BASE+question;}
-function sendChat(){seedChatbot();const input=document.getElementById('chatInput');const text=input.value.trim();if(!text)return;appendChat('user',text.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])));appendChat('bot','Question prête pour assistant externe. Utilise les boutons ChatGPT, Claude, Perplexity, ou copie le prompt complet dans l assistant de ton choix.');}
-function openExternalAssistant(kind){const prompt=encodeURIComponent(buildExternalPrompt());const urls={chatgpt:'https://chat.openai.com/',claude:'https://claude.ai/new',perplexity:'https://www.perplexity.ai/search?q='+prompt};window.open(urls[kind]||urls.chatgpt,'_blank','noopener,noreferrer');}
-async function copyExternalPrompt(){const prompt=buildExternalPrompt();try{await navigator.clipboard.writeText(prompt);appendChat('bot','Prompt copié. Colle-le dans l’assistant externe de ton choix.');}catch(e){appendChat('bot','Copie manuelle :<br><pre>'+prompt.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))+'</pre>');}}
-async function callExternalEndpoint(){const endpoint=localStorage.getItem('physichem_ai_endpoint');if(!endpoint){appendChat('bot',"Aucun assistant integre n'est configure sur cette page statique. Utilise les boutons externes ou copie le prompt.");return;}appendChat('bot','Interrogation de l’endpoint externe...');try{const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chapter:'PCSI-P04',question:document.getElementById('chatInput').value,prompt:buildExternalPrompt()})});const json=await res.json();appendChat('bot',json.answer||json.message||'Réponse reçue, mais format inattendu.');}catch(e){appendChat('bot','Erreur endpoint : '+e.message);}}
-function runPcsiLab(){
-  var canvas=document.getElementById('labCanvas'); if(!canvas) return;
-  var ctx=canvas.getContext('2d'); var rect=canvas.getBoundingClientRect();
-  canvas.width=Math.max(1,Math.floor(rect.width*devicePixelRatio)); canvas.height=Math.max(1,Math.floor(rect.height*devicePixelRatio));
-  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-  var w=rect.width,h=rect.height,a=(+document.getElementById('labA').value)/100,b=(+document.getElementById('labB').value)/100;
-  var code=(typeof COACH!=='undefined'&&COACH.code)||''; var mode=document.getElementById('labMode').value;
-  ctx.clearRect(0,0,w,h); ctx.strokeStyle='rgba(132,144,161,.35)'; ctx.lineWidth=1;
-  for(var i=0;i<=5;i++){var y=24+i*(h-52)/5;ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(w-18,y);ctx.stroke();}
-  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); ctx.lineWidth=3; ctx.beginPath();
-  var text=''; var x,y,t,val;
-  for(var px=42;px<w-18;px++){
-    t=(px-42)/(w-60);
-    if(code==='PCSI-P02'){var q=0.2+4*a; val=Math.exp(-b*3*t)*Math.cos(2*Math.PI*q*t); text='Oscillateur : A règle la pulsation, B règle l’amortissement. On voit \(x(t)=e^{-t/\tau}\cos(\omega t)\).';}
-    else if(code==='PCSI-P03'){val=Math.sin(2*Math.PI*(1+4*a)*t); text='Onde EM : la sinusoïde représente une composante de \(\vec E\). Le champ \(\vec B\) est transverse et en phase dans le vide.';}
-    else if(code==='PCSI-P04'){val=Math.cos(2*Math.PI*(1+8*a)*(t-.5))*Math.exp(-b*2*Math.pow(t-.5,2)); text='Interférences/diffraction : la phase crée les franges, l’enveloppe rappelle la diffraction.';}
-    else if(code==='PCSI-P05'){val=Math.sin(2*Math.PI*(1+a*3)*t)*(0.3+0.7*t*b); text='Cinématique : la courbe illustre une coordonnée variable ; la dérivée donne vitesse puis accélération.';}
-    else if(code==='PCSI-P06'){val=(t-.5)*(t-.5)*(1+a)-b*.25; text='Dynamique : lire une énergie potentielle \(E_p(x)\), c’est comprendre forces et positions d’équilibre.';}
-    else if(code==='PCSI-P07'){val=1-(0.25+0.7*b)/(0.35+0.9*a+0.7*b); text='Thermo : rendement de Carnot \(\eta=1-T_f/T_c\). Les températures doivent être en kelvin.';}
-    else if(code==='PCSI-C01'){val=((Math.sin(30*t*a)+Math.cos(18*t*b))/2); text='Structure électronique : niveaux et occupations se lisent comme des états discrets, pas comme des orbites classiques.';}
-    else if(code==='PCSI-C02'){val=Math.sin(8*Math.PI*t*a)*Math.sin(Math.PI*t); text='Liaison : la forme suggère recouvrement liant/antiliant ; le signe encode une phase d’orbitale.';}
-    else if(code==='PCSI-C03'){val=Math.tanh((t-a)*8)*(0.5+b); text='Équilibres : comparer \(Q_r\) et \(K^\circ\), c’est lire le sens d’évolution.';}
-    else {val=Math.exp(-4*b*t)*Math.sin(2*Math.PI*(1+3*a)*t); text='Organique : l’atelier rappelle qu’une transformation dépend d’un chemin, d’une barrière et d’un intermédiaire.';}
-    y=h/2-val*(h*.34);
-    if(px===42)ctx.moveTo(px,y); else ctx.lineTo(px,y);
-  }
-  ctx.stroke(); ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted').trim(); ctx.font='700 12px Consolas'; ctx.fillText(code+' · '+mode,48,20);
-  document.getElementById('labText').innerHTML=text;
-  document.getElementById('labResult').textContent='A = '+a.toFixed(2)+' ; B = '+b.toFixed(2)+' — observe la tendance puis relie-la à la relation du cours.';
-}
-(function init(){const theme=localStorage.getItem('pcsi_theme')||'light';document.documentElement.setAttribute('data-theme',theme);document.getElementById('themeBtn').textContent=theme==='dark'?'Clair':'Sombre';updateProgress();})();
+
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
+
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">NIVEAU · Chap. X</div>
+    <h1 class="hero-title">Optique ondul<span>atoire avancée</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
+  });
+});
 </script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

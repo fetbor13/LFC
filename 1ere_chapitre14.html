@@ -1,1024 +1,181 @@
-﻿<!DOCTYPE html>
-<html lang="fr" data-theme="light">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>1ʳᵉ Spé · Chapitre 14 — Aspects énergétiques des systèmes mécaniques | PhysiChem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>
-(function(){var t=localStorage.getItem('pco_theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
-})();
-</script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
-:root{--bg:#fbf5f7;--bg2:#f3eaf0;--surface:#ffffff;--surface2:#fdf8fb;--blue:#9f4f68;--blue2:#b96a82;--blue3:#d4899f;--text:#1a0a12;--text2:#5a2d42;--text3:#8a5a6a;--border:rgba(159,79,104,0.15);--border2:rgba(159,79,104,0.30);--ok:#2d9e6b;--ok-bg:#eaf7f0;--ok-bd:rgba(45,158,107,0.3);--warn:#c07820;--warn-bg:#fdf5ea;--warn-bd:rgba(192,120,32,0.3);--prop:#6b5fad;--prop-bg:#f0eefb;--prop-bd:rgba(107,95,173,0.3);--radius:14px;--radius-sm:9px;--shadow:0 2px 16px rgba(159,79,104,0.10);--shadow-md:0 6px 28px rgba(159,79,104,0.16);}
-[data-theme="dark"]{--bg:#12060c;--bg2:#1a0d14;--surface:#1f1018;--surface2:#27151e;--text:#f5e8ef;--text2:#c49ab0;--text3:#8a5a6a;--border:rgba(185,106,130,0.15);--border2:rgba(185,106,130,0.28);--ok:#3dbf82;--ok-bg:rgba(61,191,130,0.09);--ok-bd:rgba(61,191,130,0.25);--warn:#e09a3a;--warn-bg:rgba(224,154,58,0.09);--warn-bd:rgba(224,154,58,0.25);--prop:#9a8fe8;--prop-bg:rgba(154,143,232,0.09);--prop-bd:rgba(154,143,232,0.25);--shadow:0 2px 16px rgba(0,0,0,0.35);--shadow-md:0 6px 28px rgba(0,0,0,0.45);}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-a{color:inherit;text-decoration:none;}
-/* TOPBAR */
-.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:90;box-shadow:var(--shadow);}
-.back-btn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--bg);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
-.back-btn:hover{color:var(--blue);border-color:var(--blue);}
-.breadcrumb{font-size:12px;color:var(--text3);}
-.breadcrumb strong{color:var(--blue);font-weight:600;}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.pct-pill{padding:3px 10px;border-radius:99px;background:var(--bg2);border:1px solid var(--border2);font-size:12px;font-weight:700;color:var(--blue);}
-.th-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-/* LAYOUT */
-.app{display:flex;flex:1;min-height:0;}
-/* RAIL */
-.rail{width:64px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:4px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;width:52px;padding:8px 4px;border-radius:10px;cursor:pointer;border:none;background:transparent;color:var(--text3);font-size:9.5px;font-weight:600;transition:all .2s;text-align:center;line-height:1.2;}
-.tab:hover{background:var(--bg2);color:var(--text2);}
-.tab.active{background:var(--bg2);color:var(--blue);border:1px solid var(--border2);}
-.tab-icon{font-size:18px;line-height:1;}
-/* MASTERY */
-.mastery-strip{padding:4px 8px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.mastery-bar{flex:1;height:4px;background:var(--bg2);border-radius:99px;overflow:hidden;}
-.mastery-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue3));border-radius:99px;transition:width .5s;}
-.mastery-txt{font-size:11px;font-weight:700;color:var(--blue);}
-/* CONTENT */
-.content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-.panel{display:none;}.panel.active{display:block;}
-/* HERO */
-.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:28px 32px 20px;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:99px;padding:3px 12px;font-size:11px;font-weight:700;color:var(--blue);margin-bottom:12px;}
-.hero h1{font-size:clamp(22px,3.5vw,34px);font-weight:700;letter-spacing:-0.5px;line-height:1.15;margin-bottom:10px;}
-.hero h1 em{font-style:normal;color:var(--blue);}
-.hero-desc{font-size:14px;color:var(--text2);max-width:620px;}
-canvas.hero-canvas{width:100%;height:180px;border-radius:var(--radius);background:var(--bg);display:block;margin-top:16px;}
-/* COURS */
-.cours-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
-.cours-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:36px 0 14px;padding-bottom:8px;border-bottom:1.5px solid var(--border2);}
-.cours-wrap h2:first-child{margin-top:0;}
-.cours-wrap h3{font-size:15px;font-weight:600;color:var(--text);margin:22px 0 8px;}
-.cours-wrap p{color:var(--text2);margin-bottom:12px;font-size:14.5px;}
-.box{border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin:16px 0;border-left:4px solid;background:var(--surface);}
-.box-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
-.box.def{border-color:var(--blue);}.box.def .box-lbl{color:var(--blue);}
-.box.prop{border-color:var(--prop);}.box.prop .box-lbl{color:var(--prop);}
-.box.warn{border-color:var(--warn);}.box.warn .box-lbl{color:var(--warn);}
-.box.ok{border-color:var(--ok);}.box.ok .box-lbl{color:var(--ok);}
-.formula-block{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 24px;margin:14px 0;text-align:center;font-size:15px;overflow-x:auto;}
-.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1.5px solid var(--border);margin:14px 0;}
-table.t{width:100%;border-collapse:collapse;}
-table.t th{background:var(--bg2);padding:9px 14px;font-size:12px;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border);text-align:left;}
-table.t td{padding:9px 14px;font-size:13.5px;color:var(--text2);border-bottom:1px solid var(--border);}
-table.t tr:last-child td{border-bottom:none;}
-table.t tr:hover td{background:var(--bg);color:var(--text);}
-/* RELDIM */
-.reldim-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
-.reldim-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:0 0 20px;}
-.rel-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
-.rel-card h3{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:10px;}
-.rel-card p{font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:6px;}
-/* SIM */
-.sim-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
-.sim-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:0 0 20px;}
-.sim-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:22px;box-shadow:var(--shadow);}
-.sim-card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;}
-.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:12px;}
-.sim-group label{display:block;font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;}
-.sim-inp{width:100%;padding:8px 11px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;}
-.sim-inp:focus{border-color:var(--blue);}
-.sim-btn{padding:9px 20px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:6px;}
-.sim-btn:hover{opacity:.85;}
-.sim-result{background:var(--bg2);border:1.5px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:13.5px;color:var(--text2);line-height:1.8;margin:10px 0;}
-.sim-result strong{color:var(--blue);font-family:'IBM Plex Mono',monospace;}
-canvas.sim-c{width:100%;height:200px;border-radius:10px;background:var(--bg);display:block;margin-top:10px;}
-/* ECE */
-.ece-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
-.ece-wrap h2{font-size:18px;font-weight:700;color:var(--blue);margin:0 0 20px;}
-canvas.ece-c{width:100%;height:280px;border-radius:var(--radius);background:var(--bg);display:block;margin:14px 0;}
-/* FLASHCARDS */
-.fc-wrap{max-width:760px;margin:0 auto;padding:32px 28px 80px;}
-.fc-wrap h2{font-size:20px;font-weight:700;margin-bottom:6px;}
-.fc-modes{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
-.fc-mode-btn{padding:7px 16px;border-radius:99px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-.fc-mode-btn.on{background:var(--bg2);border-color:var(--blue);color:var(--blue);}
-.fc-sec{display:none;}.fc-sec.active{display:block;}
-.fc-ctr{font-size:13px;color:var(--text3);font-weight:600;margin-bottom:18px;text-align:center;}
-.scene{perspective:1000px;max-width:520px;height:260px;margin:0 auto 20px;cursor:pointer;}
-.card3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);border-radius:16px;}
-.card3d.flip{transform:rotateY(180deg);}
-.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
-.face.front{background:var(--surface);border:1.5px solid var(--border);}
-.face.back{background:var(--bg2);border:1.5px solid var(--border2);transform:rotateY(180deg);}
-.fc-q{font-size:17px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:8px;}
-.fc-a{font-size:13.5px;color:var(--text);line-height:1.65;}
-.fc-hint{font-size:11px;color:var(--text3);margin-top:8px;}
-.fc-controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-.fc-btn{padding:8px 18px;border-radius:9px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
-.fc-btn:hover{background:var(--bg2);color:var(--text);}
-.fc-btn.primary{background:var(--text);color:var(--bg);border-color:var(--text);}
-.fc-btn.shuf{border-color:var(--prop-bd);color:var(--prop);background:var(--prop-bg);}
-.comp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px;}
-.blank{display:inline-block;min-width:60px;border-bottom:2px solid var(--blue);padding:1px 5px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text);background:transparent;outline:none;text-align:center;}
-.check-r{padding:9px 13px;border-radius:8px;font-size:13px;font-weight:600;margin-top:7px;display:none;}
-.check-r.ok{background:var(--ok-bg);border:1px solid var(--ok-bd);color:var(--ok);}
-.check-r.ko{background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);}
-.check-r.show{display:block;}
-.chrono-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
-.chrono-time{font-size:28px;font-weight:700;color:var(--text);font-family:'IBM Plex Mono',monospace;}
-.chrono-time.urg{color:var(--warn);animation:blink .7s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.chrono-prog{flex:1;height:5px;background:var(--bg2);border-radius:99px;overflow:hidden;}
-.chrono-fill{height:100%;background:linear-gradient(90deg,var(--ok),var(--blue));border-radius:99px;transition:width .5s linear;}
-.chrono-ctr{font-size:13px;color:var(--text3);font-weight:600;}
-.chrono-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:18px;text-align:center;min-height:150px;display:flex;align-items:center;justify-content:center;}
-.chrono-q{font-size:18px;font-weight:700;color:var(--text);line-height:1.35;}
-.chrono-acts{display:flex;gap:10px;justify-content:center;}
-.btn-knew{padding:11px 24px;border-radius:10px;background:var(--ok-bg);color:var(--ok);font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--ok-bd);transition:all .2s;}
-.btn-knew:hover{background:var(--ok);color:#fff;}
-.btn-retry{padding:11px 24px;border-radius:10px;border:1.5px solid var(--warn-bd);background:var(--warn-bg);color:var(--warn);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
-.btn-retry:hover{background:var(--warn);color:#fff;}
-.chrono-result{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;display:none;}
-.chrono-result.show{display:block;}
-.result-big{font-size:56px;font-weight:800;color:var(--blue);}
-/* QUIZ */
-.quiz-wrap{max-width:760px;margin:0 auto;padding:32px 28px 80px;}
-.quiz-wrap h2{font-size:20px;font-weight:700;margin-bottom:20px;}
-.q-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
-.q-num{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:7px;}
-.q-text{font-size:14.5px;font-weight:500;color:var(--text);margin-bottom:12px;line-height:1.6;}
-.opts{display:flex;flex-direction:column;gap:7px;}
-.opt{width:100%;padding:10px 13px;border-radius:9px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;text-align:left;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;}
-.opt-ltr{width:22px;height:22px;border-radius:6px;background:var(--bg2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.opt:hover:not(:disabled){border-color:var(--blue);color:var(--text);background:var(--bg2);}
-.opt.good{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);}
-.opt.good .opt-ltr{background:var(--ok);color:#fff;}
-.opt.bad{border-color:var(--warn-bd);background:var(--warn-bg);color:var(--warn);}
-.opt.bad .opt-ltr{background:var(--warn);color:#fff;}
-.opt:disabled{cursor:default;}
-.corr-box{margin-top:9px;padding:10px 13px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);font-size:13px;color:var(--text2);display:none;}
-.corr-box.show{display:block;}
-.next-q{margin-top:9px;padding:8px 16px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;display:none;transition:all .2s;}
-.next-q.show{display:inline-flex;align-items:center;gap:6px;}
-.quiz-final{display:none;text-align:center;padding:32px;}
-.quiz-final.show{display:block;}
-.final-big{font-size:60px;font-weight:800;color:var(--blue);}
-.score-pill{padding:5px 12px;border-radius:99px;background:var(--bg2);border:1.5px solid var(--border2);font-size:13px;font-weight:700;color:var(--blue);}
-.quiz-prog{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.qp-bar{flex:1;height:4px;border-radius:99px;background:var(--border);overflow:hidden;}
-.qp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--blue3));transition:width .4s;}
-.qp-lbl{font-size:12px;color:var(--text3);}
-/* CARTE MENTALE */
-.mm-wrap{max-width:1000px;margin:0 auto;padding:32px 28px 80px;}
-.mm-wrap h2{font-size:20px;font-weight:700;margin-bottom:16px;}
-.mm-ctrl{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.mm-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-.mm-btn:hover{border-color:var(--blue);color:var(--blue);}
-canvas#mmCanvas{width:100%;height:400px;border-radius:var(--radius);background:var(--bg);display:block;}
-/* EXO */
-.exo-wrap{max-width:900px;margin:0 auto;padding:32px 28px 80px;}
-.exo-wrap h2{font-size:20px;font-weight:700;margin-bottom:20px;}
-.exo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:18px;overflow:hidden;box-shadow:var(--shadow);}
-.exo-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.exo-num{padding:3px 10px;border-radius:6px;background:var(--bg2);border:1px solid var(--border2);font-size:11px;font-weight:700;color:var(--blue);}
-.exo-title{font-size:14px;font-weight:700;color:var(--text);}
-.exo-pills{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto;}
-.epill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;}
-.epill.diff1{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd);}
-.epill.diff2{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
-.epill.diff3{background:var(--prop-bg);color:var(--prop);border:1px solid var(--prop-bd);}
-.exo-body{padding:16px 20px;}
-.exo-enonce{font-size:14px;color:var(--text2);line-height:1.75;padding:12px 16px;background:var(--bg2);border-radius:var(--radius-sm);border-left:3px solid var(--blue);margin-bottom:12px;}
-.corr-toggle{padding:7px 15px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-.corr-toggle:hover{border-color:var(--blue);color:var(--blue);}
-.corr-content{display:none;margin-top:12px;padding:14px 18px;background:var(--ok-bg);border:1.5px solid var(--ok-bd);border-radius:var(--radius-sm);font-size:13.5px;color:var(--text2);line-height:1.75;}
-.corr-content.show{display:block;}
-/* TERMINAL */
-.term-wrap{max-width:860px;margin:0 auto;padding:32px 28px 80px;}
-.term-wrap h2{font-size:20px;font-weight:700;margin-bottom:20px;}
-.term-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;box-shadow:var(--shadow);}
-.term-card h3{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:8px;}
-.term-card p{font-size:13.5px;color:var(--text2);line-height:1.65;}
-@media(max-width:700px){.rail{width:52px;}.tab{width:44px;font-size:8.5px;}.hero{padding:18px 16px 14px;}.cours-wrap,.reldim-wrap,.sim-wrap,.ece-wrap,.fc-wrap,.quiz-wrap,.mm-wrap,.exo-wrap,.term-wrap{padding:20px 14px 60px;}}
+/* ── BLOCK 1 : base layout & components ── */
+:root{
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-<script>
-MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true}};
-</script>
 </head>
 <body>
-<div class="topbar">
-  <button class="back-btn" onclick="history.back()">← Retour</button>
-  <span class="breadcrumb">1ère Spé › <strong>Chapitre 14</strong> — Aspects énergétiques des systèmes mécaniques</span>
-  <div class="topbar-right">
-    <span class="pct-pill" id="pctPill">0 %</span>
-    <button class="th-btn" id="thBtn" onclick="toggleTheme()">🌙</button>
+
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
+    <div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · Enseignant SPC</p>
+    </div>
+  </div>
+
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">1ʳᵉ Spé</span>
+      <span class="micro">Chap. 14</span>
+    </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+  </div>
+
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
+
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
   </div>
 </div>
-<div class="app">
-  <!-- RAIL -->
-  <nav class="rail">
-    <button class="tab active" onclick="go('cours',this)"><span class="tab-icon">📚</span>Cours</button>
-    <button class="tab" onclick="go('reldim',this)"><span class="tab-icon">📐</span>Relations</button>
-    <button class="tab" onclick="go('exo',this)"><span class="tab-icon">✏️</span>Exercices</button>
-    <button class="tab" onclick="go('fc',this)"><span class="tab-icon">🃏</span>Flash-cards</button>
-    <button class="tab" onclick="go('quiz',this)"><span class="tab-icon">❓</span>Quiz</button>
-    <button class="tab" onclick="go('mm',this)"><span class="tab-icon">🧠</span>Carte</button>
-    <button class="tab" onclick="go('sim',this)"><span class="tab-icon">⚡</span>Simul.</button>
-    <button class="tab" onclick="go('ece',this)"><span class="tab-icon">🔬</span>ECE</button>
-    <button class="tab" onclick="go('terminal',this)"><span class="tab-icon">🚀</span>Terminale</button>
-  </nav>
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="mastery-strip">
-      <span style="font-size:11px;color:var(--text3);font-weight:600;">Maîtrise :</span>
-      <div class="mastery-bar"><div class="mastery-fill" id="masteryBar" style="width:0%"></div></div>
-      <span class="mastery-txt" id="masteryTxt">0%</span>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
+
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">1ʳᵉ Spé · Chap. 14</div>
+    <h1 class="hero-title">Aspects énergétiques des sys<span>tèmes mécaniques | PhysiChem</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
     </div>
+  </div>
 
-    <!-- COURS -->
-    <div class="panel active" id="p-cours">
-      <div class="hero">
-        <div class="hero-badge">⚙️ Thème 3 — Énergie · Chapitre 14</div>
-        <h1>Aspects énergétiques <em>des systèmes mécaniques</em></h1>
-        <p class="hero-desc">Travail d'une force, énergie cinétique, énergie potentielle de pesanteur, théorème de l'énergie cinétique, conservation de l'énergie mécanique.</p>
-        <canvas class="hero-canvas" id="heroCanvas"></canvas>
-      </div>
-      <div class="cours-wrap">
-        <h2>⚙️ I. Travail d'une force</h2>
-        <div class="box def">
-          <div class="box-lbl">Définition</div>
-          <p>Le travail d'une force \(\vec{F}\) lors d'un déplacement \(\overrightarrow{AB}\) vaut :</p>
-        </div>
-        <div class="formula-block">\[W_{A \to B}(\vec{F}) = \vec{F} \cdot \overrightarrow{AB} = F \cdot d \cdot \cos\alpha\]</div>
-        <p>avec \(F\) la norme de la force en N, \(d = AB\) le déplacement en m, \(\alpha\) l'angle entre \(\vec{F}\) et \(\overrightarrow{AB}\). Unité : le <strong>joule</strong> (J).</p>
-        <div class="box prop">
-          <div class="box-lbl">Signe du travail</div>
-          <p>— \(W > 0\) : force <strong>motrice</strong> (\(\alpha < 90°\), force dans le sens du mouvement)</p>
-          <p>— \(W < 0\) : force <strong>résistante</strong> (\(\alpha > 90°\), force opposée au mouvement)</p>
-          <p>— \(W = 0\) : force perpendiculaire au déplacement (\(\alpha = 90°\), ex. : force normale \(\vec{N}\))</p>
-        </div>
-        <h3>Cas particuliers importants</h3>
-        <div class="table-wrap"><table class="t">
-          <thead><tr><th>Force</th><th>Travail</th><th>Signe</th></tr></thead>
-          <tbody>
-            <tr><td>Poids \(\vec{P}\) — descente h</td><td>\(W(\vec{P}) = mgh\)</td><td>Moteur (+)</td></tr>
-            <tr><td>Poids \(\vec{P}\) — montée h</td><td>\(W(\vec{P}) = -mgh\)</td><td>Résistant (−)</td></tr>
-            <tr><td>Frottement \(\vec{f}\) sur d</td><td>\(W(\vec{f}) = -fd\)</td><td>Résistant (−)</td></tr>
-            <tr><td>Force normale \(\vec{N}\)</td><td>\(W(\vec{N}) = 0\)</td><td>Nul</td></tr>
-          </tbody>
-        </table></div>
-
-        <h2>🔋 II. Énergie cinétique et potentielle</h2>
-        <h3>Énergie cinétique</h3>
-        <div class="formula-block">\[E_c = \frac{1}{2}mv^2\]</div>
-        <p>\(m\) en kg, \(v\) en m·s⁻¹, \(E_c\) en joules. Toujours \(E_c \geq 0\). Si \(v\) double, \(E_c\) est multipliée par 4 (importance en sécurité routière).</p>
-        <h3>Énergie potentielle de pesanteur</h3>
-        <div class="formula-block">\[E_{pp} = mgh\]</div>
-        <p>\(h\) est l'altitude par rapport à une <strong>référence choisie librement</strong> (sol, table…). Unité : joule. Seule la <em>variation</em> \(\Delta E_{pp} = mg\Delta h\) est physiquement signifiante.</p>
-        <h3>Énergie mécanique</h3>
-        <div class="formula-block">\[E_m = E_c + E_{pp} = \frac{1}{2}mv^2 + mgh\]</div>
-
-        <h2>📐 III. Théorème de l'énergie cinétique (TEC)</h2>
-        <div class="box def">
-          <div class="box-lbl">Énoncé</div>
-          <p>La variation d'énergie cinétique d'un système est égale à la somme algébrique des travaux de toutes les forces appliquées :</p>
-        </div>
-        <div class="formula-block">\[\Delta E_c = E_{c,f} - E_{c,i} = \sum W(\vec{F})\]</div>
-        <div class="box ok">
-          <div class="box-lbl">Méthode TEC</div>
-          <p>1. Identifier les forces (poids, frottements, normale, etc.).</p>
-          <p>2. Calculer le travail de chaque force sur le déplacement choisi.</p>
-          <p>3. Appliquer : \(E_{c,f} = E_{c,i} + W_{\text{total}}\).</p>
-          <p>4. En déduire \(v_f = \sqrt{\dfrac{2E_{c,f}}{m}}\).</p>
-        </div>
-        <div class="box warn">
-          <div class="box-lbl">Application numérique</div>
-          <p>Bloc \(m = 2\) kg, \(v_i = 4\) m·s⁻¹, frottement \(f = 5\) N sur \(d = 3\) m (horizontal) :</p>
-          <p>\(\Delta E_c = W(f) + W(N) + W(P) = -15 + 0 + 0 = -15\) J</p>
-          <p>\(E_{c,f} = \frac{1}{2}\times 2 \times 16 - 15 = 1\) J → \(v_f = \sqrt{2 \times 1/2} = 1\) m·s⁻¹</p>
-        </div>
-
-        <h2>♻️ IV. Conservation de l'énergie mécanique</h2>
-        <div class="box def">
-          <div class="box-lbl">Conservation</div>
-          <p>Si les <strong>seules forces qui travaillent sont conservatives</strong> (poids), alors l'énergie mécanique se conserve :</p>
-        </div>
-        <div class="formula-block">\[E_{m,f} = E_{m,i} \quad \Leftrightarrow \quad \frac{1}{2}mv_f^2 + mgh_f = \frac{1}{2}mv_i^2 + mgh_i\]</div>
-        <div class="box prop">
-          <div class="box-lbl">Avec forces non conservatives (frottements)</div>
-          <p>\(\Delta E_m = W(\text{forces non conservatives}) < 0\)</p>
-          <p>L'énergie mécanique diminue : elle est dissipée sous forme de chaleur.</p>
-        </div>
-        <div class="box ok">
-          <div class="box-lbl">Chute libre sans frottements</div>
-          <p>\(m = 1\) kg, \(h_i = 10\) m, \(v_i = 0\). À \(h_f = 0\) :</p>
-          <p>\(E_{m,i} = E_{m,f}\) → \(mgh_i = \frac{1}{2}mv_f^2\) → \(v_f = \sqrt{2gh} = \sqrt{2 \times 9{,}81 \times 10} \approx 14{,}0\) m·s⁻¹</p>
-          <p>La masse disparaît du calcul : tous les corps lâchés de la même hauteur atteignent la même vitesse.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- RELATIONS & DIMENSIONS -->
-    <div class="panel" id="p-reldim">
-      <div class="reldim-wrap">
-        <h2>📐 Relations & Dimensions — Chapitre 14</h2>
-        <div class="rel-card">
-          <h3>Travail d'une force</h3>
-          <div class="formula-block">\[W = F \cdot d \cdot \cos\alpha\]</div>
-          <p><strong>Grandeurs :</strong> \(F\) [N], \(d\) [m], \(\alpha\) [sans dimension]. <strong>Unité :</strong> N·m = J (joule).</p>
-          <p><strong>Dimension :</strong> [W] = M·L²·T⁻²</p>
-        </div>
-        <div class="rel-card">
-          <h3>Énergie cinétique</h3>
-          <div class="formula-block">\[E_c = \frac{1}{2}mv^2\]</div>
-          <p><strong>Grandeurs :</strong> \(m\) [kg], \(v\) [m·s⁻¹]. <strong>Unité :</strong> kg·m²·s⁻² = J.</p>
-          <p><strong>Variation :</strong> \(\Delta E_c = E_{c,f} - E_{c,i}\) — peut être positive ou négative.</p>
-        </div>
-        <div class="rel-card">
-          <h3>Énergie potentielle de pesanteur</h3>
-          <div class="formula-block">\[E_{pp} = mgh\]</div>
-          <p><strong>Grandeurs :</strong> \(m\) [kg], \(g \approx 9{,}81\) N·kg⁻¹, \(h\) [m]. <strong>Unité :</strong> J.</p>
-          <p><strong>Variation :</strong> \(\Delta E_{pp} = mg\Delta h\) — indépendante du choix de l'origine.</p>
-        </div>
-        <div class="rel-card">
-          <h3>Théorème de l'énergie cinétique</h3>
-          <div class="formula-block">\[\Delta E_c = \sum W(\vec{F})\]</div>
-          <p><strong>Portée :</strong> valable pour tout système, avec ou sans frottements.</p>
-        </div>
-        <div class="rel-card">
-          <h3>Conservation de l'énergie mécanique</h3>
-          <div class="formula-block">\[E_m = E_c + E_{pp} = \text{cst} \quad \text{(sans frottements)}\]</div>
-          <p>Avec frottements : \(\Delta E_m = W_{\text{nc}} < 0\).</p>
-        </div>
-        <div class="rel-card">
-          <h3>Vitesse en chute libre depuis h</h3>
-          <div class="formula-block">\[v_f = \sqrt{2gh}\]</div>
-          <p>Indépendant de la masse. Valide si \(v_i = 0\) et sans frottements.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- EXERCICES -->
-    <div class="panel" id="p-exo">
-      <div class="exo-wrap">
-        <h2>✏️ Exercices progressifs</h2>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 1</span>
-            <span class="exo-title">Travail du poids</span>
-            <div class="exo-pills"><span class="epill diff1">⭐ Facile</span><span class="epill diff1">APP</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Un objet de masse \(m = 0{,}5\) kg tombe d'une hauteur \(h = 8\) m.<br>1. Calculer le travail du poids lors de cette chute.<br>2. Ce travail est-il moteur ou résistant ? Justifier.</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(W(\vec{P}) = mgh = 0{,}5 \times 9{,}81 \times 8 = \mathbf{39{,}2}\) J</p>
-              <p>2. Moteur : la force est dans le sens du déplacement (\(\alpha = 0°\), \(\cos 0° = 1 > 0\)).</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 2</span>
-            <span class="exo-title">Énergie cinétique</span>
-            <div class="exo-pills"><span class="epill diff1">⭐ Facile</span><span class="epill diff1">REA</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Une voiture de masse \(m = 1\,200\) kg roule à \(v_1 = 50\) km·h⁻¹, puis à \(v_2 = 100\) km·h⁻¹.<br>1. Convertir les vitesses en m·s⁻¹.<br>2. Calculer \(E_{c1}\) et \(E_{c2}\).<br>3. Comparer : que conclure sur le risque en cas de choc ?</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(v_1 = 50/3{,}6 \approx 13{,}9\) m·s⁻¹ ; \(v_2 = 100/3{,}6 \approx 27{,}8\) m·s⁻¹</p>
-              <p>2. \(E_{c1} = \frac{1}{2} \times 1200 \times 13{,}9^2 \approx 115\,600\) J ; \(E_{c2} \approx 462\,400\) J</p>
-              <p>3. \(E_{c2} = 4 \times E_{c1}\) : doubler la vitesse quadruple l'énergie cinétique, donc le risque en cas de choc est quatre fois plus élevé.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 3</span>
-            <span class="exo-title">Théorème de l'énergie cinétique — plan horizontal</span>
-            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">REA</span><span class="epill diff1">ANA</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Un bloc de \(m = 3\) kg glisse sur un plan horizontal. \(v_i = 5\) m·s⁻¹, force de frottement \(f = 6\) N sur \(d = 4\) m.<br>1. Calculer \(W(f)\), \(W(N)\), \(W(P)\).<br>2. Appliquer le TEC pour trouver \(v_f\).</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(W(f) = -6 \times 4 = -24\) J ; \(W(N) = 0\) (perpendiculaire) ; \(W(P) = 0\) (plan horizontal)</p>
-              <p>2. TEC : \(E_{c,f} = E_{c,i} + W_{\text{total}} = \frac{1}{2}\times 3 \times 25 - 24 = 37{,}5 - 24 = 13{,}5\) J</p>
-              <p>\(v_f = \sqrt{\dfrac{2 \times 13{,}5}{3}} = \sqrt{9} = \mathbf{3}\) m·s⁻¹</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 4</span>
-            <span class="exo-title">Conservation de l'énergie mécanique</span>
-            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">REA</span><span class="epill diff1">VAL</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Un skateur de masse \(m = 60\) kg part du bord d'une rampe à \(h = 3\) m avec \(v_i = 0\).<br>1. Calculer \(E_m\) au départ.<br>2. Sans frottements, quelle est sa vitesse en bas (\(h = 0\)) ?<br>3. Avec frottements (\(\Delta E_m = -180\) J), quelle est sa vitesse en bas ?</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(E_m = E_c + E_{pp} = 0 + mgh = 60 \times 9{,}81 \times 3 = \mathbf{1\,765{,}8}\) J</p>
-              <p>2. Sans frottements : \(E_{m,f} = E_{m,i}\) → \(\frac{1}{2}mv^2 = 1765{,}8\) → \(v = \sqrt{2 \times 1765{,}8/60} \approx \mathbf{7{,}67}\) m·s⁻¹ (= \(\sqrt{2gh}\))</p>
-              <p>3. Avec frottements : \(E_{c,f} = 1765{,}8 - 180 = 1585{,}8\) J → \(v = \sqrt{2 \times 1585{,}8/60} \approx \mathbf{7{,}27}\) m·s⁻¹</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 5</span>
-            <span class="exo-title">Balle lancée verticalement</span>
-            <div class="exo-pills"><span class="epill diff2">⭐⭐ Moyen</span><span class="epill diff1">APP</span><span class="epill diff1">ANA</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Une balle de \(m = 0{,}2\) kg est lancée vers le haut depuis le sol avec \(v_0 = 8\) m·s⁻¹ (on néglige les frottements).<br>1. Calculer \(E_m\) à \(h = 0\).<br>2. Hauteur maximale \(H_{\max}\) (quand \(v = 0\)).<br>3. Vitesse à \(h = 1\) m (en montant). Vérifier avec le TEC.</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(E_m = \frac{1}{2} \times 0{,}2 \times 64 = 6{,}4\) J</p>
-              <p>2. \(E_m = mgh_{\max}\) → \(H_{\max} = \dfrac{6{,}4}{0{,}2 \times 9{,}81} \approx \mathbf{3{,}26}\) m</p>
-              <p>3. \(E_c = E_m - mgh = 6{,}4 - 0{,}2 \times 9{,}81 \times 1 = 6{,}4 - 1{,}962 = 4{,}438\) J → \(v = \sqrt{2 \times 4{,}438/0{,}2} \approx \mathbf{6{,}66}\) m·s⁻¹</p>
-              <p>TEC : \(\Delta E_c = W(P) = -mgh = -1{,}962\) J → \(E_{c,f} = 6{,}4 - 1{,}962 = 4{,}438\) J ✓</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="exo-card">
-          <div class="exo-head">
-            <span class="exo-num">Ex. 6</span>
-            <span class="exo-title">Freinage — distance d'arrêt</span>
-            <div class="exo-pills"><span class="epill diff3">⭐⭐⭐ Difficile</span><span class="epill diff1">REA</span><span class="epill diff1">VAL</span></div>
-          </div>
-          <div class="exo-body">
-            <div class="exo-enonce">Voiture \(m = 1\,200\) kg roulant à \(v_i = 25\) m·s⁻¹ (90 km·h⁻¹). Freinage : force de freinage \(F = 8\,000\) N.<br>1. Calculer \(E_{c,i}\).<br>2. Par le TEC, calculer la distance d'arrêt totale \(d_{\text{arrêt}}\) (chercher \(d\) tel que \(E_{c,f} = 0\)).<br>3. Comparer à \(v = 50\) km·h⁻¹ : que conclure ?</div>
-            <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
-            <div class="corr-content">
-              <p>1. \(E_{c,i} = \frac{1}{2} \times 1200 \times 625 = 375\,000\) J</p>
-              <p>2. TEC : \(0 - 375\,000 = -8000 \times d\) → \(d = \dfrac{375\,000}{8000} = \mathbf{46{,}9}\) m</p>
-              <p>3. À 50 km·h⁻¹ (\(v \approx 13{,}9\) m·s⁻¹) : \(E_{c,i} = \frac{1}{2} \times 1200 \times 193 \approx 115\,700\) J → \(d \approx 14{,}5\) m. À 90 km·h⁻¹, la distance est ~3,2 fois plus grande.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FLASHCARDS -->
-    <div class="panel" id="p-fc">
-      <div class="fc-wrap">
-        <h2>🃏 Flashcards — Énergie mécanique</h2>
-        <p style="color:var(--text3);margin-bottom:20px;font-size:13px;">15 cartes · 3 modes</p>
-        <div class="fc-modes">
-          <button class="fc-mode-btn on" onclick="switchFCMode('libre',this)">📖 Révision libre</button>
-          <button class="fc-mode-btn" onclick="switchFCMode('completion',this)">✍️ Complétion</button>
-          <button class="fc-mode-btn" onclick="switchFCMode('chrono',this)">⏱ Chrono 2 min</button>
-        </div>
-        <div class="fc-sec active" id="fc-libre">
-          <div class="fc-ctr" id="fc-ctr">Carte 1 / 15</div>
-          <div class="scene" onclick="flipCard()">
-            <div class="card3d" id="fc-card">
-              <div class="face front"><div id="fc-icon" style="font-size:28px;margin-bottom:8px;">⚙️</div><div class="fc-q" id="fc-q">—</div><div class="fc-hint">Cliquer pour retourner</div></div>
-              <div class="face back"><div class="fc-a" id="fc-a">—</div></div>
-            </div>
-          </div>
-          <div class="fc-controls">
-            <button class="fc-btn" onclick="prevCard()">← Préc.</button>
-            <button class="fc-btn primary" onclick="flipCard()">↻ Retourner</button>
-            <button class="fc-btn" onclick="nextCard()">Suiv. →</button>
-            <button class="fc-btn shuf" onclick="shuffleCards()">🔀 Mélanger</button>
-          </div>
-        </div>
-        <div class="fc-sec" id="fc-completion">
-          <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Score : <strong id="comp-score">0</strong></div>
-          <div id="comp-container"></div>
-        </div>
-        <div class="fc-sec" id="fc-chrono">
-          <div class="chrono-bar">
-            <div class="chrono-time" id="chrono-time">2:00</div>
-            <div class="chrono-prog"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
-            <div class="chrono-ctr" id="chrono-ctr">0/10</div>
-          </div>
-          <div class="chrono-card" id="chrono-card"><div class="chrono-q" id="chrono-q">Appuyez sur Démarrer</div></div>
-          <div class="chrono-acts" id="chrono-acts"><button class="btn-knew" onclick="startChrono()">▶ Démarrer</button></div>
-          <div class="chrono-result" id="chrono-result">
-            <div class="result-big" id="result-big">0/10</div>
-            <div style="font-size:14px;color:var(--text2);margin:8px 0 20px" id="result-sub">—</div>
-            <button class="fc-btn primary" onclick="startChrono()">🔄 Recommencer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- QUIZ -->
-    <div class="panel" id="p-quiz">
-      <div class="quiz-wrap">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <h2 style="margin:0">❓ Quiz — Énergie mécanique</h2>
-          <span class="score-pill" id="scorePill">0/0</span>
-        </div>
-        <div class="quiz-prog"><div class="qp-bar"><div class="qp-fill" id="qpFill" style="width:0%"></div></div><div class="qp-lbl" id="qpLbl">Q 1/12</div></div>
-        <div id="qContainer"></div>
-        <div class="quiz-final" id="qFinal">
-          <div class="final-big" id="finalBig">—</div>
-          <div style="font-size:15px;color:var(--text2);margin:8px 0 22px" id="finalMsg">—</div>
-          <button style="padding:11px 24px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:600;cursor:pointer;" onclick="startQuiz()">🔄 Recommencer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARTE MENTALE -->
-    <div class="panel" id="p-mm">
-      <div class="mm-wrap">
-        <h2>🧠 Carte mentale — Énergie mécanique</h2>
-        <div class="mm-ctrl">
-          <button class="mm-btn" onclick="drawMM()">🗺 Afficher</button>
-          <button class="mm-btn" onclick="dlMM()" style="margin-left:auto">⬇ PNG</button>
-        </div>
-        <canvas id="mmCanvas"></canvas>
-      </div>
-    </div>
-
-    <!-- SIMULATIONS -->
-    <div class="panel" id="p-sim">
-      <div class="sim-wrap">
-        <h2>⚡ Simulations interactives</h2>
-        <div class="sim-card">
-          <h3>⚙️ Simulateur TEC — Glissement avec frottements</h3>
-          <div class="sim-grid">
-            <div class="sim-group"><label>Masse m (kg)</label><input class="sim-inp" id="s1-m" type="number" value="2" step="0.1"></div>
-            <div class="sim-group"><label>Vitesse initiale v_i (m/s)</label><input class="sim-inp" id="s1-vi" type="number" value="5" step="0.1"></div>
-            <div class="sim-group"><label>Frottement f (N)</label><input class="sim-inp" id="s1-f" type="number" value="4" step="0.1"></div>
-            <div class="sim-group"><label>Déplacement d (m)</label><input class="sim-inp" id="s1-d" type="number" value="3" step="0.1"></div>
-          </div>
-          <button class="sim-btn" onclick="calcTEC()">Calculer</button>
-          <div class="sim-result" id="s1-result">Renseignez les paramètres puis cliquez.</div>
-          <canvas class="sim-c" id="s1-canvas"></canvas>
-        </div>
-
-        <div class="sim-card">
-          <h3>♻️ Simulateur Conservation — Chute libre</h3>
-          <div class="sim-grid">
-            <div class="sim-group"><label>Masse m (kg)</label><input class="sim-inp" id="s2-m" type="number" value="1" step="0.1"></div>
-            <div class="sim-group"><label>Hauteur initiale h (m)</label><input class="sim-inp" id="s2-h" type="number" value="5" step="0.5"></div>
-          </div>
-          <button class="sim-btn" onclick="calcConserv()">Calculer</button>
-          <div class="sim-result" id="s2-result">Renseignez les paramètres puis cliquez.</div>
-          <canvas class="sim-c" id="s2-canvas"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- ECE -->
-    <div class="panel" id="p-ece">
-      <div class="ece-wrap">
-        <h2>🔬 ECE — Vérification du TEC sur plan incliné</h2>
-        <div class="box def">
-          <div class="box-lbl">Protocole expérimental</div>
-          <p><strong>Objectif :</strong> vérifier que \(\Delta E_c = \sum W(\vec{F})\) pour un bloc glissant sur un plan incliné.</p>
-          <p><strong>Matériel :</strong> plan incliné, bloc, capteur de vitesse (photoporte ou vidéo), dynamomètre, règle.</p>
-          <p><strong>Mesures :</strong> masse \(m\), angle \(\theta\), distance \(d\), frottement \(f\), vitesses \(v_A\) et \(v_B\).</p>
-        </div>
-        <div class="box prop">
-          <div class="box-lbl">Calculs à effectuer</div>
-          <p>1. \(\Delta E_c = \frac{1}{2}m(v_B^2 - v_A^2)\) (mesure expérimentale)</p>
-          <p>2. \(W(P) = mgd\sin\theta\) ; \(W(f) = -fd\) ; \(W(N) = 0\)</p>
-          <p>3. \(\sum W = W(P) + W(f)\) (calcul théorique)</p>
-          <p>4. Comparer \(\Delta E_c\) et \(\sum W\) : accord si écart &lt; 10%.</p>
-        </div>
-        <canvas class="ece-c" id="eceCanvas"></canvas>
-        <div class="sim-grid" style="margin:12px 0;">
-          <div class="sim-group"><label>Masse m (kg)</label><input class="sim-inp" id="ece-m" type="number" value="0.5" step="0.1"></div>
-          <div class="sim-group"><label>Angle θ (°)</label><input class="sim-inp" id="ece-theta" type="number" value="30" step="1"></div>
-          <div class="sim-group"><label>Frottement f (N)</label><input class="sim-inp" id="ece-f" type="number" value="0.5" step="0.1"></div>
-          <div class="sim-group"><label>Distance d (m)</label><input class="sim-inp" id="ece-d" type="number" value="1.5" step="0.1"></div>
-          <div class="sim-group"><label>v_A (m/s)</label><input class="sim-inp" id="ece-va" type="number" value="0" step="0.1"></div>
-          <div class="sim-group"><label>v_B (m/s)</label><input class="sim-inp" id="ece-vb" type="number" value="2.5" step="0.1"></div>
-        </div>
-        <button class="sim-btn" onclick="calcECE()">Analyser</button>
-        <div class="sim-result" id="ece-result">Entrez les paramètres pour analyser l'expérience.</div>
-      </div>
-    </div>
-
-    <!-- VERS TERMINALE -->
-    <div class="panel" id="p-terminal">
-      <div class="term-wrap">
-        <h2>🚀 Vers la Terminale</h2>
-        <div class="term-card">
-          <h3>Ce qui sera réutilisé directement</h3>
-          <p>Le TEC et la conservation de \(E_m\) sont les outils centraux de la mécanique en Terminale. Vous les retrouverez dans l'étude des chutes verticales, des plans inclinés, des pendules et du mouvement dans les champs (gravitationnel, électrique).</p>
-        </div>
-        <div class="term-card">
-          <h3>Ce qui deviendra plus complexe</h3>
-          <p>En Terminale : les forces ne sont plus constantes (ressort → énergie potentielle élastique \(E_{pe} = \frac{1}{2}ke^2\)), les systèmes tournent (moment d'inertie), et les bilans énergétiques incluent l'énergie thermique et les échanges avec l'extérieur.</p>
-        </div>
-        <div class="term-card">
-          <h3>Lien avec d'autres chapitres</h3>
-          <p>— Chap. 13 (énergie électrique) : analogie entre l'énergie cinétique \(E_c = \frac{1}{2}mv^2\) et l'énergie stockée dans un condensateur \(E_C = \frac{1}{2}CU^2\).</p>
-          <p>— Chap. 10 (interactions et champs) : le poids \(\vec{P} = m\vec{g}\) est une force conservative, ce qui justifie l'existence de \(E_{pp} = mgh\).</p>
-          <p>— Terminale, ondes : la notion d'énergie transportée par une onde est une généralisation directe de ces bilans.</p>
-        </div>
-        <div class="term-card" style="border-color:var(--blue);background:var(--bg2);">
-          <h3>Mini-défi Terminale</h3>
-          <p>Une bille de masse \(m\) glisse sans frottement dans un looping de rayon \(R\). Pour que la bille reste en contact au sommet du looping, quelle doit être sa vitesse minimale au sommet ? À quelle hauteur minimale de départ correspond-elle ?</p>
-          <details style="margin-top:8px">
-            <summary style="cursor:pointer;font-size:13px;color:var(--blue);font-weight:600;">Indice / Correction</summary>
-            <div style="margin-top:8px;font-size:13px;color:var(--text2);">
-              <p>Au sommet : la force centripète est assurée par \(P + N \geq 0\) → \(v_{\min} = \sqrt{gR}\).</p>
-              <p>Conservation \(E_m\) (départ à \(h_0\), \(v = 0\)) : \(mgh_0 = \frac{1}{2}mv^2 + mg(2R)\) → \(h_0 = \frac{v^2}{2g} + 2R = \frac{R}{2} + 2R = \frac{5R}{2}\).</p>
-            </div>
-          </details>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- end content -->
-</div><!-- end app -->
+</div>
 
 <script>
-/* THEME */
-(function(){var t=localStorage.getItem('pco_theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
-  document.getElementById('thBtn').textContent=t==='dark'?'☀️':'🌙';
-})();
-function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('thBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pco_theme',n);drawHero();drawMM();drawECE();}
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-/* TABS */
-var visited=new Set();
-function go(id,btn){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById('p-'+id).classList.add('active');
-  btn.classList.add('active');
-  visited.add(id);updateMastery();
-  if(id==='mm')setTimeout(drawMM,60);
-  if(id==='ece')setTimeout(drawECE,60);
-  if(id==='sim')setTimeout(function(){calcTEC();calcConserv();},60);
-}
-function updateMastery(){var tot=9,n=visited.size,pct=Math.round(n/tot*100);
-  document.getElementById('masteryBar').style.width=pct+'%';
-  document.getElementById('masteryTxt').textContent=pct+'%';
-  document.getElementById('pctPill').textContent=pct+' %';
-}
-
-/* HERO CANVAS — ball dropping with Ec/Epp bars */
-function drawHero(){
-  var c=document.getElementById('heroCanvas');
-  c.width=c.offsetWidth||800;c.height=180;
-  var ctx=c.getContext('2d');
-  var dark=document.documentElement.getAttribute('data-theme')==='dark';
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var W=c.width,H=c.height;
-  var t=Date.now()/1000;
-  // Animated ball
-  var phase=(t%2)/2;
-  var ballY=20+phase*(H-50);
-  var Epp_frac=1-phase;
-  var Ec_frac=phase;
-  // neon ball
-  var grd=ctx.createRadialGradient(W*0.18,ballY,0,W*0.18,ballY,14);
-  grd.addColorStop(0,'#ff9abb');grd.addColorStop(1,'#9f4f68');
-  ctx.beginPath();ctx.arc(W*0.18,ballY,12,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
-  ctx.beginPath();ctx.arc(W*0.18,ballY,14,0,Math.PI*2);ctx.strokeStyle='rgba(212,137,159,0.6)';ctx.lineWidth=2;ctx.stroke();
-  // Trail
-  ctx.strokeStyle='rgba(159,79,104,0.3)';ctx.lineWidth=1.5;ctx.setLineDash([3,4]);
-  ctx.beginPath();ctx.moveTo(W*0.18,20);ctx.lineTo(W*0.18,ballY);ctx.stroke();ctx.setLineDash([]);
-  // Energy bars
-  var bx=W*0.45,bw=60,bH=H-40,by=20;
-  // Epp bar
-  ctx.fillStyle='rgba(100,80,60,0.3)';ctx.fillRect(bx,by,bw,bH);
-  var eppH=Epp_frac*bH;
-  var g1=ctx.createLinearGradient(0,by+bH-eppH,0,by+bH);
-  g1.addColorStop(0,'#e09a3a');g1.addColorStop(1,'#c07820');
-  ctx.fillStyle=g1;ctx.fillRect(bx,by+bH-eppH,bw,eppH);
-  ctx.fillStyle='#e09a3a';ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='center';
-  ctx.fillText('Epp',bx+bw/2,by+bH+14);
-  // Ec bar
-  var bx2=bx+bw+20;
-  ctx.fillStyle='rgba(60,80,100,0.3)';ctx.fillRect(bx2,by,bw,bH);
-  var ecH=Ec_frac*bH;
-  var g2=ctx.createLinearGradient(0,by+bH-ecH,0,by+bH);
-  g2.addColorStop(0,'#5ac8e0');g2.addColorStop(1,'#2a8aaa');
-  ctx.fillStyle=g2;ctx.fillRect(bx2,by+bH-ecH,bw,ecH);
-  ctx.fillStyle='#5ac8e0';ctx.fillText('Ec',bx2+bw/2,by+bH+14);
-  // Em bar
-  var bx3=bx2+bw+20;
-  ctx.fillStyle='rgba(80,60,100,0.3)';ctx.fillRect(bx3,by,bw,bH);
-  ctx.fillStyle='rgba(212,137,159,0.8)';ctx.fillRect(bx3,by,bw,bH);
-  ctx.fillStyle='#d4899f';ctx.fillText('Em',bx3+bw/2,by+bH+14);
-  // Label Em = cst
-  ctx.fillStyle='rgba(212,137,159,0.9)';ctx.font='bold 12px IBM Plex Mono,monospace';ctx.textAlign='left';
-  ctx.fillText('Em = cst',bx3+bw+14,by+bH/2);
-  // title
-  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px Inter,sans-serif';ctx.textAlign='left';
-  ctx.fillText('Conservation de l\'énergie mécanique',W*0.01,H-10);
-}
-var heroRaf;
-function heroLoop(){drawHero();heroRaf=requestAnimationFrame(heroLoop);}
-heroLoop();
-
-/* SIM TEC */
-function calcTEC(){
-  var m=parseFloat(document.getElementById('s1-m').value)||2;
-  var vi=parseFloat(document.getElementById('s1-vi').value)||5;
-  var f=parseFloat(document.getElementById('s1-f').value)||4;
-  var d=parseFloat(document.getElementById('s1-d').value)||3;
-  var Eci=0.5*m*vi*vi;
-  var Wf=-f*d;
-  var Ecf=Eci+Wf;
-  var vf=Ecf>0?Math.sqrt(2*Ecf/m):0;
-  document.getElementById('s1-result').innerHTML=
-    'Ec_i = <strong>'+Eci.toFixed(2)+' J</strong> · W(f) = <strong>'+Wf.toFixed(2)+' J</strong><br>'+
-    'Ec_f = <strong>'+Ecf.toFixed(2)+' J</strong> · v_f = <strong>'+vf.toFixed(2)+' m/s</strong>';
-  var c=document.getElementById('s1-canvas');c.width=c.offsetWidth||600;c.height=200;
-  var ctx=c.getContext('2d');
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var W=c.width,H=c.height;
-  var barW=80,gap=30,baseY=H-30,maxH=H-60;
-  var vals=[Eci,Math.abs(Wf),Math.max(Ecf,0)];
-  var maxV=Math.max(...vals,1);
-  var labels=['Ec_i','|W(f)|','Ec_f'];
-  var colors=['#5ac8e0','#e09a3a','#9f4f68'];
-  var sx=(W-(3*barW+2*gap))/2;
-  for(var i=0;i<3;i++){
-    var bh=vals[i]/maxV*maxH;
-    var x=sx+i*(barW+gap);
-    var grd=ctx.createLinearGradient(0,baseY-bh,0,baseY);
-    grd.addColorStop(0,colors[i]);grd.addColorStop(1,colors[i]+'55');
-    ctx.fillStyle=grd;ctx.fillRect(x,baseY-bh,barW,bh);
-    ctx.strokeStyle=colors[i];ctx.lineWidth=1.5;ctx.strokeRect(x,baseY-bh,barW,bh);
-    ctx.fillStyle=colors[i];ctx.font='bold 11px IBM Plex Mono,monospace';ctx.textAlign='center';
-    ctx.fillText(labels[i],x+barW/2,baseY+14);
-    ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='10px IBM Plex Mono,monospace';
-    ctx.fillText(vals[i].toFixed(1)+' J',x+barW/2,baseY-bh-6);
-  }
-}
-setTimeout(calcTEC,100);
-
-/* SIM CONSERVATION */
-function calcConserv(){
-  var m=parseFloat(document.getElementById('s2-m').value)||1;
-  var h=parseFloat(document.getElementById('s2-h').value)||5;
-  var g=9.81;
-  var Em=m*g*h;
-  var vf=Math.sqrt(2*g*h);
-  var h_mid=h/2;
-  var vf_mid=Math.sqrt(2*g*h_mid);
-  document.getElementById('s2-result').innerHTML=
-    'Em = <strong>'+Em.toFixed(2)+' J</strong> (constante)<br>'+
-    'À h='+h+' m : v = 0 m/s | Epp = <strong>'+Em.toFixed(2)+'J</strong> | Ec = 0<br>'+
-    'À h='+h_mid.toFixed(1)+' m : v = <strong>'+vf_mid.toFixed(2)+' m/s</strong> | Epp = Ec = '+( Em/2).toFixed(2)+'J<br>'+
-    'À h=0 m : v = <strong>'+vf.toFixed(2)+' m/s</strong> | Ec = <strong>'+Em.toFixed(2)+'J</strong> | Epp = 0';
-  var c=document.getElementById('s2-canvas');c.width=c.offsetWidth||600;c.height=200;
-  var ctx=c.getContext('2d');
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var CW=c.width,CH=c.height;
-  var n=20;
-  for(var i=0;i<=n;i++){
-    var frac=i/n;
-    var hi=h*(1-frac);
-    var Eppv=m*g*hi;
-    var Ecv=Em-Eppv;
-    var x=40+frac*(CW-80);
-    var eppH=Eppv/Em*(CH-50);
-    var ecH=Ecv/Em*(CH-50);
-    var baseY=CH-30;
-    var barW=Math.max(2,(CW-80)/(n+1)*0.7);
-    ctx.fillStyle='rgba(224,154,58,0.8)';ctx.fillRect(x-barW/2,baseY-eppH,barW,eppH);
-    ctx.fillStyle='rgba(90,200,224,0.8)';ctx.fillRect(x-barW/2,baseY-eppH-ecH,barW,ecH);
-  }
-  ctx.fillStyle='rgba(212,137,159,0.7)';ctx.font='11px IBM Plex Mono,monospace';ctx.textAlign='left';
-  ctx.fillText('■ Epp',10,18);ctx.fillStyle='rgba(90,200,224,0.7)';ctx.fillText('■ Ec',10,32);
-  ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='10px Inter,sans-serif';
-  ctx.textAlign='left';ctx.fillText('h='+h+'m',40,CH-14);
-  ctx.textAlign='right';ctx.fillText('h=0',CW-10,CH-14);
-}
-setTimeout(calcConserv,100);
-
-/* ECE */
-function drawECE(){
-  var c=document.getElementById('eceCanvas');
-  if(!c)return;
-  c.width=c.offsetWidth||700;c.height=280;
-  var ctx=c.getContext('2d');
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var W=c.width,H=c.height;
-  // Draw inclined plane
-  var theta=30*Math.PI/180;
-  var ox=60,oy=H-50,l=W*0.55;
-  var ex=ox+l*Math.cos(theta),ey=oy-l*Math.sin(theta);
-  ctx.strokeStyle='rgba(159,79,104,0.7)';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ex,ey);ctx.lineTo(ox,oy);ctx.stroke();
-  // Ground
-  ctx.strokeStyle='rgba(100,80,80,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
-  ctx.beginPath();ctx.moveTo(ox-20,oy);ctx.lineTo(ex+20,oy);ctx.stroke();ctx.setLineDash([]);
-  // Block (animated)
-  var t=Date.now()/2000;var pos=(t%1);
-  var bx=ox+pos*l*Math.cos(theta)-12,by=oy-pos*l*Math.sin(theta)-12;
-  ctx.save();ctx.translate(bx+12,by+12);ctx.rotate(-theta);
-  ctx.fillStyle='rgba(90,200,224,0.6)';ctx.fillRect(-12,-12,24,24);
-  ctx.strokeStyle='#5ac8e0';ctx.lineWidth=2;ctx.strokeRect(-12,-12,24,24);
-  // Weight vector
-  ctx.strokeStyle='#e09a3a';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,30);ctx.stroke();
-  ctx.fillStyle='#e09a3a';ctx.beginPath();ctx.moveTo(-4,26);ctx.lineTo(4,26);ctx.lineTo(0,34);ctx.fill();
-  ctx.restore();
-  // Labels
-  ctx.fillStyle='rgba(90,200,224,0.8)';ctx.font='bold 12px IBM Plex Mono,monospace';ctx.textAlign='left';
-  ctx.fillText('Bloc m',bx+28,by+8);
-  ctx.fillStyle='#e09a3a';ctx.fillText('P⃗',bx+14,by+46);
-  ctx.fillStyle='rgba(212,137,159,0.8)';ctx.font='11px Inter,sans-serif';
-  ctx.fillText('Plan incliné — θ',ox+l*0.4+10,oy-8);
-  ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='11px Inter,sans-serif';ctx.textAlign='center';
-  ctx.fillText('Vérification TEC : ΔEc = W(P) + W(f)',W/2,H-16);
-}
-setInterval(function(){if(document.getElementById('p-ece').classList.contains('active'))drawECE();},50);
-
-function calcECE(){
-  var m=parseFloat(document.getElementById('ece-m').value)||0.5;
-  var theta=parseFloat(document.getElementById('ece-theta').value)||30;
-  var f=parseFloat(document.getElementById('ece-f').value)||0.5;
-  var d=parseFloat(document.getElementById('ece-d').value)||1.5;
-  var va=parseFloat(document.getElementById('ece-va').value)||0;
-  var vb=parseFloat(document.getElementById('ece-vb').value)||2.5;
-  var g=9.81,th=theta*Math.PI/180;
-  var dEc=0.5*m*(vb*vb-va*va);
-  var WP=m*g*d*Math.sin(th);
-  var Wf=-f*d;
-  var WN=0;
-  var Wtot=WP+Wf+WN;
-  var ecart=Math.abs(dEc-Wtot)/Math.abs(Wtot+0.001)*100;
-  document.getElementById('ece-result').innerHTML=
-    '<strong>Mesure expérimentale :</strong> ΔEc = ½m(vB²−vA²) = <strong>'+dEc.toFixed(3)+' J</strong><br>'+
-    '<strong>Calcul théorique :</strong><br>'+
-    '&nbsp; W(P) = mgd·sin('+theta+'°) = <strong>'+WP.toFixed(3)+' J</strong><br>'+
-    '&nbsp; W(f) = −fd = <strong>'+Wf.toFixed(3)+' J</strong><br>'+
-    '&nbsp; ΣW = <strong>'+Wtot.toFixed(3)+' J</strong><br>'+
-    '<strong>Écart relatif :</strong> <strong style="color:var(--'+(ecart<10?'ok':'warn')+')">'+ecart.toFixed(1)+'%</strong> — '+(ecart<10?'✅ TEC vérifié':'⚠️ Vérifier les mesures');
-}
-setTimeout(drawECE,100);
-
-/* FLASHCARDS */
-var FC=[
-  {icon:"⚙️",q:"Formule du travail W d'une force F sur déplacement d (angle α) ?",a:"W = F·d·cos(α). W>0 moteur (α<90°), W<0 résistant (α>90°), W=0 si α=90°.",formula:"W = F × d × [___]",blanks:["cos(α)"],answers:["cos(α)","cosα","cos alpha"]},
-  {icon:"🔋",q:"Formule de l'énergie cinétique Ec ?",a:"Ec = ½mv². Ec ≥ 0 toujours. Si v double → Ec multiplié par 4.",formula:"Ec = [___] × m × v²",blanks:["1/2"],answers:["1/2","0.5","½"]},
-  {icon:"🏔️",q:"Formule de l'énergie potentielle de pesanteur Epp ?",a:"Epp = mgh. h = altitude par rapport à une référence choisie librement.",formula:"Epp = m × [___] × h",blanks:["g"],answers:["g"]},
-  {icon:"⚡",q:"Formule de l'énergie mécanique Em ?",a:"Em = Ec + Epp = ½mv² + mgh.",formula:"Em = Ec + [___]",blanks:["Epp"],answers:["Epp","énergie potentielle"]},
-  {icon:"📐",q:"Énoncé du théorème de l'énergie cinétique (TEC) ?",a:"ΔEc = Ec,f − Ec,i = ΣW (somme algébrique de tous les travaux des forces appliquées).",formula:"ΔEc = [___]",blanks:["ΣW"],answers:["ΣW","W_total","somme des travaux"]},
-  {icon:"⚙️",q:"Travail du poids lors d'une descente h ?",a:"W(P) = mgh (positif, moteur). Lors d'une montée : W(P) = −mgh (résistant).",formula:"W(P) descente = [___]",blanks:["mgh"],answers:["mgh"]},
-  {icon:"🔥",q:"Travail d'une force de frottement f sur d ?",a:"W(f) = −fd (toujours négatif : force résistante opposée au mouvement).",formula:"W(frottement) = [___]",blanks:["-fd"],answers:["-fd","-f×d","-f d"]},
-  {icon:"♻️",q:"Condition de conservation de Em ?",a:"Em = constante si et seulement si les seules forces qui travaillent sont conservatives (poids). Si frottements → Em diminue.",formula:"Pas de frottements → Em = [___]",blanks:["constante"],answers:["constante","cst"]},
-  {icon:"📐",q:"Chute libre h=10m, v_i=0 → v_f (conservation) ?",a:"½mv_f² = mgh → v_f = √(2gh) = √(2×9,81×10) ≈ 14 m/s.",formula:"v_f = √(2 × [___] × h)",blanks:["g"],answers:["g","9.81","9,81"]},
-  {icon:"🔋",q:"v double → Ec multipliée par ?",a:"Ec = ½mv². Si v → 2v : Ec = ½m(2v)² = 4×½mv² → ×4.",formula:"v × 2 → Ec × [___]",blanks:["4"],answers:["4","quatre"]},
-  {icon:"⚙️",q:"Travail de la force normale N ?",a:"W(N) = 0. La force normale est perpendiculaire au déplacement (α = 90°) → cos90° = 0.",formula:"W(normale) = [___]",blanks:["0"],answers:["0","nul","zéro"]},
-  {icon:"📐",q:"TEC : m=2kg, v_i=6m/s, W_total=−20J → v_f ?",a:"Ec,f = Ec,i + W = ½×2×36 − 20 = 36−20 = 16 J → v_f = √(2×16/2) = 4 m/s.",formula:"v_f = √(2 × [___] / m)",blanks:["16"],answers:["16","Ec,f"]},
-  {icon:"♻️",q:"Avec frottements : que vaut ΔEm ?",a:"ΔEm = W(forces non conservatives) < 0. L'énergie mécanique diminue (dissipée en chaleur).",formula:"ΔEm = W [___] < 0",blanks:["(nc)"],answers:["(nc)","non conservatives","frottements"]},
-  {icon:"🏔️",q:"m=3kg, h=4m, v=0 (repos en haut) → Em ?",a:"Em = Ec + Epp = 0 + mgh = 3×9,81×4 ≈ 117,7 J.",formula:"Em = 0 + m × g × [___]",blanks:["4"],answers:["4","h"]},
-  {icon:"⚙️",q:"ΔEm = −30J → chaleur dissipée par frottements ?",a:"30 J dissipés en chaleur. L'énergie mécanique perdue se transforme en énergie thermique.",formula:"E_chaleur = [___] J",blanks:["30"],answers:["30","30 J"]}
-];
-var fcIdx=0,fcFlipped=false,fcOrder=FC.map(function(_,i){return i;}),fcInit=false;
-function initFC(){fcInit=true;renderFC();initComp();}
-function renderFC(){var c=FC[fcOrder[fcIdx]];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-q').textContent=c.q;document.getElementById('fc-a').textContent=c.a;document.getElementById('fc-ctr').textContent='Carte '+(fcIdx+1)+'/'+fcOrder.length;document.getElementById('fc-card').classList.remove('flip');fcFlipped=false;}
-function flipCard(){document.getElementById('fc-card').classList.toggle('flip');fcFlipped=!fcFlipped;}
-function nextCard(){fcIdx=(fcIdx+1)%fcOrder.length;renderFC();}
-function prevCard(){fcIdx=(fcIdx-1+fcOrder.length)%fcOrder.length;renderFC();}
-function shuffleCards(){for(var i=fcOrder.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=fcOrder[i];fcOrder[i]=fcOrder[j];fcOrder[j]=t;}fcIdx=0;renderFC();}
-function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.querySelectorAll('.fc-sec').forEach(function(s){s.classList.remove('active');});document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();}
-var compIdx=0,compScore=0;
-function initComp(){compIdx=0;compScore=0;}
-function renderComp(){var c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML='<div class="comp-card"><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.6">'+c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')+'</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-r" id="check-r"></div><button class="fc-btn" style="margin-top:8px" onclick="nextComp()">Suivante →</button></div>';setTimeout(function(){var b=document.getElementById('blank0');if(b)b.focus();},80);}
-function checkComp(){var c=FC[compIdx];var v=(document.getElementById('blank0').value||'').trim().toLowerCase();var ok=c.answers.map(function(a){return a.toLowerCase();});var r=document.getElementById('check-r');if(ok.indexOf(v)>=0){r.className='check-r ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-r ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
-function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
-var chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
-function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-ctr').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur Démarrer';document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
-function startChrono(){var pool=FC.map(function(_,i){return i;});for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(function(){chronoLeft--;var m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=m+':'+(s<10?'0':'')+s;document.getElementById('chrono-time').className='chrono-time'+(chronoLeft<=20?' urg':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
-function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}var c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-ctr').textContent=chronoCurrent+'/10';document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
-function caAnswer(k){var c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
-function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-acts').innerHTML='';var el=120-chronoLeft;document.getElementById('result-big').textContent=chronoKnew+'/10';document.getElementById('result-sub').textContent=Math.round(chronoKnew*10)+'% — '+Math.floor(el/60)+'m'+(el%60<10?'0':'')+el%60+'s';document.getElementById('chrono-result').classList.add('show');}
-
-/* QUIZ */
-var QS=[
-  {q:"Formule du travail W d'une force F sur déplacement d, angle α ?",opts:["W = F·d·cos(α)","W = F·d·sin(α)","W = F/d","W = F·d"],ans:0,corr:"W = F·d·cos(α). α = angle entre la force et le déplacement."},
-  {q:"Énergie cinétique Ec d'un objet de masse m et vitesse v ?",opts:["Ec = ½mv²","Ec = mv","Ec = mgh","Ec = mv²"],ans:0,corr:"Ec = ½mv². Toujours ≥ 0. Si v double : Ec × 4."},
-  {q:"Énergie potentielle de pesanteur Epp ?",opts:["Epp = mgh","Epp = ½mv²","Epp = mgh²","Epp = mg/h"],ans:0,corr:"Epp = mgh. m en kg, g ≈ 9,81 N/kg, h = altitude par rapport à la référence."},
-  {q:"Énoncé du TEC (Théorème de l'Énergie Cinétique) ?",opts:["ΔEc = ΣW (somme de tous les travaux)","ΔEc = W(poids) seulement","ΔEc = ΔEpp","ΔEc = 0 toujours"],ans:0,corr:"ΔEc = Ec,f − Ec,i = somme algébrique des travaux de TOUTES les forces."},
-  {q:"m=2kg, v_i=6m/s, frottement f=5N sur d=3m (horizontal) → v_f ?",opts:["v_f ≈ 4,6 m/s","v_f = 6 m/s","v_f = 0","v_f = 9 m/s"],ans:0,corr:"Ec,i=36J. W(f)=−15J. Ec,f=21J. v_f=√(2×21/2)=√21≈4,6 m/s."},
-  {q:"Quand Em est-elle conservée ?",opts:["Quand seul le poids travaille (pas de frottements)","Toujours","Jamais","Quand v = constante"],ans:0,corr:"Em = Ec + Epp = constante si les seules forces qui travaillent sont conservatives."},
-  {q:"Chute libre h=20m, v_i=0 → v_f (conservation Em) ?",opts:["v_f ≈ 19,8 m/s","v_f = 20 m/s","v_f = 0","v_f ≈ 9,81 m/s"],ans:0,corr:"v_f = √(2gh) = √(2×9,81×20) ≈ 19,8 m/s."},
-  {q:"Travail de la force normale N lors d'un glissement horizontal ?",opts:["W(N) = 0 (perpendiculaire)","W(N) = Nd","W(N) = -Nd","W(N) = mgh"],ans:0,corr:"N est perpendiculaire au déplacement → α = 90° → cos90° = 0 → W(N) = 0."},
-  {q:"v double → Ec multipliée par ?",opts:["4 (car Ec ∝ v²)","2","8","1"],ans:0,corr:"Ec = ½mv². Si v→2v : Ec = ½m(2v)² = 4×½mv². Crucial pour la sécurité routière."},
-  {q:"Em avec frottements → ?",opts:["ΔEm < 0 (dissipée en chaleur)","ΔEm > 0","ΔEm = 0","Em = 2×Em_i"],ans:0,corr:"Les frottements font W < 0 → ΔEm = W(frottements) < 0."},
-  {q:"Unité du travail W et de l'énergie ?",opts:["Joule (J) = kg·m²·s⁻²","Newton (N)","Watt (W)","Pascal (Pa)"],ans:0,corr:"1 J = 1 N·m = 1 kg·m²·s⁻². Le joule est l'unité SI du travail et de l'énergie."},
-  {q:"Travail du poids lors d'une montée de h = 5 m pour m = 2 kg ?",opts:["W(P) = −98,1 J","W(P) = +98,1 J","W(P) = 0","W(P) = 49 J"],ans:0,corr:"Lors d'une montée, le poids est résistant : W(P) = −mgh = −2×9,81×5 = −98,1 J."}
-];
-var curQ=0,scoreQ=0,answeredQ=false;
-function startQuiz(){curQ=0;scoreQ=0;answeredQ=false;document.getElementById('qFinal').classList.remove('show');document.getElementById('scorePill').textContent='0/0';renderQ();}
-function renderQ(){if(curQ>=QS.length){showFinal();return;}var q=QS[curQ];document.getElementById('qpFill').style.width=(curQ/QS.length*100)+'%';document.getElementById('qpLbl').textContent='Q '+(curQ+1)+'/'+QS.length;document.getElementById('qContainer').innerHTML='<div class="q-card"><div class="q-num">Q '+(curQ+1)+'/'+QS.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">'+q.opts.map(function(o,i){return'<button class="opt" onclick="ansQ('+i+')" id="o'+i+'"><span class="opt-ltr">'+'ABCD'[i]+'</span>'+o+'</button>';}).join('')+'</div><div class="corr-box" id="corrBox">💡 '+q.corr+'</div><button class="next-q" id="nextQ" onclick="nextQ()">'+(curQ<QS.length-1?'Suivante →':'Résultats 🏆')+'</button></div>';answeredQ=false;}
-function ansQ(i){if(answeredQ)return;answeredQ=true;var q=QS[curQ];document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});document.getElementById('o'+q.ans).classList.add('good');if(i!==q.ans)document.getElementById('o'+i).classList.add('bad');else scoreQ++;document.getElementById('scorePill').textContent=scoreQ+'/'+(curQ+1);document.getElementById('corrBox').classList.add('show');document.getElementById('nextQ').classList.add('show');}
-function nextQ(){curQ++;renderQ();}
-function showFinal(){document.getElementById('qContainer').innerHTML='';var pct=Math.round(scoreQ/QS.length*100);document.getElementById('finalBig').textContent=scoreQ+'/'+QS.length;document.getElementById('finalMsg').textContent=pct+'% — '+(pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🚀 Relis le cours !');document.getElementById('qFinal').classList.add('show');}
-startQuiz();
-
-/* CARTE MENTALE */
-function drawMM(){
-  var c=document.getElementById('mmCanvas');
-  c.width=c.offsetWidth||900;c.height=400;
-  var ctx=c.getContext('2d');
-  var dark=document.documentElement.getAttribute('data-theme')==='dark';
-  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,c.width,c.height);
-  var W=c.width,H=c.height,cx=W/2,cy=H/2;
-  var branches=[
-    {label:'Travail',color:'#5ac8e0',angle:-90,nodes:['W=F·d·cosα','W>0 moteur','W(N)=0']},
-    {label:'Énergie cinétique',color:'#9f4f68',angle:-30,nodes:['Ec=½mv²','v×2→Ec×4','unité : J']},
-    {label:'Énergie potentielle',color:'#e09a3a',angle:30,nodes:['Epp=mgh','origine libre','ΔEpp=mgΔh']},
-    {label:'TEC',color:'#6b5fad',angle:90,nodes:['ΔEc=ΣW','toutes forces','v_f=√(2Ec/m)']},
-    {label:'Conservation',color:'#3dbf82',angle:150,nodes:['sans frottements','Em=cst','vf=√(2gh)']},
-    {label:'Avec frottements',color:'#d4899f',angle:210,nodes:['ΔEm<0','chaleur dissipée','W_nc<0']}
-  ];
-  // Center
-  ctx.save();
-  ctx.shadowColor=branches[1].color;ctx.shadowBlur=18;
-  ctx.fillStyle='rgba(159,79,104,0.18)';ctx.beginPath();ctx.roundRect(cx-70,cy-24,140,48,12);ctx.fill();
-  ctx.restore();
-  ctx.fillStyle='#d4899f';ctx.font='bold 13px IBM Plex Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('ÉNERGIE',cx,cy-7);ctx.fillText('MÉCANIQUE',cx,cy+9);
-  branches.forEach(function(br){
-    var a=br.angle*Math.PI/180;
-    var r1=85,r2=155;
-    var bx=cx+r2*Math.cos(a),by=cy+r2*Math.sin(a);
-    // line
-    ctx.strokeStyle=br.color+'88';ctx.lineWidth=2;
-    ctx.beginPath();ctx.moveTo(cx+r1*Math.cos(a),cy+r1*Math.sin(a));ctx.lineTo(bx,by);ctx.stroke();
-    // branch node
-    ctx.fillStyle=br.color+'22';ctx.beginPath();ctx.roundRect(bx-52,by-14,104,28,8);ctx.fill();
-    ctx.strokeStyle=br.color+'99';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx-52,by-14,104,28,8);ctx.stroke();
-    ctx.fillStyle=br.color;ctx.font='bold 10.5px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(br.label,bx,by);
-    // leaf nodes
-    br.nodes.forEach(function(nd,j){
-      var spread=(j-(br.nodes.length-1)/2)*0.38;
-      var na=a+spread,nr=230;
-      var nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
-      ctx.strokeStyle=br.color+'44';ctx.lineWidth=1;ctx.setLineDash([3,3]);
-      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(nx,ny);ctx.stroke();ctx.setLineDash([]);
-      var nw=Math.max(80,nd.length*7);
-      ctx.fillStyle=dark?'rgba(30,12,22,0.85)':'rgba(255,248,252,0.85)';ctx.beginPath();ctx.roundRect(nx-nw/2,ny-11,nw,22,5);ctx.fill();
-      ctx.strokeStyle=br.color+'55';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(nx-nw/2,ny-11,nw,22,5);ctx.stroke();
-      ctx.fillStyle=dark?'rgba(245,232,239,0.85)':'rgba(26,10,18,0.85)';ctx.font='9.5px Inter,sans-serif';
-      ctx.fillText(nd,nx,ny+1);
-    });
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
   });
-}
-function dlMM(){var c=document.getElementById('mmCanvas');var a=document.createElement('a');a.download='carte-mentale-ch14.png';a.href=c.toDataURL();a.click();}
-setTimeout(drawMM,100);
-
-/* EXO CORRECTION TOGGLE */
-function toggleCorr(btn){var cc=btn.nextElementSibling;cc.classList.toggle('show');btn.textContent=cc.classList.contains('show')?'Masquer la correction':'Voir la correction';}
-
-/* INIT FC when tab visited */
-document.querySelector('[onclick="go(\'fc\',this)"]').addEventListener('click',function(){if(!fcInit)initFC();});
-</script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
-<script>
-(function(){
-  function _scrollToPanel(){
-    var p=document.querySelector('.panel.active');
-    if(!p)return;
-    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
-    var off=nb?nb.offsetHeight+6:70;
-    var y=p.getBoundingClientRect().top+window.scrollY-off;
-    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
-  }
-  document.addEventListener('click',function(e){
-    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
-    if(b)setTimeout(_scrollToPanel,60);
-  },true);
-})();
+});
 </script>
 </body>
 </html>

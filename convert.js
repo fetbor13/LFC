@@ -1,11 +1,100 @@
+const fs = require('fs');
+const { globSync } = require('glob');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
 
+function convertFile(filePath) {
+  const html = fs.readFileSync(filePath, 'utf8');
+  const dom = new JSDOM(html);
+  const document = dom.window.document;
+
+  // Extraire le niveau et le chapitre
+  let titleParts = document.title.split('·');
+  let levelStr = "NIVEAU";
+  let chapStr = "Chap. X";
+  if (titleParts.length > 1) {
+      levelStr = titleParts[0].trim();
+      let chapMatch = titleParts[1].match(/Chapitre\s*(\d+)/i);
+      if (chapMatch) {
+          chapStr = "Chap. " + chapMatch[1];
+      }
+  }
+
+  // Extraire le titre du chapitre
+  let chapTitle = document.title;
+  let splitDash = chapTitle.split('—');
+  if (splitDash.length > 1) {
+      chapTitle = splitDash[1].trim();
+  }
+
+  // Determine file type context for the brand "PhysiChem" or specific teacher
+  let isCollege = filePath.includes('eme_') || filePath.includes('e_');
+  let teacherName = isCollege ? "M Borsali · Enseignant SPC" : "M Borsali · PC · LFC";
+
+  // Créer la nouvelle structure
+  const body = document.body;
+
+  // Conserver le contenu original, chercher les divs d'onglets
+  const oldContent = body.innerHTML;
+
+  // Re-parser pour manipuler plus facilement
+  const oldDom = new JSDOM(oldContent);
+  const oldDoc = oldDom.window.document;
+
+  // Trouver tous les conteneurs d'onglets de l'ancienne structure
+  // Généralement, ils ont des IDs comme "Cours", "Exercices", "QCM", etc.
+  // Et ils sont déclenchés par des <button class="tablinks">
+
+  const tabLinks = Array.from(oldDoc.querySelectorAll('.tablinks'));
+  const oldTabs = tabLinks.map(btn => {
+      // le onclick contient souvent openTab(event, 'Nom')
+      let match = btn.getAttribute('onclick')?.match(/'([^']+)'/);
+      return {
+          id: match ? match[1] : btn.textContent.trim(),
+          text: btn.textContent.trim()
+      };
+  }).filter(t => t.id);
+
+  // Si on n'a pas trouvé par tablinks, on essaie de trouver les divs avec la classe tabcontent
+  let tabContents = Array.from(oldDoc.querySelectorAll('.tabcontent'));
+
+  if (oldTabs.length === 0 && tabContents.length > 0) {
+      tabContents.forEach(tc => {
+          oldTabs.push({ id: tc.id, text: tc.id });
+      });
+  }
+
+  // Mapping d'icônes par défaut
+  const iconMap = {
+      'Cours': '📘',
+      'Relations': '∑',
+      'Exercices': '🎯',
+      'Flashcards': '🃏',
+      'Carte': '🧠',
+      'Simulations': '🕹️',
+      'QCM': '✅',
+      'Quiz': '✅',
+      'ECE': '🧪',
+      'PCSI': '🚀',
+      'Prépa': '🚀'
+  };
+
+  function getIcon(text) {
+      for (const key in iconMap) {
+          if (text.toLowerCase().includes(key.toLowerCase())) return iconMap[key];
+      }
+      return '📄';
+  }
+
+  // Construire le nouveau HTML
+  let newHtml = `
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PCSI-P09 — Induction électromagnétique</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<title>${document.title}</title>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\\\(','\\\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
 /* ── BLOCK 1 : base layout & components ── */
@@ -123,14 +212,14 @@ p{line-height:1.65;margin-bottom:.75rem}
     <div class="brand-mark">P</div>
     <div>
       <h1>PhysiChem</h1>
-      <p>M Borsali · PC · LFC</p>
+      <p>${teacherName}</p>
     </div>
   </div>
 
   <div class="level-card">
     <div class="level-row">
-      <span class="badge">NIVEAU</span>
-      <span class="micro">Chap. X</span>
+      <span class="badge">${levelStr}</span>
+      <span class="micro">${chapStr}</span>
     </div>
     <div class="progress"><span style="width:100%"></span></div>
     <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
@@ -138,7 +227,19 @@ p{line-height:1.65;margin-bottom:.75rem}
 
   <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
   <div class="tablist">
-  </div>
+`;
+
+  // Ajouter les boutons d'onglets
+  oldTabs.forEach((tab, index) => {
+      const icon = getIcon(tab.text);
+      const activeClass = index === 0 ? ' active' : '';
+      newHtml += `    <button class="tab${activeClass}" data-target="panel-${tab.id}">
+      <span class="tab-icon">${icon}</span>
+      <span class="tab-text">${tab.text}</span>
+    </button>\n`;
+  });
+
+  newHtml += `  </div>
 
   <div class="tools">
     <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
@@ -152,15 +253,48 @@ p{line-height:1.65;margin-bottom:.75rem}
 
   <!-- EN-TÊTE COMMUN -->
   <div class="hero">
-    <div class="hero-sub">NIVEAU · Chap. X</div>
-    <h1 class="hero-title">Induction éle<span>ctromagnétique</span></h1>
+    <div class="hero-sub">${levelStr} · ${chapStr}</div>
+    <h1 class="hero-title">${chapTitle.substring(0, chapTitle.length/2)}<span>${chapTitle.substring(chapTitle.length/2)}</span></h1>
     <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
     <div class="hero-stats">
       <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
       <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
     </div>
   </div>
+`;
 
+  // Ajouter les panneaux
+  oldTabs.forEach((tab, index) => {
+      const activeClass = index === 0 ? ' active' : '';
+      const tabContentDiv = oldDoc.getElementById(tab.id);
+
+      let innerHTML = '';
+      if (tabContentDiv) {
+          innerHTML = tabContentDiv.innerHTML;
+
+          // Nettoyage basique des vieux styles (optionnel mais recommandé)
+          innerHTML = innerHTML.replace(/style="[^"]*"/g, '');
+
+          // Transformation des sous-titres h3/h4 si nécessaire
+          innerHTML = innerHTML.replace(/<h3/g, '<h2');
+          innerHTML = innerHTML.replace(/<\/h3>/g, '</h2>');
+
+          // Emballer dans une content-card générique
+          innerHTML = `<div class="content-card">\n${innerHTML}\n</div>`;
+
+          // Essayer de trouver des tableaux et les styliser
+          innerHTML = innerHTML.replace(/<table/g, '<table class="data-table"');
+      } else {
+          innerHTML = `<div class="content-card"><p>Contenu non trouvé pour ${tab.text}</p></div>`;
+      }
+
+      newHtml += `
+  <div id="panel-${tab.id}" class="panel${activeClass}">
+    ${innerHTML}
+  </div>\n`;
+  });
+
+  newHtml += `
 </div>
 
 <script>
@@ -178,4 +312,19 @@ document.querySelectorAll('.tab').forEach(btn => {
 });
 </script>
 </body>
-</html>
+</html>`;
+
+  fs.writeFileSync(filePath, newHtml, 'utf8');
+  console.log(`Converted ${filePath}`);
+}
+
+const files = globSync("*.html");
+files.forEach(file => {
+  if (file !== 'index.html' && file !== 'index_college.html' && file !== 'revision.html' && !file.includes('essai')) {
+      try {
+          convertFile(file);
+      } catch (e) {
+          console.error(`Error processing ${file}:`, e);
+      }
+  }
+});

@@ -1,400 +1,181 @@
-﻿<!DOCTYPE html>
-<html lang="fr" data-theme="light">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>4ᵉ · Chapitre 5 — La vitesse de la lumière | PhysiChem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
+/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --bg:#f0fdf9; --surface:#ffffff; --surface2:#f5fffe; --line:rgba(13,148,136,.18);
-  --text:#134e4a; --muted:#4d7c78; --soft:#5eead4; --accent:#0d9488; --accent2:#5eead4;
-  --lav:#67e8f9; --peach:#fde68a; --ok:#059669; --warn:#d97706;
-  --shadow:0 18px 45px rgba(13,148,136,.12); --shadow2:0 8px 24px rgba(13,148,136,.10);
-  --radius:22px; --side:266px;
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
 }
-[data-theme="dark"]{
-  --bg:#042f2e; --surface:#0a3d3b; --surface2:#0e4947; --line:rgba(45,212,191,.15);
-  --text:#ccfbf1; --muted:#7dd9c7; --soft:#4db8a8; --accent:#2dd4bf; --accent2:#134e4a;
-  --lav:#22d3ee; --peach:#fbbf24; --ok:#34d399; --warn:#f59e0b;
-  --shadow:0 20px 50px rgba(0,0,0,.28); --shadow2:0 8px 24px rgba(0,0,0,.22);
-}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}a{text-decoration:none;color:inherit}.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
-.sidebar{position:sticky;top:0;height:100vh;padding:17px 14px;background:rgba(255,255,255,.78);backdrop-filter:blur(20px);border-right:1px solid var(--line);overflow:auto}[data-theme="dark"] .sidebar{background:rgba(16,24,39,.78)}
-.brand{display:flex;gap:12px;align-items:center;padding:8px 8px 16px}.logo{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--lav));display:grid;place-items:center;font-weight:800;color:#fff;box-shadow:var(--shadow2)}.brand h1{font-size:18px;letter-spacing:-.04em;font-weight:700}.brand p{font-size:12px;color:var(--muted)}
-.level-card{margin:7px 4px 18px;padding:14px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.76),rgba(255,255,255,.45));box-shadow:var(--shadow2)}.level-card .pill{display:inline-flex;padding:4px 10px;border-radius:999px;background:rgba(134,188,235,.17);color:#477EBA;border:1px solid rgba(134,188,235,.28);font-size:12px;font-weight:800}.progress{height:7px;border-radius:99px;background:rgba(134,188,235,.18);margin:13px 0 8px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--lav));border-radius:99px}.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);font-weight:800;margin:0 9px 10px}
-.nav button{width:100%;display:flex;align-items:center;gap:10px;border:1px solid transparent;background:transparent;color:#536074;padding:10px 12px;border-radius:16px;font-weight:700;font-size:13.3px;cursor:pointer;text-align:left;margin-bottom:5px;transition:.2s}.nav button:hover{background:var(--surface2);border-color:var(--line)}.nav button.active{background:rgba(134,188,235,.18);border-color:rgba(134,188,235,.40);color:#477EBA;box-shadow:var(--shadow2)}[data-theme="dark"] .nav button{color:#B7C5D8}
-.main{min-width:0}.topbar{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.52);backdrop-filter:blur(18px);position:sticky;top:0;z-index:50}[data-theme="dark"] .topbar{background:rgba(16,24,39,.55)}.crumb{font-size:13px;color:var(--muted)}.crumb strong{color:#477EBA}.top-actions{display:flex;gap:10px}.top-actions button,.top-actions a{border:1px solid var(--line);background:var(--surface);padding:8px 13px;border-radius:999px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow2)}
-.hero{padding:20px 32px 16px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 15% 0,rgba(134,188,235,.24),transparent 35%),radial-gradient(circle at 85% 0,rgba(185,179,244,.16),transparent 35%)}.hero-inner{max-width:1160px}.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:stretch}.hero-card{background:rgba(255,255,255,.76);border:1px solid var(--line);border-radius:24px;padding:17px 21px;box-shadow:var(--shadow)}.hero-badge{display:inline-flex;font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#477EBA;margin-bottom:7px}.hero h2{font-size:clamp(25px,3.5vw,36px);font-weight:500;letter-spacing:-.074em;line-height:1.03;margin-bottom:8px}.hero h2 em{font-style:normal;color:#5C9DD7}.hero p{font-size:13.2px;color:var(--muted);max-width:730px;margin-bottom:11px}.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.stat{border:1px solid var(--line);background:var(--surface2);border-radius:15px;padding:8px 10px}.stat strong{display:block;font-size:19px;line-height:1;font-weight:700}.stat span{font-size:11.2px;color:var(--muted)}.hero-media{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:24px;padding:10px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center}.hero-media svg{width:100%;height:180px;border-radius:18px;background:#081222}
-.missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}.mission{background:rgba(255,255,255,.70);border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow2)}.mission small{display:inline-flex;padding:3px 8px;border-radius:999px;background:rgba(134,188,235,.18);color:#477EBA;font-weight:800;margin-bottom:7px;font-size:11.5px}.mission:nth-child(2) small{background:rgba(185,179,244,.18);color:#7B74D9}.mission:nth-child(3) small{background:rgba(244,197,183,.23);color:#C58168}.mission h3{font-size:17px;font-weight:600;letter-spacing:-.04em}.mission p{font-size:12.5px;color:var(--muted);margin:3px 0 0}
-.panel{display:none}.panel.active{display:block}.section{max-width:1160px;margin:0 auto;padding:26px 32px 68px}.course-layout{display:grid;grid-template-columns:126px minmax(0,1fr);gap:22px}.toc{position:sticky;top:82px;align-self:start;background:rgba(255,255,255,.70);border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:var(--shadow2)}.toc-title{font-size:9.3px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:800;margin-bottom:7px}.toc a{display:block;padding:7px 7px;border-radius:11px;font-size:11.7px;color:var(--muted);font-weight:700;border-left:3px solid transparent}.toc a:nth-child(2){border-left-color:#86BCEB}.toc a:nth-child(3){border-left-color:#B9B3F4}.toc a:nth-child(4){border-left-color:#F4C5B7}.toc a:nth-child(5){border-left-color:#70B6C7}.toc a:nth-child(6){border-left-color:#D89579}.toc a:hover{background:var(--surface2);color:var(--text)}.content{max-width:860px}.content h2{font-size:21.5px;font-weight:600;letter-spacing:-.04em;margin:20px 0 12px}.content h2:first-child{margin-top:0}.content h3{font-size:16.3px;font-weight:700;margin:16px 0 8px}.content p,.content li{color:var(--muted);font-size:15px}.content ul{padding-left:22px;margin:8px 0 14px}
-.box{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 17px 17px 0;padding:14px 16px;margin:15px 0;box-shadow:var(--shadow2)}.box .label{font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;color:#477EBA;margin-bottom:5px}.box.warn{border-left-color:var(--warn)}.box.warn .label{color:var(--warn)}.box.lav{border-left-color:var(--lav)}.box.lav .label{color:#7B74D9}.formula{font-family:"JetBrains Mono",monospace;background:var(--surface2);border:1px solid var(--line);border-radius:15px;padding:13px;text-align:center;margin:14px 0;font-size:16px;overflow-x:auto}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:16px;box-shadow:var(--shadow2)}.card h3{font-size:17px;letter-spacing:-.03em}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:17px;margin:15px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse;background:var(--surface)}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}th{background:var(--surface2);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}td{color:var(--muted)}tr:last-child td{border-bottom:none}
-.sim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.sim-card{background:var(--surface);border:1px solid var(--line);border-radius:21px;box-shadow:var(--shadow2);overflow:hidden}.sim-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}.sim-head h3{font-size:16.5px;letter-spacing:-.03em}.sim-body{padding:16px}.sim-zone{min-height:235px;background:var(--surface2);border:1px solid var(--line);border-radius:17px;margin:12px 0;display:grid;place-items:center;padding:12px;overflow:hidden}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.field label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:13px;padding:10px;font-family:inherit}.btn{border:1px solid rgba(134,188,235,.35);background:rgba(134,188,235,.16);color:#477EBA;border-radius:13px;padding:10px 13px;font-weight:800;cursor:pointer}.result{padding:12px;border:1px solid var(--line);background:var(--surface2);border-radius:15px;color:var(--muted);font-size:14px}.iframe-wrap{position:relative;padding-bottom:56%;background:var(--surface2);border-radius:17px;overflow:hidden;border:1px solid var(--line)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.flash-wrap{display:grid;grid-template-columns:1fr 260px;gap:16px}.flash-card{height:240px;perspective:1000px}.flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:.55s}.flip.flipped{transform:rotateY(180deg)}.face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;text-align:center;padding:24px}.back{transform:rotateY(180deg);background:linear-gradient(135deg,rgba(134,188,235,.18),rgba(185,179,244,.16))}.face h3{font-size:23px;font-weight:500;letter-spacing:-.04em}.face p{color:var(--muted)}.list button{display:block;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px;margin-bottom:7px;text-align:left;color:var(--muted);font-weight:700;cursor:pointer}
-.quiz-card{max-width:760px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow)}.options{display:grid;gap:10px;margin-top:16px}.options button{border:1px solid var(--line);border-radius:15px;padding:12px;background:var(--surface2);text-align:left;color:var(--text);cursor:pointer;font-weight:700}.options button.good{border-color:rgba(108,175,196,.5);background:rgba(108,175,196,.14)}.options button.bad{border-color:rgba(216,149,121,.5);background:rgba(216,149,121,.14)}
-.chat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.chat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow2)}.chat .icon{font-size:28px}.chat h3{font-size:18px}.chat p{font-size:13px;color:var(--muted);margin:6px 0 12px}.chat a{display:inline-flex;padding:9px 12px;border-radius:12px;background:rgba(134,188,235,.16);border:1px solid rgba(134,188,235,.35);font-weight:800;color:#477EBA}.prompt-box{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow2)}textarea{width:100%;min-height:126px;border:1px solid var(--line);border-radius:15px;background:var(--surface2);color:var(--text);padding:13px;font-family:Inter;margin-top:10px}.copy-row{display:flex;justify-content:flex-end;margin-top:10px}
-@media(max-width:960px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.hero-grid,.missions,.grid2,.grid3,.sim-grid,.flash-wrap,.chat-grid{grid-template-columns:1fr}.course-layout{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}.hero-media{max-width:260px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
-  <div class="brand"><div class="logo">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
-  <div class="level-card"><span class="pill">Quatrième</span><div class="progress"><span id="progressBar"></span></div><p style="font-size:13px;color:var(--muted)"><span id="pct">0%</span> du chapitre exploré</p></div>
-  <div class="nav-title">Sommaire</div>
-  <nav class="nav">
-    <button class="active" data-tab="cours">📘 Cours</button>
-    <button data-tab="simulations">🎛️ Simulations</button>
-    <button data-tab="outils">📐 Outils maths & unités</button>
-    <button data-tab="flashcards">🃏 Flashcards</button>
-    <button data-tab="exercices">🎯 Exercices</button>
-    <button data-tab="quiz">❓ Quiz</button>
-    <button data-tab="tp">🧪 TP / Activité</button>
-    <button data-tab="chatbots">🤖 Chatbots externes</button>
-    <button data-tab="suivant">🚀 Vers la suite</button>
-  </nav>
-</aside>
-<main class="main">
-  <div class="topbar"><div class="crumb">Collège › 4e › <strong>La vitesse de la lumière</strong></div><div class="top-actions"><button onclick="toggleTheme()" id="themeBtn">🌙</button><a href="#panel-simulations" onclick="showPanel('simulations',document.querySelectorAll('.nav button')[1])">Simuler</a></div></div>
-  <header class="hero">
-    <div class="hero-inner">
-      <div class="hero-grid">
-        <div class="hero-card">
-          <div class="hero-badge">4e · Chapitre 5</div>
-          <h2>La <em>vitesse de la lumière</em></h2>
-          <p>Comprendre que la lumière ne se propage pas instantanément, utiliser la relation vitesse-distance-durée, puis découvrir les distances astronomiques comme la seconde-lumière et l'année-lumière.</p>
-          <div class="hero-stats"><div class="stat"><strong>5</strong><span>notions clés</span></div><div class="stat"><strong>10</strong><span>exercices guidés</span></div><div class="stat"><strong>4</strong><span>simulateurs</span></div></div>
-        </div>
-        <div class="hero-media">
-          <svg viewBox="0 0 260 190" role="img" aria-label="Rayon lumineux traversant l'espace">
-            <defs><radialGradient id="g" cx="50%" cy="50%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#9CCFFF" stop-opacity=".75"/><stop offset="1" stop-color="#9CCFFF" stop-opacity="0"/></radialGradient><linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".22" stop-color="#BFDDF8"/><stop offset=".8" stop-color="#B9B3F4"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
-            <rect width="260" height="190" fill="#081222"/><g opacity=".22" stroke="#86BCEB"><path d="M0 40 H260M0 80 H260M0 120 H260M0 160 H260M45 0 V190M95 0 V190M145 0 V190M195 0 V190"/></g>
-            <circle cx="48" cy="95" r="30" fill="url(#g)"/><path d="M52 93 C100 54 166 52 236 78" stroke="url(#beam)" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M52 100 C100 138 166 140 236 112" stroke="url(#beam)" stroke-width="8" fill="none" stroke-linecap="round" opacity=".7"/>
-            <circle cx="218" cy="95" r="23" fill="#172234" stroke="#86BCEB" stroke-width="2"/><text x="130" y="168" text-anchor="middle" fill="#CFE8FF" font-size="15" font-weight="800">c ≈ 3,0 × 10⁸ m·s⁻¹</text>
-          </svg>
-        </div>
-      </div>
-      <div class="missions"><article class="mission"><small>Mission 01</small><h3>Mesurer</h3><p>Comprendre une vitesse comme une distance parcourue pendant une durée.</p></article><article class="mission"><small>Mission 02</small><h3>Calculer</h3><p>Utiliser \(v=\frac{d}{\Delta t}\), \(d=v\Delta t\) et \(\Delta t=\frac{d}{v}\).</p></article><article class="mission"><small>Mission 03</small><h3>Explorer</h3><p>Relier la lumière aux distances astronomiques et au passé observé.</p></article></div>
-    </div>
-  </header>
 
-  <section class="panel active" id="panel-cours"><div class="section"><div class="course-layout"><aside class="toc"><div class="toc-title">Plan</div><a href="#c1">I. Vitesse</a><a href="#c2">II. Lumière</a><a href="#c3">III. Calculer</a><a href="#c4">IV. 5C</a><a href="#c5">V. Temps-lumière</a></aside><div class="content">
-    <h2 id="c1">I. Rappel : qu'est-ce qu'une vitesse ?</h2>
-    <p>La vitesse indique la distance parcourue pendant une durée donnée. Plus la distance parcourue est grande pendant la même durée, plus la vitesse est élevée. C'est une notion que l'on utilise tous les jours : quand on dit qu'une voiture roule à 130 km/h, cela signifie qu'elle parcourt 130 km en une heure si elle maintient cette vitesse constante.</p>
-    <p>On peut comparer les vitesses de différents objets pour savoir lequel se déplace le plus rapidement. Par exemple, un guépard court à environ 110 km/h, un cheval galope à 60 km/h et un humain court à environ 36 km/h au sprint. La vitesse permet donc de classer les mouvements du plus lent au plus rapide.</p>
-    <div class="formula">\[v=\frac{d}{\Delta t}\qquad d=v\times \Delta t\qquad \Delta t=\frac{d}{v}\]</div>
-    <div class="box"><div class="label">À retenir</div><p>La relation fonctionne seulement si les unités sont cohérentes : par exemple distance en mètres, durée en secondes et vitesse en mètres par seconde. Si la vitesse est en km/h, la distance doit être en km et la durée en heures.</p></div>
-    <div class="box lav"><div class="label">Analogie</div><p>Imagine que tu marches à 5 km/h. En 2 heures, tu parcours \(d = 5 \times 2 = 10\) km. Si tu veux savoir combien de temps il te faut pour parcourir 15 km, tu calcules \(\Delta t = 15 / 5 = 3\) heures. C'est exactement la même logique pour la lumière, mais avec des vitesses et des distances bien plus grandes !</p></div>
-    <div class="box warn"><div class="label">Erreur fréquente</div><p>Attention aux unités ! Si la vitesse est en m/s mais que la distance est en km, il faut convertir la distance en mètres avant de calculer. De même, si la durée est en minutes, il faut la convertir en secondes si la vitesse est en m/s.</p></div>
-
-    <h2 id="c2">II. La lumière a une vitesse finie</h2>
-    <p>Pendant longtemps, on a pu croire que la lumière arrivait instantanément. En réalité, elle se propage très vite, mais pas avec une vitesse infinie. C'est le physicien danois Ole Rømer qui, en 1676, a été le premier à prouver que la lumière a une vitesse finie en observant les satellites de Jupiter. Il a remarqué que les éclipses des satellites de Jupiter semblaient en retard quand la Terre s'éloignait de Jupiter, ce qui s'explique par le temps de parcours de la lumière.</p>
-    <p>Aujourd'hui, on connaît la vitesse de la lumière avec une précision extrême. Elle est même utilisée pour définir le mètre : depuis 1983, le mètre est défini comme la distance parcourue par la lumière dans le vide en 1/299 792 458 de seconde.</p>
-    <div class="box lav"><div class="label">Valeur importante</div><p>Dans le vide, la vitesse de la lumière vaut environ :</p><div class="formula">\[c=3,0\times 10^{8}\;\text{m·s}^{-1}=300\,000\;\text{km·s}^{-1}\]</div></div>
-    <p>Dans un milieu matériel comme l'eau ou le verre, la lumière se propage moins vite que dans le vide. Sa vitesse dépend donc du milieu traversé. C'est comme un coureur qui ralentit sur un sol boueux par rapport à une piste d'athlétisme : le milieu de propagation influence la vitesse.</p>
-    <p>Ce ralentissement de la lumière dans les milieux matériels est à l'origine d'un phénomène appelé la <strong>réfraction</strong> : quand la lumière passe d'un milieu à un autre, elle change de direction. C'est ce qui fait qu'un bâton plongé dans l'eau paraît cassé à la surface.</p>
-    <div class="table-wrap"><table><thead><tr><th>Milieu</th><th>Vitesse approximative</th><th>Idée essentielle</th></tr></thead><tbody><tr><td>Vide / air</td><td>300 000 km/s</td><td>Référence utilisée au collège</td></tr><tr><td>Eau</td><td>225 000 km/s</td><td>La lumière ralentit (75 % de c)</td></tr><tr><td>Verre</td><td>200 000 km/s</td><td>La lumière ralentit davantage (67 % de c)</td></tr><tr><td>Diamant</td><td>124 000 km/s</td><td>Ralentissement maximal (41 % de c)</td></tr></tbody></table></div>
-    <div class="box"><div class="label">Exemple concret</div><p>La lumière du Soleil met environ 8 minutes et 19 secondes pour nous parvenir. Cela signifie que nous ne voyons jamais le Soleil tel qu'il est à l'instant présent, mais tel qu'il était il y a plus de 8 minutes ! Si le Soleil s'éteignait brusquement, nous ne le saurions que 8 min 19 s plus tard.</p></div>
-
-    <h2 id="c3">III. Utiliser la vitesse de la lumière</h2>
-    <p>Pour résoudre un problème, il faut d'abord identifier ce que l'on cherche : une distance, une durée ou une vitesse. Ensuite, on choisit la bonne formule parmi les trois formes équivalentes de la relation vitesse-distance-durée.</p>
-    <p>La clé du succès est de toujours vérifier la cohérence des unités avant de calculer. Si la vitesse est en km/s, on peut travailler en km et en secondes. Si la vitesse est en m/s, il faut tout exprimer en mètres et en secondes. Après le calcul, on n'oublie jamais de convertir le résultat dans l'unité la plus appropriée pour la conclusion.</p>
-    <div class="grid3"><article class="card"><h3>Distance</h3><p>Si on connaît la vitesse et la durée :</p><div class="formula">\[d=v\Delta t\]</div><p>Exemple : combien parcourt la lumière en 10 s ? \(d = 300\,000 \times 10 = 3\,000\,000\) km.</p></article><article class="card"><h3>Durée</h3><p>Si on connaît la distance et la vitesse :</p><div class="formula">\[\Delta t=\frac{d}{v}\]</div><p>Exemple : combien de temps pour 1 500 000 km ? \(\Delta t = 1\,500\,000 / 300\,000 = 5\) s.</p></article><article class="card"><h3>Vitesse</h3><p>Si on connaît la distance et la durée :</p><div class="formula">\[v=\frac{d}{\Delta t}\]</div><p>Exemple : 900 000 km en 3 s, \(v = 900\,000/3 = 300\,000\) km/s.</p></article></div>
-    <div class="box warn"><div class="label">Erreur fréquente</div><p>Ne mélange pas les kilomètres et les mètres, ou les heures et les secondes. Si la vitesse est en m/s, la durée doit être en secondes et la distance en mètres. Par exemple, pour utiliser \(c = 3,0 \times 10^8\) m/s, la distance doit être en mètres.</p></div>
-    <div class="box"><div class="label">Méthode</div><p>Quand tu lis un énoncé, souligne toujours la donnée cherchée et les données fournies. Écris la formule avant de faire le calcul. N'oublie pas d'écrire l'unité dans la conclusion : une réponse sans unité est une réponse incomplète.</p></div>
-
-    <h2 id="c4">IV. La méthode des 5C</h2>
-    <p>La méthode des 5C permet de présenter une résolution proprement, comme dans un vrai raisonnement scientifique. Elle s'applique à tous les calculs de physique-chimie et sera utile tout au long de ta scolarité.</p>
-    <p>Cette méthode force à prendre le temps de la réflexion avant de se lancer dans les calculs. Beaucoup d'erreurs viennent du fait qu'on calcule trop vite sans avoir identifié clairement ce qu'on cherche et dans quelles unités on travaille.</p>
-    <div class="table-wrap"><table><thead><tr><th>Étape</th><th>Question à se poser</th><th>Exemple</th></tr></thead><tbody><tr><td>Chercher</td><td>Que veut-on calculer ?</td><td>Une durée de parcours</td></tr><tr><td>Connaître</td><td>Quelles données sont fournies ?</td><td>\(d=225\times10^6\) km, \(c=300\,000\) km/s</td></tr><tr><td>Convertir</td><td>Les unités sont-elles compatibles ?</td><td>km et km/s : durée en s</td></tr><tr><td>Calculer</td><td>Quelle relation utiliser ?</td><td>\(\Delta t=d/c = 225\times10^6/300\,000 = 750\) s</td></tr><tr><td>Conclure</td><td>Quelle phrase répond au problème ?</td><td>La lumière met environ 12,5 min depuis Mars.</td></tr></tbody></table></div>
-    <div class="box lav"><div class="label">Astuce</div><p>Pour la conversion des secondes en minutes, divise par 60. Pour les minutes en heures, divise encore par 60. Ainsi, 750 s = 750/60 = 12,5 min = 12 min 30 s. Écris toujours le résultat sous la forme la plus naturelle pour le lecteur.</p></div>
-    <div class="box ok"><div class="label">Application concrète</div><p>Quand les robots Curiosity ou Perseverance envoient des images depuis Mars, le signal lumineux met entre 3 et 22 minutes pour arriver sur Terre selon la position des planètes. Cela signifie qu'on ne peut pas piloter ces robots en temps réel : chaque commande met au moins plusieurs minutes à arriver, et la réponse met autant à revenir !</p></div>
-
-    <h2 id="c5">V. Secondes-lumière et années-lumière</h2>
-    <p>La lumière permet de définir de très grandes distances astronomiques. Une seconde-lumière est la distance parcourue par la lumière en une seconde. Une année-lumière est la distance parcourue par la lumière en une année. Ces unités sont indispensables pour exprimer les distances dans l'Univers, car les kilomètres deviennent rapidement inutilisables.</p>
-    <p>Par exemple, l'étoile la plus proche du Soleil, Proxima du Centaure, se trouve à environ 40 000 milliards de kilomètres. Ce nombre est tellement grand qu'il est difficile à manipuler. C'est pourquoi on préfère dire qu'elle est à 4,24 années-lumière, ce qui est beaucoup plus parlant pour les astronomes.</p>
-    <div class="formula">\[1\;\text{seconde-lumière}\approx 300\,000\;\text{km}\]</div><div class="formula">\[1\;\text{année-lumière}\approx 9,47\times 10^{12}\;\text{km}\]</div>
-    <div class="box"><div class="label">Comprendre</div><p>Dire qu'une étoile est à 10 années-lumière signifie que sa lumière met environ 10 ans à nous parvenir. Observer loin dans l'Univers, c'est donc observer le passé. Quand on observe une galaxie à 1 milliard d'années-lumière, on la voit telle qu'elle était il y a 1 milliard d'années !</p></div>
-    <div class="box lav"><div class="label">Analogie</div><p>Imagine que tu reçois une lettre d'un ami qui vit à l'autre bout du monde. La lettre met 2 semaines à arriver. Quand tu la lis, tu lis ce que ton ami pensait il y a 2 semaines, pas ce qu'il pense maintenant. C'est exactement la même chose avec la lumière des étoiles, sauf que le « retard » se mesure en années, voire en milliards d'années !</p></div>
-    <div class="box warn"><div class="label">Attention</div><p>L'année-lumière est une <strong>distance</strong>, pas une durée ! C'est l'une des erreurs les plus fréquentes. Malgré son nom qui contient le mot « année », elle mesure bien une distance — celle que parcourt la lumière en un an.</p></div>
-    <div class="table-wrap"><table><thead><tr><th>Objet céleste</th><th>Distance</th><th>Temps de trajet de la lumière</th></tr></thead><tbody><tr><td>Lune</td><td>384 400 km</td><td>1,28 s</td></tr><tr><td>Soleil</td><td>149,6 millions km</td><td>8 min 19 s</td></tr><tr><td>Mars (moyenne)</td><td>225 millions km</td><td>12 min 30 s</td></tr><tr><td>Jupiter (moyenne)</td><td>778 millions km</td><td>43 min</td></tr><tr><td>Proxima du Centaure</td><td>4,24 a.l.</td><td>4,24 ans</td></tr><tr><td>Galaxie d'Andromède</td><td>2,5 millions a.l.</td><td>2,5 millions d'années</td></tr></tbody></table></div>
-    <div class="box ok"><div class="label">Application technologique</div><p>Les communications avec les satellites reposent sur des ondes électromagnétiques qui se déplacent à la vitesse de la lumière. Un appel téléphonique par satellite avec l'Australie subit un délai d'environ 0,3 s aller-retour, ce qui explique le léger décalage dans les conversations. Pour les communications avec Mars, ce délai peut atteindre 25 minutes aller-retour !</p></div>
-  </div></div></div></section>
-
-  <section class="panel" active id="panel-simulations"><h2 style="text-align:center;color:var(--accent);margin-bottom:1.2rem">ðŸŒŠ Simulateurs — Lumière &amp; Ondes EM</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
-  <div class="card" style="background:#1a0800;border:1px solid #ff6a0035;border-radius:12px;padding:1rem">
-    <h3 style="color:var(--accent);margin-bottom:.5rem">Propagation d'une onde lumineuse</h3>
-    <canvas id="cvA5_4" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
-    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
-      <label style="color:#bbb;font-size:.82rem">Fréquence :</label>
-      <input type="range" id="slA5_4" min="1" max="8" value="3" step=".5" style="flex:1;accent-color:var(--accent)">
-      <span id="lbA5_4" style="color:var(--accent);font-weight:bold;min-width:3rem">3</span>
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
+    <div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · Enseignant SPC</p>
     </div>
   </div>
-  <div class="card" style="background:#1a0800;border:1px solid #ff6a0035;border-radius:12px;padding:1rem">
-    <h3 style="color:var(--accent);margin-bottom:.5rem">Spectre électromagnétique</h3>
-    <canvas id="cvB5_4" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
-    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
-      <label style="color:#bbb;font-size:.82rem">Zone :</label>
-      <input type="range" id="slB5_4" min="0" max="6" value="3" style="flex:1;accent-color:var(--accent)">
-      <span id="lbB5_4" style="color:var(--accent);font-weight:bold;min-width:5rem">Visible</span>
+
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">4ᵉ</span>
+      <span class="micro">Chap. 5</span>
     </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
   </div>
-</div></section>
 
-  <section class="panel" id="panel-outils"><div class="section"><div class="grid2"><article class="card"><h3>Relations à maîtriser</h3><div class="formula">\[v=\frac{d}{\Delta t}\]</div><div class="formula">\[d=v\Delta t\]</div><div class="formula">\[\Delta t=\frac{d}{v}\]</div></article><article class="card"><h3>Conversions utiles</h3><ul><li>1 km = 1000 m</li><li>1 min = 60 s</li><li>1 h = 3600 s</li><li>1 an ≈ 365,25 jours ≈ 31 557 600 s</li><li>\(c=3,0\times10^8\;m/s = 300\,000\;km/s\)</li><li>1 a.l. ≈ \(9,47\times10^{12}\) km</li><li>1 seconde-lumière ≈ 300 000 km</li></ul></article></div><div class="box warn"><div class="label">Méthode</div><p>Avant tout calcul, vérifie si les unités de la distance, de la vitesse et de la durée sont compatibles. Écris toujours l'unité dans la conclusion. Pour les grands nombres, utilise la notation scientifique : \(2,25 \times 10^8\) km plutôt que 225 000 000 km.</p></div><div class="box"><div class="label">Aide mnémotechnique</div><p>Pour retenir la formule, dessine un triangle avec \(d\) en haut, \(v\) et \(\Delta t\) en bas. Cache la grandeur cherchée : ce qui reste te donne la formule. Cache \(d\) → \(v \times \Delta t\). Cache \(v\) → \(d / \Delta t\). Cache \(\Delta t\) → \(d / v\).</p></div></div></section>
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
 
-  <section class="panel" id="panel-flashcards"><div class="section"><div class="flash-wrap"><div><div class="flash-card" onclick="flipCard()"><div class="flip" id="flip"><div class="face"><div><h3 id="fcQ"></h3><p>Cliquer pour retourner</p></div></div><div class="face back"><p id="fcA"></p></div></div></div><div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button class="btn" onclick="event.stopPropagation();fc=(fc-1+FC.length)%FC.length;renderFC()">←</button><button class="btn" onclick="event.stopPropagation();fc=(fc+1)%FC.length;renderFC()">→</button></div></div><aside class="list" id="fcList"></aside></div></div></section>
-
-  <section class="panel" id="panel-exercices"><div class="section"><div class="grid2">
-    <article class="card"><h3>Niveau 1 — Distance parcourue</h3><p>Calculer la distance parcourue par la lumière en 4 s dans le vide.</p><div class="box"><div class="label">Correction</div><p>\(d=c\Delta t=300\,000\times4=1\,200\,000\) km.</p></div></article>
-    <article class="card"><h3>Niveau 1 — Durée Terre-Lune</h3><p>La distance Terre-Lune est environ 384 400 km. Combien de temps met la lumière ?</p><div class="box"><div class="label">Correction</div><p>\(\Delta t=d/c=384400/300000\approx1,28\) s.</p></div></article>
-    <article class="card"><h3>Niveau 1 — Distance en minutes</h3><p>Combien de kilomètres la lumière parcourt-elle en 2 minutes ?</p><div class="box"><div class="label">Correction</div><p>2 min = 120 s. \(d = 300\,000 \times 120 = 36\,000\,000\) km, soit 36 millions de km.</p></div></article>
-    <article class="card"><h3>Niveau 2 — Mars</h3><p>Mars est à 225 millions de km. Calculer la durée de trajet de la lumière.</p><div class="box"><div class="label">Correction</div><p>\(\Delta t=225\times10^6/300000=750\) s = 12,5 min = 12 min 30 s.</p></div></article>
-    <article class="card"><h3>Niveau 2 — Jupiter</h3><p>Jupiter est à environ 778 millions de km de la Terre. Quel est le temps de trajet de la lumière ? Exprime en minutes.</p><div class="box"><div class="label">Correction</div><p>\(\Delta t = 778\,000\,000 / 300\,000 \approx 2593\) s. Soit \(2593/60 \approx 43,2\) min, environ 43 min.</p></div></article>
-    <article class="card"><h3>Niveau 2 — Communication avec Mars</h3><p>Un robot sur Mars envoie un signal à la Terre (distance moyenne 225 millions de km). Combien de temps faut-il pour recevoir une réponse ?</p><div class="box"><div class="label">Correction</div><p>Aller : 12,5 min. Retour : 12,5 min. Total : 25 min. Le délai aller-retour est d'environ 25 minutes.</p></div></article>
-    <article class="card"><h3>Niveau 2 — Vitesse dans l'eau</h3><p>La lumière se propage à 225 000 km/s dans l'eau. Quelle distance parcourt-elle en 0,001 s ?</p><div class="box"><div class="label">Correction</div><p>\(d = 225\,000 \times 0{,}001 = 225\) km. En une milliseconde, la lumière parcourt 225 km dans l'eau.</p></div></article>
-    <article class="card"><h3>Niveau 3 — Année-lumière</h3><p>Retrouver l'ordre de grandeur de l'année-lumière en km.</p><div class="box"><div class="label">Correction</div><p>1 an ≈ 31 557 600 s, donc \(d=300000\times31557600\approx9,47\times10^{12}\) km. L'année-lumière vaut environ 9 470 milliards de km.</p></div></article>
-    <article class="card"><h3>Niveau 3 — Proxima du Centaure</h3><p>L'étoile Proxima du Centaure est à 4,24 années-lumière. Convertis cette distance en km. Combien de temps met la lumière pour nous parvenir ?</p><div class="box"><div class="label">Correction</div><p>Distance : \(4{,}24 \times 9{,}47 \times 10^{12} \approx 4{,}02 \times 10^{13}\) km, soit environ 40 000 milliards de km. La lumière met 4,24 ans à nous parvenir.</p></div></article>
-    <article class="card"><h3>Niveau 3 — Voir le passé</h3><p>Le télescope Hubble observe une galaxie située à 10 milliards d'années-lumière. Que signifie cette information ? Quel âge a la lumière que nous recevons ?</p><div class="box"><div class="label">Correction</div><p>La lumière a mis 10 milliards d'années à nous parvenir. Nous voyons donc cette galaxie telle qu'elle était il y a 10 milliards d'années, soit peu après la formation de l'Univers (environ 13,8 milliards d'années). Observer loin, c'est observer le passé profond de l'Univers.</p></div></article>
-  </div></div></section>
-
-  <section class="panel" id="panel-quiz"><div class="section"><div class="quiz-card"><h3 id="qText"></h3><div class="options" id="qOptions"></div><div class="result" id="qFeedback" style="margin-top:14px;display:none"></div><button class="btn" onclick="nextQ()" style="margin-top:14px">Question suivante</button></div></div></section>
-
-  <section class="panel" id="panel-tp"><div class="section"><article class="card"><h3>Activité — Mesurer l'écho lumineux à l'échelle astronomique</h3><p><strong>Objectif :</strong> utiliser un tableau de distances pour calculer les temps mis par la lumière et comprendre pourquoi « voir loin, c'est voir dans le passé ».</p>
-    <div class="grid2"><div><h3>Données</h3><ul><li>Lune : 384 400 km</li><li>Soleil : 149,6 millions de km</li><li>Mars : 225 millions de km</li><li>Jupiter : 778 millions de km</li><li>Proxima du Centaure : 4,24 a.l.</li><li>\(c=300\,000\) km/s</li></ul></div><div><h3>Travail demandé</h3><ul><li>Calculer chaque durée de trajet en utilisant la méthode des 5C.</li><li>Convertir les durées en unités adaptées (secondes, minutes, années).</li><li>Rédiger une conclusion complète pour chaque calcul.</li><li>Expliquer pourquoi les astronomes disent que « voir loin, c'est voir dans le passé ».</li></ul></div></div>
-    <div class="box"><div class="label">Protocole détaillé</div><p>1. Lis attentivement chaque distance fournie dans le tableau. 2. Pour chaque objet, identifie la grandeur cherchée (ici la durée) et les données connues (distance et vitesse). 3. Vérifie que les unités sont compatibles (km et km/s → durée en s). 4. Applique la formule \(\Delta t = d / c\). 5. Convertis le résultat dans l'unité la plus appropriée. 6. Rédige une phrase de conclusion complète avec l'unité.</p></div>
-    <div class="box warn"><div class="label">Attention — Sécurité</div><p>Il ne faut jamais regarder le Soleil directement, même brièvement, et encore moins avec des jumelles ou un télescope. Les observations solaires nécessitent un filtre spécialisé. Une exposition même courte peut provoquer des lésions irréversibles de la rétine.</p></div>
-    <div class="box ok"><div class="label">Résultats attendus</div><p>Lune : ~1,28 s · Soleil : ~8 min 19 s · Mars : ~12 min 30 s · Jupiter : ~43 min · Proxima du Centaure : ~4,24 ans. On constate que plus l'objet est éloigné, plus le retard est grand. Voir la galaxie d'Andromède à 2,5 millions d'années-lumière, c'est la voir telle qu'elle était il y a 2,5 millions d'années !</p></div></article></div></section>
-
-  <section class="panel" id="panel-chatbots"><div class="section"><div class="chat-grid"><article class="chat"><div class="icon">💬</div><h3>ChatGPT</h3><p>Demander une explication, un exercice ou une correction.</p><a href="https://chat.openai.com/" target="_blank">Ouvrir</a></article><article class="chat"><div class="icon">✨</div><h3>Gemini</h3><p>Comparer une méthode ou reformuler le cours.</p><a href="https://gemini.google.com/" target="_blank">Ouvrir</a></article><article class="chat"><div class="icon">🧠</div><h3>Claude</h3><p>Faire une fiche ou des flashcards.</p><a href="https://claude.ai/" target="_blank">Ouvrir</a></article><article class="chat"><div class="icon">🪟</div><h3>Copilot</h3><p>Obtenir une aide rapide ou un résumé.</p><a href="https://copilot.microsoft.com/" target="_blank">Ouvrir</a></article></div><div class="prompt-box"><h3>Prompt prêt à copier</h3><p style="color:var(--muted)">Copie-colle ce prompt dans le chatbot externe choisi :</p><textarea id="promptText">Tu es mon tuteur de physique-chimie niveau 4e. Je travaille le chapitre « La vitesse de la lumière ». Explique-moi en détail :
-
-1. La relation v = d / Δt et ses trois formes (calculer d, Δt ou v)
-2. La valeur de c = 3,0 × 10^8 m/s = 300 000 km/s dans le vide
-3. Pourquoi la lumière ralentit dans l'eau et le verre (donne les valeurs)
-4. La méthode des 5C avec un exemple complet pour la distance Terre-Mars
-5. La seconde-lumière et l'année-lumière : définitions, valeurs et différences
-6. Pourquoi « voir loin, c'est voir dans le passé » avec des exemples concrets
-7. Les applications technologiques (communications spatiales, GPS)
-
-Donne-moi ensuite 5 exercices progressifs (du niveau 1 au niveau 3) avec correction détaillée utilisant la méthode des 5C.</textarea><div class="copy-row"><button class="btn" onclick="copyPrompt()">Copier le prompt</button></div></div></div></section>
-
-  <section class="panel" id="panel-suivant"><div class="section"><div class="grid3"><article class="card"><h3>En 3e — Signaux et vitesses</h3><p>Tu réutiliseras les calculs de vitesse avec les signaux sonores et lumineux. Tu apprendras à comparer les vitesses du son et de la lumière, et à calculer des distances d'orage. La relation \(v = d / \Delta t\) sera appliquée à de nouveaux contextes.</p></article><article class="card"><h3>Au lycée — Ondes et optique</h3><p>La lumière sera étudiée comme onde électromagnétique, avec fréquence, longueur d'onde et spectres. Tu découvriras la diffraction, les interférences et le modèle ondulatoire de la lumière. Les vitesses dans les milieux seront reliées à l'indice de réfraction \(n = c/v\).</p></article><article class="card"><h3>Pourquoi c'est important ?</h3><p>Cette notion explique les distances astronomiques, les communications spatiales, le fonctionnement du GPS et l'observation de l'Univers. Sans la compréhension de la vitesse finie de la lumière, pas de satellites, pas d'exploration spatiale, pas de cosmologie moderne.</p></article></div><div class="box lav"><div class="label">Connexion avec le chapitre suivant</div><p>Dans le chapitre suivant, tu étudieras les combustions et la pollution. Tu découvriras comment les transformations chimiques produisent de nouvelles substances. Bien que ce chapitre porte sur la chimie, tu retrouveras les mêmes compétences : observer, mesurer, calculer et conclure avec rigueur.</p></div><div class="box ok"><div class="label">Compétences transversales</div><p>Les compétences développées ici (méthode des 5C, cohérence des unités, conversion, calcul avec grands nombres) te serviront dans tous les chapitres de physique-chimie et en mathématiques. La notation scientifique, en particulier, est un outil essentiel pour manipuler les grands nombres rencontrés en astronomie.</p></div></div></section>
-</main>
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
+  </div>
 </div>
-<script>
-// === Tab navigation (standardized) ===
-const _tabs=document.querySelectorAll('[data-tab],.tab,.tab-btn');
-const _panels=document.querySelectorAll('.panel');
-function _switchTab(tabName){
-    _tabs.forEach(b=>b.classList.remove('active'));
-    _panels.forEach(p=>p.classList.remove('active'));
-    _tabs.forEach(b=>{if(b.dataset&&b.dataset.tab===tabName)b.classList.add('active');});
-    var _map={'cours': 'panel-cours', 'simulations': 'panel-simulations', 'outils': 'panel-outils', 'flashcards': 'panel-flashcards', 'exercices': 'panel-exercices', 'quiz': 'panel-quiz', 'tp': 'panel-tp', 'chatbots': 'panel-chatbots', 'suivant': 'panel-suivant'};
-    var panelId=_map[tabName]||tabName;
-    var el=document.getElementById(panelId);
-    if(el)el.classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-    if(window.MathJax)setTimeout(()=>MathJax.typesetPromise(),100);
-}
-_tabs.forEach(btn=>{if(btn.dataset&&btn.dataset.tab)btn.addEventListener('click',()=>_switchTab(btn.dataset.tab));});
 
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
 
-function $(id){return document.getElementById(id)}
-function updateProgress(){const buttons=[...document.querySelectorAll('.nav button')];const idx=buttons.findIndex(b=>b.classList.contains('active'));const p=Math.round((idx+1)/buttons.length*100);$('progressBar').style.width=p+'%';$('pct').textContent=p+'%'}
-function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);$('themeBtn').textContent=n==='dark'?'☀️':'🌙'}
-function fmt(x){return Number(x).toLocaleString('fr-FR',{maximumFractionDigits:2})}
-function renderTravel(){let d=+$('dist').value||0,u=$('unit').value;let km=u==='m'?d/1000:u==='al'?d*9.47e12:d;let t=km/300000;let w=Math.min(100,Math.log10(km+1)/13*100);$('travelView').innerHTML=`<svg viewBox="0 0 430 230" width="100%" height="100%"><rect x="30" y="105" width="370" height="22" rx="11" fill="rgba(134,188,235,.18)"/><rect x="30" y="105" width="${3.7*w}" height="22" rx="11" fill="#86BCEB"/><circle cx="55" cy="116" r="22" fill="#B9B3F4"/><circle cx="375" cy="116" r="22" fill="#F4C5B7"/><text x="55" y="120" text-anchor="middle" fill="white" font-weight="800">S</text><text x="375" y="120" text-anchor="middle" fill="white" font-weight="800">O</text><text x="215" y="88" text-anchor="middle" fill="#637286" font-weight="800">distance = ${fmt(km)} km</text></svg>`;$('travelResult').innerHTML=`Durée de trajet : <strong>${fmt(t)} s</strong> soit environ <strong>${fmt(t/60)} min</strong>. Plus la distance est grande, plus le temps de trajet augmente.`;}
-function renderMedium(){let v=+$('medium').value,t=+$('medTime').value||0;let d=v*t;let w=Math.min(100,d/300000*t?d/(300000*Math.max(t,1))*100:0);$('mediumView').innerHTML=`<svg viewBox="0 0 430 230" width="100%" height="100%"><line x1="55" y1="80" x2="375" y2="80" stroke="#86BCEB" stroke-width="10" stroke-linecap="round"/><line x1="55" y1="145" x2="${55+3.2*w}" y2="145" stroke="#B9B3F4" stroke-width="10" stroke-linecap="round"/><text x="55" y="60" fill="#637286" font-weight="800">vide : 300 000 km/s</text><text x="55" y="128" fill="#637286" font-weight="800">milieu choisi : ${fmt(v)} km/s</text></svg>`;$('mediumResult').innerHTML=`En ${fmt(t)} s, la lumière parcourt <strong>${fmt(d)} km</strong> dans ce milieu. Comparaison : dans le vide, elle parcourrait ${fmt(300000*t)} km.`;}
-function renderAstro(){let [name,value,label]=$('astro').value.split('|');let dist=parseFloat(value);let isAL=name.includes('Proxima');$('astroView').innerHTML=`<svg viewBox="0 0 430 230" width="100%" height="100%"><rect width="430" height="230" rx="18" fill="#081222"/><g fill="#fff" opacity=".75"><circle cx="65" cy="54" r="1.6"/><circle cx="120" cy="160" r="1.2"/><circle cx="220" cy="78" r="1.4"/><circle cx="340" cy="130" r="1.7"/><circle cx="385" cy="44" r="1.2"/></g><circle cx="82" cy="115" r="22" fill="#86BCEB"/><path d="M110 115 C180 70 250 70 332 110" stroke="#BFDDF8" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="350" cy="115" r="18" fill="#F4C5B7"/><text x="215" y="180" text-anchor="middle" fill="#CFE8FF" font-size="14" font-weight="800">${name}</text></svg>`;$('astroResult').innerHTML=`Objet : <strong>${name}</strong>. ${isAL?'Distance : environ <strong>'+dist+' années-lumière</strong>.':'Distance choisie : <strong>'+fmt(dist)+' km</strong>.'} La lumière met environ <strong>${label}</strong> pour nous parvenir. Nous voyons donc cet objet tel qu'il était il y a ${label}.`;}
-const FC=[['Valeur de c dans le vide','\(c=3,0\times10^8\;m/s=300\,000\;km/s\).'],['Relation de la vitesse','\(v=\frac{d}{\Delta t}\).'],['Calculer une distance','On utilise \(d=v\times\Delta t\).'],['Calculer une durée','On utilise \(\Delta t=\frac{d}{v}\).'],['Calculer une vitesse','On utilise \(v=\frac{d}{\Delta t}\).'],['Une année-lumière est…','Une distance : celle parcourue par la lumière en un an, environ \(9,47\times10^{12}\) km.'],['Voir loin, voir le passé','La lumière met du temps à arriver : plus l\'objet est loin, plus on le voit tel qu\'il était dans le passé.'],['Vitesse dans l\'eau','Environ 225 000 km/s, soit 75 % de la vitesse dans le vide.'],['Vitesse dans le verre','Environ 200 000 km/s, soit 67 % de la vitesse dans le vide.'],['Temps Terre-Soleil','Environ 8 minutes et 19 secondes.'],['Temps Terre-Lune','Environ 1,28 seconde.'],['Méthode des 5C','Chercher, Connaître, Convertir, Calculer, Conclure.'],['Qui a prouvé que c est finie ?','Ole Rømer en 1676, en observant les satellites de Jupiter.'],['Attention aux unités','Si v est en m/s, d doit être en m et Δt en s. Jamais de mélange !'],['Seconde-lumière','Distance parcourue par la lumière en 1 s, soit environ 300 000 km.']];let fc=0;function initFC(){renderFC();$('fcList').innerHTML=FC.map((c,i)=>`<button onclick="fc=${i};renderFC()">${i+1}. ${c[0]}</button>`).join('')}function renderFC(){if(!$('fcQ'))return;$('flip').classList.remove('flipped');$('fcQ').innerHTML=FC[fc][0];$('fcA').innerHTML=FC[fc][1];if(window.MathJax) MathJax.typesetPromise();}function flipCard(){$('flip').classList.toggle('flipped')}
-const QS=[{q:'Dans le vide, la vitesse de la lumière vaut environ...',o:['300 000 km/s','300 km/s','3 000 km/h','30 000 km/s'],a:0,c:'Dans le vide, c ≈ 300 000 km/s.'},{q:'Pour calculer une durée, on utilise...',o:['Δt = d / v','d = v / Δt','v = d × Δt','Δt = v / d'],a:0,c:'On isole la durée : Δt = d / v.'},{q:'Une année-lumière est...',o:['une distance','une durée','une vitesse','une unité de temps'],a:0,c:'C\'est la distance parcourue par la lumière en un an.'},{q:'Si la lumière met 8 min à venir du Soleil, alors...',o:['on voit le Soleil avec 8 min de retard','le Soleil est immobile','la lumière est instantanée','le Soleil est à 8 km'],a:0,c:'Observer loin, c\'est observer avec un retard dû au temps de propagation.'},{q:'Dans l\'eau, la lumière se propage...',o:['moins vite que dans le vide','à la même vitesse que dans le vide','plus vite que dans le vide','elle ne se propage pas dans l\'eau'],a:0,c:'Dans l\'eau, la vitesse est d\'environ 225 000 km/s, plus lent que dans le vide.'},{q:'La lumière met environ combien de temps pour aller de la Terre à la Lune ?',o:['1,3 s','8 min','1 min','0,01 s'],a:0,c:'La Lune est à 384 400 km, donc Δt ≈ 384 400 / 300 000 ≈ 1,28 s.'},{q:'Quelle est la valeur d\'une seconde-lumière ?',o:['Environ 300 000 km','Environ 9,47 × 10¹² km','Environ 300 000 m','Environ 1 km'],a:0,c:'Une seconde-lumière est la distance parcourue par la lumière en 1 seconde : ~300 000 km.'},{q:'La méthode des 5C, c\'est...',o:['Chercher, Connaître, Convertir, Calculer, Conclure','Calculer, Comparer, Comprendre, Conclure, Confirmer','Chercher, Comprendre, Calculer, Comparer, Conclure'],a:0,c:'La méthode des 5C est : Chercher, Connaître, Convertir, Calculer, Conclure.'},{q:'Si c = 3 × 10⁸ m/s et d = 1,5 × 10¹¹ m, quelle est la durée ?',o:['500 s','50 s','5 000 s','5 s'],a:0,c:'Δt = d / c = 1,5 × 10¹¹ / 3 × 10⁸ = 500 s ≈ 8 min 20 s (distance Terre-Soleil).'},{q:'Qui a le premier prouvé que la vitesse de la lumière est finie ?',o:['Ole Rømer','Isaac Newton','Albert Einstein','Galilée'],a:0,c:'Ole Rømer en 1676, en observant les éclipses des satellites de Jupiter.'},{q:'Si une galaxie est à 2 millions d\'années-lumière, cela signifie que...',o:['sa lumière met 2 millions d\'années à nous parvenir','elle est à 2 millions de km','elle a 2 millions d\'années','elle se déplace à la vitesse de la lumière'],a:0,c:'Une distance en années-lumière correspond au temps que met la lumière à la parcourir.'}];let qi=0;function renderQ(){let q=QS[qi];$('qText').textContent=q.q;$('qOptions').innerHTML=q.o.map((x,i)=>`<button onclick="answer(${i})">${x}</button>`).join('');$('qFeedback').style.display='none'}function answer(i){let q=QS[qi];document.querySelectorAll('#qOptions button').forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add('good');if(k===i&&i!==q.a)b.classList.add('bad')});$('qFeedback').style.display='block';$('qFeedback').innerHTML=(i===q.a?'✅ ':'⚠️ ')+q.c;}function nextQ(){qi=(qi+1)%QS.length;renderQ()}function copyPrompt(){navigator.clipboard.writeText($('promptText').value);alert('Prompt copié.')}renderTravel();renderMedium();renderAstro();updateProgress();
-</script>
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">4ᵉ · Chap. 5</div>
+    <h1 class="hero-title">La vitesse de la l<span>umière | PhysiChem</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+    </div>
+  </div>
+
+</div>
+
 <script>
-/* ===== PATCH PHYSICHEN — BUGS CORRIGÉS ===== */
-(function(){
-  if(typeof visited==='undefined'){window.visited=new Set(['cours']);}
-  /* updateProgress — était appelée mais non définie */
-  window.updateProgress=function(){
-    var tabs=document.querySelectorAll('[data-tab]');
-    var tot=tabs.length||9;
-    var pct=Math.round(visited.size/tot*100);
-    var fill=document.getElementById('progressFill');
-    var txt=document.getElementById('progressText');
-    var prog=document.getElementById('progress');
-    var pctEl=document.getElementById('pct');
-    if(fill)fill.style.width=pct+'%';
-    if(txt)txt.textContent=pct+'% du chapitre exploré';
-    if(prog)prog.style.width=pct+'%';
-    if(pctEl)pctEl.textContent=pct+'%';
-  };
-  /* showPanel — était appelée dans le topbar mais non définie */
-  window.showPanel=function(id){window.switchTab(id);};
-  /* switchTab — remplace _switchTab avec scroll fix */
-  window.switchTab=function(id){
-    var _m={cours:"panel-cours",simulations:"panel-simulations",exercices:"panel-exercices",flashcards:"panel-flashcards",outils:"panel-outils",quiz:"panel-quiz",tp:"panel-tp",chatbots:"panel-chatbots",suivant:"panel-suivant"};
-    var resolvedId=_m[id]||id;
-    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-    document.querySelectorAll('.tab,.tab-btn').forEach(function(t){t.classList.remove('active');});
-    var panel=document.getElementById(resolvedId);
-    if(panel)panel.classList.add('active');
-    document.querySelectorAll('[data-tab="'+id+'"]').forEach(function(t){t.classList.add('active');});
-    visited.add(id);
-    updateProgress();
-    /* SCROLL FIX — affiche le panneau directement sans curseur */
-    setTimeout(function(){
-      var p=document.getElementById(resolvedId);
-      var topbarEl=document.querySelector('.topbar');
-      var topH=topbarEl?topbarEl.offsetHeight:62;
-      if(p){var y=p.getBoundingClientRect().top+window.scrollY-topH-4;window.scrollTo({top:y,behavior:'smooth'});}
-    },30);
-    if(window.MathJax)setTimeout(function(){MathJax.typesetPromise();},100);
-    /* Quiz — render au 1er clic */
-    if(id==='quiz'){
-      var box=document.getElementById('quizBox');
-      if(box&&!box.dataset.ready){
-        if(typeof renderQuiz==='function')renderQuiz();
-        if(typeof buildQuiz==='function')buildQuiz();
-      }
-    }
-  };
-  /* Réenregistrer les écouteurs de clics (remplace les anciens) */
-  document.querySelectorAll('[data-tab]').forEach(function(btn){
-    var clone=btn.cloneNode(true);
-    btn.parentNode.replaceChild(clone,btn);
-    clone.addEventListener('click',function(){window.switchTab(clone.dataset.tab);});
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
   });
-  /* Activer l'onglet cours au chargement */
-  updateProgress();
-})();
+});
 </script>
-<script>
-function initSims(){
-(function(){
-  var cv=document.getElementById("cvA5_4");if(!cv)return;
-  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
-  var sl=document.getElementById("slA5_4"),lb=document.getElementById("lbA5_4");
-  var freq=3;
-  if(sl)sl.addEventListener("input",function(){freq=+this.value;if(lb)lb.textContent=freq;});
-  (function L(){
-    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#fff8f2";x.fillRect(0,0,W,H);
-    var cy=H/2;
-    var lam=W/(freq*1.2);
-    var waveColor="hsl("+(280-freq*20)+",100%,60%)";
-    x.shadowBlur=12;x.shadowColor=waveColor;
-    x.strokeStyle=waveColor;x.lineWidth=2.5;
-    x.beginPath();
-    for(var px=0;px<W;px++){
-      var y=cy+55*Math.sin((px/lam-t*.06)*6.28);
-      px===0?x.moveTo(px,y):x.lineTo(px,y);
-    }
-    x.stroke();
-    // E field
-    x.shadowColor="var(--accent,#ff6a00)";x.strokeStyle="rgba(224,90,0,.6)";x.lineWidth=1;
-    for(var px2=0;px2<W;px2+=20){
-      var ey=cy+55*Math.sin((px2/lam-t*.06)*6.28);
-      x.beginPath();x.moveTo(px2,cy);x.lineTo(px2,ey);x.stroke();
-    }
-    x.shadowBlur=0;
-    // labels
-    x.fillStyle="rgba(255,255,255,.6)";x.font="10px monospace";x.textAlign="left";
-    x.fillText("Î» = "+(lam/60).toFixed(2)+" unité",8,H-25);
-    x.fillText("f = "+freq+" unité",8,H-12);
-    x.fillStyle="rgba(224,90,0,.85)";x.font="bold 11px monospace";x.textAlign="right";
-    x.fillText("c = Î» Ã— f = constante",W-8,H-8);
-    // photon
-    x.shadowBlur=15;x.shadowColor=waveColor;x.fillStyle=waveColor;
-    var photX=(t*3)%W,photY=cy+55*Math.sin((photX/lam-t*.06)*6.28);
-    x.beginPath();x.arc(photX,photY,7,0,6.28);x.fill();x.shadowBlur=0;
-    t++;requestAnimationFrame(L);
-  })();
-})();
-(function(){
-  var cv=document.getElementById("cvB5_4");if(!cv)return;
-  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
-  var sl=document.getElementById("slB5_4"),lb=document.getElementById("lbB5_4");
-  var zones=[{n:"Radio",c:"#884400",f:"10Â³ Hz"},{n:"Micro-ondes",c:"#ff8800",f:"10â¹ Hz"},{n:"Infrarouge",c:"#ff4400",f:"10Â¹Â² Hz"},{n:"Visible",c:"#ffcc00",f:"10Â¹â´ Hz"},{n:"UV",c:"#cc00ff",f:"10Â¹âµ Hz"},{n:"X",c:"#4488ff",f:"10Â¹â· Hz"},{n:"Gamma",c:"#00ffcc",f:"10Â²â° Hz"}];
-  var cur=3;
-  if(sl)sl.addEventListener("input",function(){cur=+this.value;if(lb)lb.textContent=zones[cur].n;});
-  (function L(){
-    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#fff8f2";x.fillRect(0,0,W,H);
-    var bw=Math.floor(W/zones.length)-4;
-    zones.forEach(function(z,i){
-      var bx=4+i*(bw+4),by=60,bh=H-110;
-      var active=(i===cur);
-      x.shadowBlur=active?20:4;x.shadowColor=z.c;
-      x.fillStyle=z.c+(active?"55":"22");x.fillRect(bx,by,bw,bh);
-      x.strokeStyle=z.c;x.lineWidth=active?2.5:1;x.strokeRect(bx,by,bw,bh);x.shadowBlur=0;
-      x.fillStyle=z.c;x.font=(active?"bold ":"")+"9px monospace";x.textAlign="center";
-      x.fillText(z.n,bx+bw/2,by+bh+14);
-      x.fillStyle="rgba(255,255,255,.4)";x.font="8px monospace";x.fillText(z.f,bx+bw/2,by+bh+25);
-      // wave preview inside bar
-      if(active){
-        var freq2=Math.pow(10,i+1),lam2=bw;
-        x.strokeStyle=z.c+"88";x.lineWidth=1;x.beginPath();
-        for(var px=0;px<bw;px++){var yy=by+bh/2+20*Math.sin((px/lam2-t*.04)*6.28);px===0?x.moveTo(bx+px,yy):x.lineTo(bx+px,yy);}
-        x.stroke();
-      }
-    });
-    x.fillStyle="rgba(200,200,200,.5)";x.font="10px monospace";x.textAlign="center";
-    x.fillText("Toutes les ondes EM se propagent à c = 3Ã—10â¸ m/s",W/2,H-5);
-    x.fillStyle=zones[cur].c;x.font="bold 12px monospace";
-    x.fillText(zones[cur].n+" — "+zones[cur].f,W/2,25);
-    t++;requestAnimationFrame(L);
-  })();
-})();
-}
-</script>
-<script>
-// Auto-trigger initSims on sims panel activation (any id variant)
-(function(){
-  function tryInit(id){
-    if(window._simsInited)return;
-    if(!id)return;
-    var sims=['sims','simulations','panel-simulations','tab-simulations'];
-    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
-  }
-  // Hook into switchTab (already defined by patch or original)
-  var _orig=window.switchTab;
-  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
-  // Hook data-target buttons
-  document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('[data-target]').forEach(function(b){
-      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
-    });
-    // If sims panel is already active on load
-    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
-    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
-  });
-})();
-</script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

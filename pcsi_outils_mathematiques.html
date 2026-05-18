@@ -1,1148 +1,181 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PCSI-M00 — Outils mathématiques</title>
-<script>
-window.MathJax = {
-  tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] },
-  svg: { fontCache: 'global' }
-};
-</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
+/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --bg:#f6f7f9;
-  --paper:#ffffff;
-  --paper-2:#eef3f6;
-  --ink:#17212e;
-  --muted:#5b6674;
-  --soft:#8490a1;
-  --line:#dfe5eb;
-  --line-strong:#c4ccd6;
-  --accent:#0f766e;
-  --accent-2:#2563eb;
-  --accent-3:#7c3aed;
-  --warn:#c2410c;
-  --ok:#15803d;
-  --accent-bg:#e6f6f4;
-  --shadow:0 18px 55px rgba(23,33,46,.12);
-  --shadow-soft:0 12px 28px rgba(23,33,46,.08);
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
 }
-[data-theme="dark"]{
-  --bg:#111827;
-  --paper:#182232;
-  --paper-2:#101827;
-  --ink:#edf4ff;
-  --muted:#b4c0ce;
-  --soft:#8794a7;
-  --line:#2a3648;
-  --line-strong:#3a475b;
-  --accent:#2dd4bf;
-  --accent-2:#60a5fa;
-  --accent-3:#a78bfa;
-  --warn:#fb923c;
-  --ok:#4ade80;
-  --accent-bg:rgba(45,212,191,.12);
-  --shadow:0 20px 60px rgba(0,0,0,.28);
-  --shadow-soft:0 12px 30px rgba(0,0,0,.18);
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    linear-gradient(90deg,rgba(15,118,110,.08) 0 1px,transparent 1px 80px),
-    linear-gradient(180deg,rgba(37,99,235,.06) 0 1px,transparent 1px 80px),
-    var(--bg);
-  color:var(--ink);
-}
-a{color:inherit;text-decoration:none}
-.progress{position:fixed;inset:0 0 auto 0;height:3px;background:transparent;z-index:30}
-.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:20;
-  height:66px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:0 24px;
-  border-bottom:1px solid var(--line);
-  background:color-mix(in srgb,var(--paper) 90%,transparent);
-  backdrop-filter:blur(18px);
-}
-.brand{display:flex;align-items:center;gap:10px;font-weight:950}
-.brand-mark{width:34px;height:34px;border-radius:8px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:950}
-.crumb{font-size:13px;color:var(--muted);white-space:nowrap}
-.crumb strong{color:var(--accent)}
-.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
-.pct{font-family:"JetBrains Mono",Consolas,monospace;font-size:12px;color:var(--soft)}
-.small-btn{
-  border:1px solid var(--line-strong);
-  border-radius:8px;
-  background:var(--paper-2);
-  color:var(--ink);
-  padding:8px 12px;
-  cursor:pointer;
-  font-weight:900;
-}
-.small-btn:hover{border-color:var(--accent);color:var(--accent)}
-.hero{
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 82%,transparent),transparent);
-}
-.hero-inner{
-  max-width:1280px;
-  margin:0 auto;
-  padding:54px 36px 42px;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 390px;
-  gap:34px;
-  align-items:center;
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 11px;
-  border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));
-  border-radius:8px;
-  background:var(--accent-bg);
-  color:var(--accent);
-  font-size:12px;
-  font-weight:950;
-  text-transform:uppercase;
-  letter-spacing:0;
-}
-h1{max-width:820px;margin:18px 0 16px;font-size:clamp(34px,5.3vw,64px);line-height:1.04;letter-spacing:0}
-h1 em{font-style:normal;color:var(--accent)}
-.hero p{max-width:720px;color:var(--muted);font-size:17px;line-height:1.72}
-.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.hero-stats span{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:9px 11px;color:var(--muted);font-size:13px}
-.math-panel{
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:var(--paper);
-  box-shadow:var(--shadow);
-  padding:18px;
-  min-height:310px;
-  display:grid;
-  gap:10px;
-}
-.math-line{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);padding:12px}
-.math-line strong{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent)}
-.math-line span{color:var(--muted);font-size:13px;line-height:1.5}
-.tabs{
-  position:sticky;
-  top:66px;
-  z-index:18;
-  display:flex;
-  gap:4px;
-  overflow-x:auto;
-  padding:0 24px;
-  border-bottom:1px solid var(--line);
-  background:color-mix(in srgb,var(--paper) 90%,transparent);
-  backdrop-filter:blur(18px);
-}
-.tabs button{border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);padding:15px 13px 12px;cursor:pointer;font-weight:950;white-space:nowrap}
-.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.layout{max-width:1280px;margin:0 auto;padding:36px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:30px}
-.toc{position:sticky;top:132px;height:fit-content;border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--paper) 84%,transparent);padding:14px}
-.toc strong{display:block;font-size:11px;letter-spacing:0;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
-.toc a{display:block;padding:8px 9px;border-radius:8px;color:var(--muted);font-size:13px;border-left:3px solid transparent}
-.toc a:hover,.toc a.active{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent)}
-.content{min-width:0}
-.content h2{margin:42px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--accent);font-size:24px}
-.content h2:first-child{margin-top:0}
-.content h3{margin:28px 0 10px;font-size:18px;color:var(--ink)}
-.content p,.content li{color:var(--muted);line-height:1.82;font-size:15px}
-.lead-box,.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
-.note,.definition,.method,.warning,.example,.theorem,.exercise-card,.summary-card{
-  border:1px solid var(--line);
-  border-left:4px solid var(--accent);
-  border-radius:0 8px 8px 0;
-  background:var(--paper);
-  padding:18px 20px;
-  box-shadow:var(--shadow-soft);
-  margin:18px 0;
-}
-.method{border-left-color:var(--accent-2)}
-.warning{border-left-color:var(--warn)}
-.example{border-left-color:var(--ok)}
-.theorem{border-left-color:var(--accent-3)}
-.box-title{display:block;font-size:11px;color:var(--soft);font-weight:950;letter-spacing:0;text-transform:uppercase;margin-bottom:8px}
-.formula{overflow-x:auto;margin:18px 0;padding:18px 22px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);text-align:center;font-size:18px}
-.data-table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:8px;border:1px solid var(--line);background:var(--paper);margin:18px 0}
-.data-table th,.data-table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.data-table th{background:var(--paper-2);font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:0}
-.data-table td{color:var(--muted)}
-.solution{display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:12px;color:var(--muted)}
-.solution.open{display:block}
-.map{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-.map div{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:14px}
-.map strong{display:block;color:var(--accent);margin-bottom:6px}
-.soul-box{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:linear-gradient(135deg,var(--accent-bg),var(--paper));padding:20px 22px;box-shadow:var(--shadow-soft);margin:0 0 26px}
-.soul-box p{font-size:16px;line-height:1.9;color:var(--muted);margin:8px 0 14px}
-.soul-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
-.soul-grid span{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:10px 12px;color:var(--muted);font-size:13px;line-height:1.55}
-.lab-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);padding:18px;margin:16px 0}
-.lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.lab-grid label{display:block;font-size:12px;color:var(--soft);font-weight:900;margin-bottom:6px}
-.lab-grid input,.lab-grid select{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:10px}
-.lab-canvas{width:100%;height:280px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);display:block}
-.chat-explain{border:1px solid var(--line);border-radius:8px;background:var(--accent-bg);padding:12px 14px;color:var(--muted);line-height:1.7;margin:14px 0}
-@media(max-width:960px){
-  .hero-inner{grid-template-columns:1fr;padding:42px 18px 28px}
-  .layout{grid-template-columns:1fr;padding:28px 18px 70px}
-  .toc{display:none}
-  .lead-box,.grid-2,.map{grid-template-columns:1fr}
-  .tabs{top:66px;padding:0 12px}
-  .topbar{padding:0 12px}
-  .crumb{display:none}
-}
-@media print{
-  .topbar,.tabs,.toc,.small-btn,.hero{display:none!important}
-  body{background:white;color:black}
-  .tab-panel{display:block}
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="progress"><span id="progressTop"></span></div>
-<nav class="topbar">
-  <a class="brand" href="index_wow.html"><span class="brand-mark">M</span><span>PhysiChem</span></a>
-  <div class="crumb">PCSI-M00 · <strong>Outils mathématiques</strong></div>
-  <div class="top-actions">
-    <span class="pct" id="pctLabel">0%</span>
-    <button class="small-btn" id="themeBtn" onclick="toggleTheme()">Mode</button>
-    <a class="small-btn" href="index_wow.html">Index</a>
-  </div>
-</nav>
 
-<header class="hero">
-  <div class="hero-inner">
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
     <div>
-      <span class="badge">PCSI-M00 · Socle supérieur</span>
-      <h1>Outils mathématiques <em>puis applications PCSI</em></h1>
-      <p>Un chapitre transversal organisé en deux temps : d'abord les outils mathématiques en tant que mathématiques, avec leurs notations propres, puis leurs usages en physique-chimie PCSI.</p>
-      <div class="hero-stats">
-        <span>Équations différentielles</span><span>Complexes</span><span>Intégrales</span><span>Matrices</span><span>DL et ordres de grandeur</span>
-      </div>
-    </div>
-    <div class="math-panel" aria-label="Aperçu des outils">
-      <div class="math-line"><strong>ED</strong><span>\(\tau y'+y=y_\infty\), \(x''+\frac{\omega_0}{Q}x'+\omega_0^2x=f(t)\)</span></div>
-      <div class="math-line"><strong>C</strong><span>\(z=re^{j\theta}\), modules, arguments, impédances et phases.</span></div>
-      <div class="math-line"><strong>∫</strong><span>Aires, travaux, charges, valeurs moyennes, primitives et changements de variable.</span></div>
-      <div class="math-line"><strong>A</strong><span>Systèmes linéaires, déterminants, inverses, valeurs propres.</span></div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · PC · LFC</p>
     </div>
   </div>
-</header>
 
-<nav class="tabs" aria-label="Onglets du chapitre">
-  <button class="active" onclick="showTab('notations',this)">Notations</button>
-  <button onclick="showTab('analyse',this)">Analyse</button>
-  <button onclick="showTab('eqdiff',this)">Éq. diff</button>
-  <button onclick="showTab('complexes',this)">Complexes</button>
-  <button onclick="showTab('integrales',this)">Intégrales</button>
-  <button onclick="showTab('matrices',this)">Matrices</button>
-  <button onclick="showTab('applications',this)">Applications PC</button>
-  <button onclick="showTab('exercices',this)">Exercices</button>
-  <button onclick="showTab('chatbot',this)">Chatbot</button>
-  <button onclick="showTab('synthese',this)">Synthèse</button>
-</nav>
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">NIVEAU</span>
+      <span class="micro">Chap. X</span>
+    </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+  </div>
 
-<section class="tab-panel active" id="tab-notations">
-  <div class="layout">
-    <aside class="toc"><strong>Notations</strong><a href="#n1">Objets</a><a href="#n2">Fonctions</a><a href="#n3">Vecteurs</a><a href="#n4">Logique</a></aside>
-    <main class="content">
-<!-- PCSI PROGRAMME LOUCHART -->
-<div class="definition" id="programme-pcsi">
-  <span class="box-title">Repère programme PCSI</span>
-  <p><strong>Ancrage.</strong> Guide PCSI : consolider les outils de lycée puis les transformer en langage de calcul de prépa.</p>
-  <p><strong>Cap à tenir.</strong> Faire passer un énoncé physique ou chimique dans une écriture mathématique stable.</p>
-  <p class="pct">Référence de cadrage : <a href="http://b.louchart.free.fr/Guide_eleve_Maths_Sup_PCSI.html" target="_blank" rel="noopener">B. Louchart — ressources PCSI</a> ; bloc ajouté comme synthèse pédagogique, sans reproduction des documents recensés.</p>
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
+
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
+  </div>
 </div>
-<div class="formula">\[ \mathrm{modèle}\ \longrightarrow\ \mathrm{équation}\ \longrightarrow\ \mathrm{solution}\ \longrightarrow\ \mathrm{contrôle} \]</div>
-<table class="data-table">
-  <tr><th>Point de maîtrise</th><th>Ce que l’étudiant doit savoir faire</th></tr>
-  <tr><td><strong>Notation</strong></td><td>Définir chaque symbole avant de calculer : fonction, variable, paramètre, unité.</td></tr><tr><td><strong>Méthode</strong></td><td>Choisir l’outil adapté : équation différentielle, complexe, intégrale, matrice ou développement limité.</td></tr><tr><td><strong>Contrôle</strong></td><td>Tester homogénéité, signe, limite, ordre de grandeur et domaine de validité.</td></tr>
-</table>
-<div class="method">
-  <span class="box-title">Méthode de travail inspirée du découpage PCSI</span>
-  <p>Avant un exercice, nommer le bloc du programme, écrire les hypothèses, poser les grandeurs avec leurs unités, choisir la relation directrice, puis terminer par un contrôle : homogénéité, signe, limite, ordre de grandeur et cohérence expérimentale.</p>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
+
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">NIVEAU · Chap. X</div>
+    <h1 class="hero-title">Outils mat<span>hématiques</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+    </div>
+  </div>
+
 </div>
-<!-- /PCSI PROGRAMME LOUCHART -->
-<div class="soul-box" id="fil-conducteur">
-        <span class="box-title">Le fil conducteur</span>
-        <p>Ce chapitre n'est pas là pour faire des mathématiques décoratives. Il apprend à reconnaître la forme d'un problème : une évolution devient une équation différentielle, une oscillation devient un complexe, un bilan devient une intégrale, un couplage devient une matrice. Quand l'étudiant voit l'outil avant la formule, il gagne en liberté.</p>
-        <div class="soul-grid"><span>Identifier l’objet mathématique avant de calculer.</span><span>Séparer notation pure et sens physique.</span><span>Utiliser les applications comme traduction, pas comme point de départ.</span></div>
-      </div>
-
-
-      <h2 id="n1">1. Les objets mathématiques de base</h2>
-      <p>Avant d'utiliser un outil dans un problème, il faut savoir quel objet mathématique on manipule. Une erreur fréquente consiste à mélanger nombre, fonction, vecteur, matrice et paramètre.</p>
-      <table class="data-table">
-        <tr><th>Objet</th><th>Notation mathématique</th><th>Lecture</th></tr>
-        <tr><td>Nombre réel</td><td>\(x\in\mathbb R\)</td><td>Une valeur sur la droite réelle.</td></tr>
-        <tr><td>Nombre complexe</td><td>\(z\in\mathbb C\)</td><td>Un nombre de la forme \(a+ib\), avec \(i^2=-1\).</td></tr>
-        <tr><td>Intervalle</td><td>\([a,b]\), \(]a,b[\), \(\mathbb R_+\)</td><td>Un ensemble continu de réels.</td></tr>
-        <tr><td>Fonction</td><td>\(f:I\to\mathbb R,\ x\mapsto f(x)\)</td><td>À chaque \(x\) de \(I\), on associe une valeur \(f(x)\).</td></tr>
-        <tr><td>Suite</td><td>\((u_n)_{n\in\mathbb N}\)</td><td>Une famille de nombres indexés par des entiers.</td></tr>
-        <tr><td>Vecteur</td><td>\(\vec u\in\mathbb R^n\)</td><td>Un objet ayant des coordonnées dans une base.</td></tr>
-        <tr><td>Matrice</td><td>\(A\in\mathcal M_{n,p}(\mathbb R)\)</td><td>Un tableau de nombres avec \(n\) lignes et \(p\) colonnes.</td></tr>
-      </table>
-
-      <h2 id="n2">2. Notations de fonctions et de variations</h2>
-      <div class="definition">
-        <span class="box-title">Fonction</span>
-        Écrire \(f:I\to\mathbb R\) signifie que \(f\) prend ses entrées dans l'ensemble \(I\) et renvoie des nombres réels. La variable \(x\) est muette : \(f(t)\), \(f(u)\), \(f(x)\) peuvent désigner la même fonction évaluée en des points différents.
-      </div>
-      <table class="data-table">
-        <tr><th>Notation</th><th>Signification mathématique</th><th>Attention</th></tr>
-        <tr><td>\(f'(x)\)</td><td>Dérivée de \(f\) au point \(x\).</td><td>Nombre dépendant de \(x\).</td></tr>
-        <tr><td>\(\mathrm df\)</td><td>Différentielle de \(f\).</td><td>Objet linéaire local, pas une petite quantité isolée.</td></tr>
-        <tr><td>\(\Delta x=x_2-x_1\)</td><td>Variation finie.</td><td>Ne pas confondre avec \(\mathrm dx\).</td></tr>
-        <tr><td>\(\mathrm dx\)</td><td>Variation infinitésimale dans une intégrale ou une différentielle.</td><td>Dépend du contexte.</td></tr>
-        <tr><td>\(\dot x\)</td><td>Dérivée temporelle \(\frac{\mathrm dx}{\mathrm dt}\).</td><td>Notation surtout utilisée quand la variable est le temps.</td></tr>
-      </table>
-
-      <h2 id="n3">3. Vecteurs, bases et coordonnées</h2>
-      <p>Un vecteur n'est pas la même chose que la liste de ses coordonnées : les coordonnées dépendent de la base choisie.</p>
-      <div class="formula">\[ \vec u=x_1\vec e_1+x_2\vec e_2+\cdots+x_n\vec e_n
-      \quad\Longleftrightarrow\quad
-      [\vec u]_{\mathcal B}=\begin{pmatrix}x_1\\x_2\\\vdots\\x_n\end{pmatrix} \]</div>
-      <table class="data-table">
-        <tr><th>Notation</th><th>Signification</th></tr>
-        <tr><td>\(\vec e_1,\ldots,\vec e_n\)</td><td>Vecteurs d'une base.</td></tr>
-        <tr><td>\([\vec u]_{\mathcal B}\)</td><td>Colonne des coordonnées de \(\vec u\) dans la base \(\mathcal B\).</td></tr>
-        <tr><td>\(\|\vec u\|\)</td><td>Norme, c'est-à-dire longueur du vecteur.</td></tr>
-        <tr><td>\(\vec u\cdot\vec v\)</td><td>Produit scalaire.</td></tr>
-      </table>
-
-      <h2 id="n4">4. Logique et rédaction</h2>
-      <div class="grid-2">
-        <div class="method"><span class="box-title">Implication</span>\(P\Rightarrow Q\) signifie : si \(P\) est vraie, alors \(Q\) est vraie.</div>
-        <div class="method"><span class="box-title">Équivalence</span>\(P\Leftrightarrow Q\) signifie : \(P\) et \(Q\) ont exactement la même vérité.</div>
-        <div class="method"><span class="box-title">Existence</span>\(\exists x\in E\) signifie qu'il existe au moins un élément \(x\) de \(E\).</div>
-        <div class="method"><span class="box-title">Universalité</span>\(\forall x\in E\) signifie que la propriété vaut pour tous les éléments de \(E\).</div>
-      </div>
-    
-
-      <h2 id="math-enrich-notations">5. Méthode de traduction mathématique d'un énoncé</h2>
-      <div class="method">
-        <span class="box-title">Méthode de résolution par identification</span>
-        <p>Avant de calculer, on transforme l'énoncé en objets mathématiques correctement typés. Cette étape évite presque toutes les erreurs de signe, d'unité ou de variable.</p>
-        <table class="data-table">
-          <tr><th>Étape</th><th>Question mathématique</th><th>Écriture attendue</th></tr>
-          <tr><td>1</td><td>Quel est l'ensemble de travail ?</td><td>\(x\in\mathbb R\), \(z\in\mathbb C\), \(X\in\mathbb R^n\), \(A\in\mathcal M_{n,p}\).</td></tr>
-          <tr><td>2</td><td>Quelle est l'inconnue ?</td><td>Un nombre, une fonction \(y:t\mapsto y(t)\), un vecteur \(X(t)\), une matrice.</td></tr>
-          <tr><td>3</td><td>Quels sont les paramètres ?</td><td>Constantes positives, domaines, unités, hypothèses de validité.</td></tr>
-          <tr><td>4</td><td>Quelle relation faut-il résoudre ?</td><td>Équation algébrique, équation différentielle, intégrale, système linéaire.</td></tr>
-          <tr><td>5</td><td>Le résultat a-t-il un sens ?</td><td>Contrôle dimensionnel, signe, ordre de grandeur, limite.</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — force de Lorentz</span>
-        <p>On donne \(q=2{,}0\,\mathrm{nC}\), \(\vec E=3{,}0\times10^4\,\vec e_x\,\mathrm{V.m^{-1}}\), \(\vec v=4{,}0\times10^5\,\vec e_y\,\mathrm{m.s^{-1}}\) et \(\vec B=0{,}20\,\vec e_z\,\mathrm T\). Calculer \(\vec F=q(\vec E+\vec v\wedge\vec B)\).</p>
-        <div class="formula">\[
-        \vec v\wedge\vec B=(4{,}0\times10^5\vec e_y)\wedge(0{,}20\vec e_z)
-        =8{,}0\times10^4\,\vec e_x
-        \]</div>
-        <div class="formula">\[
-        \vec F=2{,}0\times10^{-9}\left(3{,}0\times10^4+8{,}0\times10^4\right)\vec e_x
-        =2{,}2\times10^{-4}\,\vec e_x\ \mathrm N
-        \]</div>
-        <p>Le calcul n'est rigoureux que parce que les objets ont été identifiés : \(q\) est un scalaire en coulomb, \(\vec E\) et \(\vec v\wedge\vec B\) ont même unité \(\mathrm{N.C^{-1}}\), et le résultat est un vecteur force en newton.</p>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-analyse">
-  <div class="layout">
-    <aside class="toc"><strong>Analyse</strong><a href="#a1">Limites</a><a href="#a2">Continuité</a><a href="#a3">Dérivées</a><a href="#a4">DL</a></aside>
-    <main class="content">
-      <h2 id="a1">1. Limites et équivalents</h2>
-      <div class="definition">
-        <span class="box-title">Limite</span>
-        Dire que \(f(x)\to \ell\) quand \(x\to a\) signifie que les valeurs \(f(x)\) deviennent arbitrairement proches de \(\ell\) lorsque \(x\) se rapproche de \(a\).
-      </div>
-      <div class="definition">
-        <span class="box-title">Équivalent</span>
-        On écrit \(f(x)\sim g(x)\) quand \(x\to a\) si :
-        <div class="formula">\[ \frac{f(x)}{g(x)}\longrightarrow 1 \]</div>
-      </div>
-      <table class="data-table">
-        <tr><th>Équivalent usuel</th><th>Quand \(x\to0\)</th></tr>
-        <tr><td>\(\sin x\sim x\)</td><td>Angle en radian.</td></tr>
-        <tr><td>\(\tan x\sim x\)</td><td>Angle en radian.</td></tr>
-        <tr><td>\(e^x-1\sim x\)</td><td>Exponentielle proche de 1.</td></tr>
-        <tr><td>\(\ln(1+x)\sim x\)</td><td>Pour \(x>-1\).</td></tr>
-        <tr><td>\((1+x)^\alpha-1\sim\alpha x\)</td><td>\(\alpha\) réel fixé.</td></tr>
-      </table>
-
-      <h2 id="a2">2. Continuité et dérivabilité</h2>
-      <p>La continuité signifie qu'il n'y a pas de saut dans les valeurs. La dérivabilité signifie qu'on peut approcher localement la courbe par une droite.</p>
-      <div class="formula">\[ f(a+h)=f(a)+h f'(a)+o(h) \quad (h\to0) \]</div>
-      <div class="warning"><span class="box-title">Ordre logique</span>Une fonction dérivable est continue, mais une fonction continue n'est pas forcément dérivable.</div>
-
-      <h2 id="a3">3. Dérivées et différentielles</h2>
-      <table class="data-table">
-        <tr><th>Règle</th><th>Formule</th></tr>
-        <tr><td>Somme</td><td>\((f+g)'=f'+g'\)</td></tr>
-        <tr><td>Produit</td><td>\((fg)'=f'g+fg'\)</td></tr>
-        <tr><td>Quotient</td><td>\(\left(\frac fg\right)'=\frac{f'g-fg'}{g^2}\)</td></tr>
-        <tr><td>Composition</td><td>\((f\circ g)'=(f'\circ g)\,g'\)</td></tr>
-      </table>
-      <div class="definition">
-        <span class="box-title">Différentielle</span>
-        Si \(y=f(x)\), alors au premier ordre :
-        <div class="formula">\[ \mathrm dy=f'(x)\,\mathrm dx \]</div>
-      </div>
-
-      <h2 id="a4">4. Développements limités</h2>
-      <p>Un développement limité remplace une fonction par un polynôme localement, avec un reste contrôlé.</p>
-      <table class="data-table">
-        <tr><th>Fonction</th><th>DL au voisinage de 0</th></tr>
-        <tr><td>\(e^x\)</td><td>\(1+x+\frac{x^2}{2}+o(x^2)\)</td></tr>
-        <tr><td>\(\ln(1+x)\)</td><td>\(x-\frac{x^2}{2}+o(x^2)\)</td></tr>
-        <tr><td>\(\sin x\)</td><td>\(x-\frac{x^3}{6}+o(x^3)\)</td></tr>
-        <tr><td>\(\cos x\)</td><td>\(1-\frac{x^2}{2}+o(x^2)\)</td></tr>
-        <tr><td>\((1+x)^\alpha\)</td><td>\(1+\alpha x+\frac{\alpha(\alpha-1)}2x^2+o(x^2)\)</td></tr>
-      </table>
-      <div class="method"><span class="box-title">Réflexe</span>Avant de remplacer une fonction par un DL, identifier le petit paramètre : \(x\), \(h\), \(\varepsilon\), \(\theta\), etc.</div>
-    
-
-      <h2 id="math-enrich-analyse">5. Méthodes de résolution en analyse</h2>
-      <div class="method">
-        <span class="box-title">Choisir le bon outil local</span>
-        <table class="data-table">
-          <tr><th>Situation</th><th>Outil</th><th>Justification rigoureuse</th></tr>
-          <tr><td>Comparer deux grandeurs proches de \(0\)</td><td>Équivalent \(f\sim g\)</td><td>Valable dans un quotient ou un produit, pas dans une somme sans précaution.</td></tr>
-          <tr><td>Approximer une fonction près d'un point</td><td>Développement limité</td><td>Le reste \(o(x^n)\) précise l'ordre d'erreur.</td></tr>
-          <tr><td>Linéariser une relation</td><td>Différentielle \(\mathrm dy=f'(x)\mathrm dx\)</td><td>Approximation au premier ordre, valable pour une petite variation.</td></tr>
-          <tr><td>Étudier une variation</td><td>Dérivée et signe</td><td>Le signe de \(f'\) contrôle la monotonie sur un intervalle.</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — approximation du pendule simple</span>
-        <p>L'équation exacte d'un pendule sans frottement est \(\ddot\theta+\frac{g}{\ell}\sin\theta=0\). Pour de petites oscillations, on veut obtenir le modèle linéaire et estimer l'erreur relative.</p>
-        <div class="formula">\[
-        \sin\theta=\theta-\frac{\theta^3}{6}+o(\theta^3)
-        \]</div>
-        <p>Au premier ordre, \(\sin\theta\simeq\theta\), donc :</p>
-        <div class="formula">\[
-        \ddot\theta+\frac{g}{\ell}\theta=0,\qquad
-        \omega_0=\sqrt{\frac{g}{\ell}},\qquad
-        T_0=2\pi\sqrt{\frac{\ell}{g}}
-        \]</div>
-        <p>L'erreur relative commise sur \(\sin\theta\) est approximativement \(\frac{\theta^2}{6}\). Pour \(\theta=0{,}10\,\mathrm{rad}\), elle vaut \(\frac{0{,}10^2}{6}\simeq1{,}7\times10^{-3}\), soit \(0{,}17\,\%\).</p>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-eqdiff">
-  <div class="layout">
-    <aside class="toc"><strong>Éq. diff</strong><a href="#ed1">Définir</a><a href="#ed2">1er ordre</a><a href="#ed3">2e ordre</a><a href="#ed4">Systèmes</a></aside>
-    <main class="content">
-      <h2 id="ed1">1. Définition mathématique</h2>
-      <p>Une équation différentielle est une équation dont l'inconnue est une fonction et où apparaissent certaines de ses dérivées.</p>
-      <div class="formula">\[ F\left(x,y(x),y'(x),\ldots,y^{(n)}(x)\right)=0 \]</div>
-      <table class="data-table">
-        <tr><th>Vocabulaire</th><th>Signification</th></tr>
-        <tr><td>Ordre</td><td>Ordre de la dérivée la plus élevée.</td></tr>
-        <tr><td>Linéaire</td><td>L'inconnue et ses dérivées apparaissent à la puissance 1, sans produit entre elles.</td></tr>
-        <tr><td>Homogène</td><td>Second membre nul.</td></tr>
-        <tr><td>Condition initiale</td><td>Valeur imposée de la solution et parfois de ses dérivées en un point.</td></tr>
-      </table>
-
-      <h2 id="ed2">2. Équation différentielle linéaire du premier ordre</h2>
-      <div class="theorem">
-        <span class="box-title">Forme générale</span>
-        <div class="formula">\[ y'(x)+a(x)y(x)=b(x) \]</div>
-      </div>
-      <div class="theorem">
-        <span class="box-title">Cas à coefficients constants</span>
-        Pour \(y'+ay=b\), avec \(a\ne0\) et \(b\) constant :
-        <div class="formula">\[ y(x)=\frac{b}{a}+\left(y(x_0)-\frac{b}{a}\right)e^{-a(x-x_0)} \]</div>
-      </div>
-      <div class="method"><span class="box-title">Structure</span>Solution générale = solution particulière + solution générale de l'équation homogène.</div>
-
-      <h2 id="ed3">3. Équation différentielle linéaire du second ordre</h2>
-      <p>Pour une équation homogène à coefficients constants :</p>
-      <div class="formula">\[ ay''+by'+cy=0,\qquad a\ne0 \]</div>
-      <p>On résout l'équation caractéristique :</p>
-      <div class="formula">\[ ar^2+br+c=0 \]</div>
-      <table class="data-table">
-        <tr><th>Discriminant</th><th>Racines</th><th>Forme de la solution</th></tr>
-        <tr><td>\(\Delta>0\)</td><td>\(r_1,r_2\) réelles distinctes</td><td>\(y=Ae^{r_1x}+Be^{r_2x}\)</td></tr>
-        <tr><td>\(\Delta=0\)</td><td>\(r\) double</td><td>\(y=(A+Bx)e^{rx}\)</td></tr>
-        <tr><td>\(\Delta<0\)</td><td>\(\alpha\pm i\beta\)</td><td>\(y=e^{\alpha x}(A\cos\beta x+B\sin\beta x)\)</td></tr>
-      </table>
-
-      <h2 id="ed4">4. Systèmes différentiels linéaires</h2>
-      <p>Un système différentiel regroupe plusieurs fonctions inconnues dans un vecteur.</p>
-      <div class="formula">\[ X'(t)=AX(t)+B(t),\qquad X(t)=\begin{pmatrix}x_1(t)\\x_2(t)\\\vdots\\x_n(t)\end{pmatrix} \]</div>
-      <p>Les valeurs propres de \(A\) décrivent les directions privilégiées d'évolution du système.</p>
-    
-
-      <h2 id="math-enrich-eqdiff">5. Méthodes de résolution à connaître</h2>
-      <div class="method">
-        <span class="box-title">Catalogue raisonné</span>
-        <table class="data-table">
-          <tr><th>Forme</th><th>Méthode</th><th>Solution type</th></tr>
-          <tr><td>\(y'+a(x)y=b(x)\)</td><td>Facteur intégrant</td><td>\(\mu(x)=e^{\int a(x)\,\mathrm dx}\), puis \((\mu y)'=\mu b\).</td></tr>
-          <tr><td>\(y'+ay=b\)</td><td>Solution particulière constante + homogène</td><td>\(y=\frac{b}{a}+Ce^{-ax}\), si \(a\ne0\).</td></tr>
-          <tr><td>\(ay''+by'+cy=0\)</td><td>Équation caractéristique</td><td>Racines de \(ar^2+br+c=0\).</td></tr>
-          <tr><td>\(ay''+by'+cy=A\cos(\omega t)\)</td><td>Réponse complexe</td><td>On cherche \(\underline y e^{j\omega t}\), puis on prend la partie réelle.</td></tr>
-          <tr><td>\(X'=AX\)</td><td>Diagonalisation si possible</td><td>Si \(A=PDP^{-1}\), alors \(X(t)=Pe^{Dt}P^{-1}X(0)\).</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — charge d'un condensateur</span>
-        <p>Dans un circuit \(RC\) soumis à un échelon \(E\), la tension \(u_C(t)\) vérifie :</p>
-        <div class="formula">\[
-        RC\frac{\mathrm du_C}{\mathrm dt}+u_C=E,\qquad u_C(0)=0
-        \]</div>
-        <p>On met sous forme canonique :</p>
-        <div class="formula">\[
-        u_C'+\frac{1}{RC}u_C=\frac{E}{RC}
-        \]</div>
-        <p>La solution particulière constante est \(u_p=E\), et la solution homogène est \(u_h=Ke^{-t/(RC)}\). Donc :</p>
-        <div class="formula">\[
-        u_C(t)=E+Ke^{-t/(RC)}
-        \]</div>
-        <p>La condition initiale \(u_C(0)=0\) donne \(K=-E\). Finalement :</p>
-        <div class="formula">\[
-        \boxed{u_C(t)=E\left(1-e^{-t/(RC)}\right)}
-        \]</div>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-complexes">
-  <div class="layout">
-    <aside class="toc"><strong>Complexes</strong><a href="#c1">Définir</a><a href="#c2">Module</a><a href="#c3">Euler</a><a href="#c4">Équations</a></aside>
-    <main class="content">
-      <h2 id="c1">1. Définition et formes d'un complexe</h2>
-      <p>Un nombre complexe est un nombre \(z=a+ib\), où \(a,b\in\mathbb R\) et \(i^2=-1\). Dans certains cours, l'unité imaginaire peut aussi être notée \(j\) ; mathématiquement, le rôle est le même.</p>
-      <div class="formula">\[ z=a+ib=r(\cos\theta+i\sin\theta)=re^{i\theta} \]</div>
-      <table class="data-table">
-        <tr><th>Symbole</th><th>Nom mathématique</th></tr>
-        <tr><td>\(\Re(z)=a\)</td><td>Partie réelle.</td></tr>
-        <tr><td>\(\Im(z)=b\)</td><td>Partie imaginaire.</td></tr>
-        <tr><td>\(\bar z=a-ib\)</td><td>Conjugué.</td></tr>
-        <tr><td>\(|z|=\sqrt{a^2+b^2}\)</td><td>Module.</td></tr>
-        <tr><td>\(\arg(z)=\theta\)</td><td>Argument, défini modulo \(2\pi\).</td></tr>
-      </table>
-
-      <h2 id="c2">2. Calculs avec module et argument</h2>
-      <div class="formula">\[ |zz'|=|z|\,|z'|,\qquad \arg(zz')=\arg z+\arg z'\quad [2\pi] \]</div>
-      <div class="formula">\[ z\bar z=|z|^2,\qquad \frac{1}{z}=\frac{\bar z}{|z|^2}\quad (z\ne0) \]</div>
-      <div class="method"><span class="box-title">Choix de forme</span>La forme algébrique est pratique pour additionner. La forme exponentielle est pratique pour multiplier, diviser et gérer les phases.</div>
-
-      <h2 id="c3">3. Formules d'Euler et trigonométrie</h2>
-      <div class="formula">\[ e^{i\theta}=\cos\theta+i\sin\theta \]</div>
-      <div class="formula">\[ \cos\theta=\frac{e^{i\theta}+e^{-i\theta}}2,\qquad \sin\theta=\frac{e^{i\theta}-e^{-i\theta}}{2i} \]</div>
-      <p>Ces formules permettent de transformer des calculs trigonométriques en calculs exponentiels.</p>
-
-      <h2 id="c4">4. Équations complexes simples</h2>
-      <table class="data-table">
-        <tr><th>Équation</th><th>Idée</th></tr>
-        <tr><td>\(z^2=a\)</td><td>Écrire \(a\) sous forme exponentielle et prendre deux arguments séparés de \(\pi\).</td></tr>
-        <tr><td>\(|z-z_0|=R\)</td><td>Cercle de centre \(z_0\) et rayon \(R\).</td></tr>
-        <tr><td>\(\arg(z-z_0)=\theta\)</td><td>Demi-droite issue de \(z_0\), d'angle \(\theta\).</td></tr>
-      </table>
-    
-
-      <h2 id="math-enrich-complexes">5. Méthodes de résolution avec les complexes</h2>
-      <div class="method">
-        <span class="box-title">Passer de la forme réelle à la forme complexe</span>
-        <table class="data-table">
-          <tr><th>Problème</th><th>Réflexe</th><th>Résultat</th></tr>
-          <tr><td>Somme de sinusoïdes de même pulsation</td><td>Utiliser les amplitudes complexes</td><td>\(x(t)=\Re(\underline X e^{j\omega t})\).</td></tr>
-          <tr><td>Dérivée temporelle</td><td>Multiplier par \(j\omega\)</td><td>\(\frac{\mathrm d}{\mathrm dt}\leftrightarrow j\omega\).</td></tr>
-          <tr><td>Équation linéaire forcée</td><td>Transformer en équation algébrique</td><td>\(\underline X=\frac{\underline F}{Z(\omega)}\).</td></tr>
-          <tr><td>Gain et phase</td><td>Calculer module et argument</td><td>\(G=|H|\), \(\varphi=\arg(H)\).</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — filtre RC passe-bas</span>
-        <p>Pour un circuit \(RC\) série, sortie aux bornes du condensateur :</p>
-        <div class="formula">\[
-        Z_R=R,\qquad Z_C=\frac{1}{jC\omega},\qquad
-        H(j\omega)=\frac{\underline U_C}{\underline E}
-        =\frac{Z_C}{R+Z_C}
-        \]</div>
-        <p>On simplifie en multipliant numérateur et dénominateur par \(jC\omega\) :</p>
-        <div class="formula">\[
-        H(j\omega)=\frac{1}{1+jRC\omega}
-        \]</div>
-        <p>Le gain et la phase valent :</p>
-        <div class="formula">\[
-        |H(j\omega)|=\frac{1}{\sqrt{1+(RC\omega)^2}},
-        \qquad
-        \arg H(j\omega)=-\arctan(RC\omega)
-        \]</div>
-        <p>À la pulsation de coupure \(\omega_c=\frac{1}{RC}\), on obtient \(|H|=\frac{1}{\sqrt2}\) et \(\arg H=-\frac{\pi}{4}\).</p>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-integrales">
-  <div class="layout">
-    <aside class="toc"><strong>Intégrales</strong><a href="#i1">Définir</a><a href="#i2">Primitives</a><a href="#i3">Méthodes</a><a href="#i4">Moyenne</a></aside>
-    <main class="content">
-      <h2 id="i1">1. Intégrale définie</h2>
-      <p>Pour une fonction continue \(f\) sur \([a,b]\), l'intégrale \(\int_a^b f(x)\,\mathrm dx\) représente une somme continue orientée. Mathématiquement, c'est la limite de sommes de rectangles.</p>
-      <div class="formula">\[ \int_a^b f(x)\,\mathrm dx=\lim_{n\to+\infty}\sum_{k=0}^{n-1} f(x_k)\Delta x \]</div>
-      <table class="data-table">
-        <tr><th>Propriété</th><th>Formule</th></tr>
-        <tr><td>Linéarité</td><td>\(\int_a^b(\lambda f+\mu g)=\lambda\int_a^b f+\mu\int_a^b g\)</td></tr>
-        <tr><td>Relation de Chasles</td><td>\(\int_a^b f+\int_b^c f=\int_a^c f\)</td></tr>
-        <tr><td>Inversion des bornes</td><td>\(\int_b^a f=-\int_a^b f\)</td></tr>
-      </table>
-
-      <h2 id="i2">2. Primitives</h2>
-      <div class="definition"><span class="box-title">Définition</span>Une primitive de \(f\) sur \(I\) est une fonction \(F\) telle que \(F'=f\).</div>
-      <div class="formula">\[ \int_a^b f(x)\,\mathrm dx=F(b)-F(a) \]</div>
-      <table class="data-table">
-        <tr><th>Fonction</th><th>Primitive usuelle</th></tr>
-        <tr><td>\(x^n\), \(n\ne-1\)</td><td>\(\frac{x^{n+1}}{n+1}\)</td></tr>
-        <tr><td>\(\frac{1}{x}\)</td><td>\(\ln|x|\)</td></tr>
-        <tr><td>\(e^{ax}\)</td><td>\(\frac{1}{a} e^{ax}\), si \(a\ne0\)</td></tr>
-        <tr><td>\(\cos ax\)</td><td>\(\frac{1}{a}\sin ax\)</td></tr>
-        <tr><td>\(\sin ax\)</td><td>\(-\frac{1}{a}\cos ax\)</td></tr>
-      </table>
-
-      <h2 id="i3">3. Changement de variable et intégration par parties</h2>
-      <div class="formula">\[ \int_{\alpha}^{\beta} f(u(x))u'(x)\,\mathrm dx=\int_{u(\alpha)}^{u(\beta)} f(u)\,\mathrm du \]</div>
-      <div class="formula">\[ \int_a^b u'(x)v(x)\,\mathrm dx=\left[u(x)v(x)\right]_a^b-\int_a^b u(x)v'(x)\,\mathrm dx \]</div>
-      <div class="method"><span class="box-title">Choisir la méthode</span>Changement de variable : quand une fonction composée et sa dérivée apparaissent. Intégration par parties : quand un produit peut être simplifié en dérivant l'un des facteurs.</div>
-
-      <h2 id="i4">4. Valeur moyenne mathématique</h2>
-      <div class="definition">
-        <span class="box-title">Définition</span>
-        Pour une fonction continue sur \([a,b]\) :
-        <div class="formula">\[ \langle f\rangle_{[a,b]}=\frac{1}{b-a}\int_a^b f(x)\,\mathrm dx \]</div>
-      </div>
-    
-
-      <h2 id="math-enrich-integrales">5. Méthodes de résolution d'intégrales</h2>
-      <div class="method">
-        <span class="box-title">Arbre de décision</span>
-        <table class="data-table">
-          <tr><th>Forme de l'intégrale</th><th>Méthode privilégiée</th><th>Indice de reconnaissance</th></tr>
-          <tr><td>\(\int f'(x)g(f(x))\,\mathrm dx\)</td><td>Changement de variable</td><td>Une fonction composée et sa dérivée apparaissent.</td></tr>
-          <tr><td>\(\int u'(x)v(x)\,\mathrm dx\)</td><td>Intégration par parties</td><td>Un facteur se simplifie quand on le dérive.</td></tr>
-          <tr><td>Fonction paire ou impaire</td><td>Symétrie</td><td>Intervalle centré en \(0\).</td></tr>
-          <tr><td>Intégrale dépendant d'un paramètre</td><td>Dérivation sous le signe intégral, si autorisée</td><td>Un paramètre intervient dans l'intégrande.</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — travail d'un ressort</span>
-        <p>Une force de rappel élastique vaut \(\vec F(x)=-kx\,\vec e_x\). Le travail de l'opérateur extérieur qui étire quasi-statiquement le ressort de \(0\) à \(a\) est :</p>
-        <div class="formula">\[
-        W_{\mathrm{ext}}=\int_0^a kx\,\mathrm dx
-        =k\left[\frac{x^2}{2}\right]_0^a
-        =\frac{1}{2}ka^2
-        \]</div>
-        <p>La grandeur obtenue est une énergie : \(k\) s'exprime en \(\mathrm{N.m^{-1}}\), \(a^2\) en \(\mathrm{m^2}\), donc \(ka^2\) en \(\mathrm{N.m}=\mathrm J\).</p>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — cinétique chimique d'ordre 1</span>
-        <p>Si \(\frac{\mathrm d C}{\mathrm dt}=-kC\), avec \(C(0)=C_0>0\), on sépare les variables :</p>
-        <div class="formula">\[
-        \frac{1}{C}\,\mathrm dC=-k\,\mathrm dt
-        \quad\Longrightarrow\quad
-        \int_{C_0}^{C(t)}\frac{1}{C}\,\mathrm dC=-\int_0^t k\,\mathrm dt
-        \]</div>
-        <div class="formula">\[
-        \ln\left(\frac{C(t)}{C_0}\right)=-kt
-        \quad\Longrightarrow\quad
-        \boxed{C(t)=C_0e^{-kt}}
-        \]</div>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-matrices">
-  <div class="layout">
-    <aside class="toc"><strong>Matrices</strong><a href="#m1">Définir</a><a href="#m2">Calculs</a><a href="#m3">Systèmes</a><a href="#m4">Valeurs propres</a></aside>
-    <main class="content">
-      <h2 id="m1">1. Matrices et dimensions</h2>
-      <p>Une matrice \(A\in\mathcal M_{n,p}(\mathbb R)\) est un tableau de \(n\) lignes et \(p\) colonnes. Le coefficient de la ligne \(i\) et de la colonne \(j\) se note \(a_{ij}\).</p>
-      <div class="formula">\[ A=(a_{ij})_{\substack{1\le i\le n\\1\le j\le p}} \]</div>
-      <table class="data-table">
-        <tr><th>Type</th><th>Notation</th><th>Dimension</th></tr>
-        <tr><td>Vecteur colonne</td><td>\(X\)</td><td>\(n\times1\)</td></tr>
-        <tr><td>Matrice carrée</td><td>\(A\)</td><td>\(n\times n\)</td></tr>
-        <tr><td>Matrice identité</td><td>\(I_n\)</td><td>\(n\times n\)</td></tr>
-        <tr><td>Matrice nulle</td><td>\(0_{n,p}\)</td><td>\(n\times p\)</td></tr>
-      </table>
-
-      <h2 id="m2">2. Addition, produit, inverse</h2>
-      <p>On ne peut additionner que deux matrices de même taille. Le produit \(AB\) existe si le nombre de colonnes de \(A\) est égal au nombre de lignes de \(B\).</p>
-      <div class="formula">\[ (AB)_{ij}=\sum_{k=1}^{p}a_{ik}b_{kj} \]</div>
-      <div class="theorem">
-        <span class="box-title">Inverse 2x2</span>
-        Si \(A=\begin{pmatrix}a&b\\c&d\end{pmatrix}\) et \(ad-bc\ne0\), alors :
-        <div class="formula">\[ A^{-1}=\frac{1}{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix} \]</div>
-      </div>
-
-      <h2 id="m3">3. Systèmes linéaires</h2>
-      <p>Un système linéaire s'écrit sous la forme matricielle :</p>
-      <div class="formula">\[ AX=B \]</div>
-      <table class="data-table">
-        <tr><th>Cas</th><th>Conclusion</th></tr>
-        <tr><td>\(\det A\ne0\)</td><td>Solution unique : \(X=A^{-1}B\).</td></tr>
-        <tr><td>\(\det A=0\)</td><td>Pas de solution ou une infinité de solutions.</td></tr>
-      </table>
-
-      <h2 id="m4">4. Valeurs propres</h2>
-      <div class="definition">
-        <span class="box-title">Définition</span>
-        Un réel ou complexe \(\lambda\) est une valeur propre de \(A\) s'il existe un vecteur non nul \(X\) tel que :
-        <div class="formula">\[ AX=\lambda X \]</div>
-      </div>
-      <p>Les valeurs propres se trouvent avec l'équation caractéristique :</p>
-      <div class="formula">\[ \det(A-\lambda I)=0 \]</div>
-    
-
-      <h2 id="math-enrich-matrices">5. Méthodes de résolution matricielle</h2>
-      <div class="method">
-        <span class="box-title">Choisir entre Gauss, inverse et valeurs propres</span>
-        <table class="data-table">
-          <tr><th>Objectif</th><th>Méthode</th><th>Condition</th></tr>
-          <tr><td>Résoudre \(AX=B\)</td><td>Pivot de Gauss</td><td>Méthode robuste, même si \(A\) n'est pas inversible.</td></tr>
-          <tr><td>Calculer explicitement la solution</td><td>\(X=A^{-1}B\)</td><td>Seulement si \(\det A\ne0\).</td></tr>
-          <tr><td>Étudier une évolution \(X'=AX\)</td><td>Valeurs propres, diagonalisation</td><td>Utile pour découpler les modes.</td></tr>
-          <tr><td>Comprendre une conservation</td><td>Noyau et rang</td><td>Les contraintes linéaires se lisent dans \(\ker A\) ou \(\operatorname{rg}A\).</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — équilibrage d'une réaction chimique</span>
-        <p>Équilibrer la combustion de l'éthane :</p>
-        <div class="formula">\[
-        a\,\mathrm{C_2H_6}+b\,\mathrm{O_2}
-        \longrightarrow c\,\mathrm{CO_2}+d\,\mathrm{H_2O}
-        \]</div>
-        <p>Les bilans atomiques donnent le système :</p>
-        <div class="formula">\[
-        \begin{cases}
-        2a=c\\
-        6a=2d\\
-        2b=2c+d
-        \end{cases}
-        \]</div>
-        <p>On choisit \(a=2\) pour éviter les fractions. Alors \(c=4\), \(d=6\), et \(2b=8+6=14\), donc \(b=7\).</p>
-        <div class="formula">\[
-        \boxed{2\,\mathrm{C_2H_6}+7\,\mathrm{O_2}\longrightarrow4\,\mathrm{CO_2}+6\,\mathrm{H_2O}}
-        \]</div>
-        <p>Mathématiquement, on a résolu un système linéaire homogène à une dimension de liberté, puis choisi le plus petit multiple entier positif.</p>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-applications">
-  <div class="layout">
-    <aside class="toc"><strong>Applications</strong><a href="#p1">Traduire</a><a href="#p2">Élec</a><a href="#p3">Méca</a><a href="#p4">Chimie</a></aside>
-    <main class="content">
-      <h2 id="p1">1. Passer du mathématique au physique</h2>
-      <p>Une relation mathématique devient une relation physique quand chaque symbole reçoit une signification, une unité et un domaine de validité.</p>
-      <table class="data-table">
-        <tr><th>Étape</th><th>Question</th></tr>
-        <tr><td>Variable</td><td>La variable mathématique représente-t-elle le temps, une position, une température, une concentration ?</td></tr>
-        <tr><td>Fonction inconnue</td><td>Quelle grandeur cherche-t-on ? Tension, position, quantité de matière, température ?</td></tr>
-        <tr><td>Paramètres</td><td>Quels nombres sont constants pendant l'étude ?</td></tr>
-        <tr><td>Unités</td><td>Chaque terme d'une somme a-t-il la même unité ?</td></tr>
-        <tr><td>Limites</td><td>Le résultat est-il cohérent quand un paramètre devient très petit ou très grand ?</td></tr>
-      </table>
-
-      <h2 id="p2">2. Électricité : équation différentielle du premier ordre</h2>
-      <div class="example">
-        <span class="box-title">RC série</span>
-        Math pur : \(y'+ay=b\). Application : \(u_C\) est l'inconnue, \(t\) est la variable, \(R\) et \(C\) sont des paramètres positifs.
-        <div class="formula">\[ RC\frac{\mathrm du_C}{\mathrm dt}+u_C=E \]</div>
-      </div>
-      <table class="data-table">
-        <tr><th>Symbole physique</th><th>Signification</th><th>Unité</th></tr>
-        <tr><td>\(u_C(t)\)</td><td>Tension aux bornes du condensateur.</td><td>V</td></tr>
-        <tr><td>\(R\)</td><td>Résistance.</td><td>\(\Omega\)</td></tr>
-        <tr><td>\(C\)</td><td>Capacité.</td><td>F</td></tr>
-        <tr><td>\(E\)</td><td>Tension imposée par la source.</td><td>V</td></tr>
-        <tr><td>\(RC\)</td><td>Constante de temps.</td><td>s</td></tr>
-      </table>
-
-      <h2 id="p3">3. Mécanique : second ordre</h2>
-      <div class="example">
-        <span class="box-title">Oscillateur amorti</span>
-        Math pur : \(ay''+by'+cy=f(t)\). Application mécanique :
-        <div class="formula">\[ m\ddot x+\alpha \dot x+kx=F(t) \]</div>
-      </div>
-      <p>Ici \(x(t)\) est une position en mètre, \(m\) une masse en kilogramme, \(\alpha\) un coefficient de frottement en kg.s\(^{-1}\), \(k\) une raideur en N.m\(^{-1}\), et \(F(t)\) une force en newton.</p>
-
-      <h2 id="p4">4. Chimie : intégrales, dérivées et systèmes</h2>
-      <div class="example">
-        <span class="box-title">Cinétique</span>
-        Une loi du type \(\frac{\mathrm d[A]}{\mathrm dt}=-k[A]\) est une équation différentielle du premier ordre. Mathématiquement, l'inconnue est une fonction positive du temps.
-      </div>
-      <div class="example">
-        <span class="box-title">Bilans</span>
-        Les matrices apparaissent quand plusieurs espèces ou plusieurs équations de conservation sont couplées. La résolution mathématique est \(AX=B\), mais chaque ligne représente une contrainte chimique.
-      </div>
-    
-
-      <h2 id="math-enrich-applications">5. Applications résolues avec choix de méthode</h2>
-      <div class="method">
-        <span class="box-title">Démarche PCSI complète</span>
-        <p>Une application sérieuse ne commence pas par une formule : elle commence par le type mathématique du problème. On choisit ensuite l'outil minimal, puis on revient aux unités et au sens physique ou chimique.</p>
-        <table class="data-table">
-          <tr><th>Indice dans l'énoncé</th><th>Outil mathématique</th><th>Contrôle final</th></tr>
-          <tr><td>Évolution temporelle avec dérivée</td><td>Équation différentielle</td><td>Condition initiale et limite \(t\to+\infty\).</td></tr>
-          <tr><td>Régime sinusoïdal forcé</td><td>Complexes</td><td>Module, phase, limites basse et haute fréquence.</td></tr>
-          <tr><td>Bilan cumulé ou moyenne</td><td>Intégrale</td><td>Unité de la grandeur intégrée.</td></tr>
-          <tr><td>Plusieurs inconnues couplées</td><td>Matrice ou système linéaire</td><td>Rang, déterminant, cohérence des contraintes.</td></tr>
-        </table>
-      </div>
-      <div class="example">
-        <span class="box-title">Application résolue — dose reçue pendant une perfusion</span>
-        <p>Un modèle simple de concentration \(C(t)\) vérifie \(C'(t)+kC(t)=r\), avec \(C(0)=0\), \(k>0\), \(r>0\). La dose cumulée sur \([0,T]\) est proportionnelle à \(\int_0^T C(t)\,\mathrm dt\).</p>
-        <p>On résout d'abord l'équation différentielle :</p>
-        <div class="formula">\[
-        C(t)=\frac{r}{k}\left(1-e^{-kt}\right)
-        \]</div>
-        <p>Puis on intègre :</p>
-        <div class="formula">\[
-        \int_0^T C(t)\,\mathrm dt
-        =\frac{r}{k}\int_0^T\left(1-e^{-kt}\right)\mathrm dt
-        =\frac{r}{k}\left(T-\frac{1-e^{-kT}}{k}\right)
-        \]</div>
-        <p>La résolution combine deux outils : équation différentielle pour obtenir \(C(t)\), puis intégrale pour obtenir une grandeur cumulée.</p>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-exercices">
-  <div class="layout">
-    <aside class="toc"><strong>Exercices</strong><a href="#ex1">Math pur</a><a href="#ex4">Applications</a></aside>
-    <main class="content">
-      <h2 id="ex1">Exercices mathématiques purs</h2>
-      <div class="exercise-card">
-        <h3>1. Équivalent</h3>
-        <p>Déterminer un équivalent de \(e^{2x}-1\) lorsque \(x\to0\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">On sait que \(e^u-1\sim u\) quand \(u\to0\). Avec \(u=2x\), on obtient \(e^{2x}-1\sim2x\).</div>
-      </div>
-      <div class="exercise-card">
-        <h3>2. Premier ordre</h3>
-        <p>Résoudre \(y'+3y=6\) avec \(y(0)=1\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">La valeur limite est \(6/3=2\). Donc \(y(t)=2+(1-2)e^{-3t}=2-e^{-3t}\).</div>
-      </div>
-      <div class="exercise-card">
-        <h3>3. Matrice</h3>
-        <p>Résoudre \(\begin{cases}x+y=3\\2x-y=0\end{cases}\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">De \(2x-y=0\), on tire \(y=2x\). Donc \(3x=3\), ainsi \(x=1\) et \(y=2\).</div>
-      </div>
-
-      <h2 id="ex4">Exercices d'application physique</h2>
-      <div class="exercise-card">
-        <h3>4. Traduire une équation RC</h3>
-        <p>Dans \(RCu_C'+u_C=E\), identifier l'inconnue, la variable, les paramètres et la constante de temps.</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">L'inconnue est la fonction \(u_C(t)\). La variable est \(t\). Les paramètres sont \(R,C,E\). La constante de temps est \(\tau=RC\).</div>
-      </div>
-      <div class="exercise-card">
-        <h3>5. Module complexe</h3>
-        <p>Pour \(H(j\omega)=\frac{1}{1+jRC\omega}\), calculer \(|H|\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">\(|1+jRC\omega|=\sqrt{1+(RC\omega)^2}\), donc \(|H|=\frac{1}{\sqrt{1+(RC\omega)^2}}\).</div>
-      </div>
-    
-
-      <h2 id="math-enrich-exercices">Applications guidées supplémentaires</h2>
-      <div class="exercise-card">
-        <h3>6. Équation différentielle et limite physique</h3>
-        <p>Résoudre \(T'(t)+\frac{1}{\tau}T(t)=\frac{1}{\tau}T_{\mathrm{ext}}\), avec \(T(0)=T_0\), puis interpréter la limite.</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">
-          La solution particulière constante est \(T_{\mathrm{ext}}\). La solution homogène est \(Ke^{-t/\tau}\). Donc \(T(t)=T_{\mathrm{ext}}+Ke^{-t/\tau}\). Avec \(T(0)=T_0\), \(K=T_0-T_{\mathrm{ext}}\). Ainsi :
-          \[
-          \boxed{T(t)=T_{\mathrm{ext}}+\left(T_0-T_{\mathrm{ext}}\right)e^{-t/\tau}}
-          \]
-          et \(\lim_{t\to+\infty}T(t)=T_{\mathrm{ext}}\).
-        </div>
-      </div>
-      <div class="exercise-card">
-        <h3>7. Complexes en régime sinusoïdal</h3>
-        <p>Pour \(H(j\omega)=\frac{j\omega\tau}{1+j\omega\tau}\), calculer \(|H|\) et \(\arg H\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">
-          \[
-          |H|=\frac{|j\omega\tau|}{|1+j\omega\tau|}
-          =\frac{\omega\tau}{\sqrt{1+(\omega\tau)^2}}
-          \]
-          et
-          \[
-          \arg H=\arg(j\omega\tau)-\arg(1+j\omega\tau)
-          =\frac{\pi}{2}-\arctan(\omega\tau).
-          \]
-        </div>
-      </div>
-      <div class="exercise-card">
-        <h3>8. Intégrale et énergie</h3>
-        <p>Une puissance varie selon \(P(t)=P_0e^{-t/\tau}\). Calculer l'énergie totale reçue entre \(0\) et \(+\infty\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">
-          \[
-          E=\int_0^{+\infty}P_0e^{-t/\tau}\,\mathrm dt
-          =P_0\left[-\tau e^{-t/\tau}\right]_0^{+\infty}
-          =P_0\tau.
-          \]
-          L'unité est \(\mathrm W\cdot\mathrm s=\mathrm J\).
-        </div>
-      </div>
-      <div class="exercise-card">
-        <h3>9. Matrice et bilan</h3>
-        <p>Résoudre \(\begin{pmatrix}2&1\\1&-1\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}5\\1\end{pmatrix}\).</p>
-        <button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button>
-        <div class="solution">
-          Le système est \(2x+y=5\), \(x-y=1\). La seconde équation donne \(y=x-1\). On remplace :
-          \(2x+x-1=5\), donc \(3x=6\), \(x=2\), puis \(y=1\). Ainsi
-          \[
-          X=\begin{pmatrix}2\\1\end{pmatrix}.
-          \]
-        </div>
-      </div>
-
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-chatbot">
-  <div class="layout">
-    <aside class="toc"><strong>Assistant externe</strong><a href="#chat">Question libre</a><a href="#chat">Assistant</a></aside>
-    <main class="content">
-      <h2 id="chat">Chatbot externe — Outils mathématiques PCSI</h2>
-      <p class="chat-explain"><strong>Version simple.</strong> Cette page ne contient pas une IA enfermée dans le fichier HTML. Elle prépare une question propre, avec le contexte du chapitre, puis ouvre un assistant externe comme ChatGPT, Claude ou Perplexity. L'étudiant écrit sa question, clique sur un bouton, et l'assistant externe peut répondre à tout : cours, exercice, démonstration, approfondissement.</p>
-      <div class="chat-card">
-        <div class="chat-log" id="chatLog"></div>
-        <div class="chat-input-row">
-          <input id="chatInput" type="text" placeholder="Pose n'importe quelle question : cours, exercice, démonstration, unité, approfondissement..." onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="small-btn" onclick="sendChat()">Préparer</button>
-        </div>
-      </div>
-      <div class="grid-2" style="margin-top:14px">
-        <button class="small-btn" onclick="openExternalAssistant('chatgpt')">Ouvrir ChatGPT</button>
-        <button class="small-btn" onclick="openExternalAssistant('claude')">Ouvrir Claude</button>
-        <button class="small-btn" onclick="openExternalAssistant('perplexity')">Ouvrir Perplexity</button>
-        <button class="small-btn" onclick="copyExternalPrompt()">Copier le prompt</button>
-      </div>
-      <div class="chat-explain"><strong>Pour le professeur.</strong> Le bouton “Copier le prompt” suffit pour un site statique. Une intégration directe dans la page demanderait plus tard un vrai serveur/API ; cette option technique n'est volontairement plus affichée aux élèves.</div>
-    </main>
-  </div>
-</section>
-
-<section class="tab-panel" id="tab-synthese">
-  <div class="layout">
-    <aside class="toc"><strong>Synthèse</strong><a href="#s1">Organisation</a><a href="#s2">Méthode</a></aside>
-    <main class="content">
-<!-- PCSI LOUCHART SYNTHESE -->
-<div class="summary-card" id="programme-check">
-  <span class="box-title">Checklist programme PCSI</span>
-  <p><strong>Bloc de rattachement.</strong> Guide PCSI : consolider les outils de lycée puis les transformer en langage de calcul de prépa.</p>
-  <ul>
-    <li><strong>Notation.</strong> Définir chaque symbole avant de calculer : fonction, variable, paramètre, unité.</li><li><strong>Méthode.</strong> Choisir l’outil adapté : équation différentielle, complexe, intégrale, matrice ou développement limité.</li><li><strong>Contrôle.</strong> Tester homogénéité, signe, limite, ordre de grandeur et domaine de validité.</li>
-  </ul>
-  <p><strong>Relation à réciter avec sens.</strong> \(\mathrm{modèle}\ \longrightarrow\ \mathrm{équation}\ \longrightarrow\ \mathrm{solution}\ \longrightarrow\ \mathrm{contrôle}\)</p>
-</div>
-<!-- /PCSI LOUCHART SYNTHESE -->
-
-      <h2 id="s1">Organisation du chapitre</h2>
-      <div class="map">
-        <div><strong>Math pur</strong><p>On définit les objets : fonctions, dérivées, intégrales, complexes, matrices.</p></div>
-        <div><strong>Calcul</strong><p>On apprend les méthodes : résoudre, dériver, intégrer, diagonaliser, approximer.</p></div>
-        <div><strong>Traduction</strong><p>On associe ensuite chaque symbole à une grandeur physique ou chimique.</p></div>
-        <div><strong>Unités</strong><p>Une relation physique exige une cohérence dimensionnelle.</p></div>
-        <div><strong>Limites</strong><p>Les cas extrêmes contrôlent la cohérence du résultat.</p></div>
-        <div><strong>Rédaction</strong><p>Nommer l'inconnue, la variable, les paramètres et les hypothèses.</p></div>
-      </div>
-      <h2 id="s2">Méthode universelle</h2>
-      <div class="summary-card">
-        <p>1. Identifier l'objet mathématique. 2. Écrire la notation mathématique propre. 3. Résoudre ou simplifier. 4. Traduire en grandeurs physiques avec unités. 5. Vérifier dimensions, signes et limites.</p>
-      </div>
-    
-
-      <h2 id="math-enrich-synthese">3. Carte de décision des méthodes</h2>
-      <table class="data-table">
-        <tr><th>Forme rencontrée</th><th>Outil prioritaire</th><th>Sortie attendue</th></tr>
-        <tr><td>\(y'+ay=b\)</td><td>Équation différentielle du premier ordre</td><td>Fonction \(y(t)\) et constante de temps.</td></tr>
-        <tr><td>\(ay''+by'+cy=0\)</td><td>Équation caractéristique</td><td>Régime apériodique, critique ou oscillant.</td></tr>
-        <tr><td>\(e^{j\omega t}\), \(H(j\omega)\)</td><td>Complexes</td><td>Gain, phase, fréquence caractéristique.</td></tr>
-        <tr><td>\(\int_a^b f(x)\,\mathrm dx\)</td><td>Intégrales</td><td>Bilan, aire, énergie, moyenne.</td></tr>
-        <tr><td>\(AX=B\), \(X'=AX\)</td><td>Matrices</td><td>Solution de système, modes propres, couplages.</td></tr>
-      </table>
-      <div class="example">
-        <span class="box-title">Application transversale résolue — deux espèces couplées</span>
-        <p>On considère la transformation réversible \(A\rightleftharpoons B\), avec constantes \(k_1\) et \(k_{-1}\). En notant \(X(t)=\begin{pmatrix}[A](t)\\[B](t)\end{pmatrix}\), le modèle est :</p>
-        <div class="formula">\[
-        X'(t)=
-        \begin{pmatrix}
-        -k_1 & k_{-1}\\
-        k_1 & -k_{-1}
-        \end{pmatrix}X(t)
-        \]</div>
-        <p>La somme \(C_0=[A](t)+[B](t)\) est constante. On résout donc une seule équation pour \([A]\) :</p>
-        <div class="formula">\[
-        [A]'=-k_1[A]+k_{-1}(C_0-[A])
-        =-(k_1+k_{-1})[A]+k_{-1}C_0
-        \]</div>
-        <div class="formula">\[
-        [A](t)=[A]_{\mathrm{eq}}+\left([A](0)-[A]_{\mathrm{eq}}\right)e^{-(k_1+k_{-1})t},
-        \qquad
-        [A]_{\mathrm{eq}}=\frac{k_{-1}}{k_1+k_{-1}}C_0
-        \]</div>
-        <p>Ce seul exemple mobilise matrices, équations différentielles, conservation et limite \(t\to+\infty\).</p>
-      </div>
-
-    </main>
-  </div>
-</section>
 
 <script>
-function showTab(id,btn){
-  document.querySelectorAll('.tab-panel').forEach(function(panel){panel.classList.remove('active');});
-  document.getElementById('tab-'+id).classList.add('active');
-  document.querySelectorAll('.tabs button').forEach(function(button){button.classList.remove('active');});
-  btn.classList.add('active');
-  window.scrollTo({top:document.querySelector('.tabs').offsetTop,behavior:'smooth'});
-  if(id==='chatbot') setTimeout(focusChatInput,50);
-}
-function focusChatInput(){
-  seedChatbot();
-  var input=document.getElementById('chatInput');
-  if(input) input.focus();
-}
-const EXTERNAL_PROMPT_BASE="Tu es un professeur universitaire de mathématiques pour PCSI. Réponds en français avec définitions mathématiques pures, notations, exemples, puis applications physique-chimie si utile. Question étudiant: ";
-function seedChatbot(){
-  var log=document.getElementById('chatLog');
-  if(!log || log.dataset.seeded) return;
-  log.dataset.seeded='1';
-  appendChatMessage('bot','<strong>Assistant externe PCSI-M00.</strong><br>Pose une question libre, puis ouvre un assistant externe, copie le prompt ou interroge ton endpoint configuré.');
-}
-function appendChatMessage(kind,htmlText){
-  var log=document.getElementById('chatLog'); if(!log) return;
-  var div=document.createElement('div');
-  div.className='chat-message '+kind;
-  div.innerHTML=htmlText;
-  log.appendChild(div);
-  log.scrollTop=log.scrollHeight;
-  if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([div]);
-}
-function buildExternalPrompt(){
-  var input=document.getElementById('chatInput');
-  var question=(input && input.value.trim()) || 'Explique-moi ce chapitre avec un niveau PCSI exigeant.';
-  return EXTERNAL_PROMPT_BASE + question;
-}
-function sendChat(){
-  seedChatbot();
-  var input=document.getElementById('chatInput'); if(!input) return;
-  var text=input.value.trim(); if(!text) return;
-  appendChatMessage('user',text.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}));
-  appendChatMessage('bot','Question prête pour assistant externe. Utilise les boutons ChatGPT, Claude, Perplexity, Copier le prompt, ou configure un endpoint.');
-}
-function openExternalAssistant(kind){
-  var prompt=encodeURIComponent(buildExternalPrompt());
-  var urls={chatgpt:'https://chat.openai.com/',claude:'https://claude.ai/new',perplexity:'https://www.perplexity.ai/search?q='+prompt};
-  window.open(urls[kind]||urls.chatgpt,'_blank','noopener,noreferrer');
-}
-async function copyExternalPrompt(){
-  var prompt=buildExternalPrompt();
-  try{await navigator.clipboard.writeText(prompt);appendChatMessage('bot','Prompt copié. Colle-le dans l’assistant externe de ton choix.');}
-  catch(e){appendChatMessage('bot','Copie manuelle :<br><pre>'+prompt.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];})+'</pre>');}
-}
-async function callExternalEndpoint(){
-  var endpoint=localStorage.getItem('physichem_ai_endpoint');
-  if(!endpoint){appendChatMessage('bot',"Aucun assistant integre n'est configure sur cette page statique. Utilise les boutons externes ou copie le prompt.");return;}
-  appendChatMessage('bot','Interrogation de l’endpoint externe...');
-  try{
-    var res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chapter:'PCSI-M00',question:document.getElementById('chatInput').value,prompt:buildExternalPrompt()})});
-    var json=await res.json();
-    appendChatMessage('bot',json.answer||json.message||'Réponse reçue, mais format inattendu.');
-  }catch(e){appendChatMessage('bot','Erreur endpoint : '+e.message);}
-}
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-function toggleSolution(btn){
-  var sol=btn.nextElementSibling;
-  sol.classList.toggle('open');
-  btn.textContent=sol.classList.contains('open')?'Masquer la correction':'Voir la correction';
-  if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([sol]);
-}
-function toggleTheme(){
-  var cur=document.documentElement.getAttribute('data-theme')||'light';
-  var next=cur==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  localStorage.setItem('physichem_pcsi_math_theme',next);
-  document.getElementById('themeBtn').textContent=next==='dark'?'Mode clair':'Mode sombre';
-}
-function updateProgress(){
-  var max=document.documentElement.scrollHeight-window.innerHeight;
-  var pct=max>0?Math.round(window.scrollY/max*100):0;
-  document.getElementById('progressTop').style.width=pct+'%';
-  document.getElementById('pctLabel').textContent=pct+'%';
-}
-window.addEventListener('scroll',updateProgress);
-(function init(){
-  var theme=localStorage.getItem('physichem_pcsi_math_theme')||'light';
-  document.documentElement.setAttribute('data-theme',theme);
-  document.getElementById('themeBtn').textContent=theme==='dark'?'Mode clair':'Mode sombre';
-  updateProgress();
-})();
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
+  });
+});
 </script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

@@ -1,839 +1,181 @@
-﻿<!DOCTYPE html>
-<html lang="fr" data-theme="light">
+
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Terminale Spé · Chapitre 5 — La radioactivité | PhysiChem</title>
-<meta name="description" content="Cours Terminale spécialité physique-chimie : radioactivité, noyaux, désintégrations, activité, demi-vie, datation, énergie nucléaire, ECE et ouverture PCSI.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['\\(','\\)'], ['$', '$']],
-    displayMath: [['$$','$$'], ['\\[','\\]']],
-    processEscapes: true
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
-};
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
+/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --bg:#f6f8fb;--bg2:#edf2f7;--panel:#fff;--panel2:#fbfcfe;--line:#d8e0ea;--line2:#c7d2df;
-  --text:#111827;--muted:#607084;--faint:#8a98aa;--blue:#0f766e;--blue2:#0369a1;--blue3:#e6f6f3;
-  --green:#15803d;--green2:#ecfdf3;--amber:#c2410c;--amber2:#fff0e8;--red:#b42318;--red2:#fff0ef;
-  --mauve:#4f46e5;--mauve2:#eeedff;--cyan:#0369a1;--cyan2:#e8f5ff;
-  --shadow:0 18px 38px rgba(17,24,39,.08);--shadow2:0 10px 24px rgba(17,24,39,.065);
-  --side:286px;--content:1280px;
+  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
+  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --side:286px;--content:1280px;--rad:8px;
 }
-[data-theme="dark"]{
-  --bg:#0b1018;--bg2:#111827;--panel:#151c28;--panel2:#182233;--line:#2a3444;--line2:#39475c;
-  --text:#f3f7fb;--muted:#a9b6c7;--faint:#7f8da1;--blue:#5eead4;--blue2:#7dd3fc;--blue3:rgba(20,184,166,.12);
-  --green:#86efac;--green2:rgba(34,197,94,.12);--amber:#fb923c;--amber2:rgba(251,146,60,.12);
-  --red:#fca5a5;--red2:rgba(248,113,113,.12);--mauve:#a5b4fc;--mauve2:rgba(99,102,241,.16);
-  --cyan:#7dd3fc;--cyan2:rgba(14,165,233,.13);--shadow:0 18px 44px rgba(0,0,0,.28);--shadow2:0 10px 30px rgba(0,0,0,.24);
-}
-*{box-sizing:border-box;letter-spacing:0}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.62;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--blue);color:white;padding:10px 16px;border-radius:0 0 8px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(15,23,42,.78)}.brand{display:flex;align-items:center;gap:10px;margin:2px 0 18px}.brand-mark{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;color:white;box-shadow:var(--shadow);font-weight:800}.brand h1{font-size:17px;line-height:1.1;margin:0;font-weight:800}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow);margin-bottom:14px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);color:var(--blue);background:var(--blue3);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800}.micro{color:var(--faint);font-size:11px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:0;color:var(--faint);font-weight:800;margin:18px 0 8px}.tablist{display:grid;gap:7px}.tab{width:100%;display:grid;grid-template-columns:30px 1fr;align-items:center;gap:9px;border-radius:8px;padding:10px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-weight:780;font-size:13px;text-align:left;transition:.18s}.tab-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);font-size:14px;line-height:1}.tab:hover{border-color:var(--line);background:var(--panel);color:var(--text)}.tab.active{border-color:rgba(15,118,110,.35);background:var(--blue3);color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.tools{display:flex;gap:8px;margin-top:14px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:8px;display:grid;place-items:center;cursor:pointer}.icon-btn:hover{border-color:var(--blue);color:var(--blue)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(246,248,251,.84);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}[data-theme="dark"] .topbar{background:rgba(11,16,24,.84)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--blue);font-weight:760}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn,.primary,.secondary{border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:800}.pill-btn,.secondary{border:1px solid var(--line);background:var(--panel);color:var(--text)}.primary{background:var(--text);color:var(--panel);border:1px solid var(--text)}.pill-btn:hover,.secondary:hover{border-color:var(--blue);color:var(--blue)}.page{max-width:var(--content);margin:0 auto;padding:22px}.hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(340px,.96fr);gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;min-height:214px}.hero-card:before{content:"";position:absolute;right:-120px;top:-120px;width:310px;height:310px;background:radial-gradient(circle,rgba(15,118,110,.09),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:0}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--blue)}.hero h2{font-size:clamp(31px,4.2vw,42px);line-height:1.02;letter-spacing:0;margin:10px 0 12px;font-weight:800}.hero h2 span{color:var(--blue)}.hero-copy{font-size:15px;color:var(--muted);max-width:72ch;margin:0}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.metric{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px}.metric b{display:block;font-size:20px;color:var(--text);line-height:1}.metric span{font-size:12px;color:var(--muted)}.real-hero-img{height:100%;max-height:214px;min-height:214px;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--line);background:var(--bg2);box-shadow:var(--shadow)}.real-hero-img img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.96) contrast(1.04)}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow)}.useful-card small{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;margin-bottom:8px;background:var(--bg);color:var(--muted)}.useful-card b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}.useful-card span{display:block;color:var(--muted);font-size:13px}.mission-1{background:linear-gradient(180deg,var(--blue3),var(--panel))}.mission-2{background:linear-gradient(180deg,var(--amber2),var(--panel))}.mission-3{background:linear-gradient(180deg,var(--mauve2),var(--panel))}.panel{display:none;scroll-margin-top:78px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}.content-card h3{margin:0 0 12px;font-size:25px;letter-spacing:0;font-weight:800}.content-card p{color:var(--muted)}.course-grid{display:grid;grid-template-columns:158px minmax(0,1fr);gap:24px}.toc{position:sticky;top:78px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:0;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:flex;align-items:center;gap:8px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 9px;font-weight:760;font-size:12px;color:var(--muted)}.toc a:nth-of-type(1){background:var(--blue3);color:var(--blue)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--mauve2);color:var(--mauve)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.toc a:nth-of-type(6){background:var(--red2);color:var(--red)}.toc a.active{box-shadow:inset 4px 0 0 currentColor;border-color:currentColor}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--blue);letter-spacing:0;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:800;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.box{border-radius:0 8px 8px 0;padding:16px 18px;margin:18px 0;border-left:4px solid;background:var(--panel);box-shadow:var(--shadow2);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.box-label{font-size:10px;font-weight:800;letter-spacing:0;text-transform:uppercase;margin-bottom:7px}.box.def{border-left-color:var(--blue)}.box.def .box-label{color:var(--blue)}.box.prop{border-left-color:var(--mauve)}.box.prop .box-label{color:var(--mauve)}.box.warn{border-left-color:var(--amber)}.box.warn .box-label{color:var(--amber)}.box.ok{border-left-color:var(--green)}.box.ok .box-label{color:var(--green)}.formula{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin:14px 0;text-align:center;overflow-x:auto;font-size:17px}.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line);margin:18px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:780}.card p,.card li{font-size:13px;color:var(--muted)}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.chip.blue{background:var(--blue3);color:var(--blue)}.chip.green{background:var(--green2);color:var(--green)}.chip.amber{background:var(--amber2);color:var(--amber)}.chip.mauve{background:var(--mauve2);color:var(--mauve)}details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 14px;margin:10px 0}summary{cursor:pointer;font-weight:800;color:var(--text)}details p{margin-bottom:0}.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:13px}.step b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue);color:white;font-size:12px;margin-bottom:8px}.step span{display:block;font-weight:800;font-size:13px}.step small{display:block;color:var(--muted);font-size:11.5px;line-height:1.45;margin-top:4px}.exercise-list{display:grid;gap:12px}.exercise-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}.exercise-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.exercise-title h4{margin:0;font-size:15px;font-weight:780}.exercise-title small{color:var(--muted);white-space:nowrap}.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.flash-layout{display:grid;grid-template-columns:1fr 290px;gap:16px}.flash-card{height:270px;border-radius:8px;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel),var(--panel2));box-shadow:var(--shadow);display:grid;place-items:center;text-align:center;padding:28px;cursor:pointer;position:relative}.flash-card h3{font-size:23px;letter-spacing:0;margin:0}.flash-card p{color:var(--muted)}.flash-card .hint{position:absolute;bottom:14px;color:var(--faint);font-size:12px}.answers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.quiz-ai-grid{display:grid;grid-template-columns:minmax(300px,.95fr) minmax(340px,1.05fr);gap:16px;align-items:start}.quiz-card,.ai-helper-card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:18px;box-shadow:var(--shadow2)}.quiz-card h4,.ai-helper-card h4{margin:0 0 6px;font-size:18px;letter-spacing:0}.options{display:grid;gap:9px;margin-top:14px}.option{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:11px 13px;cursor:pointer;text-align:left}.option:hover{border-color:var(--blue)}.option.correct{border-color:var(--green);background:var(--green2);color:var(--green)}.option.wrong{border-color:var(--red);background:var(--red2);color:var(--red)}.ai-choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.ai-choice{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:9px 8px;cursor:pointer;font-weight:800;font-size:12px;color:var(--text)}.ai-choice:hover{border-color:var(--mauve);color:var(--mauve);background:var(--mauve2)}.ai-label{display:block;margin:10px 0 6px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0}.ai-textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);padding:12px 14px;min-height:128px;outline:none}.prompt-box{white-space:pre-wrap;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;line-height:1.6}.mindmap{width:100%;min-height:430px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.mindmap svg{width:100%;height:auto;display:block}.footer-nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.note{font-size:12px;color:var(--faint);margin-top:8px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-.sim-block-title{margin:20px 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0;color:var(--faint);font-weight:800}.phet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}.sim-card-large{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;overflow:hidden;box-shadow:var(--shadow2)}.sim-card-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.sim-card-head>span{font-size:22px}.sim-card-head h4{margin:0;font-size:15px;font-weight:780;color:var(--text)}.sim-card-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}.iframe-wrap{position:relative;width:100%;padding-bottom:62%;background:var(--bg2)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.future-sim-suite{display:grid;gap:18px;margin:18px 0 24px}.future-sim-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:16px 18px;box-shadow:var(--shadow2)}.future-sim-title h4{margin:0;font-size:18px;color:var(--text);font-weight:820}.future-sim-title p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:78ch}.future-badge{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:800;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 30%,transparent);background:var(--cyan2);border-radius:999px;padding:6px 9px;white-space:nowrap}.future-lab-grid{display:grid;grid-template-columns:1fr;gap:18px}.future-lab{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);overflow:hidden}.future-lab-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px 9px;border-bottom:1px solid var(--line)}.future-lab-head h4{margin:0;font-size:15px;color:var(--text);font-weight:820}.future-lab-head p{margin:4px 0 0;font-size:11.5px;color:var(--muted)}.future-lab-body{display:grid;grid-template-columns:minmax(230px,300px) minmax(0,1fr);gap:16px;padding:14px 16px 16px}.future-controls{display:grid;gap:10px;align-content:start}.future-control{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:9px 10px}.future-control label{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;font-weight:780;color:var(--text)}.future-control output{font-family:"IBM Plex Mono",monospace;color:var(--blue);white-space:nowrap;font-size:11px}.future-control input{width:100%;margin-top:9px;appearance:none;height:22px;background:transparent;cursor:pointer}.future-control input::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}.future-control input::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);margin-top:-7px;box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-control input::-moz-range-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan))}.future-control input::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-canvas-wrap{border:1px solid rgba(47,98,136,.16);border-radius:8px;overflow:hidden;background:var(--bg);min-width:0}.future-canvas{display:block;width:100%;height:380px}.future-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.future-metric{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 10px;min-height:56px}.future-metric span{display:block;font-size:9.5px;font-weight:800;letter-spacing:0;text-transform:uppercase;color:var(--faint);margin-bottom:4px}.future-metric b{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--text)}.future-equation{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:10px 12px;margin-top:8px;color:var(--muted);font-size:12px}
-@media(max-width:1100px){.future-lab-body{grid-template-columns:1fr}.future-canvas{height:320px}.app{display:block}.rail{position:relative;height:auto}.tablist{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.course-grid,.cards,.quiz-ai-grid,.useful-strip{grid-template-columns:1fr}.real-hero-img{min-height:230px;max-height:230px}.toc{position:relative;top:auto}.topbar{position:relative}.phet-grid{grid-template-columns:1fr}}
-@media(max-width:720px){.page{padding:14px}.hero h2{font-size:32px}.tablist,.hero-grid,.method-grid,.future-metrics,.ai-choice-row{grid-template-columns:1fr}.top-actions{display:none}.real-hero-img{min-height:200px;max-height:200px}.content-card{padding:16px}.future-sim-title{display:block}.future-badge{display:inline-flex;margin-top:10px}.flash-layout{grid-template-columns:1fr}.iframe-wrap{padding-bottom:76%}}
-@media print{.rail,.topbar,.top-actions,.tools,.useful-strip,.footer-nav,.future-controls{display:none!important}.app{display:block}.page{max-width:100%;padding:0}.panel{display:block!important}.content-card{box-shadow:none;break-inside:avoid}.hero{grid-template-columns:1fr}.real-hero-img{display:none}}
-.key-formula{position:relative}.key-formula::before{content:"★ À retenir";position:absolute;top:-10px;right:12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em;padding:3px 9px;border-radius:999px;animation:kfPulse 2.8s ease-in-out infinite;pointer-events:none}
-@keyframes kfPulse{0%,100%{box-shadow:0 0 0 0 rgba(79,70,229,.45)}55%{box-shadow:0 0 0 7px rgba(79,70,229,0)}}
-#readProgress{height:3px;background:linear-gradient(90deg,var(--blue),var(--mauve));width:0%;border-radius:0 2px 2px 0;transition:width .18s;margin-bottom:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
+p{line-height:1.65;margin-bottom:.75rem}
+
+.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
+  border-right:3px solid var(--accent);}
+.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
+.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
+  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
+.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
+.brand p{font-size:.7rem;color:#94a3b8;margin:0}
+.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
+.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
+.micro{font-size:.68rem;color:#94a3b8}
+.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
+.tablist{display:flex;flex-direction:column;gap:.25rem}
+.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
+  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
+  transition:background .18s,color .18s;width:100%}
+.tab:hover{background:rgba(255,255,255,.07);color:#fff}
+.tab.active{background:var(--accent);color:#fff;font-weight:600}
+.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
+.tab-text{flex:1}
+.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
+.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
+  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
+.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
+.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
+.hero-title span{color:#5eead4}
+.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
+.hero-stats{display:flex;gap:1rem}
+.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
+.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
+
+.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
+  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
+.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
+  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
+.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;font-size:.6rem;font-weight:800}
+
+.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
+  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
+.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
+.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
+
+.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
+.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
+.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
+.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
+.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
+
+.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
+.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
+.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
+.method-acc[open] summary::before{transform:rotate(90deg)}
+.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
+
+.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
+.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
+.data-table tr:nth-child(even) td{background:var(--bg)}
+
+.step-list{list-style:none;counter-reset:step}
+.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
+.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
+  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
+  display:grid;place-items:center;font-size:.75rem;font-weight:700}
+
+/* Utilitaires */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.center{text-align:center}
+.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
+@media (max-width:1024px){.rail{width:240px;min-width:240px}}
+@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Aller au contenu</a>
-<div class="app">
-<aside class="rail" aria-label="Navigation du chapitre">
-  <div class="brand"><div class="brand-mark" aria-hidden="true">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
-  <div class="level-card"><div class="level-row"><span class="badge">Terminale Spé</span><span class="micro">Chap. 05</span></div><div class="progress"><span id="masteryBar"></span></div><div class="micro" style="margin-top:8px"><span id="progressText">0%</span> du chapitre exploré</div></div>
-  <div class="nav-label">Sommaire</div>
-  <nav class="tablist" role="tablist" aria-label="Onglets du chapitre">
-    <button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
-    <button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
-    <button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
-    <button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">▣</span><span class="tab-text">Flashcards</span></button>
-    <button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">◎</span><span class="tab-text">Carte mentale</span></button>
-    <button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">⚙</span><span class="tab-text">Simulations</span></button>
-    <button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✓</span><span class="tab-text">Quiz § Chatbot</span></button>
-    <button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
-    <button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
-  </nav>
-  <div class="tools"><button class="icon-btn" id="themeBtn" title="Thème">◐</button><button class="icon-btn" onclick="window.print()" title="Imprimer">⎙</button><button class="icon-btn" onclick="copyCurrentPrompt()" title="Copier prompt IA">⌘</button></div>
-</aside>
-<main class="main" id="main">
-<div class="topbar"><div class="crumb">Terminale Spé › Physique › <b>La radioactivité</b></div><div class="top-actions"><button class="pill-btn" onclick="switchTab('outils')">Relations clés</button><button class="pill-btn" onclick="switchTab('simulations')">Simuler</button></div></div>
-<div class="page">
-<section class="hero" aria-label="Introduction du chapitre">
-  <div class="hero-card">
-    <div class="eyebrow">Terminale Spé · Chapitre 05</div>
-    <div class="instructor">M Borsali · Enseignant PC · LFC</div>
-    <h2>La <span>radioactivité</span></h2>
-    <p class="hero-copy">Comprendre la radioactivité, c’est relier l’aléatoire microscopique à une loi statistique fiable : noyaux instables, activité, demi-vie, datation, énergie libérée et radioprotection.</p>
-    <div class="hero-grid"><div class="metric"><b>5</b><span>idées nucléaires</span></div><div class="metric"><b>8</b><span>relations utiles</span></div><div class="metric"><b>2</b><span>simulations pleine largeur</span></div></div>
-  </div>
-  <figure class="real-hero-img" aria-label="Traces de particules dans une chambre à brouillard"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Radon_decay_in_a_cloud_chamber.jpg" alt="Traces de particules ionisantes produites par le radon dans une chambre à brouillard"></figure>
-</section>
-<section class="useful-strip" aria-label="Objectifs">
-  <div class="useful-card mission-1"><small>Comprendre</small><b>Du hasard à la loi</b><span>Un noyau isolé est imprévisible ; un grand ensemble de noyaux suit une décroissance exponentielle.</span></div>
-  <div class="useful-card mission-2"><small>Mesurer</small><b>Activité</b><span>L’activité compte les désintégrations par seconde et diminue avec le nombre de noyaux restants.</span></div>
-  <div class="useful-card mission-3"><small>Réussir</small><b>ECE et Bac</b><span>Écrire une équation nucléaire, convertir les temps, exploiter (t_{1/2}), (A=lambda N) et conclure avec unité.</span></div>
-</section>
 
-<section class="panel active" id="tab-cours">
-<div class="content-card">
-<h3>Cours complet</h3>
-<div class="course-grid">
-  <aside class="toc" aria-label="Plan du cours">
-    <div class="toc-title">Plan rapide</div>
-    <a href="#c1">1. Noyau instable</a>
-    <a href="#c2">2. Désintégrations</a>
-    <a href="#c3">3. Loi de décroissance</a>
-    <a href="#c4">4. Activité</a>
-    <a href="#c5">5. Demi-vie et datation</a>
-    <a href="#c6">6. Énergie et protection</a>
-  </aside>
-  <article class="course-body">
-    <h2 id="c1">1. Un noyau instable : hasard microscopique, loi macroscopique</h2>
-    <p>Un noyau radioactif est un noyau instable qui se transforme spontanément en un autre noyau en émettant une particule ou un rayonnement. On ne peut pas prévoir l’instant de désintégration d’un noyau isolé. En revanche, pour un très grand nombre de noyaux identiques, la décroissance devient prévisible : c’est là toute la force du modèle statistique.</p>
-    <div class="box def"><div class="box-label">Notation nucléaire</div><p>Un noyau s’écrit \(\,{}^{A}_{Z}X\,\), où \(Z\) est le nombre de protons, \(A\) le nombre de nucléons, et \(N=A-Z\) le nombre de neutrons. Deux isotopes ont le même \(Z\), mais des nombres de neutrons différents.</p></div>
-    <p>La radioactivité est donc à la fois une histoire de structure du noyau et de probabilité. Cette idée explique pourquoi elle sert à dater des roches, choisir un traceur médical, gérer des déchets ou dimensionner une protection.</p>
-
-    <h2 id="c2">2. Écrire une désintégration nucléaire</h2>
-    <p>Une équation nucléaire se rédige avec deux conservations : conservation du nombre de nucléons \(A\) et conservation de la charge \(Z\). Les désintégrations les plus courantes en Terminale sont \(\alpha\), \(\beta^-\), \(\beta^+\) et \(\gamma\).</p>
-    <div class="table-wrap"><table><thead><tr><th>Type</th><th>Écriture type</th><th>Effet sur \(A\), \(Z\)</th><th>Pénétration</th></tr></thead><tbody>
-      <tr><td>\(\alpha\)</td><td>\(\displaystyle {}^{A}_{Z}X\rightarrow{}^{A-4}_{Z-2}Y+{}^{4}_{2}\mathrm{He}\)</td><td>\(A-4\), \(Z-2\)</td><td>Faible (arrêté par une feuille de papier)</td></tr>
-      <tr><td>\(\beta^-\)</td><td>\(\displaystyle {}^{A}_{Z}X\rightarrow{}^{A}_{Z+1}Y+{}^{0}_{-1}e+\bar\nu_e\)</td><td>\(A\) inchangé, \(Z+1\)</td><td>Moyen (arrêté par quelques mm d’aluminium)</td></tr>
-      <tr><td>\(\beta^+\)</td><td>\(\displaystyle {}^{A}_{Z}X\rightarrow{}^{A}_{Z-1}Y+{}^{0}_{+1}e+\nu_e\)</td><td>\(A\) inchangé, \(Z-1\)</td><td>Moyen</td></tr>
-      <tr><td>\(\gamma\)</td><td>\(\displaystyle {}^{A}_{Z}X^\star\rightarrow{}^{A}_{Z}X+\gamma\)</td><td>\(A\) et \(Z\) inchangés</td><td>Fort (nécessite plomb ou béton épais)</td></tr>
-    </tbody></table></div>
-    <div class="box ok"><div class="box-label">Exemples concrets d’équations nucléaires</div>
-    <p><strong>\(\alpha\) :</strong> \(\displaystyle {}^{238}_{92}\mathrm{U}\rightarrow{}^{234}_{90}\mathrm{Th}+{}^{4}_{2}\mathrm{He}\)</p>
-    <p><strong>\(\beta^-\) :</strong> \(\displaystyle {}^{14}_{6}\mathrm{C}\rightarrow{}^{14}_{7}\mathrm{N}+{}^{0}_{-1}e+\bar\nu_e\)</p>
-    <p><strong>\(\beta^+\) :</strong> \(\displaystyle {}^{18}_{9}\mathrm{F}\rightarrow{}^{18}_{8}\mathrm{O}+{}^{0}_{+1}e+\nu_e\)</p>
-    </div>
-    <div class="box warn"><div class="box-label">Attention</div><p>Dans une équation nucléaire, on ne conserve pas les formules chimiques, mais les nombres \(A\) et \(Z\). Une particule \(\beta^-\) possède \(A=0\) et \(Z=-1\). La désintégration \(\beta^-\) se produit lorsqu’un noyau est trop riche en neutrons ; la \(\beta^+\) lorsqu’il est trop riche en protons.</p></div>
-
-    <h2 id="c3">3. Loi de décroissance radioactive</h2>
-    <p>Chaque noyau possède la même probabilité de se désintégrer par unité de temps. Cette hypothèse conduit à l’équation différentielle :</p>
-    <div class="formula">\[
-      \frac{\mathrm dN}{\mathrm dt}=-\lambda N
-    \]</div>
-    <p>\(N(t)\) est le nombre de noyaux radioactifs restants à la date \(t\). La constante radioactive \(\lambda\) s’exprime en \(\mathrm{s^{-1}}\) si \(t\) est en seconde. La solution est :</p>
-    <div class="formula key-formula">\[
-      N(t)=N_0\,\mathrm e^{-\lambda t}
-    \]</div>
-    <p>La décroissance n’est pas linéaire : il ne disparaît pas le même nombre de noyaux à chaque seconde, mais la même fraction pendant des durées égales.</p>
-    <div class="box prop"><div class="box-label">Linéarisation</div><p>En prenant le logarithme népérien : \[\ln N(t)=\ln N_0-\lambda t.\] Si on trace \(\ln N\) en fonction de \(t\), on obtient une droite de pente \(-\lambda\) et d’ordonnée à l’origine \(\ln N_0\). C’est la méthode utilisée expérimentalement pour vérifier le modèle et déterminer \(\lambda\).</p></div>
-    <details><summary>📐 Démonstration — Intégrer \(\dfrac{\mathrm dN}{\mathrm dt}=-\lambda N\) pour obtenir \(N(t)=N_0\,\mathrm e^{-\lambda t}\)</summary>
-    <p>On sépare les variables : \(\dfrac{\mathrm dN}{N}=-\lambda\,\mathrm dt\). En intégrant entre \(0\) et \(t\) :</p>
-    <div class="formula">\[\int_{N_0}^{N(t)}\frac{\mathrm dN’}{N’}=-\lambda\int_0^t\mathrm dt’ \implies \ln\!\left(\frac{N(t)}{N_0}\right)=-\lambda t\]</div>
-    <p>En passant à l’exponentielle : \(N(t)=N_0\,\mathrm e^{-\lambda t}\). La fonction exponentielle est l’unique solution car elle vérifie à la fois la condition initiale \(N(0)=N_0\) et l’équation différentielle. La décroissance n’est donc pas linéaire — chaque noyau a la même probabilité de se désintégrer indépendamment des autres, ce qui conduit naturellement à cette forme.</p>
-    </details>
-
-    <h2 id="c4">4. Activité d’un échantillon</h2>
-    <p>L’activité \(A(t)\) mesure le nombre moyen de désintégrations par seconde. Elle est proportionnelle au nombre de noyaux encore présents.</p>
-    <div class="formula">\[
-      A(t)=-\frac{\mathrm dN}{\mathrm dt}=\lambda N(t)=A_0\,\mathrm e^{-\lambda t}
-    \]</div>
-    <p>L’unité SI de l’activité est le becquerel : \(\mathrm{Bq}=\mathrm{s^{-1}}\). Un échantillon de grande activité produit beaucoup de désintégrations par seconde ; cela ne dit pas seul la dangerosité biologique, qui dépend aussi du type de rayonnement, de l’énergie et de l’exposition.</p>
-    <div class="box ok"><div class="box-label">Lien avec la masse</div><p>Si l’échantillon contient une masse \(m\) d’un isotope de masse molaire \(M\), alors \[
-      N=\frac{m}{M}\,N_A,
-    \] avec \(N_A=6{,}022\times10^{23}\,\mathrm{mol^{-1}}\).</p></div>
-
-    <h3>Isotopes radioactifs importants</h3>
-    <div class="table-wrap"><table><thead><tr><th>Isotope</th><th>Type</th><th>\(t_{1/2}\)</th><th>Application</th></tr></thead><tbody>
-      <tr><td>\({}^{14}_{6}\mathrm{C}\) (carbone 14)</td><td>\(\beta^-\)</td><td>\(5\,730\) ans</td><td>Datation archéologique</td></tr>
-      <tr><td>\({}^{238}_{92}\mathrm{U}\) (uranium 238)</td><td>\(\alpha\)</td><td>\(4{,}5\) milliards d’années</td><td>Datation géologique</td></tr>
-      <tr><td>\({}^{131}_{53}\mathrm{I}\) (iode 131)</td><td>\(\beta^-/\gamma\)</td><td>\(8{,}02\) jours</td><td>Médecine nucléaire (thyroïde)</td></tr>
-      <tr><td>\({}^{18}_{9}\mathrm{F}\) (fluor 18)</td><td>\(\beta^+\)</td><td>\(110\) minutes</td><td>TEP (imagerie cérébrale)</td></tr>
-      <tr><td>\({}^{60}_{27}\mathrm{Co}\) (cobalt 60)</td><td>\(\beta^-/\gamma\)</td><td>\(5{,}27\) ans</td><td>Radiothérapie</td></tr>
-      <tr><td>\({}^{222}_{86}\mathrm{Rn}\) (radon 222)</td><td>\(\alpha\)</td><td>\(3{,}82\) jours</td><td>Risque domestique (sols granitiques)</td></tr>
-    </tbody></table></div>
-
-    <h2 id="c5">5. Demi-vie et datation</h2>
-    <p>La demi-vie \(t_{1/2}\) est la durée au bout de laquelle il reste la moitié des noyaux radioactifs initiaux.</p>
-    <div class="formula key-formula">\[
-      N(t_{1/2})=\frac{N_0}{2}
-      \qquad\Longrightarrow\qquad
-      t_{1/2}=\frac{\ln 2}{\lambda}
-    \]</div>
-    <details><summary>🔬 Démonstration — Pourquoi \(t_{1/2}=\dfrac{\ln 2}{\lambda}\) et pourquoi elle ne dépend pas de \(N_0\)</summary>
-    <p>Par définition, \(N(t_{1/2})=\dfrac{N_0}{2}\). En substituant dans la loi :</p>
-    <div class="formula">\[\frac{N_0}{2}=N_0\,\mathrm e^{-\lambda t_{1/2}} \implies \frac{1}{2}=\mathrm e^{-\lambda t_{1/2}} \implies \ln\tfrac{1}{2}=-\lambda t_{1/2} \implies t_{1/2}=\frac{\ln 2}{\lambda}\]</div>
-    <p>La concentration initiale \(N_0\) s’est simplifiée : \(t_{1/2}\) ne dépend que de \(\lambda\), c’est-à-dire de la nature du noyau radioactif. Doubler la quantité de matière double l’activité initiale, mais ne change absolument pas la demi-vie.</p>
-    </details>
-    <p>Après \(n\) demi-vies, il reste \(\frac{N_0}{2^n}\). La datation radioactive compare une quantité actuelle à une quantité initiale ou à un noyau fils formé. La formule de datation s’obtient en isolant \(t\) :</p>
-    <div class="formula">\[
-      t=\frac{1}{\lambda}\ln\!\left(\frac{N_0}{N(t)}\right)=\frac{t_{1/2}}{\ln 2}\ln\!\left(\frac{A_0}{A(t)}\right)
-    \]</div>
-    <details><summary>🗓️ Méthode — Comment isoler \(t\) dans la formule de datation</summary>
-    <p>On part de \(N(t)=N_0\,\mathrm e^{-\lambda t}\). On divise par \(N_0\), on prend \(\ln\) des deux membres :</p>
-    <div class="formula">\[\ln\!\left(\frac{N(t)}{N_0}\right)=-\lambda t \implies t=-\frac{1}{\lambda}\ln\!\left(\frac{N(t)}{N_0}\right)=\frac{1}{\lambda}\ln\!\left(\frac{N_0}{N(t)}\right)\]</div>
-    <p>En pratique : on mesure l’activité actuelle \(A(t)\) et on l’identifie à \(\lambda N(t)\), ce qui donne \(\frac{N_0}{N(t)}=\frac{A_0}{A(t)}\). La datation revient donc à mesurer un rapport d’activités et à connaître \(\lambda\) (ou \(t_{1/2}\)). L’hypothèse critique est que le système est resté fermé depuis la date zéro.</p>
-    </details>
-    <p>La méthode n’a de sens que si le système est resté fermé et si l’isotope choisi a une demi-vie adaptée à l’âge étudié.</p>
-    <div class="box ok"><div class="box-label">Datation au carbone 14</div><p>Tout organisme vivant incorpore du \({}^{14}\mathrm{C}\) par échange avec l’atmosphère, à une proportion constante (environ 1 atome de \({}^{14}\mathrm{C}\) pour \(10^{12}\) atomes de \({}^{12}\mathrm{C}\)). À la mort, les échanges cessent et le \({}^{14}\mathrm{C}\) se désintègre avec \(t_{1/2}=5\,730\) ans. On mesure l’activité actuelle \(A(t)\) et on la compare à l’activité d’un organisme vivant actuel \(A_0\) pour calculer l’âge. Cette méthode est fiable jusqu’à environ \(50\,000\) ans.</p></div>
-
-    <h2 id="c6">6. Énergie nucléaire, applications et radioprotection</h2>
-    <p>Lors d’une transformation nucléaire, une partie de la masse peut être convertie en énergie. La relation d’Einstein donne :</p>
-    <div class="formula">\[
-      E=\Delta m\,c^2
-    \]</div>
-    <p>On utilise souvent l’électronvolt : \(1\,\mathrm{eV}=1{,}602\times10^{-19}\,\mathrm{J}\), et en nucléaire le \(\mathrm{MeV}\). L’unité de masse atomique vaut \(1\,\mathrm{u}=1{,}6605\times10^{-27}\,\mathrm{kg}\).</p>
-
-    <h3>Applications de la radioactivité</h3>
-    <div class="table-wrap"><table><thead><tr><th>Domaine</th><th>Application</th><th>Isotope(s) utilisé(s)</th></tr></thead><tbody>
-      <tr><td>Médecine (diagnostic)</td><td>Scintigraphie, TEP</td><td>\({}^{18}\mathrm{F}\), \({}^{99}\mathrm{Tc}\), \({}^{201}\mathrm{Tl}\)</td></tr>
-      <tr><td>Médecine (traitement)</td><td>Radiothérapie, curiethérapie</td><td>\({}^{60}\mathrm{Co}\), \({}^{192}\mathrm{Ir}\), \({}^{131}\mathrm{I}\)</td></tr>
-      <tr><td>Archéologie</td><td>Datation au \({}^{14}\mathrm{C}\)</td><td>\({}^{14}\mathrm{C}\)</td></tr>
-      <tr><td>Géologie</td><td>Datation des roches</td><td>\({}^{238}\mathrm{U}\), \({}^{87}\mathrm{Rb}\), \({}^{40}\mathrm{K}\)</td></tr>
-      <tr><td>Énergie</td><td>Centrales nucléaires (fission)</td><td>\({}^{235}\mathrm{U}\), \({}^{239}\mathrm{Pu}\)</td></tr>
-      <tr><td>Industrie</td><td>Contrôle non destructif, stérilisation</td><td>\({}^{60}\mathrm{Co}\), \({}^{137}\mathrm{Cs}\)</td></tr>
-    </tbody></table></div>
-
-    <h3>Radioprotection : trois réflexes</h3>
-    <div class="box def"><div class="box-label">Les 3 principes de radioprotection</div>
-    <p><strong>Distance :</strong> s’éloigner de la source. L’intensité diminue en \(\frac{1}{d^2}\) : tripler la distance divise le débit de dose par 9.</p>
-    <p><strong>Temps :</strong> réduire la durée d’exposition au minimum nécessaire.</p>
-    <p><strong>Écran :</strong> interposer un écran adapté au rayonnement — papier pour \(\alpha\), aluminium pour \(\beta\), plomb ou béton épais pour \(\gamma\).</p></div>
-    <div class="box prop"><div class="box-label">Idée à retenir</div><p>Une demi-vie courte signifie une activité qui chute vite, mais une activité initiale peut être très forte. Une demi-vie longue signifie une persistance sur de grandes durées, ce qui pose la question de la gestion des déchets.</p></div>
-  </article>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-outils">
-<div class="content-card">
-<h3>Relations mathématiques, grandeurs et unités</h3>
-<p>Les grandeurs nucléaires exigent des unités cohérentes : secondes pour \(\lambda\) en \(\mathrm{s^{-1}}\), kilogrammes pour \(E=\Delta m c^2\), et becquerel pour l’activité.</p>
-<div class="table-wrap"><table>
-<thead><tr><th>Relation</th><th>Écriture rigoureuse</th><th>Grandeurs, unités et domaine</th></tr></thead>
-<tbody>
-<tr><td>Composition du noyau</td><td>\(\displaystyle {}^{A}_{Z}X,\qquad N=A-Z\)</td><td>\(A\) nombre de nucléons, \(Z\) nombre de protons, \(N\) nombre de neutrons.</td></tr>
-<tr><td>Conservation nucléaire</td><td>\(\displaystyle \sum A_{\mathrm{avant}}=\sum A_{\mathrm{après}},\quad \sum Z_{\mathrm{avant}}=\sum Z_{\mathrm{après}}\)</td><td>Valable pour équilibrer toute équation nucléaire.</td></tr>
-<tr><td>Décroissance différentielle</td><td>\(\displaystyle \frac{\mathrm dN}{\mathrm dt}=-\lambda N\)</td><td>\(N\) sans unité, \(t\) en \(\mathrm{s}\), \(\lambda\) en \(\mathrm{s^{-1}}\).</td></tr>
-<tr><td>Loi de décroissance</td><td>\(\displaystyle N(t)=N_0\,\mathrm e^{-\lambda t}\)</td><td>Modèle statistique pour un grand nombre de noyaux identiques.</td></tr>
-<tr><td>Activité</td><td>\(\displaystyle A(t)=-\frac{\mathrm dN}{\mathrm dt}=\lambda N(t)\)</td><td>\(A\) en \(\mathrm{Bq}=\mathrm{s^{-1}}\). Attention : \(A\) désigne ici l’activité, pas le nombre de masse.</td></tr>
-<tr><td>Demi-vie</td><td>\(\displaystyle t_{1/2}=\frac{\ln 2}{\lambda}\)</td><td>\(t_{1/2}\) en \(\mathrm{s}\) si \(\lambda\) est en \(\mathrm{s^{-1}}\).</td></tr>
-<tr><td>Après \(n\) demi-vies</td><td>\(\displaystyle N_n=\frac{N_0}{2^n},\qquad A_n=\frac{A_0}{2^n}\)</td><td>Valable si \(n=\frac{t}{t_{1/2}}\). Même loi pour l’activité.</td></tr>
-<tr><td>Datation simple</td><td>\(\displaystyle t=\frac{1}{\lambda}\ln\!\left(\frac{N_0}{N(t)}\right)=\frac{1}{\lambda}\ln\!\left(\frac{A_0}{A(t)}\right)\)</td><td>Suppose un système fermé et un rapport initial connu.</td></tr>
-<tr><td>Énergie de masse</td><td>\(\displaystyle E=\Delta m\,c^2\)</td><td>\(E\) en \(\mathrm{J}\), \(\Delta m\) en \(\mathrm{kg}\), \(c=2{,}998\times10^8\,\mathrm{m\,s^{-1}}\).</td></tr>
-</tbody>
-</table></div>
-<div class="cards">
-  <div class="card"><h4>Conversions essentielles</h4><p>\(1\,\mathrm{an}=365{,}25\times24\times3600\,\mathrm{s}\), \(1\,\mathrm{MeV}=1{,}602\times10^{-13}\,\mathrm{J}\), \(1\,\mathrm{u}=1{,}6605\times10^{-27}\,\mathrm{kg}\).</p></div>
-  <div class="card"><h4>Ordre de grandeur</h4><p>Une activité de \(1\,\mathrm{Bq}\) correspond à une désintégration par seconde en moyenne. Une activité de \(1\,\mathrm{MBq}\) correspond à \(10^6\) désintégrations par seconde.</p></div>
-</div>
-<h4 style="margin:24px 0 10px">Contrôle d'unités</h4>
-<div class="box warn"><div class="box-label">Avant tout calcul numérique</div><p>Si \(\lambda\) est en \(\mathrm{s^{-1}}\), alors \(t\) doit être en \(\mathrm{s}\). Si \(\lambda\) est en \(\mathrm{an^{-1}}\), alors \(t\) est en années. Pour une datation, toute incohérence d'unité dans \(t_{1/2}\) fausse l'âge obtenu. La demi-vie ne dépend pas de la quantité initiale : doubler l'échantillon double l'activité initiale, mais ne change pas \(t_{1/2}\).</p></div>
-<h4 style="margin:24px 0 10px">Méthode fiable</h4>
-<div class="box ok"><div class="box-label">Application guidée</div><p>1. Équilibrer d'abord l'équation nucléaire en vérifiant \(\sum A\) et \(\sum Z\).<br>2. Pour la décroissance, identifier l'inconnue : \(N(t)\), \(A(t)\), \(\lambda\) ou \(t\).<br>3. Si nécessaire, linéariser : \(\ln\!\left(\frac{N(t)}{N_0}\right)=-\lambda t\).<br>4. Conclure avec unité, ordre de grandeur et cohérence physique.</p></div>
-
-<h4 style="margin:28px 0 14px">Calculatrices interactives</h4>
-<div class="cards">
-  <div class="card">
-    <h4>Constante \(\lambda\) et \(t_{1/2}\) — ordre 1</h4>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Données : \(N_0\), \(N(t)\), \(t\) → calcule \(\lambda\) et \(t_{1/2}\).</p>
-    <div style="display:grid;gap:8px">
-      <label style="font-size:12px;font-weight:700">\(N_0\) (noyaux) <input id="r5_N0" type="number" step="1e10" value="1e15" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <label style="font-size:12px;font-weight:700">\(N(t)\) (noyaux) <input id="r5_Nt" type="number" step="1e10" value="3.5e14" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <label style="font-size:12px;font-weight:700">\(t\) (s) <input id="r5_t" type="number" step="1" value="3600" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <button class="primary" onclick="calcLambda5()" style="margin-top:4px">Calculer</button>
-      <div id="r5_res1" style="font-size:13px;color:var(--muted);min-height:36px"></div>
+<!-- RAIL LATÉRAL -->
+<div class="rail">
+  <div class="brand">
+    <div class="brand-mark">P</div>
+    <div>
+      <h1>PhysiChem</h1>
+      <p>M Borsali · PC · LFC</p>
     </div>
   </div>
-  <div class="card">
-    <h4>Activité \(A(t)\) et noyaux \(N(t)\)</h4>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Données : \(N_0\), \(t_{1/2}\), \(t\) → calcule \(N(t)\) et \(A(t)\).</p>
-    <div style="display:grid;gap:8px">
-      <label style="font-size:12px;font-weight:700">\(N_0\) (noyaux) <input id="r5_N0b" type="number" step="1e10" value="1e15" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <label style="font-size:12px;font-weight:700">\(t_{1/2}\) (s) <input id="r5_th" type="number" step="1" value="21600" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <label style="font-size:12px;font-weight:700">\(t\) (s) <input id="r5_tb" type="number" step="1" value="43200" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <button class="primary" onclick="calcNt5()" style="margin-top:4px">Calculer</button>
-      <div id="r5_res2" style="font-size:13px;color:var(--muted);min-height:36px"></div>
+
+  <div class="level-card">
+    <div class="level-row">
+      <span class="badge">Terminale Spé</span>
+      <span class="micro">Chap. 5</span>
+    </div>
+    <div class="progress"><span style="width:100%"></span></div>
+    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+  </div>
+
+  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
+  <div class="tablist">
+  </div>
+
+  <div class="tools">
+    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
+    <button class="icon-btn" title="Imprimer">🖨️</button>
+    <button class="icon-btn" title="Plein écran">⛶</button>
+  </div>
+</div>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="panels">
+
+  <!-- EN-TÊTE COMMUN -->
+  <div class="hero">
+    <div class="hero-sub">Terminale Spé · Chap. 5</div>
+    <h1 class="hero-title">La radioactivi<span>té | PhysiChem</span></h1>
+    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
+      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
     </div>
   </div>
-  <div class="card">
-    <h4>Datation radioactive</h4>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Données : rapport \(A/A_0\), \(t_{1/2}\) → âge \(t\).</p>
-    <div style="display:grid;gap:8px">
-      <label style="font-size:12px;font-weight:700">Rapport \(A/A_0\) (entre 0 et 1) <input id="r5_ratio" type="number" step="0.01" value="0.18" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <label style="font-size:12px;font-weight:700">\(t_{1/2}\) (années) <input id="r5_th2" type="number" step="1" value="5730" style="width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--panel2);color:var(--text)"></label>
-      <button class="primary" onclick="calcAge5()" style="margin-top:4px">Calculer l'âge</button>
-      <div id="r5_res3" style="font-size:13px;color:var(--muted);min-height:36px"></div>
-    </div>
-  </div>
-</div>
-</div>
-</section>
 
-<section class="panel" id="tab-exercices">
-<div class="content-card">
-<h3>Exercices d’entraînement</h3>
-<p>Les exercices travaillent les compétences utiles au Bac : écrire une équation nucléaire, exploiter une demi-vie, convertir les unités, calculer une activité et interpréter une datation.</p>
-<div class="exercise-list">
-  <article class="exercise-card"><div class="exercise-title"><h4>1. Équation de désintégration \(\alpha\)</h4><small>Conservation</small></div><p>Le radium \(^{226}_{88}\mathrm{Ra}\) se désintègre en radon \(^{222}_{86}\mathrm{Rn}\) en émettant une particule \(\alpha\).</p><ol><li>Écrire l’équation nucléaire.</li><li>Vérifier les conservations de \(A\) et \(Z\).</li><li>Identifier la particule émise.</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle {}^{226}_{88}\mathrm{Ra}\rightarrow{}^{222}_{86}\mathrm{Rn}+{}^{4}_{2}\mathrm{He}\). Les nombres de nucléons donnent \(226=222+4\), les charges \(88=86+2\). La particule \(\alpha\) est un noyau d’hélium \(^{4}_{2}\mathrm{He}\).</p></details></article>
-  <article class="exercise-card"><div class="exercise-title"><h4>2. Technétium médical et demi-vie</h4><small>Médecine nucléaire</small></div><p>Un isotope utilisé en imagerie possède une demi-vie \(t_{1/2}=6{,}0\,\mathrm{h}\). Une dose a une activité initiale \(A_0=740\,\mathrm{MBq}\).</p><ol><li>Calculer l’activité après \(12\,\mathrm{h}\).</li><li>Calculer \(\lambda\) en \(\mathrm{h^{-1}}\).</li><li>Expliquer pourquoi cet isotope est utile en imagerie mais doit être utilisé rapidement.</li></ol><details><summary>Correction détaillée</summary><p>Après \(12\,\mathrm{h}\), deux demi-vies se sont écoulées : \(A=A_0/2^2=185\,\mathrm{MBq}\). \(\displaystyle \lambda=\frac{\ln2}{t_{1/2}}=\frac{0{,}693}{6{,}0}=0{,}116\,\mathrm{h^{-1}}\). L’activité diminue assez vite : c’est utile pour limiter la durée d’exposition, mais cela impose une utilisation rapide.</p></details></article>
-  <article class="exercise-card"><div class="exercise-title"><h4>3. Activité d’un échantillon</h4><small>\(A=\lambda N\)</small></div><p>Un échantillon contient \(N=3{,}0\times10^{15}\) noyaux radioactifs. Sa constante radioactive vaut \(\lambda=2{,}1\times10^{-6}\,\mathrm{s^{-1}}\).</p><ol><li>Calculer l’activité.</li><li>Exprimer le résultat en \(\mathrm{Bq}\) puis en \(\mathrm{MBq}\).</li><li>Dire ce que signifie physiquement cette activité.</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle A=\lambda N=2{,}1\times10^{-6}\times3{,}0\times10^{15}=6{,}3\times10^9\,\mathrm{Bq}\). Cela vaut \(6{,}3\times10^3\,\mathrm{MBq}\). En moyenne, l’échantillon produit \(6{,}3\times10^9\) désintégrations par seconde.</p></details></article>
-  <article class="exercise-card"><div class="exercise-title"><h4>4. Datation au carbone 14</h4><small>Logarithme</small></div><p>Un fragment organique possède une activité en carbone 14 égale à \(18\,\%\) de celle d’un organisme vivant comparable. On prend \(t_{1/2}=5730\,\mathrm{ans}\).</p><ol><li>Écrire la relation \(\frac{A(t)}{A_0}=\mathrm e^{-\lambda t}\).</li><li>Calculer \(\lambda\) en \(\mathrm{an^{-1}}\).</li><li>Déterminer l’âge du fragment.</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle \lambda=\frac{\ln2}{5730}=1{,}21\times10^{-4}\,\mathrm{an^{-1}}\). Comme \(\frac{A}{A_0}=0{,}18\), \(\displaystyle t=\frac{1}{\lambda}\ln\!\left(\frac{A_0}{A}\right)=\frac{1}{1{,}21\times10^{-4}}\ln\!\left(\frac{1}{0{,}18}\right)=1{,}42\times10^4\,\mathrm{ans}\).</p></details></article>
-  <article class="exercise-card"><div class="exercise-title"><h4>5. Radioprotection : temps, distance, écran</h4><small>Raisonnement</small></div><p>Un débit de dose est proportionnel à \(\frac{A}{d^2}\). À \(d=1{,}0\,\mathrm{m}\), une source donne un débit \(D_1\). On se place à \(d=3{,}0\,\mathrm{m}\), puis on attend deux demi-vies.</p><ol><li>Quel facteur apporte la distance ?</li><li>Quel facteur apporte l’attente de deux demi-vies ?</li><li>Donner le facteur total sur le débit de dose.</li></ol><details><summary>Correction détaillée</summary><p>La distance multiplie le débit par \(\frac{1}{3^2}=\frac{1}{9}\). Deux demi-vies divisent l’activité par \(2^2=4\). Le facteur total est donc \(\frac{1}{9}\times\frac{1}{4}=\frac{1}{36}\). Le débit est \(36\) fois plus faible.</p></details></article>
-  <article class="exercise-card"><div class="exercise-title"><h4>6. Énergie libérée par défaut de masse</h4><small>\(E=\Delta m c^2\)</small></div><p>Une transformation nucléaire présente un défaut de masse \(\Delta m=3{,}2\times10^{-29}\,\mathrm{kg}\). On prend \(c=3{,}00\times10^8\,\mathrm{m\,s^{-1}}\).</p><ol><li>Calculer l’énergie libérée en joule.</li><li>Convertir en \(\mathrm{MeV}\).</li><li>Comparer qualitativement à une énergie chimique typique de quelques \(\mathrm{eV}\).</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle E=\Delta m c^2=3{,}2\times10^{-29}\times(3{,}00\times10^8)^2=2{,}88\times10^{-12}\,\mathrm{J}\). En \(\mathrm{MeV}\), \(\displaystyle E=\frac{2{,}88\times10^{-12}}{1{,}602\times10^{-13}}=18{,}0\,\mathrm{MeV}\). C’est des millions de fois plus grand qu’une énergie chimique de quelques \(\mathrm{eV}\).</p></details></article>
-</div>
-<h4 style="margin:24px 0 10px">Exercices Bac — VecteurBac vérifiés</h4>
-<p class="note">Titres vérifiés sur VecteurBac. Les boutons « Sujet PDF » ouvrent directement le sujet ; les pages VecteurBac donnent aussi accès aux corrigés.</p>
-<div class="cards">
-  <article class="card"><h4>Combustible MOX pour limiter les déchets radioactifs</h4><p>Exercice 2, \(5\) points, Amérique du nord 2025 sujet 2. Demi-vie, constante radioactive, activité massique et déchets.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2025/05/Combustible-MOX-pour-limiter-les-dechets-radioactifs.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/combustible-mox-pour-limiter-les-dechets-radioactifs/">Page VecteurBac</a></div></article>
-  <article class="card"><h4>Datation d’une roche</h4><p>Exercice 2, \(6\) points, Métropole 2025 sujet 1. Rubidium-strontium, loi de décroissance, logarithmes et datation géologique.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2025/06/Datation-dune-roche.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/datation-dune-roche/">Page VecteurBac</a></div></article>
-  <article class="card"><h4>Utilisation médicale du technétium</h4><p>Exercice 3, \(6\) points, Métropole 2025 sujet 2 Bis. Technétium, demi-vie courte, gamma et médecine nucléaire.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2025/08/Utilisation-medicale-du-technetium.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/utilisation-medicale-du-technetium/">Page VecteurBac</a></div></article>
-  <article class="card"><h4>Pollution des sols par le Césium à Fukushima</h4><p>Exercice 2, \(5\) points, Asie septembre 2025. Césium radioactif, activité, contamination et durée de décroissance.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2025/11/Pollution-des-sols-par-le-Cesium-a-Fukushima.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/pollution-des-sols-par-le-cesium-a-fukushima/">Page VecteurBac</a></div></article>
-  <article class="card"><h4>Matière et antimatière</h4><p>Exercice 2, \(5{,}5\) points, Amérique du Nord 2011, adapté au nouveau programme. Désintégration, activité, demi-vie et énergie.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2023/10/Matiere-et-antimatiere-adapte-au-nouveau-programme.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/matiere-et-antimatiere/">Page VecteurBac</a></div></article>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-flashcards">
-<div class="content-card">
-<h3>Flashcards</h3>
-<div class="flash-layout">
-  <div><div class="flash-card" id="flashCard" tabindex="0" role="button" aria-label="Carte mémoire"><div><h3 id="flashQuestion">Question</h3><p id="flashAnswer" style="display:none"></p></div><span class="hint">Cliquer pour retourner</span></div><div class="answers"><button class="secondary" onclick="prevFlash()">Précédente</button><button class="primary" onclick="flipFlash()">Retourner</button><button class="secondary" onclick="nextFlash()">Suivante</button></div></div>
-  <div class="card"><h4>Mode d’emploi</h4><p>Réponds oralement avant de retourner la carte. Les formules sont rendues avec MathJax après chaque changement.</p><p class="note"><span id="flashIndex">1</span>/<span id="flashTotal">10</span></p></div>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-mindmap">
-<div class="content-card">
-<h3>Carte mentale</h3>
-<div class="mindmap">
-<svg viewBox="0 0 1100 520" role="img" aria-label="Carte mentale de la radioactivité">
-<defs>
-  <linearGradient id="m5g" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#0f766e"/><stop offset="1" stop-color="#0369a1"/></linearGradient>
-</defs>
-<style>
-.m5bg{fill:#050e1a}
-.m5l1{stroke:#5eead4;fill:none;stroke-width:2.2;stroke-dasharray:420;stroke-dashoffset:420;animation:m5Draw 1.1s .2s ease forwards}
-.m5l2{stroke:#7dd3fc;fill:none;stroke-width:2.2;stroke-dasharray:420;stroke-dashoffset:420;animation:m5Draw 1.1s .4s ease forwards}
-.m5l3{stroke:#fb923c;fill:none;stroke-width:2.2;stroke-dasharray:420;stroke-dashoffset:420;animation:m5Draw 1.1s .6s ease forwards}
-.m5l4{stroke:#a5b4fc;fill:none;stroke-width:2.2;stroke-dasharray:420;stroke-dashoffset:420;animation:m5Draw 1.1s .8s ease forwards}
-.m5l5{stroke:#86efac;fill:none;stroke-width:2.2;stroke-dasharray:420;stroke-dashoffset:420;animation:m5Draw 1.1s 1.0s ease forwards}
-.m5n0{animation:m5Pulse 3.2s 1.5s ease-in-out infinite}
-.m5n1{opacity:0;animation:m5Fade .7s .9s ease forwards}
-.m5n2{opacity:0;animation:m5Fade .7s 1.1s ease forwards}
-.m5n3{opacity:0;animation:m5Fade .7s 1.3s ease forwards}
-.m5n4{opacity:0;animation:m5Fade .7s 1.5s ease forwards}
-.m5n5{opacity:0;animation:m5Fade .7s 1.7s ease forwards}
-@keyframes m5Draw{to{stroke-dashoffset:0}}
-@keyframes m5Fade{from{opacity:0;transform-origin:center center;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
-@keyframes m5Pulse{0%,100%{filter:drop-shadow(0 0 4px #5eead4)}55%{filter:drop-shadow(0 0 14px #5eead4)}}
-</style>
-<rect width="1100" height="520" class="m5bg"/>
-<path class="m5l1" d="M550 260 C430 190 350 155 250 118"/>
-<path class="m5l2" d="M550 260 C710 188 790 148 898 116"/>
-<path class="m5l3" d="M550 260 C395 305 320 348 238 408"/>
-<path class="m5l4" d="M550 260 C710 312 808 355 908 412"/>
-<path class="m5l5" d="M550 260 C538 162 536 118 545 72"/>
-<g class="m5n0">
-  <rect x="405" y="208" width="290" height="104" rx="14" fill="url(#m5g)"/>
-  <text x="550" y="252" text-anchor="middle" fill="white" font-size="22" font-weight="800">Radioactivité</text>
-  <text x="550" y="280" text-anchor="middle" fill="white" opacity=".88" font-size="13">noyau · hasard · loi · applications</text>
-</g>
-<g class="m5n1">
-  <rect x="82" y="60" width="316" height="105" rx="12" fill="#0d1f2d"/>
-  <rect x="82" y="60" width="316" height="105" rx="12" fill="none" stroke="#5eead4" stroke-width="1.4"/>
-  <text x="240" y="100" text-anchor="middle" fill="#5eead4" font-size="18" font-weight="800">Noyau &amp; désintégrations</text>
-  <text x="240" y="125" text-anchor="middle" fill="#a9b6c7" font-size="12">α, β⁻, β⁺, γ — conservation A et Z</text>
-  <text x="240" y="148" text-anchor="middle" fill="#a9b6c7" font-size="11">ᴬ꜀Z X → fils + particule</text>
-</g>
-<g class="m5n2">
-  <rect x="756" y="60" width="296" height="105" rx="12" fill="#0d1f2d"/>
-  <rect x="756" y="60" width="296" height="105" rx="12" fill="none" stroke="#7dd3fc" stroke-width="1.4"/>
-  <text x="904" y="100" text-anchor="middle" fill="#7dd3fc" font-size="18" font-weight="800">Décroissance</text>
-  <text x="904" y="125" text-anchor="middle" fill="#a9b6c7" font-size="12">N(t) = N₀ e^(−λt)</text>
-  <text x="904" y="148" text-anchor="middle" fill="#a9b6c7" font-size="11">dN/dt = −λN · linéar. : ln N = f(t)</text>
-</g>
-<g class="m5n3">
-  <rect x="72" y="356" width="328" height="105" rx="12" fill="#0d1f2d"/>
-  <rect x="72" y="356" width="328" height="105" rx="12" fill="none" stroke="#fb923c" stroke-width="1.4"/>
-  <text x="236" y="396" text-anchor="middle" fill="#fb923c" font-size="18" font-weight="800">Activité &amp; demi-vie</text>
-  <text x="236" y="421" text-anchor="middle" fill="#a9b6c7" font-size="12">A = λN (Bq) · t½ = ln2/λ</text>
-  <text x="236" y="444" text-anchor="middle" fill="#a9b6c7" font-size="11">après n t½ : N = N₀/2ⁿ</text>
-</g>
-<g class="m5n4">
-  <rect x="756" y="358" width="312" height="105" rx="12" fill="#0d1f2d"/>
-  <rect x="756" y="358" width="312" height="105" rx="12" fill="none" stroke="#a5b4fc" stroke-width="1.4"/>
-  <text x="912" y="398" text-anchor="middle" fill="#a5b4fc" font-size="18" font-weight="800">Datation</text>
-  <text x="912" y="423" text-anchor="middle" fill="#a9b6c7" font-size="12">t = (1/λ)·ln(N₀/N)</text>
-  <text x="912" y="446" text-anchor="middle" fill="#a9b6c7" font-size="11">¹⁴C (50 000 ans) · ²³⁸U (géologie)</text>
-</g>
-<g class="m5n5">
-  <rect x="390" y="26" width="316" height="93" rx="12" fill="#0d1f2d"/>
-  <rect x="390" y="26" width="316" height="93" rx="12" fill="none" stroke="#86efac" stroke-width="1.4"/>
-  <text x="548" y="66" text-anchor="middle" fill="#86efac" font-size="18" font-weight="800">Protection &amp; applications</text>
-  <text x="548" y="91" text-anchor="middle" fill="#a9b6c7" font-size="12">temps · distance · écran</text>
-  <text x="548" y="111" text-anchor="middle" fill="#a9b6c7" font-size="11">médecine · énergie · E = Δmc²</text>
-</g>
-</svg>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-simulations">
-<div class="content-card">
-<h3>Simulations modernes</h3>
-<p>Deux simulations maison pleine largeur : décroissance statistique avec noyaux qui disparaissent et courbe \(N(t)\), puis radioprotection avec activité, distance et écran.</p>
-<div class="future-sim-suite">
-  <div class="future-sim-title"><div><h4>Radioactivité : hasard visible, loi prévisible</h4><p>Chaque point peut se désintégrer de manière aléatoire, mais la population suit une décroissance exponentielle.</p></div><span class="future-badge">Canvas · interactif</span></div>
-  <div class="future-lab-grid">
-    <article class="future-lab">
-      <div class="future-lab-head"><div><h4>Décroissance radioactive : noyaux, courbe et demi-vie</h4><p>La grille montre les noyaux restants ; la courbe affiche \(N(t)=N_0e^{-\lambda t}\) et les repères de demi-vie.</p></div><span class="chip blue">demi-vie</span></div>
-      <div class="future-lab-body">
-        <div class="future-controls">
-          <div class="future-control"><label>Demi-vie <output id="specLambdaOut">6.0 h</output></label><input id="specLambda" type="range" min="1" max="24" step="0.5" value="6"></div>
-          <div class="future-control"><label>Date observée <output id="specWidthOut">12.0 h</output></label><input id="specWidth" type="range" min="0" max="72" step="0.5" value="12"></div>
-          <div class="future-control"><label>Noyaux initiaux <output id="specConcOut">160</output></label><input id="specConc" type="range" min="60" max="260" step="10" value="160"></div>
-          <div class="future-metrics"><div class="future-metric"><span>\(\lambda\)</span><b id="specM1">0.116 h⁻¹</b></div><div class="future-metric"><span>\(N/N_0\)</span><b id="specM2">0.250</b></div><div class="future-metric"><span>activité</span><b id="specM3">25 %</b></div></div>
-          <div class="future-equation">\(\displaystyle N(t)=N_0\mathrm e^{-\lambda t}\), \(\displaystyle \lambda=\frac{\ln2}{t_{1/2}}\).</div>
-        </div>
-        <div class="future-canvas-wrap"><canvas class="future-canvas" id="spectrumCanvas" aria-label="Simulation de décroissance radioactive"></canvas></div>
-      </div>
-    </article>
-    <article class="future-lab">
-      <div class="future-lab-head"><div><h4>Radioprotection : activité, distance et écran</h4><p>Observe l’effet combiné de la décroissance radioactive, de la distance et de l’atténuation par écran.</p></div><span class="chip green">protection</span></div>
-      <div class="future-lab-body">
-        <div class="future-controls">
-          <div class="future-control"><label>Temps écoulé <output id="calKOut">2.0 demi-vies</output></label><input id="calK" type="range" min="0" max="8" step="0.1" value="2"></div>
-          <div class="future-control"><label>Distance <output id="calCOut">2.0 m</output></label><input id="calC" type="range" min="1" max="8" step="0.1" value="2"></div>
-          <div class="future-control"><label>Écran <output id="calNoiseOut">3 demi-écrans</output></label><input id="calNoise" type="range" min="0" max="8" step="1" value="3"></div>
-          <div class="future-metrics"><div class="future-metric"><span>activité</span><b id="calM1">25 %</b></div><div class="future-metric"><span>débit relatif</span><b id="calM2">0.78 %</b></div><div class="future-metric"><span>réflexe</span><b id="calM3">temps-distance-écran</b></div></div>
-          <div class="future-equation">\(\displaystyle D\propto \frac{A(t)}{d^2}\times 2^{-n_{\mathrm{écran}}}\).</div>
-        </div>
-        <div class="future-canvas-wrap"><canvas class="future-canvas" id="calibrationCanvas" aria-label="Simulation de radioprotection"></canvas></div>
-      </div>
-    </article>
-  </div>
-</div>
-<div class="sim-block-title">Simulations PhET Colorado conservées</div>
-<div class="phet-grid">
-  <article class="sim-card-large"><div class="sim-card-head"><span>☢</span><div><h4>Nuclear Decay</h4><p>Observer une décroissance radioactive et l’effet de la demi-vie.</p></div></div><div class="iframe-wrap"><iframe title="PhET Nuclear Decay" loading="lazy" src="https://phet.colorado.edu/sims/cheerpj/nuclear-physics/latest/nuclear-physics.html?simulation=nuclear-decay&locale=fr"></iframe></div></article>
-  <article class="sim-card-large"><div class="sim-card-head"><span>⏱</span><div><h4>Radioactive Dating Game</h4><p>Relier quantité restante et datation radioactive.</p></div></div><div class="iframe-wrap"><iframe title="PhET Radioactive Dating Game" loading="lazy" src="https://phet.colorado.edu/sims/cheerpj/nuclear-physics/latest/nuclear-physics.html?simulation=radioactive-dating-game&locale=fr"></iframe></div></article>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-quiz">
-<div class="content-card">
-<h3>Quiz et chatbot externe</h3>
-<div class="quiz-ai-grid">
-  <div class="quiz-card"><h4>Quiz interactif</h4><p id="quizProgress" class="note"></p><div id="quizQuestion"></div><div id="quizOptions" class="options"></div><div class="answers"><button class="secondary" onclick="prevQuiz()">Précédent</button><button class="primary" onclick="nextQuiz()">Suivant</button><button class="secondary" onclick="resetQuiz()">Recommencer</button></div><p id="quizFeedback" class="note"></p></div>
-  <div class="ai-helper-card"><h4>Assistant externe</h4><p>Le site statique prépare une question complète ; la réponse est donnée par l’assistant externe choisi.</p><div class="ai-choice-row"><button class="ai-choice" onclick="setAIIntent('simple')">Cours simple</button><button class="ai-choice" onclick="setAIIntent('indice')">Indice</button><button class="ai-choice" onclick="setAIIntent('correction')">Correction</button><button class="ai-choice" onclick="setAIIntent('prepa')">Prépa PCSI</button></div><label class="ai-label" for="aiQuestion">Question de l’élève</label><textarea class="ai-textarea" id="aiQuestion">Explique-moi comment utiliser la loi de Activité pour déterminer une concentration inconnue.</textarea><div class="btn-row"><button class="primary" onclick="openAI('chatgpt')">ChatGPT</button><button class="secondary" onclick="openAI('claude')">Claude</button><button class="secondary" onclick="openAI('perplexity')">Perplexity</button><button class="secondary" onclick="copyCurrentPrompt()">Copier</button></div><details class="ai-preview"><summary>Voir le prompt envoyé</summary><div class="prompt-box" id="promptPreview"></div></details></div>
-</div>
-</div>
-</section>
-
-<section class="panel" id="tab-ece">
-<div class="content-card">
-<h3>ECE : activité et décroissance</h3>
-<div class="cards">
-  <div class="card"><h4>Situation type</h4><p>Exploiter une série de mesures de comptage ou d’activité pour vérifier une décroissance exponentielle, estimer \(t_{1/2}\) ou comparer à un seuil.</p><div class="chips"><span class="chip blue">comptage</span><span class="chip green">demi-vie</span><span class="chip amber">sécurité</span></div></div>
-  <div class="card"><h4>Gestes évalués</h4><ul><li>Mesurer un bruit de fond et le soustraire si nécessaire.</li><li>Faire plusieurs comptages pour réduire les fluctuations statistiques.</li><li>Tracer \(\ln(A)\) en fonction du temps si le modèle exponentiel est testé.</li><li>Conclure avec unité et incertitude qualitative.</li></ul></div>
-</div>
-<div class="table-wrap"><table>
-<thead><tr><th>Étape</th><th>Action attendue</th><th>Justification</th></tr></thead>
-<tbody>
-<tr><td>Bruit de fond</td><td>Mesurer le comptage sans source.</td><td>Le détecteur mesure aussi la radioactivité ambiante.</td></tr>
-<tr><td>Acquisition</td><td>Relever \(A(t)\) ou un nombre de coups par durée fixe.</td><td>On suit l’évolution statistique de l’échantillon.</td></tr>
-<tr><td>Exploitation</td><td>Tracer \(A(t)\), \(\ln(A)\) ou lire \(t_{1/2}\).</td><td>On choisit la représentation adaptée au modèle.</td></tr>
-<tr><td>Conclusion</td><td>Donner \(\lambda\), \(t_{1/2}\), un âge ou un seuil.</td><td>La réponse doit être contextualisée : datation, médecine, protection.</td></tr>
-</tbody>
-</table></div>
-<details><summary>Mini-sujet ECE 1 — Datation radioactive simulée</summary><p>À partir d’un rapport \(A/A_0\), déterminer un âge avec la relation \(\displaystyle t=\frac{1}{\lambda}\ln\left(\frac{A_0}{A}\right)\), puis discuter les hypothèses de système fermé.</p></details>
-<details><summary>Mini-sujet ECE 2 — Comptage et bruit de fond</summary><p>Mesurer un nombre de coups pendant une durée fixée, soustraire le bruit de fond, convertir en activité moyenne et comparer à un seuil.</p></details>
-
-<h4 style="margin:24px 0 10px">Sujets ECE VecteurBac</h4>
-<div class="cards">
-  <div class="card"><h4>Témoin de charge</h4><p>Exploiter une décroissance exponentielle expérimentale \(u(t)=U_0e^{-t/\tau}\) comme modèle analogue à \(N(t)=N_0e^{-\lambda t}\). Bien préciser que l’analogie porte sur la forme exponentielle, pas sur la nature physique.</p><div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/temoin-de-charge/">Voir le sujet ECE</a></div></div>
-  <div class="card"><h4>Défibrillateur</h4><p>Lire une constante de temps \(\tau=RC\) et vérifier une énergie stockée \(E_C=\frac{1}{2}CU^2\). Convertir les \(\mu\mathrm{F}\) en \(\mathrm{F}\), puis discuter l’ordre de grandeur de l’énergie.</p><div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/defibrillateur/">Voir le sujet ECE</a></div></div>
-</div>
-
-<div class="box ok"><div class="box-label">Méthode ECE — Incertitudes</div>
-<p>Conclure en comparant la valeur expérimentale à la valeur attendue :</p>
-<div class="formula">\[
-  u_c=\sqrt{u_A^2+u_B^2}
-  \qquad;\qquad
-  \varepsilon_r=\frac{|x_{\mathrm{exp}}-x_{\mathrm{ref}}|}{x_{\mathrm{ref}}}\times100
-\]</div>
-<p>\(u_c\) est l’incertitude-type composée, \(\varepsilon_r\) l’écart relatif en pourcentage. Les grandeurs doivent être dans la même unité. En ECE, une valeur sans unité ou une relation non nommée coûte cher.</p></div>
-</div>
-</section>
-
-<section class="panel" id="tab-prepa">
-<div class="content-card">
-<h3>Vers la prépa PCSI</h3>
-<p>En PCSI, la radioactivité est un modèle probabiliste continu : on part d’une probabilité de désintégration par unité de temps, on obtient une équation différentielle, puis une loi exponentielle.</p>
-<div class="cards">
-  <div class="card"><h4>1. Modèle probabiliste</h4><p>Sur un intervalle \(\mathrm dt\), chaque noyau a une probabilité \(\lambda\,\mathrm dt\) de se désintégrer. Pour \(N\) noyaux : \[
-    \mathrm dN=-\lambda N\,\mathrm dt.
-  \]</p></div>
-  <div class="card"><h4>2. Intégration</h4><p>\[
-    \frac{\mathrm dN}{N}=-\lambda\,\mathrm dt
-    \quad\Rightarrow\quad
-    \ln\!\left(\frac{N(t)}{N_0}\right)=-\lambda t.
-  \] Donc \(N(t)=N_0e^{-\lambda t}\).</p></div>
-  <div class="card"><h4>3. Chaîne radioactive</h4><p>Si un noyau père produit un noyau fils lui-même radioactif, on obtient des équations différentielles couplées. C’est un aperçu des systèmes d’équations différentielles.</p></div>
-  <div class="card"><h4>Mini-colle</h4><p>À partir de \(A=\lambda N\) et \(N=\frac{m}{M}N_A\), établir l’activité d’un échantillon de masse \(m\), puis discuter l’influence de \(t_{1/2}\) sur l’activité initiale.</p></div>
-</div>
-<div class="box prop"><div class="box-label">Application prépa courte</div><p>Si \(t_{1/2}=6{,}0\,\mathrm{h}\), alors \(\lambda=\frac{\ln2}{6{,}0}=0{,}116\,\mathrm{h^{-1}}\). Après \(t=18\,\mathrm{h}\), \[
-  \frac{N(t)}{N_0}=e^{-\lambda t}=e^{-0{,}116\times18}=0{,}125,
-\] soit trois demi-vies : il reste \(\frac{1}{8}\) des noyaux.</p></div>
-</div>
-</section>
-
-<div class="footer-nav"><button class="secondary" onclick="prevPanel()">← Onglet précédent</button><button class="primary" onclick="nextPanel()">Onglet suivant →</button></div>
-</div>
-</main>
 </div>
 
 <script>
-const tabs = Array.from(document.querySelectorAll('.tab'));
-const panels = Array.from(document.querySelectorAll('.panel'));
-const visited = new Set(['cours']);
-function typeset(){ if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise().catch(function(){}); } }
-function switchTab(name, shouldScroll){
-  if(shouldScroll === undefined) shouldScroll = true;
-  tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
-  panels.forEach(function(p){ p.classList.toggle('active', p.id === 'tab-' + name); });
-  visited.add(name);
-  updateProgress();
-  if(name === 'simulations'){ setTimeout(drawAllSims, 60); }
-  if(name === 'quiz'){ updatePromptPreview(); renderQuiz(); }
-  typeset();
-  if(shouldScroll){
-    const panel = document.getElementById('tab-' + name);
-    if(panel){
-      requestAnimationFrame(function(){
-        const topbar = document.querySelector('.topbar');
-        const offset = topbar ? topbar.getBoundingClientRect().height + 14 : 72;
-        const y = panel.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
-      });
-    }
-  }
-}
-tabs.forEach(function(t){ t.addEventListener('click', function(){ switchTab(t.dataset.tab, true); }); });
-function updateProgress(){
-  const pct = Math.round(visited.size / tabs.length * 100);
-  document.getElementById('masteryBar').style.width = pct + '%';
-  document.getElementById('progressText').textContent = pct + '%';
-}
-function currentTabIndex(){ return tabs.findIndex(function(t){ return t.classList.contains('active'); }); }
-function nextPanel(){ const i=currentTabIndex(); switchTab(tabs[(i+1)%tabs.length].dataset.tab); }
-function prevPanel(){ const i=currentTabIndex(); switchTab(tabs[(i-1+tabs.length)%tabs.length].dataset.tab); }
-document.getElementById('themeBtn').addEventListener('click', function(){
-  const root = document.documentElement;
-  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-  drawAllSims();
-});
-updateProgress();
+// Gestion des onglets
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-const flashcards = [
-  {q:"Qu’est-ce qu’un noyau radioactif ?", a:"Un noyau instable qui se transforme spontanément en émettant une particule ou un rayonnement."},
-  {q:"Notation d’un noyau ?", a:"\\(\\displaystyle {}^{A}_{Z}X\\), avec \\(A\\) nucléons, \\(Z\\) protons et \\(N=A-Z\\) neutrons."},
-  {q:"Loi de décroissance ?", a:"\\(\\displaystyle N(t)=N_0\\,\\mathrm e^{-\\lambda t}\\)."},
-  {q:"Équation différentielle ?", a:"\\(\\displaystyle \\frac{\\mathrm dN}{\\mathrm dt}=-\\lambda N\\)."},
-  {q:"Activité ?", a:"\\(\\displaystyle A(t)=\\lambda N(t)\\), en \\(\\mathrm{Bq}=\\mathrm{s^{-1}}\\)."},
-  {q:"Demi-vie ?", a:"\\(\\displaystyle t_{1/2}=\\frac{\\ln2}{\\lambda}\\)."},
-  {q:"Après \\(n\\) demi-vies ?", a:"\\(\\displaystyle N_n=\\frac{N_0}{2^n}\\) et \\(\\displaystyle A_n=\\frac{A_0}{2^n}\\)."},
-  {q:"Datation simple ?", a:"\\(\\displaystyle t=\\frac{1}{\\lambda}\\ln\\!\\left(\\frac{N_0}{N(t)}\\right)\\)."},
-  {q:"Énergie nucléaire ?", a:"\\(\\displaystyle E=\\Delta m\\,c^2\\)."},
-  {q:"Radioprotection ?", a:"Réduire le temps d’exposition, augmenter la distance et interposer un écran adapté."}
-];
-let flashIndex = 0, flashBack = false;
-function renderFlash(){
-  const f=flashcards[flashIndex];
-  document.getElementById('flashQuestion').innerHTML = flashBack ? 'Réponse' : f.q;
-  const ans=document.getElementById('flashAnswer');
-  ans.style.display = flashBack ? 'block' : 'none';
-  ans.innerHTML = f.a;
-  document.getElementById('flashIndex').textContent = flashIndex + 1;
-  document.getElementById('flashTotal').textContent = flashcards.length;
-  typeset();
-}
-function flipFlash(){ flashBack=!flashBack; renderFlash(); }
-function nextFlash(){ flashIndex=(flashIndex+1)%flashcards.length; flashBack=false; renderFlash(); }
-function prevFlash(){ flashIndex=(flashIndex-1+flashcards.length)%flashcards.length; flashBack=false; renderFlash(); }
-document.getElementById('flashCard').addEventListener('click', flipFlash);
-document.getElementById('flashCard').addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); flipFlash(); } });
-renderFlash();
-
-const quiz = [
-  {q:"La loi de décroissance radioactive est :", o:["\\(N(t)=N_0e^{-\\lambda t}\\)","\\(N(t)=N_0+\\lambda t\\)","\\(N(t)=\\lambda t^2\\)","\\(N(t)=N_0/t\\)"], a:0, exp:"Elle vient de \\(\\frac{\\mathrm dN}{\\mathrm dt}=-\\lambda N\\)."},
-  {q:"L’activité d’un échantillon vaut :", o:["\\(A(t)=\\lambda N(t)\\)","\\(A(t)=N/\\lambda\\)","\\(A(t)=N+\\lambda\\)","\\(A(t)=\\lambda t\\)"], a:0, exp:"L’activité est le nombre moyen de désintégrations par seconde."},
-  {q:"L’unité de l’activité est :", o:["\\(\\mathrm{Bq}=\\mathrm{s^{-1}}\\)","\\(\\mathrm{J}\\)","\\(\\mathrm{V}\\)","\\(\\mathrm{mol}\\)"], a:0, exp:"Un becquerel correspond à une désintégration par seconde en moyenne."},
-  {q:"La demi-vie vérifie :", o:["\\(t_{1/2}=\\frac{\\ln2}{\\lambda}\\)","\\(t_{1/2}=2\\lambda\\)","\\(t_{1/2}=\\lambda^2\\)","\\(t_{1/2}=1/(2N_0)\\)"], a:0, exp:"On pose \\(N(t_{1/2})=N_0/2\\)."},
-  {q:"Après trois demi-vies, il reste :", o:["\\(N_0/8\\)","\\(N_0/3\\)","\\(3N_0/2\\)","aucun noyau"], a:0, exp:"Chaque demi-vie divise par 2 : \\(2^3=8\\)."},
-  {q:"Dans une désintégration \\(\\alpha\\), la particule émise est :", o:["\\({}^{4}_{2}\\mathrm{He}\\)","un électron","un positon","un photon uniquement"], a:0, exp:"La particule alpha est un noyau d’hélium."},
-  {q:"Dans une équation nucléaire, on conserve :", o:["le nombre de nucléons et la charge","la masse exactement en kg","la température","le nombre de molécules"], a:0, exp:"On conserve \\(A\\) et \\(Z\\)."},
-  {q:"Une datation radioactive suppose notamment :", o:["un système fermé et une loi connue","une activité constante","un isotope stable","une demi-vie nulle"], a:0, exp:"Sinon le rapport mesuré ne donne pas l’âge correctement."},
-  {q:"L’énergie libérée par défaut de masse s’écrit :", o:["\\(E=\\Delta m c^2\\)","\\(E=mc\\)","\\(E=mgh\\)","\\(E=RI\\)"], a:0, exp:"C’est la relation masse-énergie d’Einstein."},
-  {q:"Un écran de trois demi-écrans divise l’intensité par :", o:["\\(2^3=8\\)","3","6","9"], a:0, exp:"Chaque demi-écran divise par 2."}
-];
-let quizIndex = 0, quizScore = 0, answered = {};
-function renderQuiz(){
-  const q=quiz[quizIndex];
-  document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex+1) + '/' + quiz.length + ' · score ' + quizScore;
-  document.getElementById('quizQuestion').innerHTML = '<h4>' + q.q + '</h4>';
-  const box=document.getElementById('quizOptions');
-  box.innerHTML='';
-  q.o.forEach(function(opt,i){
-    const btn=document.createElement('button');
-    btn.className='option';
-    btn.innerHTML=opt;
-    btn.onclick=function(){ answerQuiz(i, btn); };
-    if(answered[quizIndex] !== undefined){
-      btn.disabled=true;
-      if(i === q.a) btn.classList.add('correct');
-      if(i === answered[quizIndex] && i !== q.a) btn.classList.add('wrong');
-    }
-    box.appendChild(btn);
+    btn.classList.add('active');
+    const targetId = btn.getAttribute('data-target');
+    const targetPanel = document.getElementById(targetId);
+    if(targetPanel) targetPanel.classList.add('active');
   });
-  document.getElementById('quizFeedback').innerHTML = answered[quizIndex] !== undefined ? q.exp : 'Choisis une réponse.';
-  typeset();
-}
-function answerQuiz(i){
-  if(answered[quizIndex] !== undefined) return;
-  answered[quizIndex]=i;
-  if(i===quiz[quizIndex].a) quizScore++;
-  renderQuiz();
-}
-function nextQuiz(){ quizIndex=(quizIndex+1)%quiz.length; renderQuiz(); }
-function prevQuiz(){ quizIndex=(quizIndex-1+quiz.length)%quiz.length; renderQuiz(); }
-function resetQuiz(){ quizIndex=0; quizScore=0; answered={}; renderQuiz(); }
-renderQuiz();
-
-let aiIntent = 'simple';
-function setAIIntent(intent){ aiIntent=intent; updatePromptPreview(); }
-function buildAIPrompt(){
-  const question = document.getElementById('aiQuestion').value.trim() || 'Explique-moi comment exploiter une loi de décroissance radioactive.';
-  const intents = {
-    simple:"Explique le cours simplement, avec intuition avant calcul.",
-    indice:"Aide-moi par indices progressifs sans donner immédiatement toute la réponse.",
-    correction:"Donne une correction détaillée, étape par étape, avec unités et vérifications.",
-    prepa:"Prolonge au niveau prépa PCSI : équation différentielle, modèle probabiliste, activité, datation et chaînes radioactives."
-  };
-  return "Tu es un tuteur expert de physique-chimie. Niveau : Terminale spécialité, avec ouverture PCSI. Chapitre : Radioactivité, noyaux, désintégrations, activité, demi-vie, datation et énergie nucléaire.\\n"
-    + "Consigne : " + intents[aiIntent] + "\\n"
-    + "Réponds en français, de manière structurée, avec formules en LaTeX, unités, grandeurs définies et raisonnement détaillé.\\n"
-    + "Question de l’élève : " + question;
-}
-function updatePromptPreview(){ const p=document.getElementById('promptPreview'); if(p) p.textContent=buildAIPrompt(); }
-const aiQuestion = document.getElementById('aiQuestion');
-if(aiQuestion) aiQuestion.addEventListener('input', updatePromptPreview);
-function openAI(provider){
-  const prompt = encodeURIComponent(buildAIPrompt());
-  const urls = {
-    chatgpt:'https://chat.openai.com/?q=' + prompt,
-    claude:'https://claude.ai/new?q=' + prompt,
-    perplexity:'https://www.perplexity.ai/search?q=' + prompt
-  };
-  window.open(urls[provider] || urls.chatgpt, '_blank', 'noopener,noreferrer');
-}
-async function copyCurrentPrompt(){
-  const text=buildAIPrompt();
-  try{ await navigator.clipboard.writeText(text); }catch(e){}
-  updatePromptPreview();
-}
-updatePromptPreview();
-
-(function(){
-  var bar=document.createElement('div'); bar.id='readProgress';
-  var body=document.querySelector('.course-body');
-  if(body) body.insertBefore(bar, body.firstChild);
-  function upd(){
-    var rect=body ? body.getBoundingClientRect() : null;
-    if(!rect) return;
-    var pct=Math.min(100,Math.max(0,-rect.top/(rect.height-window.innerHeight)*100));
-    bar.style.width=pct+'%';
-  }
-  window.addEventListener('scroll', upd, {passive:true});
-})();
-
-function fmtSci(n){
-  if(n===0) return '0';
-  var e=Math.floor(Math.log10(Math.abs(n)));
-  return (n/Math.pow(10,e)).toFixed(3)+'\\times10^{'+e+'}';
-}
-function calcLambda5(){
-  var N0=parseFloat(document.getElementById('r5_N0').value);
-  var Nt=parseFloat(document.getElementById('r5_Nt').value);
-  var t=parseFloat(document.getElementById('r5_t').value);
-  var res=document.getElementById('r5_res1');
-  if(isNaN(N0)||isNaN(Nt)||isNaN(t)||N0<=0||Nt<=0||t<=0||Nt>=N0){res.textContent='Valeurs invalides (N0>Nt>0, t>0).'; return;}
-  var lam=Math.log(N0/Nt)/t;
-  var th=Math.log(2)/lam;
-  res.innerHTML='\\(\\lambda='+fmtSci(lam)+'\\,\\mathrm{s^{-1}}\\)<br>\\(t_{1/2}='+fmtSci(th)+'\\,\\mathrm{s}\\)';
-  if(window.MathJax) MathJax.typesetPromise([res]).catch(function(){});
-}
-function calcNt5(){
-  var N0=parseFloat(document.getElementById('r5_N0b').value);
-  var th=parseFloat(document.getElementById('r5_th').value);
-  var t=parseFloat(document.getElementById('r5_tb').value);
-  var res=document.getElementById('r5_res2');
-  if(isNaN(N0)||isNaN(th)||isNaN(t)||N0<=0||th<=0||t<0){res.textContent='Valeurs invalides.'; return;}
-  var lam=Math.log(2)/th;
-  var Nt=N0*Math.exp(-lam*t);
-  var At=lam*Nt;
-  res.innerHTML='\\(N(t)='+fmtSci(Nt)+'\\)<br>\\(A(t)='+fmtSci(At)+'\\,\\mathrm{Bq}\\)';
-  if(window.MathJax) MathJax.typesetPromise([res]).catch(function(){});
-}
-function calcAge5(){
-  var ratio=parseFloat(document.getElementById('r5_ratio').value);
-  var th=parseFloat(document.getElementById('r5_th2').value);
-  var res=document.getElementById('r5_res3');
-  if(isNaN(ratio)||isNaN(th)||ratio<=0||ratio>=1||th<=0){res.textContent='Valeurs invalides (0<A/A₀<1, t½>0).'; return;}
-  var age=th/Math.log(2)*Math.log(1/ratio);
-  res.innerHTML='\\(t='+fmtSci(age)+'\\,\\mathrm{ans}\\)';
-  if(window.MathJax) MathJax.typesetPromise([res]).catch(function(){});
-}
-
-function dprCanvas(canvas){
-  const rect=canvas.getBoundingClientRect();
-  const w=Math.max(620, Math.floor(rect.width || 980));
-  const h=Math.max(300, Math.floor(rect.height || 380));
-  const dpr=window.devicePixelRatio || 1;
-  canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
-  const ctx=canvas.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  return {ctx:ctx,w:w,h:h};
-}
-function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-function wavelengthRGB(lambda){
-  let r=0,g=0,b=0;
-  if(lambda>=380&&lambda<440){r=-(lambda-440)/(440-380);b=1;}
-  else if(lambda<490){g=(lambda-440)/(490-440);b=1;}
-  else if(lambda<510){g=1;b=-(lambda-510)/(510-490);}
-  else if(lambda<580){r=(lambda-510)/(580-510);g=1;}
-  else if(lambda<645){r=1;g=-(lambda-645)/(645-580);}
-  else {r=1;}
-  const f=lambda<420?0.3+0.7*(lambda-380)/(420-380):lambda>700?0.3+0.7*(780-lambda)/(780-700):1;
-  return [Math.round(255*r*f),Math.round(255*g*f),Math.round(255*b*f)];
-}
-function rgbString(arr){ return 'rgb(' + arr[0] + ',' + arr[1] + ',' + arr[2] + ')'; }
-function drawSpectrum(){
-  const canvas=document.getElementById('spectrumCanvas'); if(!canvas) return;
-  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
-  const half=Number(document.getElementById('specLambda').value);
-  const t=Number(document.getElementById('specWidth').value);
-  const N0=Number(document.getElementById('specConc').value);
-  const lambda=Math.log(2)/half;
-  const frac=Math.exp(-lambda*t);
-  const N=Math.round(N0*frac);
-  document.getElementById('specLambdaOut').textContent=half.toFixed(1)+' h';
-  document.getElementById('specWidthOut').textContent=t.toFixed(1)+' h';
-  document.getElementById('specConcOut').textContent=N0.toFixed(0);
-  const bg=ctx.createLinearGradient(0,0,w,h); bg.addColorStop(0,'#06111f'); bg.addColorStop(1,'#1c1a05'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='rgba(180,220,255,.10)'; ctx.lineWidth=1;
-  for(let x=0;x<w;x+=42){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
-  for(let y=0;y<h;y+=42){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
-  const gridLeft=38, gridTop=42, cell=15, cols=20;
-  for(let i=0;i<N0;i++){
-    const col=i%cols, row=Math.floor(i/cols);
-    const x=gridLeft+col*cell, y=gridTop+row*cell;
-    const alive=i<N;
-    ctx.beginPath();
-    ctx.arc(x,y,alive?3.8:2.3,0,Math.PI*2);
-    ctx.fillStyle=alive?'rgba(94,234,212,.95)':'rgba(148,163,184,.22)';
-    ctx.fill();
-    if(!alive){ctx.strokeStyle='rgba(251,146,60,.25)';ctx.beginPath();ctx.moveTo(x-3,y-3);ctx.lineTo(x+3,y+3);ctx.stroke();}
-  }
-  const left=Math.min(w*.42,380), right=w-42, top=46, bottom=h-58, tMax=72;
-  function X(tt){return left+tt/tMax*(right-left);} function Y(f){return bottom-f*(bottom-top);}
-  ctx.strokeStyle='rgba(255,255,255,.72)'; ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,bottom);ctx.lineTo(right,bottom);ctx.stroke();
-  ctx.beginPath();
-  for(let i=0;i<=280;i++){const tt=tMax*i/280; const f=Math.exp(-lambda*tt); const x=X(tt), y=Y(f); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);}
-  ctx.save(); ctx.shadowBlur=22; ctx.shadowColor='rgba(0,255,213,.85)'; ctx.globalAlpha=.36; ctx.strokeStyle='#5eead4'; ctx.lineWidth=5.4; ctx.stroke(); ctx.restore();
-  ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.4; ctx.stroke();
-  for(let n=1;n<=4;n++){const th=n*half; if(th<=tMax){ctx.setLineDash([4,7]);ctx.strokeStyle='rgba(251,146,60,.55)';ctx.beginPath();ctx.moveTo(X(th),top);ctx.lineTo(X(th),bottom);ctx.stroke();ctx.setLineDash([]);}}
-  ctx.setLineDash([6,7]); ctx.strokeStyle='#fb923c'; ctx.beginPath();ctx.moveTo(X(t),top);ctx.lineTo(X(t),bottom+12);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='rgba(255,255,255,.86)'; ctx.font='12px Inter, sans-serif'; ctx.fillText('noyaux restants : '+N+' / '+N0,gridLeft,24); ctx.fillText('N/N0',left-36,top+8); ctx.fillText('t (h)',right-32,bottom+32); ctx.fillText('t = '+t.toFixed(1)+' h',X(t)+8,top+22);
-  document.getElementById('specM1').textContent=lambda.toFixed(3)+' h⁻¹';
-  document.getElementById('specM2').textContent=frac.toFixed(3);
-  document.getElementById('specM3').textContent=(frac*100).toFixed(1)+' %';
-}
-function drawCalibration(){
-  const canvas=document.getElementById('calibrationCanvas'); if(!canvas) return;
-  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
-  const nHalf=Number(document.getElementById('calK').value);
-  const dist=Number(document.getElementById('calC').value);
-  const shield=Number(document.getElementById('calNoise').value);
-  const activity=Math.pow(0.5,nHalf);
-  const dose=activity/(dist*dist)*Math.pow(0.5,shield);
-  document.getElementById('calKOut').textContent=nHalf.toFixed(1)+' demi-vies';
-  document.getElementById('calCOut').textContent=dist.toFixed(1)+' m';
-  document.getElementById('calNoiseOut').textContent=shield.toFixed(0)+' demi-écrans';
-  const bg=ctx.createLinearGradient(0,0,w,h); bg.addColorStop(0,'#06111f'); bg.addColorStop(1,'#0c1b34'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='rgba(180,220,255,.10)'; ctx.lineWidth=1;
-  for(let x=0;x<w;x+=42){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
-  const sourceX=90, sourceY=h*.55, detX=w-90, detY=sourceY;
-  ctx.fillStyle='rgba(251,146,60,.95)'; ctx.beginPath();ctx.arc(sourceX,sourceY,28,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle='rgba(251,146,60,.35)'; ctx.lineWidth=1.2;
-  for(let r=45;r<260;r+=34){ctx.beginPath();ctx.arc(sourceX,sourceY,r, -.45, .45);ctx.stroke();}
-  const shieldX=sourceX+(detX-sourceX)*(0.45);
-  for(let i=0;i<shield;i++){ctx.fillStyle='rgba(94,234,212,'+(0.16+i*.045)+')';ctx.fillRect(shieldX+i*9,sourceY-95,7,190);}
-  const rays=Math.max(6,Math.round(65*dose*18));
-  ctx.save(); ctx.shadowBlur=10; ctx.shadowColor='rgba(0,255,213,.65)'; ctx.globalAlpha=.28; ctx.strokeStyle='#5eead4'; ctx.lineWidth=3;
-  for(let i=0;i<70;i++){if(i>=rays)continue; const a=-0.38+i/69*0.76; ctx.beginPath();ctx.moveTo(sourceX,sourceY);ctx.lineTo(detX-22,sourceY+Math.tan(a)*(detX-22-sourceX));ctx.stroke();}
-  ctx.restore();
-  for(let i=0;i<70;i++){
-    const a=-0.38+i/69*0.76;
-    const end= i<rays ? detX-22 : shieldX+Math.random()*shield*9;
-    ctx.strokeStyle=i<rays?'rgba(94,234,212,.72)':'rgba(148,163,184,.15)';
-    ctx.lineWidth=i<rays?1.6:1;
-    ctx.beginPath();ctx.moveTo(sourceX,sourceY);ctx.lineTo(end,sourceY+Math.tan(a)*(end-sourceX));ctx.stroke();
-  }
-  ctx.fillStyle='rgba(125,211,252,.25)'; ctx.fillRect(detX-20,detY-80,40,160); ctx.strokeStyle='#7dd3fc'; ctx.strokeRect(detX-20,detY-80,40,160);
-  const barW=Math.min(260,Math.max(4,260*dose)); ctx.fillStyle='rgba(94,234,212,.9)'; ctx.fillRect(w*.52,h-72,barW,16); ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.strokeRect(w*.52,h-72,260,16);
-  ctx.fillStyle='rgba(255,255,255,.86)'; ctx.font='12px Inter, sans-serif'; ctx.fillText('source',sourceX-20,sourceY+48); ctx.fillText('détecteur',detX-28,detY+104); ctx.fillText('écran',shieldX-6,sourceY-108); ctx.fillText('débit relatif',w*.52,h-82); ctx.fillText('distance = '+dist.toFixed(1)+' m',w*.52,h-38);
-  document.getElementById('calM1').textContent=(activity*100).toFixed(1)+' %';
-  document.getElementById('calM2').textContent=(dose*100).toFixed(2)+' %';
-  document.getElementById('calM3').textContent='temps-distance-écran';
-}
-function drawAllSims(){ drawSpectrum(); drawCalibration(); }
-['specLambda','specWidth','specConc','calK','calC','calNoise'].forEach(function(id){
-  const el=document.getElementById(id); if(el) el.addEventListener('input', drawAllSims);
 });
-window.addEventListener('resize', function(){ clearTimeout(window.__simTO); window.__simTO=setTimeout(drawAllSims,120); });
-setTimeout(drawAllSims,150);
 </script>
-<style>
-.bk-home{
-  position:fixed;bottom:20px;left:20px;z-index:9999;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:10px 18px;border-radius:10px;
-  background:rgba(18,26,46,.87);color:#ddeeff;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 4px 18px rgba(0,0,0,.35);
-  transition:.18s ease;
-  cursor:pointer;
-}
-.bk-home:hover{
-  background:rgba(47,159,202,.9);
-  color:#fff;
-  transform:translateY(-2px);
-  box-shadow:0 7px 22px rgba(47,159,202,.4);
-}
-@media(max-width:600px){
-  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
-}
-</style>
-<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>
