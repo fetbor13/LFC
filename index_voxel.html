@@ -7,17 +7,24 @@
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
   :root {
-    --bg: #050505;
+    --bg: #030014;
     --text: #e2e8f0;
-    --voxel: rgba(255, 255, 255, 0.8);
-    --accent: #ef4444; /* Alert/Urgency red */
+    --accent: #f43f5e;
     --line: rgba(255,255,255,0.1);
+
+    /* Vibrant colors for datasets */
+    --c-term: #38bdf8;
+    --c-prem: #34d399;
+    --c-sec: #fbbf24;
+    --c-col: #c084fc;
+    --c-pcsi: #f43f5e;
   }
 
   body {
     margin: 0; padding: 0; min-height: 100vh;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: var(--bg); color: var(--text);
+    background: radial-gradient(circle at bottom right, #1e0b36 0%, var(--bg) 80%);
+    color: var(--text);
     overflow: hidden;
   }
 
@@ -35,28 +42,37 @@
 
   /* Analytic Sidebar */
   .analytic-nav {
-    width: 320px; background: rgba(5,5,5,0.9);
+    width: 320px; background: rgba(3,0,20,0.85);
     border-right: 1px solid var(--line);
     padding: 40px 20px;
     display: flex; flex-direction: column; gap: 8px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
   }
-  .nav-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 25px; padding-left: 10px;}
+  .nav-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 25px; padding-left: 10px;}
 
   .data-btn {
     background: transparent; border: none; color: #94a3b8; text-align: left;
     padding: 12px 15px; font-size: 1.1rem; font-weight: 300; cursor: pointer;
-    border-left: 2px solid transparent; transition: all 0.2s;
+    border-left: 3px solid transparent; transition: all 0.3s;
     display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0 8px 8px 0;
   }
-  .data-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
-  .data-btn.active { color: #fff; border-left-color: #fff; background: rgba(255,255,255,0.08); font-weight: 400; }
-  .data-count { font-family: monospace; font-size: 0.85rem; color: #64748b; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
+  .data-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+  /* Colorful Active States */
+  .data-btn[data-target="terminale"].active { color: #fff; border-left-color: var(--c-term); background: linear-gradient(90deg, rgba(56,189,248,0.2) 0%, transparent 100%); text-shadow: 0 0 10px var(--c-term); }
+  .data-btn[data-target="premiere"].active { color: #fff; border-left-color: var(--c-prem); background: linear-gradient(90deg, rgba(52,211,153,0.2) 0%, transparent 100%); text-shadow: 0 0 10px var(--c-prem); }
+  .data-btn[data-target="seconde"].active { color: #fff; border-left-color: var(--c-sec); background: linear-gradient(90deg, rgba(251,191,36,0.2) 0%, transparent 100%); text-shadow: 0 0 10px var(--c-sec); }
+  .data-btn[data-target="college"].active { color: #fff; border-left-color: var(--c-col); background: linear-gradient(90deg, rgba(192,132,252,0.2) 0%, transparent 100%); text-shadow: 0 0 10px var(--c-col); }
+  .data-btn[data-target="pcsi"].active { color: #fff; border-left-color: var(--c-pcsi); background: linear-gradient(90deg, rgba(244,63,94,0.2) 0%, transparent 100%); text-shadow: 0 0 10px var(--c-pcsi); }
+
+  .data-count { font-family: monospace; font-size: 0.85rem; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; }
 
   /* Data content area */
   .data-content {
     flex: 1; padding: 50px 80px; overflow-y: auto;
-    background: linear-gradient(90deg, rgba(5,5,5,0.9) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(3,0,20,0.7) 0%, transparent 100%);
     backdrop-filter: blur(5px);
   }
 
@@ -64,27 +80,34 @@
   .section { margin: 0; }
   .section-head { margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 1rem; }
   .section-title { display: flex; align-items: center; gap: 1rem; }
-  .section-title h2 { font-size: 2.2rem; font-weight: 300; letter-spacing: -1px; color: #fff; margin: 0;}
+  .section-title h2 { font-size: 2.2rem; font-weight: 300; letter-spacing: -1px; color: #fff; margin: 0; }
   .section-title .lead { color: #94a3b8; margin: 0; font-size: 1.1rem;}
   .section-meta { display: flex; gap: 0.5rem; }
 
   .theme-band { background: transparent; border: none; padding: 0 0 2rem 0; margin-bottom: 2rem; }
   .theme-band-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
   .theme-kicker { color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-  .theme-band-head h3 { font-weight: 400; font-size: 1.3rem; margin: 0; color: #e2e8f0; }
+  .theme-band-head h3 { font-weight: 400; font-size: 1.3rem; margin: 0; color: #fff; }
 
-  .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+  .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
 
   .chapter-card {
-    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1);
-    padding: 1.5rem; border-radius: 0; /* Boxy analytic look */
-    transition: background 0.2s, border-color 0.2s;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    padding: 1.5rem; border-radius: 12px; /* Slightly softer for a modern look */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    position: relative; overflow: hidden;
   }
-  .chapter-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.4); }
+
+  /* Colorful glows based on section using data-accent from inner content */
+  .theme-band[data-accent="terminale"] .chapter-card:hover { border-color: var(--c-term); background: rgba(56,189,248,0.05); box-shadow: 0 10px 30px rgba(56,189,248,0.1); transform: translateY(-3px); }
+  .theme-band[data-accent="premiere"] .chapter-card:hover { border-color: var(--c-prem); background: rgba(52,211,153,0.05); box-shadow: 0 10px 30px rgba(52,211,153,0.1); transform: translateY(-3px); }
+  .theme-band[data-accent="seconde"] .chapter-card:hover { border-color: var(--c-sec); background: rgba(251,191,36,0.05); box-shadow: 0 10px 30px rgba(251,191,36,0.1); transform: translateY(-3px); }
+  .theme-band[data-accent="college"] .chapter-card:hover { border-color: var(--c-col); background: rgba(192,132,252,0.05); box-shadow: 0 10px 30px rgba(192,132,252,0.1); transform: translateY(-3px); }
+  .theme-band[data-accent="cpge"] .chapter-card:hover { border-color: var(--c-pcsi); background: rgba(244,63,94,0.05); box-shadow: 0 10px 30px rgba(244,63,94,0.1); transform: translateY(-3px); }
 
   .chapter-top { display: flex; justify-content: space-between; margin-bottom: 1rem; }
-  .chapter-num { font-family: monospace; color: #64748b; font-size: 0.9rem; }
+  .chapter-num { font-family: monospace; color: #94a3b8; font-size: 0.9rem; }
   .chapter-icon { font-size: 1.2rem; opacity: 0.8; }
   .chapter-card h4 { font-weight: 400; font-size: 1.1rem; margin: 0 0 0.5rem 0; color: #fff; }
   .chapter-card p { font-size: 0.85rem; color: #94a3b8; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -1604,12 +1627,24 @@
 
   loadData('terminale'); // init
 
-  // Voxel/Particle Engine simulating data flow
+  // Voxel/Particle Engine simulating colorful data flow
   const canvas = document.getElementById('voxel-canvas');
   const ctx = canvas.getContext('2d');
   let width, height;
   let voxels = [];
   let speedMultiplier = 1;
+
+  // Palette for particles
+  const colors = [
+    '#38bdf8', // term
+    '#34d399', // prem
+    '#fbbf24', // sec
+    '#c084fc', // col
+    '#f43f5e'  // pcsi
+  ];
+
+  // Current dominant color (changes on click)
+  let targetColorIdx = 0;
 
   function resize() {
     width = canvas.width = window.innerWidth;
@@ -1618,34 +1653,58 @@
   window.addEventListener('resize', resize);
   resize();
 
-  for(let i=0; i<600; i++) {
+  for(let i=0; i<800; i++) {
     voxels.push({
       x: Math.random() * width, y: Math.random() * height,
       z: Math.random() * 4 + 1,
-      speed: (Math.random() - 0.5) * 2
+      speed: (Math.random() - 0.5) * 2,
+      baseColorIdx: Math.floor(Math.random() * colors.length),
+      isTargetColor: Math.random() > 0.5 // 50% chance to be the target color
     });
   }
 
+  // Map buttons to colors
+  const colorMap = {
+    'terminale': 0, 'premiere': 1, 'seconde': 2, 'college': 3, 'pcsi': 4
+  };
+
   function draw() {
-    ctx.clearRect(0, 0, width, height);
+    // Add a slight fade for a trail effect
+    ctx.fillStyle = 'rgba(3, 0, 20, 0.2)';
+    ctx.fillRect(0, 0, width, height);
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    // Smooth transition logic could go here, but direct snapping or mix is fine for voxels
+    const activeBtn = document.querySelector('.data-btn.active');
+    if (activeBtn) {
+        targetColorIdx = colorMap[activeBtn.getAttribute('data-target')];
+    }
+
     voxels.forEach(v => {
-      // Move upwards
-      v.y -= (Math.abs(v.speed) * speedMultiplier + 0.2) / v.z;
-
-      // Slight horizontal drift
-      v.x += Math.sin(v.y * 0.005) * 0.3;
+      // Move upwards and flow right
+      v.y -= (Math.abs(v.speed) * speedMultiplier + 0.5) / v.z;
+      v.x += (Math.sin(v.y * 0.005) * 0.5 + 0.5) * speedMultiplier;
 
       if(v.y < 0) v.y = height;
       if(v.y > height) v.y = 0;
       if(v.x < 0) v.x = width;
       if(v.x > width) v.x = 0;
 
-      const size = 4 / v.z;
-      ctx.globalAlpha = 1 - (v.z / 5);
-      // Draw cube (voxel)
+      const size = 3.5 / v.z;
+
+      // Decide color: mostly target color, some random
+      if (v.isTargetColor) {
+        ctx.fillStyle = colors[targetColorIdx];
+      } else {
+        ctx.fillStyle = colors[v.baseColorIdx];
+      }
+
+      ctx.globalAlpha = (1 - (v.z / 5)) * (speedMultiplier > 1 ? 1 : 0.6);
+
+      // Draw glowing cube (voxel)
+      ctx.shadowBlur = speedMultiplier > 1 ? 10 : 0;
+      ctx.shadowColor = ctx.fillStyle;
       ctx.fillRect(v.x, v.y, size, size);
+      ctx.shadowBlur = 0; // reset
     });
 
     requestAnimationFrame(draw);
