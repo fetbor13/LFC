@@ -3,225 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Physique-Chimie WebOS 2026 - Accueil</title>
-<script>
-MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
-};
-</script>
+<title>Physique-Chimie 2026 - Carte Galactique</title>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
   :root {
-    --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent: #06b6d4;
-    --accent-glow: rgba(6, 182, 212, 0.5);
-    --window-header: rgba(15, 23, 42, 0.8);
-
-    /* Legacy index vars so we can reuse some of its styles inside windows */
-    --surface: transparent;
-    --surface-2: rgba(255,255,255,0.05);
-    --ink: #fff;
-    --muted: #cbd5e1;
-    --soft: #94a3b8;
-    --line: rgba(255,255,255,0.1);
-    --terminale: #63caea;
-    --premiere: #64d99c;
-    --seconde: #f1a15d;
-    --college: #9a8cfa;
-    --pcsi: #f1786d;
-    --radius: 8px;
+    --bg: #000;
+    --text: #fff;
+    --accent: #fcd34d;
+    --glass: rgba(10, 10, 15, 0.85);
+    /* Legacy index vars */
+    --surface: transparent; --surface-2: rgba(255,255,255,0.05);
+    --ink: #fff; --muted: #9ca3af; --soft: #d1d5db; --line: rgba(255,255,255,0.1);
+    --terminale: #63caea; --premiere: #64d99c; --seconde: #f1a15d;
+    --college: #9a8cfa; --pcsi: #f1786d; --radius: 12px;
   }
 
   body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    margin: 0; padding: 0;
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-main);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background: var(--bg); color: var(--text);
+    overflow: hidden; /* Canvas takes full screen */
   }
 
-  .desktop {
-    flex: 1;
-    position: relative;
-    padding: 20px;
-    background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+  #space-canvas {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1;
   }
 
-  .window {
+  .ui-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 10; pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Planet Nodes (Clickable regions on canvas translated to HTML overlays) */
+  .planet-node {
     position: absolute;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    transition: transform 0.1s, box-shadow 0.2s;
-  }
-
-  .window.active {
-    z-index: 100;
-    box-shadow: 0 0 20px var(--accent-glow);
-    border-color: var(--accent);
-  }
-
-  .window-header {
-    background: var(--window-header);
-    padding: 8px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-    user-select: none;
-    border-bottom: 1px solid var(--glass-border);
-  }
-
-  .window-title { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .window-controls { display: flex; gap: 6px; }
-  .control-btn { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer; }
-  .btn-close { background: #ef4444; }
-  .btn-min { background: #eab308; }
-  .btn-max { background: #22c55e; }
-
-  .window-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #fff;
-  }
-
-  .window-content::-webkit-scrollbar { width: 8px; }
-  .window-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-  .dock {
-    height: 70px;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    padding: 0 20px;
-    z-index: 1000;
-  }
-
-  .dock-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  .planet-node:hover { transform: translate(-50%, -50%) scale(1.1); }
+  .planet-icon {
+    font-size: 3rem; margin-bottom: 10px;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.5));
+  }
+  .planet-label {
+    background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 20px;
+    font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.2);
+    white-space: nowrap;
   }
 
-  .dock-icon:hover { transform: translateY(-5px) scale(1.1); background: rgba(255,255,255,0.2); box-shadow: 0 5px 15px var(--accent-glow); }
-  .dock-icon::after {
-    content: attr(data-tooltip);
-    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-    background: #0f172a; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem;
-    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; border: 1px solid var(--glass-border);
+  /* Modal for content */
+  #content-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+    width: 80vw; max-width: 900px; max-height: 85vh;
+    background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 20px;
+    padding: 30px; overflow-y: auto;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 50px rgba(255,255,255,0.1);
   }
-  .dock-icon:hover::after { opacity: 1; }
-  .dock-icon.active::before {
-    content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px;
-    background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent);
+  #content-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+
+  .close-modal {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.1); border: none; color: #fff;
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    font-size: 1.2rem; display: grid; place-items: center;
   }
+  .close-modal:hover { background: rgba(255,255,255,0.2); }
 
-  /* Extracted legacy styles adapted for windows */
-  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-  .section-title { display:flex; align-items:center; gap:1rem; }
-  .section-title span { font-size:2rem; }
-  .section-title h2 { margin:0; font-size:1.5rem; color: #fff; }
-  .section-title .lead { margin:0; color:var(--soft); font-size:0.9rem; }
-  .section-meta { display:flex; gap:0.5rem; }
-  .pill { font-size:0.75rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:2rem; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
+  /* Title */
+  .hud-title {
+    position: absolute; top: 30px; left: 40px; pointer-events: auto;
+  }
+  .hud-title h1 { margin: 0; font-size: 2rem; font-weight: 300; letter-spacing: 2px; }
+  .hud-title span { font-weight: 700; color: var(--accent); }
 
-  .theme-band { background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; }
-  .theme-band[data-accent="terminale"] { border-left:4px solid var(--terminale); }
-  .theme-band[data-accent="premiere"] { border-left:4px solid var(--premiere); }
-  .theme-band[data-accent="seconde"] { border-left:4px solid var(--seconde); }
-  .theme-band[data-accent="college"] { border-left:4px solid var(--college); }
-  .theme-band[data-accent="cpge"] { border-left:4px solid var(--pcsi); }
-
-  .theme-band-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1rem; border-bottom:1px solid var(--line); padding-bottom:0.75rem; }
-  .theme-kicker { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); display:block; margin-bottom:0.2rem; }
-  .theme-band-head h3 { margin:0; font-size:1.15rem; font-weight:600; color:var(--ink); }
-  .theme-band-head strong { font-size:0.8rem; color:var(--soft); background:var(--bg-gradient); padding:0.2rem 0.5rem; border-radius:4px; }
-
-  .chapter-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:1rem; }
-  .chapter-card { display:flex; flex-direction:column; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; text-decoration:none; color:inherit; transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+  /* Content inside modal styles */
+  .section { margin: 0; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .section-title h2 { margin: 0; font-size: 2rem; color: #fff; }
+  .theme-band { background: rgba(255,255,255,0.02); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .theme-band[data-accent="terminale"] { border-left: 4px solid var(--terminale); }
+  .theme-band[data-accent="premiere"] { border-left: 4px solid var(--premiere); }
+  .theme-band[data-accent="seconde"] { border-left: 4px solid var(--seconde); }
+  .theme-band[data-accent="college"] { border-left: 4px solid var(--college); }
+  .theme-band[data-accent="cpge"] { border-left: 4px solid var(--pcsi); }
+  .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .chapter-card { background: rgba(0,0,0,0.4); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem; transition: transform 0.2s, border-color 0.2s; }
   .college-panel { display: none; }
   .college-panel.active { display: block; }
   .college-tabs button { background: none; border: none; cursor: pointer; padding: 5px 10px; color: #64748b; }
   .college-tabs button.active { font-weight: bold; color: var(--accent); }
 
-  .chapter-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.2); border-color:var(--accent); }
-  .chapter-top { display:flex; justify-content:space-between; margin-bottom:0.5rem; }
-  .chapter-num { font-size:0.75rem; font-weight:700; color:var(--soft); }
-  .chapter-icon { font-size:1.1rem; }
-  .chapter-card h4 { margin:0 0 0.5rem 0; font-size:0.95rem; line-height:1.3; color:var(--ink); }
-  .chapter-card p { margin:0; font-size:0.8rem; color:var(--muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-
-  .chapter-tags { display:flex; flex-wrap:wrap; gap:0.25rem; margin:0.75rem 0; }
-  .tag { font-size:0.65rem; padding:0.15rem 0.4rem; background:rgba(255,255,255,0.08); color:var(--muted); border-radius:4px; }
-  .chapter-foot { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--line); font-size:0.75rem; font-weight:600; color:var(--accent); }
-  .chapter-foot span { display:flex; align-items:center; gap:0.25rem; }
-
+  .chapter-card:hover { transform: translateY(-3px); border-color: var(--accent); background: rgba(255,255,255,0.1); }
   a { color: inherit; text-decoration: none; }
-
-  /* Remove section IDs inside windows to avoid conflicts, and change sections to divs to render nicely */
-  .section { display: block; }
+  .pill { font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 2rem; background: rgba(255,255,255,0.1); }
 </style>
 </head>
 <body>
 
-<div class="desktop" id="desktop">
-  <!-- Welcome Widget -->
-  <div style="position: absolute; top: 30px; right: 40px; text-align: right;">
-    <h1 style="margin: 0; font-size: 2.5rem; font-weight: 300; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">WebOS <span style="font-weight: 700; color: var(--accent);">Edu</span></h1>
-    <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 1.1rem;">Espace M. Borsali</p>
-    <div style="margin-top: 15px; font-size: 0.85rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--glass-border); display: inline-block;">
-      Cliquez sur les icônes du dock en bas pour ouvrir les niveaux.
-    </div>
+<canvas id="space-canvas"></canvas>
+
+<div class="ui-layer">
+  <div class="hud-title">
+    <h1>Cartographie <span>Stellaire</span></h1>
+    <p style="color:#9ca3af; font-size:0.9rem;">Sélectionnez un système pour y voyager</p>
+  </div>
+
+  <!-- Planets positioned via absolute top/left -->
+  <div class="planet-node" style="top: 30%; left: 30%;" data-content="terminale">
+    <div class="planet-icon" style="filter: drop-shadow(0 0 20px #63caea);">🎓</div>
+    <div class="planet-label" style="color:#63caea;">Système Terminale</div>
+  </div>
+
+  <div class="planet-node" style="top: 60%; left: 20%;" data-content="premiere">
+    <div class="planet-icon" style="filter: drop-shadow(0 0 20px #64d99c);">📗</div>
+    <div class="planet-label" style="color:#64d99c;">Système Première</div>
+  </div>
+
+  <div class="planet-node" style="top: 50%; left: 50%;" data-content="seconde">
+    <div class="planet-icon" style="filter: drop-shadow(0 0 20px #f1a15d);">📙</div>
+    <div class="planet-label" style="color:#f1a15d;">Système Seconde</div>
+  </div>
+
+  <div class="planet-node" style="top: 70%; left: 70%;" data-content="college">
+    <div class="planet-icon" style="filter: drop-shadow(0 0 20px #9a8cfa);">📔</div>
+    <div class="planet-label" style="color:#9a8cfa;">Nébuleuse Collège</div>
+  </div>
+
+  <div class="planet-node" style="top: 30%; left: 75%;" data-content="pcsi">
+    <div class="planet-icon" style="filter: drop-shadow(0 0 20px #f1786d);">🔬</div>
+    <div class="planet-label" style="color:#f1786d;">Trou de Ver PCSI</div>
   </div>
 </div>
 
-<div class="dock" id="dock">
-  <div class="dock-icon" data-app="terminale" data-tooltip="Terminale Spécialité">🎓</div>
-  <div class="dock-icon" data-app="premiere" data-tooltip="Première Spécialité">📗</div>
-  <div class="dock-icon" data-app="seconde" data-tooltip="Seconde">📙</div>
-  <div class="dock-icon" data-app="college" data-tooltip="Collège">📔</div>
-  <div class="dock-icon" data-app="pcsi" data-tooltip="Passerelle PCSI">🔬</div>
+<div id="content-modal">
+  <button class="close-modal">×</button>
+  <div id="modal-body"></div>
 </div>
 
 <script>
-  let zIndexCounter = 100;
-
-  const apps = {
-    terminale: {
-      id: 'win-term', title: '🎓 Terminale Spécialité',
-      width: 800, height: 600, x: 50, y: 50,
-      content: `<section class="section" id="terminale" data-section="terminale">
+  const contents = {
+    terminale: `<section class="section" id="terminale" data-section="terminale">
       <div class="section-head">
         <div class="section-title"><span>🎓</span><div><h2>Terminale Spécialité</h2><p class="lead">19 chapitres, dans l'ordre du parcours élève.</p></div></div>
         <div class="section-meta"><span class="pill">Bac</span><span class="pill">Annales</span><span class="pill">Méthodes</span></div>
@@ -528,12 +457,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    premiere: {
-      id: 'win-prem', title: '📗 Première Spécialité',
-      width: 750, height: 550, x: 100, y: 80,
-      content: `<section class="section" id="premiere" data-section="premiere">
+    </section>`,
+    premiere: `<section class="section" id="premiere" data-section="premiere">
       <div class="section-head">
         <div class="section-title"><span>📗</span><div><h2>Première Spécialité</h2><p class="lead">18 fichiers de cours relus et renommés d'après leur contenu réel.</p></div></div>
         <div class="section-meta"><span class="pill">Chimie</span><span class="pill">Physique</span><span class="pill">Ondes</span></div>
@@ -816,12 +741,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    seconde: {
-      id: 'win-sec', title: '📙 Seconde',
-      width: 700, height: 500, x: 150, y: 110,
-      content: `<section class="section" id="seconde" data-section="seconde">
+    </section>`,
+    seconde: `<section class="section" id="seconde" data-section="seconde">
       <div class="section-head">
         <div class="section-title"><span>📙</span><div><h2>Seconde</h2><p class="lead">16 fichiers de cours relus et alignés avec leur contenu réel.</p></div></div>
         <div class="section-meta"><span class="pill">Matière</span><span class="pill">Mouvement</span><span class="pill">Signaux</span></div>
@@ -1067,12 +988,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    college: {
-      id: 'win-col', title: '📔 Collège',
-      width: 700, height: 500, x: 200, y: 140,
-      content: `<section class="section" id="college" data-section="college">
+    </section>`,
+    college: `<section class="section" id="college" data-section="college">
       <div class="section-head">
         <div class="section-title"><span>📔</span><div><h2>Collège</h2><p class="lead">5 chapitres en 5ème, 5 en 4ème, 5 en 3ème.</p></div></div>
         <div class="section-meta"><span class="pill">5ème</span><span class="pill">4ème</span><span class="pill">3ème</span></div>
@@ -1390,12 +1307,8 @@ MathJax = {
       </div>
 
 
-    </section>`
-    },
-    pcsi: {
-      id: 'win-pcsi', title: '🔬 Passerelle PCSI',
-      width: 750, height: 550, x: 250, y: 170,
-      content: `<section class="section" id="pcsi" data-section="pcsi">
+    </section>`,
+    pcsi: `<section class="section" id="pcsi" data-section="pcsi">
       <div class="section-head">
         <div class="section-title"><span>🔬</span><div><h2>Passerelle PCSI</h2><p class="lead">Un parcours PCSI complet : outils, physique, chimie, méthodes, quiz et chatbots universitaires.</p></div></div>
         <div class="section-meta"><span class="pill">22 chapitres</span><span class="pill">Méthodes</span><span class="pill">Prépa</span></div>
@@ -1696,126 +1609,91 @@ MathJax = {
 </div>
       </article>
     </section>`
-    }
   };
 
-  const desktop = document.getElementById('desktop');
+  const modal = document.getElementById('content-modal');
+  const modalBody = document.getElementById('modal-body');
 
-  function createWindow(appKey) {
-    const app = apps[appKey];
-    if (document.getElementById(app.id)) {
-      // Bring to front if already open
-      const win = document.getElementById(app.id);
-      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
-      win.classList.add('active');
-      win.style.zIndex = ++zIndexCounter;
-      return;
-    }
-
-    const win = document.createElement('div');
-    win.className = 'window active';
-    win.id = app.id;
-    win.style.width = app.width + 'px';
-    win.style.height = app.height + 'px';
-    win.style.left = app.x + 'px';
-    win.style.top = app.y + 'px';
-    win.style.zIndex = ++zIndexCounter;
-
-    win.innerHTML = `
-      <div class="window-header">
-        <div class="window-title">${app.title}</div>
-        <div class="window-controls">
-          <button class="control-btn btn-min" title="Réduire"></button>
-          <button class="control-btn btn-max" title="Agrandir"></button>
-          <button class="control-btn btn-close" title="Fermer"></button>
-        </div>
-      </div>
-      <div class="window-content">${app.content}</div>
-    `;
-
-    desktop.appendChild(win);
-
-    if (window.MathJax) {
-      MathJax.typesetPromise([win]);
-    }
-
-    win.addEventListener('mousedown', () => {
-      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
-      win.classList.add('active');
-      win.style.zIndex = ++zIndexCounter;
-    });
-
-    win.querySelector('.btn-close').addEventListener('click', () => {
-      win.remove();
-      document.querySelector(`.dock-icon[data-app="${appKey}"]`).classList.remove('active');
-    });
-
-    let isMax = false;
-    let preMax = {};
-    win.querySelector('.btn-max').addEventListener('click', () => {
-      if(!isMax) {
-        preMax = { width: win.style.width, height: win.style.height, left: win.style.left, top: win.style.top };
-        win.style.width = '100%';
-        win.style.height = '100%';
-        win.style.left = '0';
-        win.style.top = '0';
-      } else {
-        win.style.width = preMax.width;
-        win.style.height = preMax.height;
-        win.style.left = preMax.left;
-        win.style.top = preMax.top;
-      }
-      isMax = !isMax;
-    });
-
-    const header = win.querySelector('.window-header');
-    let isDragging = false, startX, startY, initialX, initialY;
-
-    header.addEventListener('mousedown', (e) => {
-      if(e.target.classList.contains('control-btn')) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      initialX = parseInt(win.style.left) || 0;
-      initialY = parseInt(win.style.top) || 0;
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if(!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      win.style.left = (initialX + dx) + 'px';
-      win.style.top = (initialY + dy) + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
-  }
-
-  document.querySelectorAll('.dock-icon').forEach(icon => {
-    icon.addEventListener('click', () => {
-      const appKey = icon.getAttribute('data-app');
-      createWindow(appKey);
-      icon.classList.add('active');
+  document.querySelectorAll('.planet-node').forEach(node => {
+    node.addEventListener('click', () => {
+      const key = node.getAttribute('data-content');
+      modalBody.innerHTML = contents[key];
+      modal.classList.add('active');
+      if (window.MathJax) MathJax.typesetPromise([modalBody]);
     });
   });
 
-  // Missing functions from original index.html to handle the College tabs inside the injected HTML
-  function showCollege(level, button) {
-    // Search within the specific college window instead of document
-    const winCol = document.getElementById('win-col');
-    if (!winCol) return;
-    winCol.querySelectorAll('.college-panel').forEach(panel => panel.classList.remove('active'));
-    winCol.querySelector('#collegePanel' + level).classList.add('active');
-    winCol.querySelectorAll('.college-tabs button').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
+  document.querySelector('.close-modal').addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+
+  // Canvas Space Background
+  const canvas = document.getElementById('space-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let stars = [];
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for(let i=0; i<300; i++) {
+    stars.push({
+      x: Math.random() * width, y: Math.random() * height,
+      z: Math.random() * 2,
+      r: Math.random() * 1.5 + 0.5
+    });
   }
 
-  // Open terminale by default
-  createWindow('terminale');
-  document.querySelector('.dock-icon[data-app="terminale"]').classList.add('active');
+  // Draw connecting constellation lines between the nodes
+  const nodes = [
+    {x: 0.3, y: 0.3}, {x: 0.2, y: 0.6}, {x: 0.5, y: 0.5}, {x: 0.7, y: 0.7}, {x: 0.75, y: 0.3}
+  ];
 
+  let time = 0;
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 5, 0.2)';
+    ctx.fillRect(0, 0, width, height);
+    time += 0.01;
+
+    // Draw stars
+    ctx.fillStyle = '#fff';
+    stars.forEach(star => {
+      ctx.globalAlpha = (Math.sin(time + star.x) + 1) / 2 * 0.8 + 0.2;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.r, 0, Math.PI*2);
+      ctx.fill();
+
+      // subtle parallax
+      star.x -= star.z * 0.1;
+      if (star.x < 0) star.x = width;
+    });
+
+    // Draw Constellation Lines
+    ctx.globalAlpha = 0.3;
+    ctx.strokeStyle = '#fcd34d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(nodes[0].x * width, nodes[0].y * height);
+    for(let i=1; i<nodes.length; i++) {
+      ctx.lineTo(nodes[i].x * width, nodes[i].y * height);
+    }
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  function showCollege(level, button) {
+    const parent = modalBody;
+    parent.querySelectorAll('.college-panel').forEach(panel => panel.classList.remove('active'));
+    parent.querySelector('#collegePanel' + level).classList.add('active');
+    parent.querySelectorAll('.college-tabs button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  }
 </script>
 </body>
 </html>

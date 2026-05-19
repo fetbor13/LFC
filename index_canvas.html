@@ -3,225 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Physique-Chimie WebOS 2026 - Accueil</title>
-<script>
-MathJax = {
-  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
-};
-</script>
+<title>Physique-Chimie 2026 - Canvas Infini</title>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
   :root {
-    --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent: #06b6d4;
-    --accent-glow: rgba(6, 182, 212, 0.5);
-    --window-header: rgba(15, 23, 42, 0.8);
-
-    /* Legacy index vars so we can reuse some of its styles inside windows */
-    --surface: transparent;
-    --surface-2: rgba(255,255,255,0.05);
-    --ink: #fff;
-    --muted: #cbd5e1;
-    --soft: #94a3b8;
-    --line: rgba(255,255,255,0.1);
-    --terminale: #63caea;
-    --premiere: #64d99c;
-    --seconde: #f1a15d;
-    --college: #9a8cfa;
-    --pcsi: #f1786d;
-    --radius: 8px;
+    --bg: #f0f0f0; /* Miro-like light grey background */
+    --dot: #d4d4d4;
   }
 
   body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    margin: 0; padding: 0; overflow: hidden;
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-main);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
-  .desktop {
-    flex: 1;
-    position: relative;
-    padding: 20px;
-    background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+  #workspace {
+    position: absolute; top: 0; left: 0;
+    width: 10000px; height: 10000px;
+    transform-origin: 0 0;
+    cursor: grab;
   }
+  #workspace:active { cursor: grabbing; }
 
-  .window {
+  .node {
     position: absolute;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    transition: transform 0.1s, box-shadow 0.2s;
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 800px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
   }
+  .node:hover { border-color: #3b82f6; }
 
-  .window.active {
-    z-index: 100;
-    box-shadow: 0 0 20px var(--accent-glow);
-    border-color: var(--accent);
+  /* Node specific placements */
+  #node-term { top: 4500px; left: 4000px; }
+  #node-prem { top: 4500px; left: 5000px; }
+  #node-sec  { top: 5200px; left: 4500px; }
+  #node-col  { top: 5900px; left: 4500px; }
+  #node-pcsi { top: 3800px; left: 4500px; }
+
+  /* UI overlay */
+  .controls {
+    position: fixed; bottom: 30px; right: 30px;
+    display: flex; gap: 10px;
+    background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
-
-  .window-header {
-    background: var(--window-header);
-    padding: 8px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-    user-select: none;
-    border-bottom: 1px solid var(--glass-border);
+  .controls button {
+    border: none; background: #f3f4f6; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;
   }
+  .controls button:hover { background: #e5e7eb; }
 
-  .window-title { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .window-controls { display: flex; gap: 6px; }
-  .control-btn { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer; }
-  .btn-close { background: #ef4444; }
-  .btn-min { background: #eab308; }
-  .btn-max { background: #22c55e; }
-
-  .window-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #fff;
+  .title-bar {
+    position: fixed; top: 30px; left: 30px;
+    background: #fff; padding: 15px 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
+  .title-bar h1 { margin: 0; font-size: 1.5rem; }
 
-  .window-content::-webkit-scrollbar { width: 8px; }
-  .window-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-  .dock {
-    height: 70px;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    padding: 0 20px;
-    z-index: 1000;
-  }
-
-  .dock-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-  }
-
-  .dock-icon:hover { transform: translateY(-5px) scale(1.1); background: rgba(255,255,255,0.2); box-shadow: 0 5px 15px var(--accent-glow); }
-  .dock-icon::after {
-    content: attr(data-tooltip);
-    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-    background: #0f172a; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem;
-    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; border: 1px solid var(--glass-border);
-  }
-  .dock-icon:hover::after { opacity: 1; }
-  .dock-icon.active::before {
-    content: ''; position: absolute; bottom: -8px; width: 6px; height: 6px;
-    background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent);
-  }
-
-  /* Extracted legacy styles adapted for windows */
-  .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-  .section-title { display:flex; align-items:center; gap:1rem; }
-  .section-title span { font-size:2rem; }
-  .section-title h2 { margin:0; font-size:1.5rem; color: #fff; }
-  .section-title .lead { margin:0; color:var(--soft); font-size:0.9rem; }
-  .section-meta { display:flex; gap:0.5rem; }
-  .pill { font-size:0.75rem; font-weight:600; padding:0.25rem 0.6rem; border-radius:2rem; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
-
-  .theme-band { background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; }
-  .theme-band[data-accent="terminale"] { border-left:4px solid var(--terminale); }
-  .theme-band[data-accent="premiere"] { border-left:4px solid var(--premiere); }
-  .theme-band[data-accent="seconde"] { border-left:4px solid var(--seconde); }
-  .theme-band[data-accent="college"] { border-left:4px solid var(--college); }
-  .theme-band[data-accent="cpge"] { border-left:4px solid var(--pcsi); }
-
-  .theme-band-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1rem; border-bottom:1px solid var(--line); padding-bottom:0.75rem; }
-  .theme-kicker { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); display:block; margin-bottom:0.2rem; }
-  .theme-band-head h3 { margin:0; font-size:1.15rem; font-weight:600; color:var(--ink); }
-  .theme-band-head strong { font-size:0.8rem; color:var(--soft); background:var(--bg-gradient); padding:0.2rem 0.5rem; border-radius:4px; }
-
-  .chapter-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:1rem; }
-  .chapter-card { display:flex; flex-direction:column; background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; text-decoration:none; color:inherit; transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+  /* Content inside node styles */
+  .section { margin: 0; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .section-title h2 { margin: 0; font-size: 2rem; color: #111; }
+  .theme-band { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .theme-band[data-accent="terminale"] { border-left: 4px solid #63caea; }
+  .theme-band[data-accent="premiere"] { border-left: 4px solid #64d99c; }
+  .theme-band[data-accent="seconde"] { border-left: 4px solid #f1a15d; }
+  .theme-band[data-accent="college"] { border-left: 4px solid #9a8cfa; }
+  .theme-band[data-accent="cpge"] { border-left: 4px solid #f1786d; }
+  .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .chapter-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.2rem; transition: transform 0.2s, box-shadow 0.2s; pointer-events: auto; }
   .college-panel { display: none; }
   .college-panel.active { display: block; }
   .college-tabs button { background: none; border: none; cursor: pointer; padding: 5px 10px; color: #64748b; }
   .college-tabs button.active { font-weight: bold; color: var(--accent); }
 
-  .chapter-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.2); border-color:var(--accent); }
-  .chapter-top { display:flex; justify-content:space-between; margin-bottom:0.5rem; }
-  .chapter-num { font-size:0.75rem; font-weight:700; color:var(--soft); }
-  .chapter-icon { font-size:1.1rem; }
-  .chapter-card h4 { margin:0 0 0.5rem 0; font-size:0.95rem; line-height:1.3; color:var(--ink); }
-  .chapter-card p { margin:0; font-size:0.8rem; color:var(--muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-
-  .chapter-tags { display:flex; flex-wrap:wrap; gap:0.25rem; margin:0.75rem 0; }
-  .tag { font-size:0.65rem; padding:0.15rem 0.4rem; background:rgba(255,255,255,0.08); color:var(--muted); border-radius:4px; }
-  .chapter-foot { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:0.75rem; border-top:1px solid var(--line); font-size:0.75rem; font-weight:600; color:var(--accent); }
-  .chapter-foot span { display:flex; align-items:center; gap:0.25rem; }
-
+  .chapter-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
   a { color: inherit; text-decoration: none; }
-
-  /* Remove section IDs inside windows to avoid conflicts, and change sections to divs to render nicely */
-  .section { display: block; }
+  .pill { font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 2rem; background: #e2e8f0; color: #475569; }
 </style>
 </head>
 <body>
 
-<div class="desktop" id="desktop">
-  <!-- Welcome Widget -->
-  <div style="position: absolute; top: 30px; right: 40px; text-align: right;">
-    <h1 style="margin: 0; font-size: 2.5rem; font-weight: 300; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">WebOS <span style="font-weight: 700; color: var(--accent);">Edu</span></h1>
-    <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 1.1rem;">Espace M. Borsali</p>
-    <div style="margin-top: 15px; font-size: 0.85rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--glass-border); display: inline-block;">
-      Cliquez sur les icônes du dock en bas pour ouvrir les niveaux.
-    </div>
-  </div>
+<div class="title-bar">
+  <h1>Mindmap Physique-Chimie</h1>
+  <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 0.9rem;">Naviguez librement en glissant la souris et en zoomant.</p>
 </div>
 
-<div class="dock" id="dock">
-  <div class="dock-icon" data-app="terminale" data-tooltip="Terminale Spécialité">🎓</div>
-  <div class="dock-icon" data-app="premiere" data-tooltip="Première Spécialité">📗</div>
-  <div class="dock-icon" data-app="seconde" data-tooltip="Seconde">📙</div>
-  <div class="dock-icon" data-app="college" data-tooltip="Collège">📔</div>
-  <div class="dock-icon" data-app="pcsi" data-tooltip="Passerelle PCSI">🔬</div>
-</div>
+<div id="workspace">
+  <!-- Connectors Canvas -->
+  <svg style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;" id="svg-lines"></svg>
 
-<script>
-  let zIndexCounter = 100;
-
-  const apps = {
-    terminale: {
-      id: 'win-term', title: '🎓 Terminale Spécialité',
-      width: 800, height: 600, x: 50, y: 50,
-      content: `<section class="section" id="terminale" data-section="terminale">
+  <div class="node" id="node-term"><section class="section" id="terminale" data-section="terminale">
       <div class="section-head">
         <div class="section-title"><span>🎓</span><div><h2>Terminale Spécialité</h2><p class="lead">19 chapitres, dans l'ordre du parcours élève.</p></div></div>
         <div class="section-meta"><span class="pill">Bac</span><span class="pill">Annales</span><span class="pill">Méthodes</span></div>
@@ -528,12 +403,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    premiere: {
-      id: 'win-prem', title: '📗 Première Spécialité',
-      width: 750, height: 550, x: 100, y: 80,
-      content: `<section class="section" id="premiere" data-section="premiere">
+    </section></div>
+  <div class="node" id="node-prem"><section class="section" id="premiere" data-section="premiere">
       <div class="section-head">
         <div class="section-title"><span>📗</span><div><h2>Première Spécialité</h2><p class="lead">18 fichiers de cours relus et renommés d'après leur contenu réel.</p></div></div>
         <div class="section-meta"><span class="pill">Chimie</span><span class="pill">Physique</span><span class="pill">Ondes</span></div>
@@ -816,12 +687,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    seconde: {
-      id: 'win-sec', title: '📙 Seconde',
-      width: 700, height: 500, x: 150, y: 110,
-      content: `<section class="section" id="seconde" data-section="seconde">
+    </section></div>
+  <div class="node" id="node-sec"><section class="section" id="seconde" data-section="seconde">
       <div class="section-head">
         <div class="section-title"><span>📙</span><div><h2>Seconde</h2><p class="lead">16 fichiers de cours relus et alignés avec leur contenu réel.</p></div></div>
         <div class="section-meta"><span class="pill">Matière</span><span class="pill">Mouvement</span><span class="pill">Signaux</span></div>
@@ -1067,12 +934,8 @@ MathJax = {
   </a>
     </div>
   </article>
-    </section>`
-    },
-    college: {
-      id: 'win-col', title: '📔 Collège',
-      width: 700, height: 500, x: 200, y: 140,
-      content: `<section class="section" id="college" data-section="college">
+    </section></div>
+  <div class="node" id="node-col"><section class="section" id="college" data-section="college">
       <div class="section-head">
         <div class="section-title"><span>📔</span><div><h2>Collège</h2><p class="lead">5 chapitres en 5ème, 5 en 4ème, 5 en 3ème.</p></div></div>
         <div class="section-meta"><span class="pill">5ème</span><span class="pill">4ème</span><span class="pill">3ème</span></div>
@@ -1390,12 +1253,8 @@ MathJax = {
       </div>
 
 
-    </section>`
-    },
-    pcsi: {
-      id: 'win-pcsi', title: '🔬 Passerelle PCSI',
-      width: 750, height: 550, x: 250, y: 170,
-      content: `<section class="section" id="pcsi" data-section="pcsi">
+    </section></div>
+  <div class="node" id="node-pcsi"><section class="section" id="pcsi" data-section="pcsi">
       <div class="section-head">
         <div class="section-title"><span>🔬</span><div><h2>Passerelle PCSI</h2><p class="lead">Un parcours PCSI complet : outils, physique, chimie, méthodes, quiz et chatbots universitaires.</p></div></div>
         <div class="section-meta"><span class="pill">22 chapitres</span><span class="pill">Méthodes</span><span class="pill">Prépa</span></div>
@@ -1695,127 +1554,117 @@ MathJax = {
   </a>
 </div>
       </article>
-    </section>`
-    }
-  };
+    </section></div>
+</div>
 
-  const desktop = document.getElementById('desktop');
+<div class="controls">
+  <button id="zoomIn">+</button>
+  <button id="zoomOut">-</button>
+  <button id="resetView">Reset</button>
+</div>
 
-  function createWindow(appKey) {
-    const app = apps[appKey];
-    if (document.getElementById(app.id)) {
-      // Bring to front if already open
-      const win = document.getElementById(app.id);
-      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
-      win.classList.add('active');
-      win.style.zIndex = ++zIndexCounter;
-      return;
-    }
+<script>
+  const workspace = document.getElementById('workspace');
+  let scale = 0.5;
+  // Center initially (approximate coordinates relative to nodes)
+  let panX = -1800;
+  let panY = -1800;
 
-    const win = document.createElement('div');
-    win.className = 'window active';
-    win.id = app.id;
-    win.style.width = app.width + 'px';
-    win.style.height = app.height + 'px';
-    win.style.left = app.x + 'px';
-    win.style.top = app.y + 'px';
-    win.style.zIndex = ++zIndexCounter;
-
-    win.innerHTML = `
-      <div class="window-header">
-        <div class="window-title">${app.title}</div>
-        <div class="window-controls">
-          <button class="control-btn btn-min" title="Réduire"></button>
-          <button class="control-btn btn-max" title="Agrandir"></button>
-          <button class="control-btn btn-close" title="Fermer"></button>
-        </div>
-      </div>
-      <div class="window-content">${app.content}</div>
-    `;
-
-    desktop.appendChild(win);
-
-    if (window.MathJax) {
-      MathJax.typesetPromise([win]);
-    }
-
-    win.addEventListener('mousedown', () => {
-      document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
-      win.classList.add('active');
-      win.style.zIndex = ++zIndexCounter;
-    });
-
-    win.querySelector('.btn-close').addEventListener('click', () => {
-      win.remove();
-      document.querySelector(`.dock-icon[data-app="${appKey}"]`).classList.remove('active');
-    });
-
-    let isMax = false;
-    let preMax = {};
-    win.querySelector('.btn-max').addEventListener('click', () => {
-      if(!isMax) {
-        preMax = { width: win.style.width, height: win.style.height, left: win.style.left, top: win.style.top };
-        win.style.width = '100%';
-        win.style.height = '100%';
-        win.style.left = '0';
-        win.style.top = '0';
-      } else {
-        win.style.width = preMax.width;
-        win.style.height = preMax.height;
-        win.style.left = preMax.left;
-        win.style.top = preMax.top;
-      }
-      isMax = !isMax;
-    });
-
-    const header = win.querySelector('.window-header');
-    let isDragging = false, startX, startY, initialX, initialY;
-
-    header.addEventListener('mousedown', (e) => {
-      if(e.target.classList.contains('control-btn')) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      initialX = parseInt(win.style.left) || 0;
-      initialY = parseInt(win.style.top) || 0;
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if(!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      win.style.left = (initialX + dx) + 'px';
-      win.style.top = (initialY + dy) + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
+  function updateTransform() {
+    workspace.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    document.body.style.backgroundPosition = `${panX}px ${panY}px`;
+    document.body.style.backgroundSize = `${40 * scale}px ${40 * scale}px`;
   }
+  updateTransform();
 
-  document.querySelectorAll('.dock-icon').forEach(icon => {
-    icon.addEventListener('click', () => {
-      const appKey = icon.getAttribute('data-app');
-      createWindow(appKey);
-      icon.classList.add('active');
-    });
+  // Panning logic
+  let isDragging = false;
+  let startX, startY;
+
+  workspace.addEventListener('mousedown', (e) => {
+    // Don't pan if clicking on a link or button
+    if(e.target.closest('a') || e.target.closest('button')) return;
+    isDragging = true;
+    startX = e.clientX - panX;
+    startY = e.clientY - panY;
   });
 
-  // Missing functions from original index.html to handle the College tabs inside the injected HTML
-  function showCollege(level, button) {
-    // Search within the specific college window instead of document
-    const winCol = document.getElementById('win-col');
-    if (!winCol) return;
-    winCol.querySelectorAll('.college-panel').forEach(panel => panel.classList.remove('active'));
-    winCol.querySelector('#collegePanel' + level).classList.add('active');
-    winCol.querySelectorAll('.college-tabs button').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    panX = e.clientX - startX;
+    panY = e.clientY - startY;
+    updateTransform();
+  });
+
+  window.addEventListener('mouseup', () => { isDragging = false; });
+
+  // Zoom logic
+  window.addEventListener('wheel', (e) => {
+    if(e.target.closest('.node')) return; // Allow scrolling inside nodes
+    e.preventDefault();
+    const zoomIntensity = 0.05;
+    const oldScale = scale;
+    scale += e.deltaY < 0 ? zoomIntensity : -zoomIntensity;
+    scale = Math.min(Math.max(0.1, scale), 2); // clamp
+
+    // Zoom toward mouse pointer
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    panX = mouseX - (mouseX - panX) * (scale / oldScale);
+    panY = mouseY - (mouseY - panY) * (scale / oldScale);
+
+    updateTransform();
+  }, { passive: false });
+
+  document.getElementById('zoomIn').addEventListener('click', () => { scale = Math.min(scale + 0.1, 2); updateTransform(); });
+  document.getElementById('zoomOut').addEventListener('click', () => { scale = Math.max(scale - 0.1, 0.1); updateTransform(); });
+  document.getElementById('resetView').addEventListener('click', () => { scale = 0.5; panX = -1800; panY = -1800; updateTransform(); });
+
+  // Draw lines between nodes
+  const svg = document.getElementById('svg-lines');
+  function drawLine(id1, id2, color) {
+    const n1 = document.getElementById(id1);
+    const n2 = document.getElementById(id2);
+    const rect1 = { x: parseInt(n1.style.left || getComputedStyle(n1).left), y: parseInt(n1.style.top || getComputedStyle(n1).top), w: 800, h: n1.offsetHeight };
+    const rect2 = { x: parseInt(n2.style.left || getComputedStyle(n2).left), y: parseInt(n2.style.top || getComputedStyle(n2).top), w: 800, h: n2.offsetHeight };
+
+    const x1 = rect1.x + rect1.w/2; const y1 = rect1.y + rect1.h/2;
+    const x2 = rect2.x + rect2.w/2; const y2 = rect2.y + rect2.h/2;
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    // Bezier curve for nice connector
+    const d = `M ${x1} ${y1} C ${x1} ${(y1+y2)/2}, ${x2} ${(y1+y2)/2}, ${x2} ${y2}`;
+    line.setAttribute('d', d);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', '4');
+    line.setAttribute('fill', 'transparent');
+    line.setAttribute('stroke-dasharray', '10,10');
+    svg.appendChild(line);
   }
 
-  // Open terminale by default
-  createWindow('terminale');
-  document.querySelector('.dock-icon[data-app="terminale"]').classList.add('active');
+  // Draw after a small delay to allow DOM to size properly
+  setTimeout(() => {
+    drawLine('node-pcsi', 'node-term', '#f1786d');
+    drawLine('node-pcsi', 'node-prem', '#f1786d');
+    drawLine('node-term', 'node-sec', '#63caea');
+    drawLine('node-prem', 'node-sec', '#64d99c');
+    drawLine('node-sec', 'node-col', '#f1a15d');
+  }, 100);
 
+  function showCollege(level, button) {
+    const parent = button.closest('.node');
+    parent.querySelectorAll('.college-panel').forEach(panel => panel.classList.remove('active'));
+    parent.querySelector('#collegePanel' + level).classList.add('active');
+    parent.querySelectorAll('.college-tabs button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    // Redraw lines since node height might change
+    svg.innerHTML = '';
+    drawLine('node-pcsi', 'node-term', '#f1786d');
+    drawLine('node-pcsi', 'node-prem', '#f1786d');
+    drawLine('node-term', 'node-sec', '#63caea');
+    drawLine('node-prem', 'node-sec', '#64d99c');
+    drawLine('node-sec', 'node-col', '#f1a15d');
+  }
 </script>
 </body>
 </html>
