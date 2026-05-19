@@ -1,181 +1,854 @@
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Seconde · Chapitre 13 — Forces et mouvements | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#FDF8F3;--bg2:#FAF0E8;--panel:#FFFFFF;--panel2:#FEFBF8;--line:#E8D5C4;--line2:#D4B89E;--text:#2C1810;--muted:#7A5C4A;--faint:#B08E78;--orange:#C87533;--orange2:#E09860;--orange3:#FDF2E9;--green:#2F855A;--green2:rgba(22,163,74,.12);--amber:#B7791F;--amber2:rgba(245,158,11,.12);--red:#B91C1C;--red2:rgba(239,68,68,.12);--purple:#5B4A9F;--purple2:rgba(91,74,159,.12);--cyan:#3A8A9F;--cyan2:rgba(58,138,159,.12);--shadow:0 14px 34px rgba(120,70,20,.055);--shadow2:0 8px 22px rgba(120,70,20,.045);--side:306px}
+[data-theme="dark"]{--bg:#1A0F08;--bg2:#221410;--panel:#2C1A10;--panel2:#3A2418;--line:#4A3020;--line2:#5E3E2C;--text:#F5E6D8;--muted:#C8A88E;--faint:#8A6A50;--orange:#E09860;--orange2:#F0B888;--orange3:rgba(224,152,96,.12);--shadow:0 18px 54px rgba(0,0,0,.32);--shadow2:0 10px 32px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(200,117,51,.055),transparent 32rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.65;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--orange);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.72);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:20px 18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(17,24,39,.72)}.brand{display:flex;align-items:center;gap:12px;margin:2px 6px 22px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#C87533,#E09860);display:grid;place-items:center;color:white;font-weight:800;font-size:14px;box-shadow:0 14px 28px rgba(200,117,51,.16)}.brand h1{font-size:16px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:16px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(200,117,51,.16);color:var(--orange);background:var(--orange3);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.micro{color:var(--faint);font-size:12px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);font-weight:800;margin:22px 10px 10px;padding:6px 10px;background:rgba(200,117,51,.06);border-radius:8px}[data-theme="dark"] .nav-label{background:rgba(224,152,96,.08)}.tablist{display:grid;gap:4px}.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:all .2s}.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}.tab.active{background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.26);box-shadow:inset 4px 0 0 var(--orange),0 8px 18px rgba(15,23,42,.035)}.tools{display:flex;gap:8px;margin-top:16px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .2s}.icon-btn:hover{border-color:var(--orange);color:var(--orange)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(253,248,243,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 30px}[data-theme="dark"] .topbar{background:rgba(26,15,8,.78)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--orange)}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px;font-weight:700}.page{max-width:1160px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.28fr .72fr;gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden}.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,117,51,.075),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--orange);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:760}.hero h2 span{color:var(--orange)}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--orange)}.hero-copy{font-size:14px;color:var(--muted);max-width:68ch}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.metric{border:1px solid var(--line);background:rgba(255,255,255,.64);border-radius:12px;padding:9px 10px}[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}.metric b{display:block;font-size:17px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:#2C1810;border:1px solid rgba(200,117,51,.15);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}.mission-1 small{background:var(--orange3);color:var(--orange)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--purple2);color:var(--purple)}.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}.panel{display:none;scroll-margin-top:82px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow2);padding:24px;margin-bottom:18px}.content-card h3{font-size:22px;letter-spacing:-.03em;margin:0 0 13px;font-weight:740}.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}.toc{position:sticky;top:82px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}.toc a:nth-of-type(1){background:var(--orange3);color:var(--orange)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--purple2);color:var(--purple)}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.note{border-left:4px solid var(--orange);background:var(--orange3);border-radius:0 18px 18px 0;padding:16px 18px;margin:16px 0;color:var(--text)}.warn{border-left-color:var(--amber);background:var(--amber2)}.ok{border-left-color:var(--green);background:var(--green2)}.formula{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:15px 0;text-align:center;overflow-x:auto;font-size:1.05rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;margin:16px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.08em}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}.card p,.card li{font-size:13px;color:var(--muted)}.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}.exercise h4{margin:0 0 10px}.exercise details{margin-top:12px}.exercise summary{cursor:pointer;font-weight:800;color:var(--orange);background:var(--orange3);border:1px solid rgba(200,117,51,.20);padding:9px 12px;border-radius:12px}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.flashcard{min-height:145px;perspective:1000px;cursor:pointer}.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer;transition:all .2s}.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}.mindmap{display:grid;gap:12px}.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:white;padding:18px;font-weight:800;font-size:18px}.map-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}.map-branch h4{margin:0 0 8px}.map-branch ul{margin:0;padding-left:18px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px;text-decoration:none;display:inline-flex;align-items:center}.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}.sim-card iframe{width:100%;height:460px;border:0}.sim-card .sim-body{padding:14px}.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}.ece-step b{display:block;margin-bottom:6px}@media(max-width:980px){.app{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.tablist{grid-template-columns:repeat(2,1fr)}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.ece-steps{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}@media(max-width:620px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
-
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Seconde</span>
-      <span class="micro">Chap. 13</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<a class="skip" href="#main-content">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand">
+<div class="brand-mark">🎯</div>
+<div><h1>PhysiChem Omnis</h1><p>Seconde</p></div>
+</div>
+<div class="level-card">
+<div class="level-row">
+<span class="badge">🎯 Chapitre 13</span>
+<span class="micro">3 sections</span>
+</div>
+<div class="progress"><span id="prog" style="width:0%"></span></div>
+</div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" id="tablist">
+<button class="tab active" data-panel="cours">📚 Cours</button>
+<button class="tab" data-panel="relations">📐 Relations &amp; Dimensions</button>
+<button class="tab" data-panel="exercices">✏️ Exercices</button>
+<button class="tab" data-panel="flashcards">🃏 Flashcards</button>
+<button class="tab" data-panel="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" data-panel="mindmap">🗺️ Carte mentale</button>
+<button class="tab" data-panel="sims">🔬 Simulations</button>
+<button class="tab" data-panel="ece">🧪 ECE</button>
+<button class="tab" data-panel="spe">🚀 Vers la 1ère Spé</button>
+</div>
+<div class="tools">
+<button class="icon-btn" id="themeBtn" title="Thème">🌓</button>
+<button class="icon-btn" id="printBtn" title="Imprimer">🖨️</button>
+<button class="icon-btn" id="fullscreenBtn" title="Plein écran">⛶</button>
+</div>
+</aside>
+<div class="main" id="main-content">
+<header class="topbar">
+<div class="crumb">Seconde › Mouvement et interactions › <b>Chap. 13 — Forces et mouvements</b></div>
+<div class="top-actions">
+<button class="pill-btn" id="scrollTopBtn">↑ Haut</button>
+</div>
+</header>
+<div class="page">
+<!-- HERO -->
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">🎯 Mouvement et interactions</div>
+<h2>Forces et <span>mouvements</span></h2>
+<p class="hero-copy">Modéliser les actions mécaniques par des forces, comprendre le principe des actions réciproques et appliquer les lois du poids et de la gravitation universelle.</p>
+<div class="instructor">Programme officiel — Seconde</div>
+<div class="hero-grid">
+<div class="metric"><b>3</b><span>Sections</span></div>
+<div class="metric"><b>3</b><span>Missions</span></div>
+<div class="metric"><b>4</b><span>Formules clés</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap">
+<canvas id="heroCanvas" width="400" height="220"></canvas>
+</div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<!-- MISSIONS -->
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Identifier et représenter les forces</b><span>Reconnaître les actions de contact et à distance, tracer les vecteurs force</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Actions réciproques</b><span>Appliquer le principe des actions réciproques (3ème loi de Newton)</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Poids et gravitation</b><span>Utiliser les relations P = mg et F = GmA×mB/d²</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Seconde · Chap. 13</div>
-    <h1 class="hero-title">Forces et mouvem<span>ents | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<!-- ==================== PANEL 1: COURS ==================== -->
+<div class="panel active" id="panel-cours">
+<div class="content-card">
+<div class="course-grid">
+<nav class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#sec1">I. Modélisation d'une action par une force</a>
+<a href="#sec2">II. Principe des actions réciproques</a>
+<a href="#sec3">III. Exemples de forces</a>
+</nav>
+<div class="course-body">
+
+<h2 id="sec1">I. Modélisation d'une action par une force</h2>
+
+<h3>1. Actions de contact et actions à distance</h3>
+<p>Une <strong>action mécanique</strong> est toute cause susceptible de modifier le mouvement d'un objet ou de le déformer. On distingue deux types d'actions :</p>
+
+<div class="cards">
+<div class="card">
+<h4>🤝 Actions de contact</h4>
+<p>L'acteur et le receveur sont en <strong>contact direct</strong>.</p>
+<ul>
+<li>Poussée d'une main sur un objet</li>
+<li>Réaction du support sur un livre</li>
+<li>Tension d'un fil</li>
+<li>Force de frottement</li>
+</ul>
+</div>
+<div class="card">
+<h4>🧲 Actions à distance</h4>
+<p>L'acteur agit sur le receveur <strong>sans contact</strong>.</p>
+<ul>
+<li>Poids (attraction gravitationnelle de la Terre)</li>
+<li>Force magnétique (aimant)</li>
+<li>Force électrostatique</li>
+</ul>
+</div>
+</div>
+
+<h3>2. Caractéristiques d'une force</h3>
+<p>Une force est modélisée par un <strong>vecteur</strong> caractérisé par quatre grandeurs :</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Caractéristique</th><th>Description</th><th>Notation</th></tr></thead>
+<tbody>
+<tr><td><strong>Point d'application</strong></td><td>Point où la force s'exerce</td><td>Origine du vecteur</td></tr>
+<tr><td><strong>Direction</strong></td><td>Droite suivant laquelle la force agit</td><td>Droite support du vecteur</td></tr>
+<tr><td><strong>Sens</strong></td><td>Orientation de la force sur sa droite</td><td>Flèche du vecteur</td></tr>
+<tr><td><strong>Norme (valeur)</strong></td><td>Intensité de la force</td><td>\(\|\vec{F}\|\) en newton (N)</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>3. Le dynamomètre</h3>
+<p>Un <strong>dynamomètre</strong> est un instrument de mesure de la norme d'une force. Il fonctionne par déformation d'un ressort : l'allongement est proportionnel à la force appliquée (loi de Hooke).</p>
+<div class="note">L'unité de force est le <strong>newton</strong> (N). Un newton correspond environ au poids d'une masse de 100 g sur Terre.</div>
+
+<h3>4. Représentation vectorielle avec échelle</h3>
+<p>Pour représenter une force sur un schéma, on choisit une <strong>échelle</strong> :</p>
+<div class="formula">$$\text{Échelle : } 1\,\text{cm} \leftrightarrow x\,\text{N}$$</div>
+<p>Exemple : pour représenter une force de 15 N avec l'échelle 1 cm ↔ 5 N, on trace un vecteur de longueur 3 cm.</p>
+
+<div class="note warn">
+<strong>Attention :</strong> Le point d'application d'une force de contact se trouve à la surface de contact. Le point d'application du poids est le <strong>centre de gravité</strong> G de l'objet.
+</div>
+
+<h2 id="sec2">II. Principe des actions réciproques</h2>
+
+<h3>1. Troisième loi de Newton (principe des actions réciproques)</h3>
+<p>Lorsqu'un objet A exerce une force sur un objet B, alors l'objet B exerce simultanément une force sur l'objet A :</p>
+<div class="formula">$$\vec{F}_{A/B} = -\vec{F}_{B/A}$$</div>
+
+<div class="note ok">
+<strong>Propriétés des forces réciproques :</strong><br>
+• Même direction et même norme<br>
+• Sens opposés<br>
+• Points d'application différents (l'un sur A, l'autre sur B)<br>
+• Elles ne se compensent <strong>JAMAIS</strong> car elles s'exercent sur des objets différents
+</div>
+
+<h3>2. Exemples d'actions réciproques</h3>
+<div class="cards">
+<div class="card">
+<h4>🏊 Nageur et eau</h4>
+<p>Le nageur pousse l'eau vers l'arrière avec ses bras et ses jambes : \(\vec{F}_{\text{nageur/eau}}\) vers l'arrière.<br>
+L'eau pousse le nageur vers l'avant : \(\vec{F}_{\text{eau/nageur}}\) vers l'avant.<br>
+C'est la force de l'eau sur le nageur qui le propulse !</p>
+</div>
+<div class="card">
+<h4>🚀 Fusée et gaz</h4>
+<p>La fusée éjecte des gaz vers le bas : \(\vec{F}_{\text{fusée/gaz}}\) vers le bas.<br>
+Les gaz exercent une force sur la fusée vers le haut : \(\vec{F}_{\text{gaz/fusée}}\) vers le haut.<br>
+C'est le principe de la <strong>propulsion par réaction</strong>.</p>
+</div>
+<div class="card">
+<h4>🦶 Personne et sol</h4>
+<p>La personne appuie sur le sol : \(\vec{F}_{\text{personne/sol}}\) vers le bas.<br>
+Le sol exerce une réaction sur la personne : \(\vec{F}_{\text{sol/personne}}\) vers le haut.</p>
+</div>
+<div class="card">
+<h4>🧲 Aimant et clou</h4>
+<p>L'aimant attire le clou : \(\vec{F}_{\text{aimant/clou}}\) vers l'aimant.<br>
+Le clou attire l'aimant : \(\vec{F}_{\text{clou/aimant}}\) vers le clou.<br>
+Les deux forces ont la même norme !</p>
+</div>
+</div>
+
+<h2 id="sec3">III. Exemples de forces</h2>
+
+<h3>1. Le poids P</h3>
+<p>Le <strong>poids</strong> d'un objet est la force d'attraction gravitationnelle exercée par la Terre sur cet objet. Il est toujours dirigé <strong>vers le bas</strong> (vers le centre de la Terre).</p>
+<div class="formula">$$P = m \times g$$</div>
+<p>où :</p>
+<ul>
+<li>\(P\) est le poids en newton (N)</li>
+<li>\(m\) est la masse en kilogramme (kg)</li>
+<li>\(g\) est l'intensité de la pesanteur : \(g \approx 9{,}81\) N·kg⁻¹ sur Terre</li>
+</ul>
+
+<h3>2. Distinction poids et masse</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Grandeur</th><th>Poids P</th><th>Masse m</th></tr></thead>
+<tbody>
+<tr><td><strong>Définition</strong></td><td>Force d'attraction gravitationnelle</td><td>Quantité de matière</td></tr>
+<tr><td><strong>Unité</strong></td><td>Newton (N)</td><td>Kilogramme (kg)</td></tr>
+<tr><td><strong>Direction</strong></td><td>Verticale, vers le bas</td><td>—</td></tr>
+<tr><td><strong>Variation</strong></td><td>Dépend du lieu (g varie)</td><td>Ne dépend pas du lieu</td></tr>
+<tr><td><strong>Instrument</strong></td><td>Dynamomètre</td><td>Balance</td></tr>
+<tr><td><strong>Relation</strong></td><td colspan="2">\(P = m \times g\)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note warn">
+<strong>Attention :</strong> Sur la Lune, \(g_{\text{Lune}} \approx 1{,}6\) N·kg⁻¹. Le poids d'un objet est environ 6 fois plus faible que sur Terre, mais sa masse reste la même !
+</div>
+
+<h3>3. La réaction du support</h3>
+<p>Lorsqu'un objet est posé sur un support horizontal, le support exerce une force <strong>perpendiculaire</strong> à sa surface : la <strong>réaction normale</strong> \(\vec{R}\).</p>
+<div class="formula">$$\text{Sur un plan horizontal sans frottement : } \vec{R} = -\vec{P}$$</div>
+<p>Les forces se compensent et l'objet reste immobile ou en mouvement rectiligne uniforme.</p>
+
+<h3>4. La tension d'un fil</h3>
+<p>Un fil tendu exerce une force de <strong>tension</strong> \(\vec{T}\) sur l'objet attaché, dirigée selon le fil, vers le point d'attache. Pour un pendule simple au repos :</p>
+<div class="formula">$$\vec{T} = -\vec{P} \quad \text{(équilibre)}$$</div>
+
+<h3>5. L'interaction gravitationnelle</h3>
+<p>Deux objets massiques A et B s'attirent mutuellement. La force d'attraction gravitationnelle est donnée par la <strong>loi de Newton</strong> :</p>
+<div class="formula">$$F = G \times \frac{m_A \times m_B}{d^2}$$</div>
+<p>où :</p>
+<ul>
+<li>\(F\) est la norme de la force en newton (N)</li>
+<li>\(G = 6{,}67 \times 10^{-11}\) N·m²·kg⁻² est la constante de gravitation universelle</li>
+<li>\(m_A\) et \(m_B\) sont les masses en kilogramme (kg)</li>
+<li>\(d\) est la distance entre les centres de gravité en mètre (m)</li>
+</ul>
+
+<div class="note ok">
+<strong>Relation entre g et G :</strong><br>
+À la surface de la Terre (rayon \(R_T \approx 6\,371\) km, masse \(M_T \approx 5{,}97 \times 10^{24}\) kg) :
+$$g = \frac{G \times M_T}{R_T^2} \approx \frac{6{,}67 \times 10^{-11} \times 5{,}97 \times 10^{24}}{(6{,}371 \times 10^6)^2} \approx 9{,}81 \text{ N·kg}^{-1}$$
+</div>
+
+<div class="note">
+<strong>Ordres de grandeur :</strong><br>
+• Poids d'une pomme (m ≈ 150 g) : \(P \approx 1{,}5\) N<br>
+• Poids d'un élève (m ≈ 60 kg) : \(P \approx 590\) N<br>
+• Force gravitationnelle entre la Terre et la Lune : \(F \approx 2 \times 10^{20}\) N<br>
+• Force gravitationnelle entre deux personnes de 70 kg à 1 m : \(F \approx 3{,}3 \times 10^{-7}\) N (négligeable !)
+</div>
 
 </div>
+</div>
+</div>
+
+<!-- ==================== PANEL 2: RELATIONS & DIMENSIONS ==================== -->
+<div class="panel" id="panel-relations">
+<div class="content-card">
+<h3>📐 Relations &amp; Analyse dimensionnelle</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Grandeur</th><th>Relation</th><th>Dimension</th><th>Unité SI</th></tr></thead>
+<tbody>
+<tr><td>Poids</td><td>\(P = m \times g\)</td><td>\([M][L][T]^{-2}\)</td><td>N</td></tr>
+<tr><td>Intensité de la pesanteur</td><td>\(g = P/m\)</td><td>\([L][T]^{-2}\)</td><td>N·kg⁻¹ = m·s⁻²</td></tr>
+<tr><td>Force gravitationnelle</td><td>\(F = G \times \dfrac{m_A \times m_B}{d^2}\)</td><td>\([M][L][T]^{-2}\)</td><td>N</td></tr>
+<tr><td>Constante G</td><td>\(G = \dfrac{F \times d^2}{m_A \times m_B}\)</td><td>\([M]^{-1}[L]^3[T]^{-2}\)</td><td>N·m²·kg⁻²</td></tr>
+<tr><td>Actions réciproques</td><td>\(\vec{F}_{A/B} = -\vec{F}_{B/A}\)</td><td>\([M][L][T]^{-2}\)</td><td>N</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="content-card">
+<h3>🔍 Vérification dimensionnelle</h3>
+<div class="formula">
+$$[F] = [G] \times \frac{[m_A][m_B]}{[d]^2} = [M]^{-1}[L]^3[T]^{-2} \times \frac{[M]^2}{[L]^2} = [M][L][T]^{-2}$$
+</div>
+<div class="note ok">La dimension de \(F\) est bien \([M][L][T]^{-2}\), celle d'une force. La relation de gravitation universelle est homogène.</div>
+</div>
+
+<div class="content-card">
+<h3>📊 Valeurs de g sur différents astres</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Astre</th><th>Masse (kg)</th><th>Rayon (km)</th><th>g (N·kg⁻¹)</th></tr></thead>
+<tbody>
+<tr><td>Terre</td><td>5,97 × 10²⁴</td><td>6 371</td><td>9,81</td></tr>
+<tr><td>Lune</td><td>7,35 × 10²²</td><td>1 737</td><td>1,62</td></tr>
+<tr><td>Mars</td><td>6,42 × 10²³</td><td>3 390</td><td>3,72</td></tr>
+<tr><td>Jupiter</td><td>1,90 × 10²⁷</td><td>69 911</td><td>25,9</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 3: EXERCICES ==================== -->
+<div class="panel" id="panel-exercices">
+<div class="content-card">
+<h3>✏️ Exercices d'entraînement</h3>
+
+<div class="exercise">
+<h4>Exercice 1 — Calculer un poids</h4>
+<p>Calculer le poids d'un objet de masse m = 5,0 kg sur Terre puis sur la Lune. (g_Terre = 9,81 N·kg⁻¹ ; g_Lune = 1,62 N·kg⁻¹)</p>
+<details><summary>Correction</summary>
+<p><strong>Sur Terre :</strong> \(P = m \times g = 5{,}0 \times 9{,}81 = 49{,}1\) N ≈ 49 N</p>
+<p><strong>Sur la Lune :</strong> \(P = m \times g_{\text{Lune}} = 5{,}0 \times 1{,}62 = 8{,}1\) N</p>
+<p>La masse reste 5,0 kg partout, mais le poids varie avec g.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Force gravitationnelle</h4>
+<p>Calculer la force d'attraction gravitationnelle entre la Terre et la Lune. (M_T = 5,97 × 10²⁴ kg ; M_L = 7,35 × 10²² kg ; d = 3,84 × 10⁸ m)</p>
+<details><summary>Correction</summary>
+<p>\(F = G \times \dfrac{M_T \times M_L}{d^2}\)</p>
+<p>\(F = 6{,}67 \times 10^{-11} \times \dfrac{5{,}97 \times 10^{24} \times 7{,}35 \times 10^{22}}{(3{,}84 \times 10^8)^2}\)</p>
+<p>\(F = 6{,}67 \times 10^{-11} \times \dfrac{4{,}39 \times 10^{47}}{1{,}47 \times 10^{17}}\)</p>
+<p>\(F \approx 1{,}99 \times 10^{20}\) N ≈ 2,0 × 10²⁰ N</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 3 — Actions réciproques</h4>
+<p>Un livre de masse 800 g est posé sur une table. Identifier les forces qui s'exercent sur le livre et sur la table. Représenter les actions réciproques.</p>
+<details><summary>Correction</summary>
+<p><strong>Forces sur le livre :</strong></p>
+<ul>
+<li>Poids \(\vec{P}\) (Terre → livre) : vertical, vers le bas, P = 0,800 × 9,81 = 7,85 N</li>
+<li>Réaction \(\vec{R}\) (table → livre) : vertical, vers le haut, R = P = 7,85 N</li>
+</ul>
+<p><strong>Actions réciproques :</strong></p>
+<ul>
+<li>Le livre appuie sur la table : \(\vec{F}_{\text{livre/table}}\) vers le bas = 7,85 N</li>
+<li>La table pousse le livre : \(\vec{F}_{\text{table/livre}} = \vec{R}\) vers le haut = 7,85 N</li>
+<li>\(\vec{F}_{\text{livre/table}} = -\vec{F}_{\text{table/livre}}\) ✓</li>
+</ul>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Représenter les forces</h4>
+<p>Un skieur de masse 75 kg descend une piste. Identifier et représenter toutes les forces qui s'exercent sur le skieur. (On néglige les frottements)</p>
+<details><summary>Correction</summary>
+<p>Deux forces s'exercent sur le skieur :</p>
+<ol>
+<li><strong>Poids \(\vec{P}\)</strong> : vertical, vers le bas, P = 75 × 9,81 = 736 N, appliqué au centre de gravité G</li>
+<li><strong>Réaction du support \(\vec{R}\)</strong> : perpendiculaire à la piste, vers le haut, appliqué au point de contact, R = P × cos(α)</li>
+</ol>
+<p>Sans frottement, la résultante n'est pas nulle (le skieur accélère).</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 5 — Propulsion d'une fusée</h4>
+<p>Une fusée éjecte 2 000 kg de gaz par seconde avec une vitesse de 3 000 m·s⁻¹. Calculer la force de propulsion.</p>
+<details><summary>Correction</summary>
+<p>Par le principe des actions réciproques : la force que les gaz exercent sur la fusée est égale et opposée à celle que la fusée exerce sur les gaz.</p>
+<p>Quantité de mouvement des gaz éjectés par seconde : \(\Delta p = \dot{m} \times v = 2\,000 \times 3\,000 = 6{,}0 \times 10^6\) kg·m·s⁻² = 6,0 MN</p>
+<p>Force de propulsion : \(F = 6{,}0 \times 10^6\) N = 6,0 MN</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 6 — Calcul de g sur Mars</h4>
+<p>Calculer l'intensité de la pesanteur sur Mars. (M_Mars = 6,42 × 10²³ kg ; R_Mars = 3 390 km)</p>
+<details><summary>Correction</summary>
+<p>\(g = \dfrac{G \times M}{R^2} = \dfrac{6{,}67 \times 10^{-11} \times 6{,}42 \times 10^{23}}{(3{,}39 \times 10^6)^2}\)</p>
+<p>\(g = \dfrac{4{,}28 \times 10^{13}}{1{,}15 \times 10^{13}} \approx 3{,}72\) N·kg⁻¹</p>
+<p>Un objet de 60 kg pèse 223 N sur Mars contre 589 N sur Terre.</p>
+</details>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 4: FLASHCARDS ==================== -->
+<div class="panel" id="panel-flashcards">
+<div class="content-card">
+<h3>🃏 Flashcards — Cliquez pour retourner</h3>
+<div class="flashcard-grid" id="flashGrid">
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Quelles sont les 4 caractéristiques d'une force ?</b></div><div class="flash-back">Point d'application, direction, sens et norme (valeur en newton). Une force est modélisée par un vecteur.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Action de contact vs à distance ?</b></div><div class="flash-back">Contact : l'acteur touche le receveur (poussée, réaction, tension). À distance : pas de contact (poids, force magnétique, force électrostatique).</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Énoncer le principe des actions réciproques</b></div><div class="flash-back">\(\vec{F}_{A/B} = -\vec{F}_{B/A}\). Même direction, même norme, sens opposés, points d'application différents. Elles ne se compensent jamais.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Relation poids-masse ?</b></div><div class="flash-back">\(P = m \times g\) avec P en N, m en kg, g en N·kg⁻¹. Sur Terre, g ≈ 9,81 N·kg⁻¹. Le poids varie avec le lieu, la masse est constante.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Différence poids et masse ?</b></div><div class="flash-back">Poids = force (N), varie avec g. Masse = quantité de matière (kg), invariable. Balance → masse, dynamomètre → poids.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Loi de gravitation universelle ?</b></div><div class="flash-back">\(F = G \times \dfrac{m_A \times m_B}{d^2}\) avec G = 6,67 × 10⁻¹¹ N·m²·kg⁻². Force attractive entre deux objets massiques, proportionnelle aux masses, inversement proportionnelle au carré de la distance.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Qu'est-ce que la réaction du support ?</b></div><div class="flash-back">Force exercée par le support sur l'objet, perpendiculaire à la surface. Sur un plan horizontal sans frottement : \(\vec{R} = -\vec{P}\).</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Pourquoi les actions réciproques ne se compensent-elles pas ?</b></div><div class="flash-back">Parce qu'elles s'exercent sur des objets différents ! \(\vec{F}_{A/B}\) agit sur B, \(\vec{F}_{B/A}\) agit sur A. Pour qu'il y ait compensation, il faut des forces sur le MÊME objet.</div></div></div>
+<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>Comment représenter une force ?</b></div><div class="flash-back">Choisir une échelle (ex : 1 cm ↔ 5 N), tracer un vecteur depuis le point d'application, dans la direction et le sens de la force, de longueur proportionnelle à sa norme.</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 5: QUIZ & CHATBOT ==================== -->
+<div class="panel" id="panel-quiz">
+<div class="content-card">
+<h3>🧠 Quiz interactif</h3>
+<div id="quizZone"></div>
+<div class="btn-row" style="margin-top:16px">
+<button class="btn primary" onclick="loadQuiz()">Nouveau quiz</button>
+<span class="chip" id="quizScore">Score : —</span>
+</div>
+</div>
+
+<div class="content-card">
+<h3>🤖 Chatbot IA — Posez vos questions</h3>
+<p>Utilisez un assistant IA pour approfondir ce chapitre. Copiez le prompt ci-dessous et collez-le dans l'outil de votre choix :</p>
+<div class="ai-grid">
+<div>
+<textarea class="prompt-box" id="promptBox" readonly>Je suis un élève de Seconde en physique-chimie. Explique-moi les forces : comment modéliser une action par une force, le principe des actions réciproques, le poids P=mg et la loi de gravitation universelle F=G×mA×mB/d². Donne des exemples concrets et des conseils pour représenter les forces sur un schéma.</textarea>
+<div class="btn-row">
+<button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value);this.textContent='✓ Copié !'">📋 Copier</button>
+</div>
+</div>
+<div>
+<h4 style="margin-top:0">Assistants IA</h4>
+<div style="display:grid;gap:8px">
+<a href="https://claude.ai" target="_blank" class="btn" style="justify-content:center;background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.2)">🟠 Claude</a>
+<a href="https://chat.openai.com" target="_blank" class="btn" style="justify-content:center;background:var(--green2);color:var(--green);border-color:rgba(22,163,74,.2)">🟢 ChatGPT</a>
+<a href="https://gemini.google.com" target="_blank" class="btn" style="justify-content:center;background:var(--purple2);color:var(--purple);border-color:rgba(91,74,159,.2)">🟣 Gemini</a>
+<a href="https://copilot.microsoft.com" target="_blank" class="btn" style="justify-content:center;background:var(--cyan2);color:var(--cyan);border-color:rgba(58,138,159,.2)">🔵 Copilot</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 6: CARTE MENTALE ==================== -->
+<div class="panel" id="panel-mindmap">
+<div class="content-card">
+<h3>🗺️ Carte mentale — Forces et mouvements</h3>
+<div class="mindmap">
+<div class="map-center">🎯 Forces et mouvements</div>
+<div class="map-branches">
+<div class="map-branch">
+<h4>📐 Modélisation</h4>
+<ul>
+<li>Force = vecteur</li>
+<li>Point, direction, sens, norme</li>
+<li>Contact vs à distance</li>
+<li>Échelle de représentation</li>
+</ul>
+</div>
+<div class="map-branch">
+<h4>🔄 Actions réciproques</h4>
+<ul>
+<li>\(\vec{F}_{A/B} = -\vec{F}_{B/A}\)</li>
+<li>Même norme, sens opposé</li>
+<li>Objets différents</li>
+<li>Nageur, fusée, marche</li>
+</ul>
+</div>
+<div class="map-branch">
+<h4>⚖️ Poids</h4>
+<ul>
+<li>\(P = m \times g\)</li>
+<li>g ≈ 9,81 N·kg⁻¹</li>
+<li>Poids ≠ masse</li>
+<li>Centre de gravité G</li>
+</ul>
+</div>
+<div class="map-branch">
+<h4>🌍 Gravitation</h4>
+<ul>
+<li>\(F = G \times m_A \times m_B / d^2\)</li>
+<li>G = 6,67 × 10⁻¹¹</li>
+<li>Toujours attractive</li>
+<li>Lien g et G : \(g = GM_T/R_T^2\)</li>
+</ul>
+</div>
+<div class="map-branch">
+<h4>🧱 Réaction du support</h4>
+<ul>
+<li>Perpendiculaire au support</li>
+<li>Compense le poids (au repos)</li>
+<li>Action de contact</li>
+<li>\(\vec{R} = -\vec{P}\) (horizontal)</li>
+</ul>
+</div>
+<div class="map-branch">
+<h4>🧵 Tension du fil</h4>
+<ul>
+<li>Selon le fil</li>
+<li>Vers le point d'attache</li>
+<li>Pendule : \(\vec{T} = -\vec{P}\)</li>
+<li>Action de contact</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 7: SIMULATIONS ==================== -->
+<div class="panel" id="panel-sims">
+<div class="content-card">
+<h3>🔬 Simulations interactives</h3>
+<div class="sim-grid-2">
+<div class="sim-card">
+<iframe src="https://phet.colorado.edu/sims/html/gravity-force-lab/latest/gravity-force-lab_fr.html" loading="lazy" allowfullscreen></iframe>
+<div class="sim-body"><b>Laboratoire de force gravitationnelle</b><span>PhET — Interaction gravitationnelle entre deux masses</span></div>
+</div>
+<div class="sim-card">
+<iframe src="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_fr.html" loading="lazy" allowfullscreen></iframe>
+<div class="sim-body"><b>Forces et mouvement</b><span>PhET — Appliquer des forces et observer le mouvement</span></div>
+</div>
+</div>
+</div>
+
+<div class="content-card">
+<h3>⚖️ Calculateur de poids et gravitation</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<div>
+<label style="font-size:13px;font-weight:700;color:var(--muted)">Masse (kg)</label>
+<input type="number" id="calcMass" value="60" min="0.1" step="0.1" style="width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-size:14px" oninput="calcForce()">
+</div>
+<div>
+<label style="font-size:13px;font-weight:700;color:var(--muted)">Astre</label>
+<select id="calcAstre" style="width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);font-size:14px" onchange="calcForce()">
+<option value="9.81">Terre (g = 9,81)</option>
+<option value="1.62">Lune (g = 1,62)</option>
+<option value="3.72">Mars (g = 3,72)</option>
+<option value="25.9">Jupiter (g = 25,9)</option>
+</select>
+</div>
+</div>
+<div class="formula" id="forceResult" style="margin-top:14px">
+P = m × g
+</div>
+<div class="note" id="forceNote">Entrez une masse et choisissez un astre pour calculer le poids.</div>
+</div>
+
+<div class="content-card">
+<h3>🌍 Simulateur gravitationnel</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<div>
+<label style="font-size:13px;font-weight:700;color:var(--muted)">Masse A (×10²⁴ kg)</label>
+<input type="range" id="gravMA" min="1" max="100" step="1" value="60" style="width:100%" oninput="calcGrav()">
+<div id="gravMAval" style="font-size:13px;font-weight:700">60 × 10²⁴ kg</div>
+</div>
+<div>
+<label style="font-size:13px;font-weight:700;color:var(--muted)">Distance (×10⁸ m)</label>
+<input type="range" id="gravD" min="1" max="50" step="1" value="4" style="width:100%" oninput="calcGrav()">
+<div id="gravDval" style="font-size:13px;font-weight:700">4 × 10⁸ m</div>
+</div>
+</div>
+<div class="formula" id="gravResult">
+F = G × mA × mB / d²
+</div>
+<div class="note" id="gravNote">Ajustez les paramètres pour calculer la force gravitationnelle (avec mB = Masse Lune).</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 8: ECE ==================== -->
+<div class="panel" id="panel-ece">
+<div class="content-card">
+<h3>🧪 ECE — Vérification de la relation P = mg</h3>
+<p>L'évaluation des compétences expérimentales porte sur la <strong>vérification de la relation P = m × g</strong>.</p>
+
+<div class="ece-steps">
+<div class="ece-step">
+<b>① Formuler une hypothèse</b>
+<p>Le poids d'un objet est proportionnel à sa masse : \(P = m \times g\) où \(g\) est l'intensité de la pesanteur. On suppose que \(g \approx 9{,}81\) N·kg⁻¹ au lieu de l'expérience.</p>
+</div>
+<div class="ece-step">
+<b>② Réaliser les mesures</b>
+<p>Mesurer la masse de plusieurs objets avec une balance (en kg) et leur poids avec un dynamomètre (en N). Varier les masses pour obtenir un tableau de valeurs.</p>
+</div>
+<div class="ece-step">
+<b>③ Exploiter les résultats</b>
+<p>Tracer le graphique \(P = f(m)\). Vérifier que les points sont alignés avec l'origine (droite passant par O). Le coefficient directeur correspond à \(g\).</p>
+</div>
+<div class="ece-step">
+<b>④ Communiquer</b>
+<p>Conclure en comparant la valeur de \(g\) obtenue expérimentalement avec la valeur théorique. Discuter des incertitudes et des sources d'erreur.</p>
+</div>
+</div>
+</div>
+
+<div class="content-card">
+<h3>📋 Protocole type</h3>
+<div class="cards">
+<div class="card">
+<h4>Matériel</h4>
+<ul>
+<li>Dynamomètre (0-10 N)</li>
+<li>Balance numérique (précision 1 g)</li>
+<li>Masses marquées (100 g à 500 g)</li>
+<li>Support + noix de serrage</li>
+<li>Fichier tableur</li>
+</ul>
+</div>
+<div class="card">
+<h4>Étapes</h4>
+<ol>
+<li>Suspendre le dynamomètre au support</li>
+<li>Mesurer la masse m de chaque objet (balance)</li>
+<li>Accrocher l'objet au dynamomètre</li>
+<li>Relever la valeur P indiquée</li>
+<li>Répéter pour 5 à 8 masses différentes</li>
+<li>Tracer P = f(m) sur tableur</li>
+<li>Déterminer le coefficient directeur</li>
+</ol>
+</div>
+<div class="card">
+<h4>Résultats attendus</h4>
+<ul>
+<li>Courbe P = f(m) : droite passant par l'origine</li>
+<li>Coefficient directeur ≈ 9,8 N·kg⁻¹</li>
+<li>Équation : P = 9,8 × m</li>
+<li>Confirme la relation P = mg</li>
+</ul>
+</div>
+<div class="card">
+<h4>Sources d'erreur</h4>
+<ul>
+<li>Précision du dynamomètre (± 0,1 N)</li>
+<li>Étalonnage de la balance</li>
+<li>Parallaxe lors de la lecture</li>
+<li>Élasticité du ressort du dynamomètre</li>
+<li>Masse du crochet non soustraite</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== PANEL 9: VERS LA 1ÈRE SPÉ ==================== -->
+<div class="panel" id="panel-spe">
+<div class="content-card">
+<h3>🚀 Vers la 1ère Spé — Pour aller plus loin</h3>
+<p>Les notions de ce chapitre préparent les concepts suivants de la spécialité Physique-Chimie en Première :</p>
+
+<div class="cards">
+<div class="card">
+<h4>⚖️ Les trois lois de Newton</h4>
+<p>En Seconde, on découvre la 3ème loi (actions réciproques). En Première, on étudie les <strong>trois lois</strong> :</p>
+<ul>
+<li><strong>1ère loi</strong> (inertie) : Si \(\sum \vec{F} = \vec{0}\), le système est immobile ou en mouvement rectiligne uniforme</li>
+<li><strong>2ème loi</strong> : \(\sum \vec{F} = m \times \vec{a}\) (relation fondamentale de la dynamique)</li>
+<li><strong>3ème loi</strong> : \(\vec{F}_{A/B} = -\vec{F}_{B/A}\) (déjà vue)</li>
+</ul>
+</div>
+<div class="card">
+<h4>📐 Projection de forces</h4>
+<p>Pour appliquer la 2ème loi de Newton, on <strong>projette</strong> les forces sur des axes choisis (horizontal et vertical, ou parallèle et perpendiculaire à la piste). Cela permet de résoudre des problèmes à plusieurs forces.</p>
+</div>
+<div class="card">
+<h4>🛰️ Satellite en orbite</h4>
+<p>En Première, on étudie le mouvement des satellites en utilisant la loi de gravitation et la 2ème loi de Newton. On montre que pour une orbite circulaire : \(F_{\text{grav}} = m \times \dfrac{v^2}{r}\).</p>
+</div>
+<div class="card">
+<h4>🎯 Travail et énergie</h4>
+<p>Le <strong>travail d'une force</strong> \(W = \vec{F} \cdot \vec{d}\) et l'<strong>énergie potentielle de gravitation</strong> \(E_p = -G \dfrac{m_A m_B}{d}\) prolongent l'étude des forces vers les concepts énergétiques.</p>
+</div>
+</div>
+
+<div class="note ok">
+<strong>Conseil :</strong> Bien maîtriser la distinction poids/masse et la représentation vectorielle des forces en Seconde est indispensable pour aborder les lois de Newton en Première. Pratiquez sur des situations variées (plan incliné, pendule, satellite) !
+</div>
+</div>
+</div>
+
+</div><!-- /page -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+// === TAB NAVIGATION ===
+const tabs=document.querySelectorAll('.tab'),panels=document.querySelectorAll('.panel');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(b=>b.classList.remove('active'));
+  panels.forEach(p=>p.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-'+t.dataset.panel).classList.add('active');
+  updateProgress();
+}));
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
+// === PROGRESS ===
+function updateProgress(){
+  const idx=[...tabs].findIndex(t=>t.classList.contains('active'));
+  document.getElementById('prog').style.width=Math.round(((idx+1)/tabs.length)*100)+'%';
+}
+updateProgress();
+
+// === THEME ===
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const d=document.documentElement;
+  d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'':'dark');
 });
+document.getElementById('printBtn').addEventListener('click',()=>window.print());
+document.getElementById('fullscreenBtn').addEventListener('click',()=>{
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+});
+document.getElementById('scrollTopBtn').addEventListener('click',()=>{
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+// === QUIZ ===
+const quizData=[
+  {q:"Quelles sont les 4 caractéristiques d'une force ?",o:["Masse, vitesse, direction, sens","Point d'application, direction, sens, norme","Direction, sens, intensité, durée","Point, droite, angle, longueur"],a:1},
+  {q:"Le poids est une force :",o:["De contact","À distance","N'existant pas","Tangentielle"],a:1},
+  {q:"La relation P = mg donne P en :",o:["Kilogramme","Newton","Mètre par seconde","Joule"],a:1},
+  {q:"Si F(A/B) = 10 N vers la droite, alors F(B/A) =",o:["10 N vers la droite","10 N vers la gauche","20 N vers la droite","5 N vers la gauche"],a:1},
+  {q:"Sur la Lune, le poids d'un objet est :",o:["Le même que sur Terre","Plus faible que sur Terre","Plus grand que sur Terre","Nul"],a:1},
+  {q:"G dans la loi de gravitation vaut :",o:["9,81 N·kg⁻¹","6,67 × 10⁻¹¹ N·m²·kg⁻²","6,67 × 10⁻¹¹ N","9,81 m·s⁻²"],a:1},
+  {q:"La réaction du support est une force :",o:["À distance","De contact","Gravitationnelle","Magnétique"],a:1},
+  {q:"Les actions réciproques s'exercent sur :",o:["Le même objet","Des objets différents","Un seul objet","L'air"],a:1},
+  {q:"Si la masse double, le poids :",o:["Reste le même","Double","Est divisé par 2","Quadruple"],a:1},
+  {q:"La force gravitationnelle est proportionnelle à :",o:["1/d","1/d²","d²","d"],a:1}
+];
+let quizIdx=0,score=0,answered=0;
+function loadQuiz(){
+  quizIdx=0;score=0;answered=0;
+  document.getElementById('quizScore').textContent='Score : 0/5';
+  showQuestion();
+}
+function showQuestion(){
+  if(quizIdx>=5){document.getElementById('quizZone').innerHTML='<div class="note ok"><b>Quiz terminé ! Score : '+score+'/5</b></div>';return;}
+  const q=quizData[Math.floor(Math.random()*quizData.length)];
+  let html='<p style="font-weight:700;color:var(--text)">'+q.q+'</p>';
+  q.o.forEach((o,i)=>{html+='<button class="option" onclick="checkAnswer(this,'+i+','+q.a+')">'+o+'</button>';});
+  document.getElementById('quizZone').innerHTML=html;
+}
+function checkAnswer(btn,sel,corr){
+  if(answered>quizIdx)return;
+  answered++;
+  const opts=document.querySelectorAll('#quizZone .option');
+  opts.forEach((o,i)=>{o.style.pointerEvents='none';if(i===corr)o.classList.add('correct');});
+  if(sel!==corr)btn.classList.add('wrong');
+  else score++;
+  document.getElementById('quizScore').textContent='Score : '+score+'/5';
+  quizIdx++;
+  setTimeout(showQuestion,1200);
+}
+loadQuiz();
+
+// === FORCE CALCULATOR ===
+function calcForce(){
+  const m=parseFloat(document.getElementById('calcMass').value)||0;
+  const g=parseFloat(document.getElementById('calcAstre').value);
+  const P=m*g;
+  const astre=document.getElementById('calcAstre').selectedOptions[0].text.split('(')[0].trim();
+  document.getElementById('forceResult').innerHTML='P = '+m.toFixed(1)+' × '+g+' = <strong>'+P.toFixed(1)+' N</strong>';
+  document.getElementById('forceNote').innerHTML='<strong>Résultat :</strong> Sur '+astre+', un objet de masse '+m.toFixed(1)+' kg a un poids de <strong>'+P.toFixed(1)+' N</strong>.<br>Sur Terre, ce même objet pèse '+(m*9.81).toFixed(1)+' N.';
+}
+calcForce();
+
+// === GRAVITATION CALCULATOR ===
+function calcGrav(){
+  const mA=parseFloat(document.getElementById('gravMA').value)*1e24;
+  const mB=7.35e22; // Lune
+  const d=parseFloat(document.getElementById('gravD').value)*1e8;
+  const G=6.67e-11;
+  const F=G*mA*mB/(d*d);
+  document.getElementById('gravMAval').textContent=(parseFloat(document.getElementById('gravMA').value))+' × 10²⁴ kg';
+  document.getElementById('gravDval').textContent=(parseFloat(document.getElementById('gravD').value))+' × 10⁸ m';
+  document.getElementById('gravResult').innerHTML='F = G × mA × m<sub>Lune</sub> / d² = <strong>'+(F/1e20).toFixed(2)+' × 10²⁰ N</strong>';
+  document.getElementById('gravNote').innerHTML='La force gravitationnelle entre ces deux masses est de <strong>'+(F/1e20).toFixed(2)+' × 10²⁰ N</strong>. C\'est une force attractive !';
+}
+calcGrav();
+
+// === HERO CANVAS - Forces animation ===
+(function(){
+  const c=document.getElementById('heroCanvas'),ctx=c.getContext('2d');
+  let w=c.width,h=c.height,t=0;
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    // Earth
+    const ex=w/2,ey=h/2+20;
+    ctx.beginPath();ctx.arc(ex,ey,35,0,Math.PI*2);
+    const grad=ctx.createRadialGradient(ex-8,ey-8,5,ex,ey,35);
+    grad.addColorStop(0,'rgba(200,117,51,0.8)');grad.addColorStop(1,'rgba(140,80,30,0.6)');
+    ctx.fillStyle=grad;ctx.fill();
+    ctx.strokeStyle='rgba(200,117,51,0.3)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='rgba(245,230,216,0.5)';ctx.font='bold 9px Inter';ctx.fillText('Terre',ex-14,ey+3);
+    // Moon orbit
+    const orbitR=100;
+    ctx.beginPath();ctx.arc(ex,ey,orbitR,0,Math.PI*2);
+    ctx.strokeStyle='rgba(200,117,51,0.1)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+    // Moon
+    const angle=t*0.015;
+    const mx=ex+orbitR*Math.cos(angle),my=ey+orbitR*Math.sin(angle);
+    ctx.beginPath();ctx.arc(mx,my,10,0,Math.PI*2);
+    const mgrad=ctx.createRadialGradient(mx-2,my-2,1,mx,my,10);
+    mgrad.addColorStop(0,'rgba(224,152,96,0.9)');mgrad.addColorStop(1,'rgba(176,142,120,0.7)');
+    ctx.fillStyle=mgrad;ctx.fill();
+    ctx.fillStyle='rgba(245,230,216,0.5)';ctx.font='bold 8px Inter';ctx.fillText('Lune',mx-12,my+3);
+    // Gravitational force arrows (attraction)
+    // Arrow from Moon toward Earth
+    const dx=ex-mx,dy=ey-my;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const ux=dx/dist,uy=dy/dist;
+    const arrowLen=30;
+    const startX=mx+ux*14,startY=my+uy*14;
+    const endX=startX+ux*arrowLen,endY=startY+uy*arrowLen;
+    ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(endX,endY);
+    ctx.strokeStyle='#C87533';ctx.lineWidth=2.5;ctx.stroke();
+    // Arrowhead
+    ctx.beginPath();ctx.moveTo(endX,endY);
+    ctx.lineTo(endX-8*ux+4*uy,endY-8*uy-4*ux);
+    ctx.lineTo(endX-8*ux-4*uy,endY-8*uy+4*ux);
+    ctx.fillStyle='#C87533';ctx.fill();
+    // Arrow from Earth toward Moon
+    const sx2=ex-ux*39,sy2=ey-uy*39;
+    const ex2=sx2+(-ux)*arrowLen,ey2=sy2+(-uy)*arrowLen;
+    ctx.beginPath();ctx.moveTo(sx2,sy2);ctx.lineTo(ex2,ey2);
+    ctx.strokeStyle='#E09860';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ex2,ey2);
+    ctx.lineTo(ex2+8*ux+4*uy,ey2+8*uy-4*ux);
+    ctx.lineTo(ex2+8*ux-4*uy,ey2+8*uy+4*ux);
+    ctx.fillStyle='#E09860';ctx.fill();
+    // Labels
+    ctx.fillStyle='rgba(200,117,51,0.7)';ctx.font='bold 9px Inter';
+    ctx.fillText('F',(endX+startX)/2-12,(endY+startY)/2-8);
+    ctx.fillText("F'",(ex2+sx2)/2+8,(ey2+sy2)/2-8);
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

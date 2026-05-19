@@ -1,181 +1,1019 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Seconde · Chapitre 4 — Réflexion et réfraction de la lumière | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#FDF8F3;--bg2:#FAF0E8;--panel:#FFFFFF;--panel2:#FEFBF8;--line:#E8D5C4;--line2:#D4B89E;--text:#2C1810;--muted:#7A5C4A;--faint:#B08E78;--orange:#C87533;--orange2:#E09860;--orange3:#FDF2E9;--green:#2F855A;--green2:#EAF6EF;--amber:#B7791F;--amber2:#FFF8EB;--red:#B91C1C;--red2:#FEF2F2;--purple:#5B4A9F;--purple2:#F1ECFF;--cyan:#2F8FA4;--cyan2:#E9F6FB;--ink:#2C1810;--shadow:0 14px 34px rgba(120,70,20,.055);--shadow2:0 8px 22px rgba(120,70,20,.045);--r:20px;--r2:12px;--side:306px;--content:1460px}
+[data-theme="dark"]{--bg:#1A0F08;--bg2:#221410;--panel:#2C1A10;--panel2:#3A2418;--line:#4A3020;--line2:#5E3E2C;--text:#F5E6D8;--muted:#C8A88E;--faint:#8A6A50;--orange:#E09860;--orange2:#F0B888;--orange3:rgba(224,152,96,.12);--green:#8BD9AA;--green2:rgba(139,217,170,.13);--amber:#F1B375;--amber2:rgba(241,179,117,.13);--red:#F09AAA;--red2:rgba(240,154,170,.13);--purple:#B6A3F1;--purple2:rgba(182,163,241,.13);--cyan:#8BD6E4;--cyan2:rgba(139,214,228,.13);--shadow:0 18px 54px rgba(0,0,0,.32);--shadow2:0 10px 32px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(200,117,51,.055),transparent 32rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.65;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}
+.skip{position:absolute;left:-999px;top:0;background:var(--orange);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.72);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:20px 18px;overflow:auto}
+[data-theme="dark"] .rail{background:rgba(17,24,39,.72)}
+.brand{display:flex;align-items:center;gap:12px;margin:2px 6px 22px}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#C87533,#E09860);display:grid;place-items:center;color:white;font-weight:800;font-size:14px;box-shadow:0 14px 28px rgba(200,117,51,.16)}
+.brand h1{font-size:16px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.level-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:16px}
+.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(200,117,51,.16);color:var(--orange);background:var(--orange3);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+.micro{color:var(--faint);font-size:12px}
+.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:999px;transition:.35s}
+.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);font-weight:800;margin:22px 10px 10px;padding:6px 10px;background:rgba(200,117,51,.06);border-radius:8px}
+[data-theme="dark"] .nav-label{background:rgba(224,152,96,.08)}
+.tablist{display:grid;gap:4px}
+.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:all .2s}
+.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}
+.tab.active{background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.26);box-shadow:inset 4px 0 0 var(--orange),0 8px 18px rgba(15,23,42,.035)}
+.tools{display:flex;gap:8px;margin-top:16px}
+.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .2s}
+.icon-btn:hover{border-color:var(--orange);color:var(--orange)}
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(253,248,243,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 30px}
+[data-theme="dark"] .topbar{background:rgba(26,15,8,.78)}
+.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--orange)}
+.top-actions{display:flex;gap:8px;align-items:center}
+.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+.pill-btn:hover{border-color:var(--orange);color:var(--orange)}
+.page{max-width:var(--content);margin:0 auto;padding:28px}
+.hero{display:grid;grid-template-columns:1.28fr .72fr;gap:16px;margin-bottom:16px;align-items:stretch}
+.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden;min-height:190px}
+.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,117,51,.075),transparent 68%)}
+.eyebrow{display:flex;align-items:center;gap:9px;color:var(--orange);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}
+.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:760}
+.hero h2 span{color:var(--orange)}
+.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}
+.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--orange)}
+.hero-copy{font-size:14px;color:var(--muted);max-width:68ch;margin-bottom:0}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.metric{border:1px solid var(--line);background:rgba(255,255,255,.64);border-radius:12px;padding:9px 10px}
+[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}
+.metric b{display:block;font-size:17px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}
+.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid rgba(200,117,51,.15);box-shadow:var(--shadow2);min-height:206px;max-height:240px;display:flex;align-items:center;justify-content:center}
+.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}
+.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}
+.mission-1 small{background:var(--orange3);color:var(--orange)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--purple2);color:var(--purple)}
+.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}
+.panel{display:none;scroll-margin-top:82px}.panel.active{display:block}
+.content-card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow2);padding:24px;margin-bottom:18px}
+.content-card h3{font-size:22px;letter-spacing:-.03em;margin:0 0 13px;font-weight:740}
+.course-grid{display:grid;grid-template-columns:195px minmax(0,1fr);gap:24px}
+.toc{position:sticky;top:82px;height:fit-content}
+.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}
+.toc a:nth-of-type(1){background:var(--orange3);color:var(--orange)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}
+.course-body{min-width:0;max-width:920px}
+.course-body h2{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.course-body h2:first-child{margin-top:0}
+.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}
+.course-body p,.course-body li{color:var(--muted)}
+.box{border-radius:0 16px 16px 0;padding:16px 18px;margin:18px 0;border-left:4px solid;background:var(--panel2);box-shadow:var(--shadow2)}
+.box-label{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+.box.def{border-color:var(--orange)}.box.def .box-label{color:var(--orange)}
+.box.prop{border-color:var(--purple)}.box.prop .box-label{color:var(--purple)}
+.box.warn{border-color:var(--amber)}.box.warn .box-label{color:var(--amber)}
+.box.ok{border-color:var(--green)}.box.ok .box-label{color:var(--green)}
+.formula{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:18px 0;text-align:center;overflow-x:auto;font-size:1.05rem}
+[data-theme="dark"] .formula{background:var(--panel2)}
+.table-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--line);margin:18px 0;box-shadow:var(--shadow2)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}
+td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}
+.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}
+.card p,.card li{font-size:13px;color:var(--muted)}
+.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}
+.exercise h4{margin:0 0 10px}
+.exercise details{margin-top:12px}
+.exercise summary{cursor:pointer;font-weight:800;color:var(--orange);background:var(--orange3);border:1px solid rgba(200,117,51,.20);padding:9px 12px;border-radius:12px}
+.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}
+.sim-card iframe{width:100%;height:460px;border:0}
+.sim-card .sim-body{padding:14px}
+.neon-sim{border:1px solid rgba(200,117,51,.18);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:var(--shadow)}
+.neon-sim canvas{width:100%;display:block}
+.neon-sim .sim-body{padding:14px;background:var(--bg2);border-top:1px solid rgba(200,117,51,.12)}
+.neon-sim h4{color:#E09860;margin:0 0 6px}
+.neon-sim p{color:#B08E78;font-size:13px;margin:0}
+.neon-input{border:1px solid rgba(200,117,51,.3);background:var(--panel2);color:#E09860;border-radius:10px;padding:7px 10px;width:100%}
+.neon-label{font-size:12px;color:#B08E78;font-weight:800;display:block;margin-bottom:4px}
+.neon-result{background:rgba(200,117,51,.07);border:1px solid rgba(200,117,51,.18);border-radius:14px;padding:12px;color:#E09860;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7}
+.sim-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.flashcard{min-height:145px;perspective:1000px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}
+.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}
+.quiz-box{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}
+.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer;transition:all .2s}
+.option:hover{border-color:var(--orange)}
+.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}
+.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}
+.mindmap{display:grid;gap:12px}
+.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:white;padding:18px;font-weight:800;font-size:18px}
+.map-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}
+.map-branch h4{margin:0 0 8px}
+.map-branch ul{margin:0;padding-left:18px}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px;transition:all .2s}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn.primary:hover{opacity:.85}
+.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}
+.chip.orange{background:var(--orange3);border-color:rgba(200,117,51,.20);color:var(--orange)}.chip.amber{background:var(--amber2);border-color:rgba(183,121,31,.18);color:var(--amber)}.chip.green{background:var(--green2);border-color:rgba(47,133,90,.18);color:var(--green)}
+.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}
+.ece-step b{display:block;margin-bottom:6px}
+@media(max-width:1080px){.app{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.tablist{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.ece-steps,.sim-inputs{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}
+@media(max-width:720px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem Omnis</h1><p>Seconde</p></div></div>
+<div class="level-card"><div class="level-row"><span class="badge">💡 Chapitre 4</span><span class="micro">Ondes et signaux</span></div><div class="progress"><span id="masterBar"></span></div></div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" role="tablist">
+<button class="tab active" onclick="switchTab('cours')" data-t="cours">📚 Cours</button>
+<button class="tab" onclick="switchTab('relations')" data-t="relations">📐 Relations &amp; Dimensions</button>
+<button class="tab" onclick="switchTab('exercices')" data-t="exercices">✏️ Exercices</button>
+<button class="tab" onclick="switchTab('flashcards')" data-t="flashcards">🃏 Flashcards</button>
+<button class="tab" onclick="switchTab('quiz')" data-t="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" onclick="switchTab('mindmap')" data-t="mindmap">🗺️ Carte mentale</button>
+<button class="tab" onclick="switchTab('simulations')" data-t="simulations">🔬 Simulations</button>
+<button class="tab" onclick="switchTab('ece')" data-t="ece">🧪 ECE</button>
+<button class="tab" onclick="switchTab('terminale')" data-t="terminale">🚀 Vers la 1ère Spé</button>
+</div>
+<div class="tools"><button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Mode sombre">🌙</button><a href="index.html" class="icon-btn" title="Accueil">🏠</a></div>
+</aside>
+<div class="main" id="main">
+<div class="topbar"><span class="crumb">Seconde › Ondes et signaux › <b>Chap. 4 — Réflexion et réfraction de la lumière</b></span><div class="top-actions"><span class="pill-btn" id="pctLabel">0 %</span></div></div>
+<div class="page">
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Seconde</span>
-      <span class="micro">Chap. 4</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<!-- HERO -->
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">💡 Chapitre 4</div>
+<h2>Réflexion et <span>réfraction</span> de la lumière</h2>
+<p class="hero-copy">Comprendre la propagation rectiligne de la lumière, les lois de Snell-Descartes pour la réflexion et la réfraction, et utiliser l'indice de réfraction pour prévoir le trajet des rayons lumineux.</p>
+<div class="instructor">Programme officiel — Seconde Physique-Chimie</div>
+<div class="hero-grid">
+<div class="metric"><b>3</b><span>sections de cours</span></div>
+<div class="metric"><b>15</b><span>flashcards</span></div>
+<div class="metric"><b>12</b><span>questions quiz</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap"><canvas id="heroCanvas" width="500" height="230"></canvas></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<!-- MISSIONS -->
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Propagation rectiligne</b><span>Rayon lumineux, vitesse c, milieu transparent</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Réflexion (miroir)</b><span>Lois de Snell-Descartes, i₁ = i_R</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Réfraction (prisme, eau)</b><span>Indice n, n₁sin(i₁) = n₂sin(i₂)</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Seconde · Chap. 4</div>
-    <h1 class="hero-title">Réflexion et réfraction <span>de la lumière | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<!-- ═══════ COURS ═══════ -->
+<div class="panel active" id="p-cours">
+<div class="content-card">
+<div class="course-grid">
+<nav class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#s1">I. Propagation de la lumière</a>
+<a href="#s2">II. Le phénomène de réflexion</a>
+<a href="#s3">III. Le phénomène de réfraction</a>
+</nav>
+<div class="course-body">
+
+<h2 id="s1">I. La propagation de la lumière</h2>
+<div class="box def"><div class="box-label">Définition — Modèle du rayon lumineux</div>
+<p>La lumière se propage en ligne droite dans un milieu <strong>transparent</strong> et <strong>homogène</strong>. On modélise son trajet par un <strong>rayon lumineux</strong>, représenté par une droite orientée dans le sens de propagation.</p>
+<ul>
+<li><strong>Milieu transparent</strong> : l'air, le vide, l'eau, le verre — la lumière traverse sans être arrêtée</li>
+<li><strong>Milieu homogène</strong> : propriétés optiques identiques en tout point (même indice de réfraction)</li>
+<li><strong>Rayon lumineux</strong> : droite orientée, fléchée dans le sens de propagation</li>
+</ul>
+</div>
+<div class="box warn"><div class="box-label">⚠️ Limites du modèle</div>
+<p>Le modèle du rayon lumineux ne s'applique pas quand la lumière rencontre des obstacles de taille voisine de sa longueur d'onde (diffraction). Il ne s'applique pas non plus dans un milieu non homogène (mirages, gradient de température dans l'air).</p>
+</div>
+<div class="formula">
+\[\boxed{c = 3{,}00 \times 10^{8}\;\mathrm{m \cdot s^{-1}}}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">Vitesse de propagation de la lumière dans le vide (et dans l'air, en excellente approximation)</p>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Vitesse dans les différents milieux</h4>
+<ul>
+<li>Vide et air : \(v \approx c = 3{,}00 \times 10^8\;\mathrm{m/s}\)</li>
+<li>Eau : \(v \approx 2{,}26 \times 10^8\;\mathrm{m/s}\)</li>
+<li>Verre : \(v \approx 2{,}00 \times 10^8\;\mathrm{m/s}\)</li>
+<li>Diamant : \(v \approx 1{,}24 \times 10^8\;\mathrm{m/s}\)</li>
+</ul>
+<p style="font-size:12px;color:var(--faint);margin-top:6px">La lumière ralentit en passant dans un milieu plus réfringent.</p>
+</div>
+<div class="card">
+<h4>Propagation et observations</h4>
+<ul>
+<li>Éclipses : ombre de la Lune sur la Terre → propagation rectiligne</li>
+<li>Camera obscura : image inversée → propagation rectiligne</li>
+<li>Ombre et pénombre : fontaine lumineuse, sources étendues</li>
+<li>Faisceau laser : rayon quasi-rectiligne visible</li>
+</ul>
+</div>
+</div>
+
+<h2 id="s2">II. Le phénomène de réflexion</h2>
+<div class="box def"><div class="box-label">Définition — Réflexion</div>
+<p>La <strong>réflexion</strong> est le changement de direction d'un rayon lumineux à la surface de séparation entre deux milieux, le rayon restant dans le milieu initial. La surface de séparation est appelée <strong>dioptre</strong> (ou miroir si la réflexion est totale).</p>
+</div>
+<div class="box prop"><div class="box-label">Lois de Snell-Descartes pour la réflexion</div>
+<p><strong>1ère loi</strong> : Le rayon réfléchi est dans le <strong>plan d'incidence</strong> (plan défini par le rayon incident et la normale au dioptre au point d'incidence).</p>
+<p><strong>2ème loi</strong> : L'angle de réflexion est égal à l'angle d'incidence :</p>
+</div>
+<div class="formula">
+\[\boxed{i_1 = i_R}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">\(i_1\) = angle d'incidence · \(i_R\) = angle de réflexion · Mesurés par rapport à la normale au dioptre</p>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Vocabulaire essentiel</h4>
+<ul>
+<li><strong>Rayon incident</strong> : rayon qui arrive sur le dioptre</li>
+<li><strong>Normale</strong> : perpendiculaire au dioptre au point d'incidence</li>
+<li><strong>Angle d'incidence</strong> \(i_1\) : entre le rayon incident et la normale</li>
+<li><strong>Angle de réflexion</strong> \(i_R\) : entre le rayon réfléchi et la normale</li>
+<li><strong>Plan d'incidence</strong> : contient le rayon incident et la normale</li>
+</ul>
+</div>
+<div class="card">
+<h4>Réflexion spéculaire vs diffuse</h4>
+<ul>
+<li><strong>Spéculaire</strong> : surface lisse (miroir) → rayons réfléchis parallèles → image nette</li>
+<li><strong>Diffuse</strong> : surface rugueuse (mur, papier) → rayons réfléchis dans toutes les directions → pas d'image mais lumière visible de partout</li>
+</ul>
+</div>
+</div>
+
+<h2 id="s3">III. Le phénomène de réfraction</h2>
+<div class="box def"><div class="box-label">Définition — Réfraction</div>
+<p>La <strong>réfraction</strong> est le changement de direction d'un rayon lumineux lors du passage d'un milieu transparent à un autre milieu transparent d'<strong>indice de réfraction différent</strong>. Le rayon est dévié vers la normale s'il passe dans un milieu plus réfringent (n plus grand).</p>
+</div>
+<div class="box def"><div class="box-label">Définition — Indice de réfraction</div>
+<p>L'<strong>indice de réfraction</strong> \(n\) d'un milieu transparent homogène est le rapport entre la vitesse de la lumière dans le vide et la vitesse de la lumière dans ce milieu :</p>
+</div>
+<div class="formula">
+\[\boxed{n = \frac{c}{v}}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">\(n\) sans unité (grandeur sans dimension) · \(n \geq 1\) · \(n = 1\) pour le vide · \(n \approx 1{,}00\) pour l'air</p>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Milieu</th><th>Indice de réfraction \(n\)</th><th>Vitesse \(v\) (×10⁸ m/s)</th></tr></thead>
+<tbody>
+<tr><td>Vide</td><td>1,000</td><td>3,00</td></tr>
+<tr><td>Air</td><td>≈ 1,00</td><td>≈ 3,00</td></tr>
+<tr><td>Eau</td><td>1,33</td><td>2,26</td></tr>
+<tr><td>Verre (crown)</td><td>1,50</td><td>2,00</td></tr>
+<tr><td>Diamant</td><td>2,42</td><td>1,24</td></tr>
+</tbody>
+</table></div>
+
+<div class="box prop"><div class="box-label">Lois de Snell-Descartes pour la réfraction</div>
+<p><strong>1ère loi</strong> : Le rayon réfracté est dans le <strong>plan d'incidence</strong>.</p>
+<p><strong>2ème loi</strong> : Les angles d'incidence et de réfraction vérifient :</p>
+</div>
+<div class="formula">
+\[\boxed{n_1 \sin(i_1) = n_2 \sin(i_2)}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">\(n_1\) et \(n_2\) = indices des milieux 1 et 2 · \(i_1\) = angle d'incidence · \(i_2\) = angle de réfraction</p>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Sens de la déviation</h4>
+<ul>
+<li>Si \(n_2 > n_1\) (ex : air → eau) : le rayon se <strong>rapproche de la normale</strong> → \(i_2 < i_1\)</li>
+<li>Si \(n_2 < n_1\) (ex : eau → air) : le rayon s'<strong>éloigne de la normale</strong> → \(i_2 > i_1\)</li>
+<li>Si \(i_1 = 0\) (incidence normale) : pas de déviation, \(i_2 = 0\)</li>
+</ul>
+</div>
+<div class="card">
+<h4>Cas particuliers</h4>
+<ul>
+<li><strong>Incidence normale</strong> (\(i_1 = 0\)) : pas de déviation, le rayon continue en ligne droite</li>
+<li><strong>Passage air → verre</strong> : le rayon se rapproche fortement de la normale (n passe de 1 à 1,5)</li>
+<li><strong>Angle limite</strong> : quand \(n_1 > n_2\), il existe un angle d'incidence au-delà duquel il y a <strong>réflexion totale</strong></li>
+</ul>
+</div>
+</div>
+<div class="box ok"><div class="box-label">Réflexion totale — aperçu</div>
+<p>Quand la lumière passe d'un milieu plus réfringent vers un milieu moins réfringent (\(n_1 > n_2\)), si l'angle d'incidence dépasse une valeur limite \(i_\ell\) telle que \(\sin(i_\ell) = n_2/n_1\), il n'y a plus de rayon réfracté : toute la lumière est réfléchie. C'est le principe des fibres optiques.</p>
+</div>
 
 </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ RELATIONS & DIMENSIONS ═══════ -->
+<div class="panel" id="p-relations">
+<div class="content-card">
+<h3>📐 Relations & Grandeurs — Réflexion et réfraction</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Variables &amp; Unités</th><th>Sens physique</th></tr></thead>
+<tbody>
+<tr><td>\(n = \dfrac{c}{v}\)</td><td>\(n\) sans unité ; \(c = 3{,}00 \times 10^8\) m/s ; \(v\) en m/s</td><td>Indice de réfraction d'un milieu</td></tr>
+<tr><td>\(i_1 = i_R\)</td><td>Angles en degrés (°) ou radians</td><td>Loi de la réflexion de Snell-Descartes</td></tr>
+<tr><td>\(n_1 \sin(i_1) = n_2 \sin(i_2)\)</td><td>\(n\) sans unité ; \(i\) en °</td><td>Loi de la réfraction de Snell-Descartes</td></tr>
+<tr><td>\(\sin(i_2) = \dfrac{n_1}{n_2} \sin(i_1)\)</td><td>Mêmes unités</td><td>Calcul de l'angle de réfraction</td></tr>
+<tr><td>\(v = \dfrac{c}{n}\)</td><td>\(v\) en m/s</td><td>Vitesse de la lumière dans un milieu d'indice n</td></tr>
+<tr><td>\(\sin(i_\ell) = \dfrac{n_2}{n_1}\) si \(n_1 > n_2\)</td><td>\(i_\ell\) en °</td><td>Angle limite de réflexion totale</td></tr>
+</tbody>
+</table></div>
+
+<div class="content-card" style="margin-top:16px">
+<h3>🔬 Simulateur — Loi de Snell-Descartes</h3>
+<div class="neon-sim">
+<canvas id="snellCanvas" height="260"></canvas>
+<div class="sim-body">
+<h4>Calcul de réfraction interactif</h4>
+<div class="sim-inputs">
+<div><label class="neon-label">Milieu 1 — n₁</label><input class="neon-input" id="s-n1" value="1.00" type="number" step="0.01" min="1" oninput="calcSnell()"/></div>
+<div><label class="neon-label">Milieu 2 — n₂</label><input class="neon-input" id="s-n2" value="1.50" type="number" step="0.01" min="1" oninput="calcSnell()"/></div>
+<div><label class="neon-label">Angle i₁ (°)</label><input class="neon-input" id="s-i1" value="30" type="number" step="1" min="0" max="90" oninput="calcSnell()"/></div>
+</div>
+<div class="neon-result" id="s-result">—</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ EXERCICES ═══════ -->
+<div class="panel" id="p-exercices">
+<div class="content-card">
+<h3>✏️ Exercices progressifs</h3>
+
+<div style="margin-bottom:10px"><span class="chip orange">S'entraîner</span></div>
+<div class="exercise">
+<h4>Exercice 1 — Calcul d'un indice de réfraction <span class="chip">APP · REA</span></h4>
+<p>La vitesse de la lumière dans un certain type de verre est \(v = 2{,}00 \times 10^8\;\mathrm{m \cdot s^{-1}}\).<br>
+<strong>1.</strong> Calculer l'indice de réfraction de ce verre.<br>
+<strong>2.</strong> Calculer le temps mis par la lumière pour traverser une plaque de 5,0 cm d'épaisseur.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(n = c/v = 3{,}00 \times 10^8 / 2{,}00 \times 10^8 = \mathbf{1{,}50}\)</p>
+<p><strong>2.</strong> \(t = d/v = 0{,}050 / 2{,}00 \times 10^8 = 2{,}5 \times 10^{-10}\;\mathrm{s} = \mathbf{0{,}25\;ns}\)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Réflexion sur un miroir <span class="chip">APP · REA</span></h4>
+<p>Un rayon lumineux frappe un miroir plan avec un angle d'incidence \(i_1 = 35°\).<br>
+<strong>1.</strong> Schématiser la situation en représentant le miroir, la normale, le rayon incident et le rayon réfléchi.<br>
+<strong>2.</strong> Calculer l'angle entre le rayon incident et le rayon réfléchi.<br>
+<strong>3.</strong> L'angle d'incidence devient 50°. Quel est le nouvel angle de réflexion ?</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> Le miroir est horizontal, la normale est verticale. Le rayon incident arrive à 35° de la normale, le rayon réfléchi part à 35° de la normale de l'autre côté.</p>
+<p><strong>2.</strong> L'angle entre les deux rayons = \(i_1 + i_R = 35 + 35 = \mathbf{70°}\)</p>
+<p><strong>3.</strong> \(i_R = i_1 = \mathbf{50°}\) (loi de Snell-Descartes pour la réflexion)</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip amber">Appliquer</span></div>
+<div class="exercise">
+<h4>Exercice 3 — Réfraction air → eau <span class="chip">REA · ANA</span></h4>
+<p>Un rayon lumineux passe de l'air (\(n_1 = 1{,}00\)) vers l'eau (\(n_2 = 1{,}33\)) avec un angle d'incidence \(i_1 = 45°\).<br>
+<strong>1.</strong> Le rayon se rapproche-t-il ou s'éloigne-t-il de la normale ? Justifier.<br>
+<strong>2.</strong> Calculer l'angle de réfraction \(i_2\).<br>
+<strong>3.</strong> Que se passe-t-il si l'angle d'incidence est nul ?</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(n_2 = 1{,}33 > n_1 = 1{,}00\) → le rayon se <strong>rapproche de la normale</strong> → \(i_2 < i_1\).</p>
+<p><strong>2.</strong> \(\sin(i_2) = \frac{n_1}{n_2} \sin(i_1) = \frac{1{,}00}{1{,}33} \times \sin(45°) = \frac{0{,}707}{1{,}33} = 0{,}532\)<br>
+\(i_2 = \arcsin(0{,}532) = \mathbf{32{,}1°}\)</p>
+<p><strong>3.</strong> Si \(i_1 = 0°\) : pas de déviation, le rayon continue en ligne droite (\(i_2 = 0°\)).</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Réfraction air → verre <span class="chip">REA · VAL</span></h4>
+<p>Un rayon lumineux dans l'air (\(n = 1{,}00\)) frappe une surface de verre (\(n = 1{,}50\)) avec un angle d'incidence de 60°.<br>
+<strong>1.</strong> Calculer l'angle de réfraction dans le verre.<br>
+<strong>2.</strong> Le rayon sort ensuite du verre vers l'air avec le même angle (faces parallèles). Calculer l'angle de sortie.<br>
+<strong>3.</strong> Le rayon sortant est-il parallèle au rayon incident ?</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\sin(i_2) = \frac{1{,}00}{1{,}50} \sin(60°) = \frac{0{,}866}{1{,}50} = 0{,}577\) → \(i_2 = \arcsin(0{,}577) = \mathbf{35{,}3°}\)</p>
+<p><strong>2.</strong> À la sortie : \(\sin(i_3) = \frac{1{,}50}{1{,}00} \sin(35{,}3°) = 1{,}50 \times 0{,}577 = 0{,}866\) → \(i_3 = \arcsin(0{,}866) = \mathbf{60°}\)</p>
+<p><strong>3.</strong> Oui ! Le rayon sortant est <strong>parallèle</strong> au rayon incident (décalé latéralement) car les faces sont parallèles et on retrouve le même angle de 60° à la sortie.</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip" style="background:var(--purple2);color:var(--purple);border-color:rgba(91,74,159,.2)">Approfondir</span></div>
+<div class="exercise">
+<h4>Exercice 5 — Le bâton brisé <span class="chip">ANA · VAL · COM</span></h4>
+<p>Un bâton est partiellement immergé dans l'eau (\(n = 1{,}33\)). La partie immergée semble cassée et remontée par rapport à sa position réelle.<br>
+<strong>1.</strong> Expliquer ce phénomène à l'aide de la loi de Snell-Descartes.<br>
+<strong>2.</strong> Un rayon part du bout du bâton sous l'eau avec \(i_1 = 30°\) (par rapport à la normale). Calculer l'angle du rayon émergent dans l'air.<br>
+<strong>3.</strong> L'observateur voit le bout du bâton en prolongeant les rayons émergents. La position apparente est-elle plus proche ou plus loin de la surface ?</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> La lumière passe de l'eau (n=1,33) vers l'air (n=1,00). Les rayons s'éloignent de la normale en sortant. L'œil, en prolongeant les rayons réfractés en ligne droite, voit le bâton à une position apparente différente de sa position réelle → illusion d'un bâton « brisé ».</p>
+<p><strong>2.</strong> \(\sin(i_2) = \frac{1{,}33}{1{,}00} \sin(30°) = 1{,}33 \times 0{,}500 = 0{,}665\) → \(i_2 = \arcsin(0{,}665) = \mathbf{41{,}7°}\)</p>
+<p><strong>3.</strong> La position apparente est <strong>plus proche de la surface</strong> que la position réelle. Le bâton semble moins profond qu'il ne l'est vraiment. C'est pourquoi un bassin paraît toujours moins profond qu'il n'est !</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 6 — Réflexion totale <span class="chip">ANA · VAL</span></h4>
+<p>Un rayon lumineux se propage dans du verre (\(n_1 = 1{,}50\)) et arrive à l'interface verre-air (\(n_2 = 1{,}00\)).<br>
+<strong>1.</strong> Calculer l'angle limite de réflexion totale \(i_\ell\).<br>
+<strong>2.</strong> Si l'angle d'incidence est de 50°, y a-t-il réfraction ou réflexion totale ?<br>
+<strong>3.</strong> Expliquer pourquoi les fibres optiques utilisent ce principe pour transmettre la lumière sur de longues distances.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\sin(i_\ell) = \frac{n_2}{n_1} = \frac{1{,}00}{1{,}50} = 0{,}667\) → \(i_\ell = \arcsin(0{,}667) = \mathbf{41{,}8°}\)</p>
+<p><strong>2.</strong> \(i_1 = 50° > i_\ell = 41{,}8°\) → <strong>réflexion totale</strong>. Aucun rayon n'est réfracté dans l'air, toute la lumière est réfléchie dans le verre.</p>
+<p><strong>3.</strong> Dans une fibre optique, le cœur a un indice supérieur à la gaine. Les rayons qui arrivent avec un angle supérieur à l'angle limite subissent une réflexion totale à chaque rebond et sont guidés sur toute la longueur de la fibre, sans perte d'énergie par réfraction.</p>
+</details>
+</div>
+</div>
+</div>
+
+<!-- ═══════ FLASHCARDS ═══════ -->
+<div class="panel" id="p-flashcards">
+<div class="content-card">
+<h3>🃏 Flashcards — Réflexion et réfraction</h3>
+<p style="color:var(--muted);margin-bottom:18px">Cliquez sur une carte pour la retourner.</p>
+<div class="flashcard-grid" id="fcGrid"></div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+<button class="btn" onclick="renderFC()">↺ Réinitialiser</button>
+</div>
+</div>
+</div>
+
+<!-- ═══════ QUIZ & CHATBOT ═══════ -->
+<div class="panel" id="p-quiz">
+<div class="content-card">
+<h3>🧠 Quiz — Réflexion et réfraction de la lumière</h3>
+<div id="quizArea"></div>
+</div>
+<div class="content-card" style="margin-top:16px">
+<h3>🤖 Chatbot IA — Aide personnalisée</h3>
+<div class="ai-grid">
+<div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:10px">Copiez ce prompt contextualisé dans l'IA de votre choix :</p>
+<textarea class="prompt-box" id="promptBox" readonly>Tu es professeur de physique-chimie niveau Seconde. Explique le chapitre "Réflexion et réfraction de la lumière" : propagation rectiligne, modèle du rayon lumineux, vitesse c = 3,00×10⁸ m/s, lois de Snell-Descartes (réflexion : i₁ = i_R ; réfraction : n₁sin(i₁) = n₂sin(i₂)), indice de réfraction n = c/v, valeurs de n (air≈1, eau=1,33, verre=1,50, diamant=2,42), déviation vers la normale si n₂>n₁, réflexion totale. Donne des exemples numériques avec formules LaTeX et unités.</textarea>
+<div class="btn-row">
+<button class="btn primary" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value)">📋 Copier</button>
+<a href="https://claude.ai" target="_blank" class="btn">Claude ↗</a>
+<a href="https://chat.openai.com" target="_blank" class="btn">ChatGPT ↗</a>
+<a href="https://gemini.google.com" target="_blank" class="btn">Gemini ↗</a>
+<a href="https://copilot.microsoft.com" target="_blank" class="btn">Copilot ↗</a>
+</div>
+</div>
+<div>
+<h4 style="margin:0 0 10px">Questions suggérées</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" onclick="setPrompt('Comment appliquer la loi de Snell-Descartes pour calculer l\'angle de réfraction quand un rayon passe de l\'air au verre avec i₁ = 40° ?')">Calcul de réfraction</button>
+<button class="btn" onclick="setPrompt('Pourquoi un bâton immergé dans l\'eau paraît-il brisé ? Explique avec un schéma mental et la loi de Snell-Descartes.')">Bâton brisé</button>
+<button class="btn" onclick="setPrompt('Qu\'est-ce que la réflexion totale ? À quelle condition se produit-elle ? Donner un exemple avec les fibres optiques.')">Réflexion totale</button>
+<button class="btn" onclick="setPrompt('Calcule l\'indice de réfraction d\'un milieu où la lumière se propage à 2,0×10⁸ m/s. En déduire l\'angle de réfraction pour i₁ = 45°.')">Calcul complet</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ CARTE MENTALE ═══════ -->
+<div class="panel" id="p-mindmap">
+<div class="content-card">
+<h3>🗺️ Carte mentale — Réflexion et réfraction de la lumière</h3>
+<div class="mindmap">
+<div class="map-center">💡 Réflexion et réfraction</div>
+<div class="map-branches">
+<div class="map-branch" style="border-color:rgba(200,117,51,.3)">
+<h4 style="color:var(--orange)">📏 Propagation rectiligne</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Rayon lumineux (droite orientée)</li>
+<li>Milieu transparent et homogène</li>
+<li>c = 3,00 × 10⁸ m/s</li>
+<li>Ombre, pénombre, éclipse</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(183,121,31,.3)">
+<h4 style="color:var(--amber)">🪞 Réflexion</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>1ère loi : plan d'incidence</li>
+<li>2ème loi : i₁ = i_R</li>
+<li>Spéculaire vs diffuse</li>
+<li>Miroirs plans</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(47,133,90,.3)">
+<h4 style="color:var(--green)">🌊 Réfraction</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>n = c/v (indice de réfraction)</li>
+<li>n₁sin(i₁) = n₂sin(i₂)</li>
+<li>Vers la normale si n₂ > n₁</li>
+<li>Éloigne si n₂ < n₁</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(91,74,159,.3)">
+<h4 style="color:var(--purple)">📊 Valeurs de n</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Air : ≈ 1,00</li>
+<li>Eau : 1,33</li>
+<li>Verre : 1,50</li>
+<li>Diamant : 2,42</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(185,28,28,.3)">
+<h4 style="color:var(--red)">⚠️ Réflexion totale</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>n₁ > n₂ nécessaire</li>
+<li>sin(iℓ) = n₂/n₁</li>
+<li>i₁ > iℓ → réflexion totale</li>
+<li>Fibres optiques</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(47,143,164,.3)">
+<h4 style="color:var(--cyan)">🔍 Applications</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Prismes, lentilles</li>
+<li>Fibres optiques</li>
+<li>Bâton brisé (illusion)</li>
+<li>Miroirs (image virtuelle)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ SIMULATIONS ═══════ -->
+<div class="panel" id="p-simulations">
+<div class="content-card">
+<h3>🔬 Simulations interactives</h3>
+<div class="neon-sim" style="margin-bottom:18px">
+<canvas id="refractCanvas" height="300"></canvas>
+<div class="sim-body">
+<h4>Simulation — Réflexion et réfraction en temps réel</h4>
+<p>Observez le rayon incident, réfléchi et réfracté. Modifiez l'angle et les indices.</p>
+<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+<button class="btn primary" onclick="startRefract()">▶ Démarrer</button>
+<button class="btn" onclick="stopRefract()">⏹ Arrêter</button>
+</div>
+<div class="sim-inputs" style="margin-top:10px">
+<div><label class="neon-label">n₁</label><input class="neon-input" id="sim-n1" value="1.00" type="number" step="0.01" oninput="updateRefract()"/></div>
+<div><label class="neon-label">n₂</label><input class="neon-input" id="sim-n2" value="1.50" type="number" step="0.01" oninput="updateRefract()"/></div>
+<div><label class="neon-label">Angle i₁ (°)</label><input class="neon-input" id="sim-i1" value="40" type="number" step="1" oninput="updateRefract()"/></div>
+</div>
+</div>
+</div>
+<div class="sim-grid-2">
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Réfraction (PhET)</h4><p style="color:var(--muted);font-size:13px">Explorez la réfraction de la lumière à travers différents milieux.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/bending-light/latest/bending-light_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Réflexion et miroirs (PhET)</h4><p style="color:var(--muted);font-size:13px">Visualisez la réflexion et la formation d'images dans les miroirs.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ ECE ═══════ -->
+<div class="panel" id="p-ece">
+<div class="content-card">
+<h3>🧪 ECE — Mesure de l'indice de réfraction d'un liquide</h3>
+<p style="color:var(--muted);margin-bottom:16px">Protocole expérimental pour déterminer l'indice de réfraction d'un liquide inconnu à l'aide d'un disque de projection et de la loi de Snell-Descartes.</p>
+<div class="ece-steps">
+<div class="ece-step">
+<b>① Montage du disque optique</b>
+<p style="color:var(--muted);font-size:13px">Placer une cuve demi-cylindrique sur un disque gradué (rapporteur). Remplir la cuve avec le liquide dont on veut mesurer l'indice. Diriger un faisceau laser vers le centre de la face courbe du demi-cylindre selon la normale.</p>
+</div>
+<div class="ece-step">
+<b>② Mesure des angles</b>
+<p style="color:var(--muted);font-size:13px">Faire varier l'angle d'incidence \(i_1\) de 0° à 80° par pas de 5°. Pour chaque valeur, noter l'angle de réfraction \(i_2\) mesuré sur le disque. Vérifier la réflexion partielle (rayon réfléchi).</p>
+</div>
+<div class="ece-step">
+<b>③ Exploitation graphique</b>
+<p style="color:var(--muted);font-size:13px">Tracer \(\sin(i_1)\) en fonction de \(\sin(i_2)\). La loi de Snell-Descartes donne : \(\sin(i_1) = n \cdot \sin(i_2)\) (avec \(n_1 = 1\) pour l'air). La pente de la droite est égale à \(n_2\), l'indice du liquide.</p>
+</div>
+<div class="ece-step">
+<b>④ Calcul de l'indice</b>
+<p style="color:var(--muted);font-size:13px">Par régression linéaire sur le graphe \(\sin(i_1) = f(\sin(i_2))\) : la pente \(a = n_2\). Comparer avec les valeurs tabulées (eau = 1,33 ; éthanol = 1,36 ; glycérine = 1,47). Identifier le liquide.</p>
+</div>
+<div class="ece-step">
+<b>⑤ Incertitudes et précautions</b>
+<p style="color:var(--muted);font-size:13px">Incertitude sur les angles : ± 1° (lecture sur le disque). Incertitude sur \(n\) : propagation des incertitudes. Placer le laser soigneusement au centre de la face courbe. Éviter les reflets parasites.</p>
+</div>
+<div class="ece-step">
+<b>⑥ Conclusion</b>
+<p style="color:var(--muted);font-size:13px">Rédiger le bilan : valeur de \(n\) mesurée, comparaison avec les tables, identification du liquide, discussion des sources d'erreur. Loi de Snell-Descartes vérifiée si le graphe est linéaire passant par l'origine.</p>
+</div>
+</div>
+<div class="neon-sim" style="margin-top:18px">
+<canvas id="eceCanvas" height="240"></canvas>
+<div class="sim-body">
+<h4>Visualisation — Disque optique et mesure</h4>
+<p>Rayon incident (orange) · Rayon réfléchi (cyan) · Rayon réfracté (vert)</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ VERS LA 1ÈRE SPÉ ═══════ -->
+<div class="panel" id="p-terminale">
+<div class="content-card">
+<h3>🚀 Vers la 1ère Spé</h3>
+<div class="cards">
+<div class="card">
+<h4>Ce qui sera approfondi</h4>
+<ul>
+<li><strong>Dispersion de la lumière</strong> : l'indice dépend de la longueur d'onde → décomposition par un prisme, spectres continus et de raies</li>
+<li><strong>Spectres</strong> : spectre continu d'origine thermique, spectre de raies d'émission et d'absorption, identification des éléments</li>
+<li><strong>Lentilles minces</strong> : réfraction sur des surfaces courbes → focalisation, images réelles et virtuelles, vergence</li>
+<li><strong>Loi de Wien</strong> : lien entre température d'un corps et longueur d'onde d'émission maximale</li>
+</ul>
+</div>
+<div class="card">
+<h4>Liens avec d'autres notions</h4>
+<ul>
+<li><strong>Ondes</strong> : la lumière est une onde électromagnétique, longueur d'onde λ, fréquence ν</li>
+<li><strong>Physique nucléaire</strong> : spectres de raies → structure de l'atome, niveaux d'énergie</li>
+<li><strong>Signaux</strong> : fibres optiques pour les télécommunications (réflexion totale)</li>
+<li><strong>Astrophysique</strong> : analyse spectrale de la lumière des étoiles, détection des éléments</li>
+</ul>
+</div>
+</div>
+<div class="content-card" style="background:var(--orange3);border-color:rgba(200,117,51,.22);margin-top:16px">
+<h4 style="color:var(--orange)">🏆 Mini-défi 1ère Spé</h4>
+<p style="color:var(--muted)">Un prisme en verre crown (\(n = 1{,}52\) pour le jaune) a un angle au sommet \(A = 60°\). Un rayon lumineux jaune arrive avec \(i_1 = 50°\) sur la première face. Calculer l'angle d'émergence du rayon à la sortie du prisme (on admet que les deux réfractions se calculent indépendamment avec la loi de Snell-Descartes).</p>
+<details><summary style="cursor:pointer;color:var(--orange);font-weight:700">Réponse</summary>
+<p style="color:var(--muted)">À l'entrée : \(\sin(i_2) = \frac{\sin(50°)}{1{,}52} = \frac{0{,}766}{1{,}52} = 0{,}504\) → \(i_2 = 30{,}3°\).<br>
+Angle sur la 2ème face : \(i_3 = A - i_2 = 60 - 30{,}3 = 29{,}7°\).<br>
+À la sortie : \(\sin(i_4) = 1{,}52 \times \sin(29{,}7°) = 1{,}52 \times 0{,}495 = 0{,}753\) → \(i_4 = \mathbf{48{,}8°}\).<br>
+Le rayon émerge avec un angle d'environ 49° par rapport à la normale de la deuxième face.</p>
+</details>
+</div>
+</div>
+</div>
+
+</div><!-- /page -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+/* ══ THEME ══ */
+(function(){const t=localStorage.getItem('pc_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pc_theme',n);drawHero();drawECE();}
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
-});
+/* ══ TABS ══ */
+const PANELS={cours:'p-cours',relations:'p-relations',exercices:'p-exercices',flashcards:'p-flashcards',quiz:'p-quiz',mindmap:'p-mindmap',simulations:'p-simulations',ece:'p-ece',terminale:'p-terminale'};
+const visited=new Set();
+function switchTab(t){
+  Object.values(PANELS).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const el=document.getElementById(PANELS[t]);if(el)el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  visited.add(t);updateMastery();
+  if(t==='flashcards'&&!fcBuilt)buildFC();
+  if(t==='quiz'&&!quizBuilt)buildQuiz();
+  if(t==='simulations')setTimeout(startRefract,200);
+  if(t==='ece')setTimeout(drawECE,100);
+  if(t==='relations')setTimeout(calcSnell,100);
+}
+function updateMastery(){const pct=Math.round(visited.size/9*100);document.getElementById('masterBar').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+' %';}
+
+/* ══ HERO CANVAS — rayon lumineux animé ══ */
+const hC=document.getElementById('heroCanvas');
+const hCtx=hC.getContext('2d');
+let hFrame=0;
+function drawHero(){
+  const W=hC.width=hC.offsetWidth||500,H=hC.height=hC.offsetHeight||230;
+  const ctx=hCtx;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  // interface horizontale
+  const yI=H/2;
+  ctx.strokeStyle='rgba(200,117,51,.4)';ctx.lineWidth=1;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(0,yI);ctx.lineTo(W,yI);ctx.stroke();
+  ctx.setLineDash([]);
+  // normale verticale
+  const cx=W*0.45;
+  ctx.strokeStyle='rgba(224,152,96,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(cx,yI-100);ctx.lineTo(cx,yI+100);ctx.stroke();
+  ctx.setLineDash([]);
+  // rayon incident
+  const ang1=40*Math.PI/180;
+  const ix=cx-80*Math.sin(ang1),iy=yI-80*Math.cos(ang1);
+  ctx.strokeStyle='#E09860';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(ix,iy);ctx.lineTo(cx,yI);ctx.stroke();
+  // flèche incidente
+  ctx.fillStyle='#E09860';ctx.beginPath();
+  const ax=cx-15*Math.sin(ang1),ay=yI-15*Math.cos(ang1);
+  ctx.moveTo(ax-4*Math.cos(ang1),ay+4*Math.sin(ang1));
+  ctx.lineTo(cx,yI);ctx.lineTo(ax+4*Math.cos(ang1),ay-4*Math.sin(ang1));ctx.fill();
+  // rayon réfléchi
+  const rx=cx+60*Math.sin(ang1),ry=yI-60*Math.cos(ang1);
+  ctx.strokeStyle='rgba(47,143,164,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,yI);ctx.lineTo(rx,ry);ctx.stroke();
+  // rayon réfracté
+  const sin2=Math.sin(ang1)/1.5;
+  if(sin2<=1){
+    const ang2=Math.asin(sin2);
+    const tx=cx+80*Math.sin(ang2),ty=yI+80*Math.cos(ang2);
+    ctx.strokeStyle='rgba(47,133,90,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,yI);ctx.lineTo(tx,ty);ctx.stroke();
+  }
+  // labels
+  const t2=Date.now()/1000;
+  ctx.font='bold 11px Inter';
+  ctx.fillStyle=`rgba(224,152,96,${.7+.2*Math.sin(t2)})`;ctx.fillText('i₁',cx-28,yI-38);
+  ctx.fillStyle=`rgba(47,143,164,${.7+.2*Math.sin(t2)})`;ctx.fillText('i_R',cx+14,yI-38);
+  ctx.fillStyle=`rgba(47,133,90,${.7+.2*Math.sin(t2)})`;ctx.fillText('i₂',cx+14,yI+30);
+  ctx.fillStyle='rgba(200,117,51,.5)';ctx.font='10px Inter';ctx.fillText('n₁ = 1,00',20,yI-10);
+  ctx.fillText('n₂ = 1,50',20,yI+20);
+  ctx.fillStyle='rgba(224,152,96,.4)';ctx.font='9px Inter';ctx.fillText('Normale',cx+4,yI-95);
+  // particules lumineuses animées
+  const pPhase=(hFrame*0.02)%1;
+  const px=ix+(cx-ix)*pPhase, py=iy+(yI-iy)*pPhase;
+  ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);ctx.fillStyle='rgba(224,152,96,.8)';ctx.fill();
+  hFrame++;
+}
+(function hloop(){drawHero();requestAnimationFrame(hloop);})();
+
+/* ══ REFRACTION SIMULATION ══ */
+let refractRunning=false,refractAnim=null;
+function startRefract(){if(refractRunning)return;refractRunning=true;(function rl(){if(!refractRunning)return;drawRefractSim();refractAnim=requestAnimationFrame(rl);})();}
+function stopRefract(){refractRunning=false;if(refractAnim)cancelAnimationFrame(refractAnim);}
+function updateRefract(){}
+function drawRefractSim(){
+  const c=document.getElementById('refractCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=300;
+  const ctx=c.getContext('2d');
+  const n1=parseFloat(document.getElementById('sim-n1').value)||1;
+  const n2=parseFloat(document.getElementById('sim-n2').value)||1.5;
+  const i1Deg=parseFloat(document.getElementById('sim-i1').value)||40;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  // interface
+  const yI=H/2;
+  ctx.fillStyle='rgba(47,143,164,.08)';ctx.fillRect(0,yI,W,H/2);
+  ctx.fillStyle='rgba(200,117,51,.04)';ctx.fillRect(0,0,W,yI);
+  ctx.strokeStyle='rgba(200,117,51,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,yI);ctx.lineTo(W,yI);ctx.stroke();
+  // normale
+  const cx=W/2;
+  ctx.strokeStyle='rgba(224,152,96,.25)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(cx,yI-130);ctx.lineTo(cx,yI+130);ctx.stroke();ctx.setLineDash([]);
+  // rayon incident
+  const ang1=i1Deg*Math.PI/180;
+  const len=120;
+  const ix=cx-len*Math.sin(ang1),iy=yI-len*Math.cos(ang1);
+  ctx.strokeStyle='#E09860';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(ix,iy);ctx.lineTo(cx,yI);ctx.stroke();
+  // rayon réfléchi
+  const rx=cx+len*Math.sin(ang1),ry=yI-len*Math.cos(ang1);
+  ctx.strokeStyle='rgba(47,143,164,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,yI);ctx.lineTo(rx,ry);ctx.stroke();
+  // rayon réfracté
+  const sinI2=n1*Math.sin(ang1)/n2;
+  if(Math.abs(sinI2)<=1){
+    const ang2=Math.asin(sinI2);
+    const tx=cx+len*Math.sin(ang2),ty=yI+len*Math.cos(ang2);
+    ctx.strokeStyle='rgba(47,133,90,.7)';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cx,yI);ctx.lineTo(tx,ty);ctx.stroke();
+    ctx.font='bold 12px Inter';ctx.fillStyle='rgba(47,133,90,.8)';
+    ctx.fillText('i₂ = '+(ang2*180/Math.PI).toFixed(1)+'°',cx+20,yI+50);
+  } else {
+    ctx.font='bold 13px Inter';ctx.fillStyle='rgba(185,28,28,.8)';
+    ctx.fillText('⚠️ Réflexion totale !',cx-70,yI+50);
+  }
+  // labels
+  ctx.font='bold 12px Inter';
+  ctx.fillStyle='#E09860';ctx.fillText('i₁ = '+i1Deg+'°',cx-55,yI-50);
+  ctx.fillStyle='rgba(47,143,164,.7)';ctx.fillText('i_R = '+i1Deg+'°',cx+15,yI-50);
+  ctx.fillStyle='rgba(200,117,51,.5)';ctx.font='11px Inter';
+  ctx.fillText('n₁ = '+n1.toFixed(2),20,yI-15);
+  ctx.fillText('n₂ = '+n2.toFixed(2),20,yI+25);
+  // angle arcs
+  ctx.strokeStyle='rgba(224,152,96,.4)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,yI,30,-Math.PI/2-ang1,-Math.PI/2);ctx.stroke();
+  ctx.strokeStyle='rgba(47,143,164,.4)';
+  ctx.beginPath();ctx.arc(cx,yI,30,-Math.PI/2,-Math.PI/2+ang1);ctx.stroke();
+}
+
+/* ══ ECE CANVAS ══ */
+function drawECE(){
+  const c=document.getElementById('eceCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=240;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  // disque
+  const cx=W/2,cy=H/2,R=100;
+  ctx.strokeStyle='rgba(200,117,51,.3)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+  // graduations
+  for(let a=0;a<360;a+=10){
+    const rad=a*Math.PI/180;
+    const r1=a%30===0?R-8:R-4;
+    ctx.strokeStyle='rgba(224,152,96,.3)';ctx.lineWidth=a%30===0?1.5:0.5;
+    ctx.beginPath();ctx.moveTo(cx+r1*Math.cos(rad),cy-r1*Math.sin(rad));ctx.lineTo(cx+R*Math.cos(rad),cy-R*Math.sin(rad));ctx.stroke();
+  }
+  // cuve demi-cylindre (bas)
+  ctx.fillStyle='rgba(47,143,164,.12)';ctx.strokeStyle='rgba(47,143,164,.4)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(cx,cy,R-5,0,Math.PI);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(47,143,164,.06)';ctx.beginPath();ctx.rect(cx-R+5,cy,2*(R-5),2);ctx.fill();
+  // rayon incident
+  const i1=45;
+  const rad1=i1*Math.PI/180;
+  ctx.strokeStyle='#E09860';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(cx-(R-15)*Math.sin(rad1),cy-(R-15)*Math.cos(rad1));ctx.lineTo(cx,cy);ctx.stroke();
+  // rayon réfracté
+  const sinI2=Math.sin(rad1)/1.33;
+  if(sinI2<=1){
+    const rad2=Math.asin(sinI2);
+    ctx.strokeStyle='rgba(47,133,90,.7)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(R-15)*Math.sin(rad2),cy+(R-15)*Math.cos(rad2));ctx.stroke();
+  }
+  // rayon réfléchi
+  ctx.strokeStyle='rgba(47,143,164,.5)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(R-15)*Math.sin(rad1),cy-(R-15)*Math.cos(rad1));ctx.stroke();
+  // labels
+  ctx.fillStyle='#E09860';ctx.font='bold 11px Inter';ctx.fillText('Incident',cx-R+10,cy-60);
+  ctx.fillStyle='rgba(47,143,164,.7)';ctx.fillText('Réfléchi',cx+20,cy-60);
+  ctx.fillStyle='rgba(47,133,90,.7)';ctx.fillText('Réfracté',cx+10,cy+70);
+  ctx.fillStyle='rgba(200,117,51,.5)';ctx.font='10px Inter';ctx.fillText('Liquide (n = ?)',cx-35,cy+30);
+  ctx.fillText('Disque gradué',cx-30,cy-R-10);
+}
+
+/* ══ SNELL CALCULATOR ══ */
+function calcSnell(){
+  const n1=parseFloat(document.getElementById('s-n1').value)||1;
+  const n2=parseFloat(document.getElementById('s-n2').value)||1.5;
+  const i1=parseFloat(document.getElementById('s-i1').value)||30;
+  const sinI2=n1*Math.sin(i1*Math.PI/180)/n2;
+  let txt='n₁ = '+n1.toFixed(2)+' · n₂ = '+n2.toFixed(2)+' · i₁ = '+i1+'°\n';
+  txt+='n₁·sin(i₁) = '+(n1*Math.sin(i1*Math.PI/180)).toFixed(4)+'\n';
+  if(Math.abs(sinI2)<=1){
+    const i2=Math.asin(sinI2)*180/Math.PI;
+    txt+='sin(i₂) = '+sinI2.toFixed(4)+'\n';
+    txt+='i₂ = '+i2.toFixed(1)+'°\n';
+    if(n2>n1) txt+='→ Rayon se rapproche de la normale (n₂ > n₁)';
+    else if(n2<n1) txt+='→ Rayon s\'éloigne de la normale (n₂ < n₁)';
+    else txt+='→ Pas de déviation (n₁ = n₂)';
+  } else {
+    txt+='⚠️ sin(i₂) = '+sinI2.toFixed(4)+' > 1 → RÉFLEXION TOTALE\n';
+    const iLim=Math.asin(n2/n1)*180/Math.PI;
+    txt+='Angle limite : iℓ = '+iLim.toFixed(1)+'° (i₁ = '+i1+'° > iℓ)';
+  }
+  document.getElementById('s-result').textContent=txt;
+  // draw snell canvas
+  const c=document.getElementById('snellCanvas');if(!c)return;
+  c.width=c.offsetWidth||500;const W=c.width;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,260);
+  const yI=130,cxS=W/2;
+  // interface
+  ctx.strokeStyle='rgba(200,117,51,.4)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,yI);ctx.lineTo(W,yI);ctx.stroke();
+  // normale
+  ctx.strokeStyle='rgba(224,152,96,.25)';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(cxS,yI-110);ctx.lineTo(cxS,yI+110);ctx.stroke();ctx.setLineDash([]);
+  // rayon incident
+  const a1=i1*Math.PI/180;
+  ctx.strokeStyle='#E09860';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cxS-90*Math.sin(a1),yI-90*Math.cos(a1));ctx.lineTo(cxS,yI);ctx.stroke();
+  // rayon réfléchi
+  ctx.strokeStyle='rgba(47,143,164,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cxS,yI);ctx.lineTo(cxS+60*Math.sin(a1),yI-60*Math.cos(a1));ctx.stroke();
+  // rayon réfracté
+  if(Math.abs(sinI2)<=1){
+    const a2=Math.asin(sinI2);
+    ctx.strokeStyle='rgba(47,133,90,.7)';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cxS,yI);ctx.lineTo(cxS+90*Math.sin(a2),yI+90*Math.cos(a2));ctx.stroke();
+    ctx.font='bold 11px Inter';ctx.fillStyle='rgba(47,133,90,.8)';ctx.fillText('i₂ = '+(a2*180/Math.PI).toFixed(1)+'°',cxS+15,yI+50);
+  } else {
+    ctx.font='bold 12px Inter';ctx.fillStyle='rgba(185,28,28,.8)';ctx.fillText('Réflexion totale !',cxS-55,yI+50);
+  }
+  ctx.font='bold 11px Inter';ctx.fillStyle='#E09860';ctx.fillText('i₁ = '+i1+'°',cxS-50,yI-45);
+}
+
+/* ══ FLASHCARDS ══ */
+const FC_DATA=[
+  {q:'Qu\'est-ce que le modèle du rayon lumineux ?',a:'On modélise le trajet de la lumière par une droite orientée (flèche) appelée rayon lumineux. Valide dans un milieu transparent et homogène pour la propagation rectiligne.'},
+  {q:'Vitesse de la lumière dans le vide',a:'c = 3,00 × 10⁸ m/s. Dans l\'air, v ≈ c (très bonne approximation). La lumière ralentit dans les milieux matériels transparents.'},
+  {q:'Définition de la réflexion',a:'Changement de direction d\'un rayon lumineux à la surface de séparation entre deux milieux (dioptre), le rayon restant dans le milieu incident. La surface peut être un miroir.'},
+  {q:'1ère loi de Snell-Descartes (réflexion)',a:'Le rayon réfléchi est dans le plan d\'incidence (plan défini par le rayon incident et la normale au dioptre).'},
+  {q:'2ème loi de Snell-Descartes (réflexion)',a:'L\'angle de réflexion est égal à l\'angle d\'incidence : i₁ = i_R. Les deux angles sont mesurés par rapport à la normale.'},
+  {q:'Définition de la réfraction',a:'Changement de direction d\'un rayon lumineux lors du passage d\'un milieu transparent à un autre d\'indice de réfraction différent. Le rayon change de milieu.'},
+  {q:'Indice de réfraction — définition et formule',a:'n = c/v. Sans unité, n ≥ 1. Caractérise le ralentissement de la lumière dans un milieu. Air ≈ 1,00 ; Eau = 1,33 ; Verre = 1,50 ; Diamant = 2,42.'},
+  {q:'2ème loi de Snell-Descartes (réfraction)',a:'n₁·sin(i₁) = n₂·sin(i₂). Relie les indices et les angles d\'incidence et de réfraction. Les angles sont mesurés par rapport à la normale au dioptre.'},
+  {q:'Sens de déviation lors d\'une réfraction',a:'Si n₂ > n₁ (milieu plus réfringent) : le rayon se rapproche de la normale → i₂ < i₁. Si n₂ < n₁ : le rayon s\'éloigne de la normale → i₂ > i₁.'},
+  {q:'Réflexion spéculaire vs diffuse',a:'Spéculaire : surface lisse (miroir) → image nette. Diffuse : surface rugueuse → lumière dispersée dans toutes les directions, pas d\'image.'},
+  {q:'Réflexion totale — condition',a:'Se produit quand n₁ > n₂ et que i₁ dépasse l\'angle limite iℓ tel que sin(iℓ) = n₂/n₁. Aucun rayon réfracté, toute la lumière est réfléchie.'},
+  {q:'Application : fibres optiques',a:'La lumière se propage dans le cœur (n grand) par réflexions totales successives sur la gaine (n plus petit). Aucune perte par réfraction → transmission sur de longues distances.'},
+  {q:'Pourquoi le bâton semble-t-il brisé dans l\'eau ?',a:'Les rayons lumineux provenant de la partie immergée sont réfractés en sortant de l\'eau (n=1,33) vers l\'air (n=1). L\'œil prolonge les rayons en ligne droite et voit le bâton à une position apparente différente.'},
+  {q:'Incidence normale (i₁ = 0°)',a:'Le rayon n\'est pas dévié : il traverse le dioptre en ligne droite. i₂ = 0° quelle que soit la valeur des indices. La réflexion existe toujours mais est faible.'},
+  {q:'Valeurs de n à connaître',a:'Vide = 1,000 · Air ≈ 1,00 · Eau = 1,33 · Verre (crown) = 1,50 · Diamant = 2,42. Plus n est grand, plus la lumière est ralentie et plus le milieu est réfringent.'},
+];
+let fcBuilt=false,fcOrder=[];
+function buildFC(){fcBuilt=true;fcOrder=[...Array(FC_DATA.length).keys()];renderFC();}
+function renderFC(){
+  const g=document.getElementById('fcGrid');if(!g)return;
+  g.innerHTML=fcOrder.map(i=>{
+    const c=FC_DATA[i];
+    return`<div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flash-front"><b>${c.q}</b><p style="font-size:11px;color:var(--faint);margin-top:8px">Cliquez pour voir la réponse</p></div>
+        <div class="flash-back">${c.a}</div>
+      </div></div>`;
+  }).join('');
+}
+function shuffleFC(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}renderFC();}
+
+/* ══ QUIZ ══ */
+const QUIZ=[
+  {q:'Dans quel milieu la lumière se propage-t-elle en ligne droite ?',opts:['Milieu transparent et homogène','Milieu opaque','Milieu non homogène','Toujours'],c:0,e:'Le modèle du rayon lumineux (propagation rectiligne) s\'applique dans un milieu transparent ET homogène. Sinon : diffraction ou mirages.'},
+  {q:'Que vaut la vitesse de la lumière dans le vide ?',opts:['3,00 × 10⁸ m/s','3,00 × 10⁵ m/s','3,00 × 10¹⁰ m/s','3,00 × 10⁶ m/s'],c:0,e:'c = 3,00 × 10⁸ m/s dans le vide (et approximativement dans l\'air).'},
+  {q:'Si i₁ = 35°, que vaut l\'angle de réflexion i_R ?',opts:['35°','55°','70°','0°'],c:0,e:'Loi de Snell-Descartes pour la réflexion : i_R = i₁ = 35°. L\'angle de réflexion est toujours égal à l\'angle d\'incidence.'},
+  {q:'L\'indice de réfraction de l\'eau est 1,33. Que vaut la vitesse de la lumière dans l\'eau ?',opts:['2,26 × 10⁸ m/s','3,00 × 10⁸ m/s','1,33 × 10⁸ m/s','4,00 × 10⁸ m/s'],c:0,e:'v = c/n = 3,00×10⁸/1,33 ≈ 2,26 × 10⁸ m/s. La lumière ralentit en entrant dans l\'eau.'},
+  {q:'Un rayon passe de l\'air (n=1) vers le verre (n=1,5). Il se :',opts:['Rapproche de la normale (i₂ < i₁)','Éloigne de la normale (i₂ > i₁)','Ne change pas de direction','Est totalement réfléchi'],c:0,e:'Si n₂ > n₁, le rayon se rapproche de la normale. n(verre) > n(air) → i₂ < i₁.'},
+  {q:'La formule n₁·sin(i₁) = n₂·sin(i₂) est la loi de :',opts:['Snell-Descartes pour la réfraction','Snell-Descartes pour la réflexion','Descartes pour la diffraction','Wien'],c:0,e:'C\'est la 2ème loi de Snell-Descartes pour la RÉFRACTION. Pour la réflexion : i₁ = i_R.'},
+  {q:'L\'angle d\'incidence est mesuré entre :',opts:['Le rayon incident et la normale au dioptre','Le rayon incident et le dioptre','Le rayon réfléchi et le dioptre','Le rayon incident et le rayon réfléchi'],c:0,e:'Toujours par rapport à la NORMALE (perpendiculaire au dioptre au point d\'incidence), jamais par rapport à la surface.'},
+  {q:'n = c/v. Que vaut n pour le vide ?',opts:['1,000','0','2','∞'],c:0,e:'Dans le vide, v = c, donc n = c/c = 1. C\'est la plus petite valeur possible : n ≥ 1 pour tout milieu.'},
+  {q:'Un rayon arrive avec i₁ = 0° (incidence normale). Que se passe-t-il ?',opts:['Pas de déviation, le rayon continue en ligne droite','Réflexion totale','Le rayon est dévié de 90°','Le rayon s\'arrête'],c:0,e:'Si i₁ = 0°, sin(i₁) = 0, donc sin(i₂) = 0 et i₂ = 0°. Pas de déviation quelle que soit la valeur des indices.'},
+  {q:'La réflexion totale se produit quand :',opts:['n₁ > n₂ et i₁ > iℓ (angle limite)','n₁ < n₂ et i₁ > iℓ','n₁ = n₂','i₁ = 0°'],c:0,e:'Condition nécessaire : n₁ > n₂ (rayon passe vers un milieu moins réfringent). Et i₁ > iℓ avec sin(iℓ) = n₂/n₁.'},
+  {q:'Quel milieu a l\'indice de réfraction le plus élevé ?',opts:['Diamant (n = 2,42)','Eau (n = 1,33)','Verre (n = 1,50)','Air (n ≈ 1)'],c:0,e:'Le diamant a n = 2,42, le plus élevé des milieux courants. Cela explique son éclat exceptionnel (forte déviation des rayons).'},
+  {q:'L\'angle limite pour le passage verre→air (n₁=1,5, n₂=1) vaut environ :',opts:['41,8°','90°','30°','66,7°'],c:0,e:'sin(iℓ) = n₂/n₁ = 1/1,5 = 0,667 → iℓ = arcsin(0,667) ≈ 41,8°. Au-delà de cet angle, réflexion totale.'},
+];
+let quizBuilt=false,qi=0,qscore=0;
+function buildQuiz(){quizBuilt=true;qi=0;qscore=0;showQ();}
+function showQ(){
+  const a=document.getElementById('quizArea');if(!a)return;
+  if(qi>=QUIZ.length){a.innerHTML=`<div class="quiz-box" style="text-align:center"><div style="font-size:52px;font-weight:800;color:var(--orange)">${qscore}/${QUIZ.length}</div><p style="color:var(--muted)">${Math.round(qscore/QUIZ.length*100)} % — ${qscore>=10?'🏆 Excellent !':qscore>=7?'👍 Bien !':'📚 Relis le cours'}</p><button class="btn primary" onclick="qi=0;qscore=0;showQ()">🔄 Recommencer</button></div>`;return;}
+  const q=QUIZ[qi];
+  a.innerHTML=`<div class="quiz-box"><div style="font-size:11px;font-weight:800;color:var(--faint);letter-spacing:.1em;margin-bottom:8px">Q ${qi+1} / ${QUIZ.length}</div>
+  <p style="font-weight:700;margin-bottom:12px">${q.q}</p>
+  ${q.opts.map((o,i)=>`<button class="option" id="opt${i}" onclick="answerQ(${i})">${o}</button>`).join('')}
+  <div id="qexp" style="display:none;margin-top:12px;padding:12px;background:var(--green2);border-radius:12px;font-size:13px;color:var(--green)"></div>
+  <button id="qnext" style="display:none;margin-top:10px" class="btn primary" onclick="qi++;showQ()">Suivante →</button>
+  </div>`;
+}
+function answerQ(i){
+  const q=QUIZ[qi];
+  document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+  document.getElementById('opt'+q.c).classList.add('correct');
+  if(i!==q.c)document.getElementById('opt'+i).classList.add('wrong');
+  else qscore++;
+  const ex=document.getElementById('qexp');ex.textContent='💡 '+q.e;ex.style.display='block';
+  document.getElementById('qnext').style.display='inline-flex';
+}
+function setPrompt(t){document.getElementById('promptBox').value=t;}
+
+/* ══ INIT ══ */
+setTimeout(()=>{calcSnell();drawECE();},300);
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>

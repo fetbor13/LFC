@@ -1,181 +1,399 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5ᵉ · Chapitre 5 — Caractériser le mouvement | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  color-scheme:light;
+  --bg:#f4fdf7; --bg2:#e9faee; --surface:#ffffff; --surface2:#f0fdf4;
+  --text:#14532d; --text2:#4d7c5a; --text3:#86a090; --line:rgba(22,163,74,.14); --line2:rgba(22,163,74,.22);
+  --accent:#16a34a; --accent2:#4ade80; --accent3:#dcfce7; --accent4:#bbf7d0;
+  --warn:#d97706; --danger:#e53e3e; --ok:#3b82f6; --purple:#7c3aed;
+  --shadow:0 18px 48px rgba(22,163,74,.10); --shadow2:0 10px 28px rgba(22,163,74,.07);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#052e16; --bg2:#083d1e; --surface:#0a4921; --surface2:#0d5529;
+  --text:#f0fdf4; --text2:#86efac; --text3:#4ade80; --line:rgba(74,222,128,.14); --line2:rgba(74,222,128,.22);
+  --accent:#4ade80; --accent2:#22c55e; --accent3:rgba(22,163,74,.15); --accent4:rgba(74,222,128,.18);
+  --warn:#fbbf24; --danger:#f87171; --ok:#60a5fa; --purple:#c084fc;
+}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'Instrument Sans',system-ui,sans-serif;background:radial-gradient(circle at 70% 0,rgba(243,175,200,.18),transparent 34%),linear-gradient(135deg,var(--bg),var(--bg2));color:var(--text);line-height:1.68;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,select{font-family:inherit}.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.74);backdrop-filter:blur(22px);border-right:1px solid var(--line);padding:22px 18px;overflow:auto}[data-theme="dark"] .sidebar{background:rgba(28,18,27,.78)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}.logo{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;box-shadow:var(--shadow2)}.brand h1{font-family:'Clash Display',sans-serif;font-size:23px;font-weight:500;letter-spacing:-.04em}.brand p{color:var(--muted);font-size:13px;margin-top:-3px}.level-card{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.64);padding:18px;margin-bottom:22px;box-shadow:var(--shadow2)}[data-theme="dark"] .level-card{background:rgba(255,255,255,.04)}.level-row{display:flex;justify-content:space-between;align-items:center}.level-pill{padding:7px 13px;border-radius:999px;background:var(--rosebg);color:var(--soft);border:1px solid var(--line);font-weight:700}.progress{height:8px;background:rgba(217,139,169,.16);border:1px solid var(--line);border-radius:999px;margin:18px 0 10px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px}.small{font-size:13px;color:var(--muted)}.nav-title{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin:20px 10px 10px}.tab-btn{width:100%;border:1px solid transparent;background:transparent;color:var(--muted);padding:13px 14px;border-radius:18px;text-align:left;display:flex;align-items:center;gap:10px;font-weight:700;cursor:pointer;margin:5px 0;transition:.18s}.tab-btn:hover{background:rgba(217,139,169,.10);color:var(--text)}.tab-btn.active{background:var(--rosebg);border-color:var(--line2);color:var(--soft);box-shadow:inset 4px 0 0 var(--accent)}.theme{width:100%;margin-top:14px;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:11px 14px;border-radius:16px;font-weight:800;cursor:pointer}.main{min-width:0}.topbar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 38px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.54);backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}[data-theme="dark"] .topbar{background:rgba(28,18,27,.66)}.crumb{color:var(--muted);font-size:14px}.crumb strong{color:var(--soft)}.quick{display:flex;gap:10px}.quick a{padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-weight:800;color:var(--text)}.header{padding:32px 40px 26px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 20% 0,rgba(217,139,169,.18),transparent 34%),radial-gradient(circle at 88% 10%,rgba(189,167,242,.16),transparent 32%)}.header-inner{max-width:1180px}.hero-grid{display:grid;grid-template-columns:minmax(0,1.16fr) 270px;gap:18px;align-items:stretch}.hero-card{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:26px;padding:24px 28px;box-shadow:var(--shadow2)}[data-theme="dark"] .hero-card,.hero-media,.mission-card,.card,.sim-card{background:rgba(255,255,255,.045)}.hero-media{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:26px;padding:13px;box-shadow:var(--shadow2);display:flex;align-items:center;justify-content:center}.hero-media img{width:100%;height:230px;object-fit:cover;border-radius:20px;display:block}.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line2);border-radius:999px;background:var(--rosebg);color:var(--soft);font-size:12px;font-weight:800;margin-bottom:10px}.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.meta{padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12.5px;font-weight:700}.header h2{font-family:'Clash Display',sans-serif;font-size:clamp(28px,4.4vw,50px);line-height:.98;font-weight:500;letter-spacing:-.055em}.header h2 em{font-style:normal;color:var(--soft)}.intro{color:var(--muted);max-width:840px;margin-top:14px;font-size:15.5px}.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.hero-stat{padding:13px 15px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}.hero-stat strong{display:block;font-size:25px;line-height:1;font-family:'Clash Display',sans-serif;font-weight:500;color:var(--text)}.hero-stat span{display:block;margin-top:5px;color:var(--muted);font-size:13px}.missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}.mission-card{background:rgba(255,255,255,.70);border:1px solid var(--line);border-radius:22px;padding:18px 20px;box-shadow:var(--shadow2)}.mission-pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:var(--rosebg);color:var(--soft);font-size:12px;font-weight:800;margin-bottom:10px}.mission-card:nth-child(2) .mission-pill{background:rgba(189,167,242,.17);color:#8E74D8}.mission-card:nth-child(3) .mission-pill{background:rgba(243,185,157,.17);color:#C98974}.mission-card h3{font-family:'Clash Display',sans-serif;font-size:24px;font-weight:500;letter-spacing:-.03em;margin-bottom:6px}.mission-card p{color:var(--muted)}.panel{display:none}.panel.active{display:block}.section{max-width:1160px;margin:0 auto;padding:32px 40px 68px}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:28px;align-items:start}.toc{position:sticky;top:80px}.toc-card{background:rgba(255,255,255,.72);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:var(--shadow2)}[data-theme="dark"] .toc-card{background:rgba(255,255,255,.04)}.toc-title{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--soft);font-weight:900;margin:4px 9px 10px}.toc a{display:block;padding:9px 11px;border-radius:14px;color:var(--muted);font-weight:700;font-size:13px;margin:5px 0;border:1px solid transparent}.toc a:nth-child(2){background:rgba(217,139,169,.10)}.toc a:nth-child(3){background:rgba(189,167,242,.10)}.toc a:nth-child(4){background:rgba(243,185,157,.12)}.toc a:nth-child(5){background:rgba(201,144,169,.10)}.toc a:nth-child(6){background:rgba(217,139,169,.08)}.toc a:hover{border-color:var(--line2);color:var(--text)}.course{max-width:820px}.course h2{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:500;letter-spacing:-.035em;margin:26px 0 13px}.course h2:first-child{margin-top:0}.course h3{font-family:'Clash Display',sans-serif;font-size:21px;font-weight:500;letter-spacing:-.025em;margin:22px 0 9px}.course p,.course li{color:var(--muted)}.course ul{padding-left:22px;margin:10px 0 14px}.box{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:17px 19px;margin:16px 0;box-shadow:var(--shadow2);position:relative;overflow:hidden}.box::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--accent)}.box.def::before{background:var(--accent)}.box.method::before{background:var(--lav)}.box.warn::before{background:var(--peach)}.box strong{color:var(--text)}.label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:900;color:var(--soft);margin-bottom:6px}.formula{border:1px solid var(--line);background:var(--rosebg);border-radius:18px;padding:16px;text-align:center;margin:15px 0;color:var(--text);overflow-x:auto}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:20px;margin:16px 0;background:var(--surface);box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);background:var(--rosebg)}td{color:var(--muted)}tr:last-child td{border-bottom:none}.mini-svg{border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow2);margin:18px 0;padding:12px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:rgba(255,255,255,.76);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow2)}.card h3{font-family:'Clash Display',sans-serif;font-size:23px;font-weight:500;margin-bottom:8px}.card p{color:var(--muted)}.sim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.sim-card{background:rgba(255,255,255,.75);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow2);overflow:hidden}.sim-head{display:flex;align-items:center;gap:11px;padding:18px 20px;border-bottom:1px solid var(--line)}.sim-head span{font-size:22px}.sim-head h3{font-family:'Clash Display',sans-serif;font-weight:500;font-size:23px}.sim-body{padding:18px}.hint{color:var(--muted);font-size:14px;margin-bottom:13px}.field{margin:10px 0}.field label{display:block;font-size:12px;color:var(--soft);font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line2);background:var(--surface);border-radius:14px;padding:10px 12px;color:var(--text);outline:none}.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lab-view{height:260px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--surface),var(--rosebg));overflow:hidden;display:flex;align-items:center;justify-content:center}.status{margin-top:12px;border:1px solid var(--line);background:var(--rosebg);border-radius:16px;padding:12px 14px;color:var(--muted);font-size:14px}.iframe-wrap{position:relative;width:100%;padding-bottom:62%;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}.flash-card{min-height:190px;perspective:1000px;cursor:pointer}.flash-inner{height:100%;position:relative;transform-style:preserve-3d;transition:.55s}.flash-card.flipped .flash-inner{transform:rotateY(180deg)}.flash-face{position:absolute;inset:0;border-radius:22px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow2);backface-visibility:hidden;padding:20px;display:flex;flex-direction:column;justify-content:center}.flash-face.back{transform:rotateY(180deg);background:var(--rosebg)}.flash-face strong{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:500;line-height:1.1}.flash-face p{margin-top:12px;color:var(--muted)}.exo{margin-bottom:16px}.exo .tag{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--rosebg);border:1px solid var(--line);font-size:12px;color:var(--soft);font-weight:800;margin-bottom:9px}.correction{display:none;margin-top:12px;padding:13px;border-radius:16px;background:var(--rosebg);border:1px solid var(--line);color:var(--muted)}.showcorr{margin-top:10px;border:1px solid var(--line);background:var(--surface);color:var(--soft);font-weight:800;border-radius:14px;padding:9px 12px;cursor:pointer}.quiz-item{margin-bottom:14px}.options{display:grid;gap:9px;margin-top:11px}.opt{border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:11px 13px;text-align:left;cursor:pointer;color:var(--muted);font-weight:700}.opt.good{background:rgba(217,139,169,.16);border-color:var(--accent);color:var(--text)}.opt.bad{background:rgba(243,185,157,.16);border-color:var(--peach);color:var(--text)}.feedback{display:none;color:var(--muted);padding-top:9px}.chat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.bot-card{text-align:center}.bot-card a{display:block;border:1px solid var(--line);border-radius:20px;padding:18px 12px;background:var(--surface);box-shadow:var(--shadow2);font-weight:900;color:var(--text)}.bot-card span{display:block;font-size:28px;margin-bottom:8px}.promptbox textarea{height:230px;resize:vertical}.copybtn{border:0;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-radius:15px;padding:11px 15px;font-weight:900;cursor:pointer;margin-top:10px}.roadmap{display:grid;gap:14px}.roadmap .step{border-left:5px solid var(--accent);background:var(--surface);border-radius:0 18px 18px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 18px;color:var(--muted)}.roadmap .step:nth-child(2){border-left-color:var(--lav)}.roadmap .step:nth-child(3){border-left-color:var(--peach)}.roadmap .step:nth-child(4){border-left-color:var(--accent3)}.roadmap strong{color:var(--text)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}.badge-soft{display:inline-block;background:var(--rosebg);border:1px solid var(--line);color:var(--soft);font-weight:900;border-radius:999px;padding:5px 11px;margin-bottom:10px}.mobile-menu{display:none}@media(max-width:1050px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.tab-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.topbar{position:relative}.layout,.hero-grid,.missions,.grid2,.grid3,.sim-grid,.two-col{grid-template-columns:1fr}.toc{display:none}.hero-media{max-width:330px}.chat-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.header,.section,.topbar{padding-left:18px;padding-right:18px}.hero-stats,.input-row{grid-template-columns:1fr}.tab-list{grid-template-columns:1fr}.chat-grid{grid-template-columns:1fr}.quick{display:none}}
 </style>
 </head>
 <body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+    <div class="level-card"><div class="level-row"><span class="level-pill">Cinquième</span><span class="small">Chap. 5</span></div><div class="progress"><span id="sideProg"></span></div><p class="small"><span id="pct">0%</span> du chapitre exploré</p></div>
+    <div class="nav-title">Sommaire</div>
+    <div class="tab-list">
+      <button class="tab-btn active" data-tab="cours">📘 Cours</button>
+      <button class="tab-btn" data-tab="sims">🎛️ Simulations</button>
+      <button class="tab-btn" data-tab="maths">📐 Outils maths & unités</button>
+      <button class="tab-btn" data-tab="flash">🃏 Flashcards</button>
+      <button class="tab-btn" data-tab="exos">🎯 Exercices</button>
+      <button class="tab-btn" data-tab="quiz">❓ Quiz</button>
+      <button class="tab-btn" data-tab="tp">🧪 TP / activité</button>
+      <button class="tab-btn" data-tab="chatbots">🤖 Chatbots externes</button>
+      <button class="tab-btn" data-tab="next">🚀 Vers la 4e</button>
+    </div>
+    <button class="theme" onclick="toggleTheme()">Changer clair / sombre</button>
+  </aside>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
+  <main class="main">
+    <div class="topbar"><div class="crumb">5ème › Mouvements & interactions › <strong>Caractériser le mouvement</strong></div><div class="quick"><a href="#relations" onclick="showTab('maths',document.querySelector('[onclick*=maths]'))">Relations clés</a><a href="#sim-trajectoire" onclick="showTab('sims',document.querySelector('[onclick*=sims]'))">Simuler</a></div></div>
+    <header class="header" id="top">
+      <div class="header-inner">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="badge">5e · Chapitre 5</div>
+            <div class="meta-row"><span class="meta">M Borsali · Enseignant PC · LFC</span></div>
+            <h2><em>Caractériser</em> le mouvement</h2>
+            <p class="intro">Décrire un mouvement en choisissant un système et un référentiel, identifier une trajectoire, calculer une vitesse moyenne et reconnaître un mouvement uniforme, accéléré ou ralenti.</p>
+            <div class="hero-stats"><div class="hero-stat"><strong>6</strong><span>idées clés</span></div><div class="hero-stat"><strong>7</strong><span>exercices guidés</span></div><div class="hero-stat"><strong>4</strong><span>simulateurs intégrés</span></div></div>
+          </div>
+          <div class="hero-media"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Running-on-treadmills-motion-blur.jpg/960px-Running-on-treadmills-motion-blur.jpg" alt="Jambes de coureurs floues sur tapis de course, illustration du mouvement et de la vitesse"></div>
+        </div>
+        <div class="missions">
+          <article class="mission-card"><span class="mission-pill">Mission 01</span><h3>Repérer</h3><p>Choisir le système étudié et le référentiel avant de décrire le mouvement.</p></article>
+          <article class="mission-card"><span class="mission-pill">Mission 02</span><h3>Mesurer</h3><p>Calculer une vitesse moyenne avec une distance et une durée correctement converties.</p></article>
+          <article class="mission-card"><span class="mission-pill">Mission 03</span><h3>Qualifier</h3><p>Reconnaître trajectoire rectiligne, circulaire ou curviligne, puis mouvement uniforme, accéléré ou ralenti.</p></article>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel active" id="cours"><div class="section"><div class="layout">
+      <aside class="toc"><div class="toc-card"><div class="toc-title">Plan du cours</div><a href="#c1">1. Système</a><a href="#c2">2. Référentiel</a><a href="#c3">3. Trajectoire</a><a href="#c4">4. Vitesse moyenne</a><a href="#c5">5. Type de mouvement</a><a href="#c6">6. Bilan</a></div></aside>
+      <div class="course">
+        <h2 id="c1">1. Décrire un mouvement : commencer par le système</h2>
+        <p>En mécanique, on ne décrit jamais « tout » à la fois. On choisit d’abord l’objet étudié : c’est le <strong>système</strong>. Cela peut être une voiture, une balle, un passager, une planète, un ascenseur ou l’extrémité d’une pale d’éolienne. Définir le système est toujours la première étape avant toute description de mouvement.</p>
+        <div class="box def"><div class="label">Définition</div><p>Le <strong>système</strong> est le corps ou l’objet dont on étudie le mouvement. Il doit être clairement nommé avant toute description.</p></div>
+        <div class="box warn"><div class="label">Erreur fréquente</div><p>Dire « ça bouge » ne suffit pas. Il faut préciser : <strong>quel objet</strong> bouge ? Par rapport à <strong>quoi</strong> ? Quelle est sa <strong>trajectoire</strong> ? Sa vitesse change-t-elle ? Sans système défini, la description est incomplète.</p></div>
+        <p>Par exemple, pour décrire le mouvement d’un train, on peut choisir comme système le train entier, un passager du train, ou même la roue du train. Le choix du système dépend de ce qu’on veut étudier. Plus le système est précis, plus la description sera claire.</p>
+        <div class="box ok"><div class="label">Exemples de systèmes</div><p>• Le centre d’une balle de tennis en mouvement<br>• Le coureur lors d’un sprint<br>• L’extrémité de la grande aiguille d’une horloge<br>• La cabine d’un ascenseur<br>• La Terre dans le système solaire</p></div>
+
+        <h2 id="c2">2. Le référentiel : le mouvement dépend du point de vue</h2>
+        <p>Pour savoir si un objet est immobile ou en mouvement, on doit choisir un objet de référence appelé <strong>référentiel</strong>. Un même système peut être immobile dans un référentiel et en mouvement dans un autre : le mouvement est <strong>relatif</strong>.</p>
+        <p>C’est une idée fondamentale en physique : il n’y a pas de mouvement absolu. Tout dépend du point de référence choisi. Quand tu es assis dans une voiture qui roule, tu es immobile par rapport à la voiture, mais en mouvement par rapport à la route.</p>
+        <div class="box def"><div class="label">Définition</div><p>Un <strong>référentiel</strong> est un objet de référence par rapport auquel on décrit la position et le mouvement d’un système.</p></div>
+        <div class="table-wrap"><table><thead><tr><th>Situation</th><th>Référentiel choisi</th><th>Description</th></tr></thead><tbody><tr><td>Passager assis dans un train</td><td>Train</td><td>Le passager est immobile.</td></tr><tr><td>Passager assis dans un train</td><td>Sol de la gare</td><td>Le passager est en mouvement.</td></tr><tr><td>Terre autour du Soleil</td><td>Soleil</td><td>La Terre décrit une trajectoire presque circulaire.</td></tr><tr><td>Personne debout sur le quai</td><td>Terre</td><td>La personne est immobile.</td></tr><tr><td>Personne debout sur le quai</td><td>Soleil</td><td>La personne est en mouvement (rotation de la Terre).</td></tr></tbody></table></div>
+        <div class="mini-svg"><svg viewBox="0 0 760 230" width="100%" height="220" role="img" aria-label="Train, passager et référentiels"><defs><linearGradient id="trainGrad" x1="0" x2="1"><stop offset="0" stop-color="#D98BA9"/><stop offset="1" stop-color="#BDA7F2"/></linearGradient></defs><rect x="35" y="156" width="690" height="8" rx="4" fill="rgba(217,139,169,.22)"/><rect x="150" y="82" width="430" height="78" rx="24" fill="url(#trainGrad)" opacity=".88"/><circle cx="235" cy="166" r="18" fill="#251825" opacity=".82"/><circle cx="495" cy="166" r="18" fill="#251825" opacity=".82"/><rect x="210" y="102" width="62" height="35" rx="10" fill="white" opacity=".76"/><rect x="315" y="102" width="62" height="35" rx="10" fill="white" opacity=".76"/><rect x="420" y="102" width="62" height="35" rx="10" fill="white" opacity=".76"/><text x="365" y="72" text-anchor="middle" fill="var(--muted)" font-size="16" font-weight="700">Dans le train : passager immobile</text><path d="M595 120 C650 120 685 120 720 120" stroke="#D98BA9" stroke-width="5" fill="none" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#D98BA9"/></marker></defs><text x="642" y="105" fill="var(--soft)" font-size="14" font-weight="700">vu du quai : mouvement</text></svg></div>
+        <div class="box prop"><div class="label">Propriété</div><p>Le référentiel le plus courant au collège est le <strong>référentiel terrestre</strong> (sol ou tout objet lié à la Terre). Pour les mouvements astronomiques, on utilise le référentiel héliocentrique (Soleil).</p></div>
+        <div class="box warn"><div class="label">Attention</div><p>Il faut toujours préciser le référentiel choisi ! Sans référentiel, dire « l’objet est immobile » ou « l’objet bouge » n’a aucun sens.</p></div>
+
+        <h2 id="c3">3. La trajectoire : la forme du chemin suivi</h2>
+        <p>La <strong>trajectoire</strong> est l’ensemble des positions successives occupées par le système au cours du temps. Elle permet de qualifier la forme du mouvement. On peut la représenter en reliant les positions occupées à différents instants.</p>
+        <p>La forme de la trajectoire dépend du référentiel choisi. Par exemple, le point sur la périphérie d’une roue de vélo décrit un cercle dans le référentiel du cadre du vélo, mais une courbe différente (une cycloïde) dans le référentiel terrestre.</p>
+        <div class="grid3">
+          <div class="card"><span class="badge-soft">Rectiligne</span><p>La trajectoire est une <strong>droite</strong> : voiture sur une route droite, ascenseur, train sur un rail droit, bille qui tombe verticalement.</p></div>
+          <div class="card"><span class="badge-soft">Circulaire</span><p>La trajectoire est un <strong>cercle</strong> ou un arc de cercle : roue, pale d’éolienne, manège, aiguille d’horloge, satellite en orbite circulaire.</p></div>
+          <div class="card"><span class="badge-soft">Curviligne</span><p>La trajectoire est une <strong>courbe quelconque</strong> : ballon lancé, skieur, trajet d’un drone, balle de tennis pendant un match.</p></div>
+        </div>
+        <div class="box method"><div class="label">Méthode : identifier une trajectoire</div><p>1. Choisir le système et le référentiel.<br>2. Repérer plusieurs positions successives du système.<br>3. Relier ces positions pour voir la forme du chemin.<br>4. Si c’est une droite : rectiligne. Si c’est un cercle : circulaire. Sinon : curviligne.</p></div>
+
+        <h2 id="c4">4. Calculer une vitesse moyenne</h2>
+        <p>La vitesse moyenne indique la distance parcourue pendant une durée donnée. Elle ne dit pas si l’objet a été plus rapide ou plus lent à certains moments. C’est une valeur globale sur l’ensemble du trajet.</p>
+        <p>Par exemple, si un bus parcourt 30 km en 1 heure, sa vitesse moyenne est de 30 km/h. Mais il a pu rouler à 50 km/h sur certaines portions et s’arrêter à des feux rouges entre-temps.</p>
+        <div class="formula">\[ v = \frac{d}{\Delta t} \]</div>
+        <div class="table-wrap"><table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité usuelle</th><th>Unité internationale</th></tr></thead><tbody><tr><td>Distance parcourue</td><td>\(d\)</td><td>km ou m</td><td>m</td></tr><tr><td>Durée du trajet</td><td>\(\Delta t\)</td><td>h, min, s</td><td>s</td></tr><tr><td>Vitesse moyenne</td><td>\(v\)</td><td>km/h ou m/s</td><td>m/s</td></tr></tbody></table></div>
+        <div class="box method"><div class="label">Méthode</div><p>Pour calculer une vitesse, on vérifie d’abord les unités : si \(d\) est en km et \(\Delta t\) en h, alors \(v\) est en km/h. Si \(d\) est en m et \(\Delta t\) en s, alors \(v\) est en m/s. On convertit si nécessaire avant de calculer.</p></div>
+        <div class="box"><div class="label">Exemple guidé</div><p>Un train parcourt 360 km en 2 h 05 min. On convertit : \(2\,h\,05 = 2 + \frac{5}{60} = 2{,}083\,h\). Puis \(v = \frac{360}{2{,}083} \approx 173\,km/h\).</p></div>
+        <div class="box ok"><div class="label">Conversion de vitesses</div><p>Pour passer de m/s à km/h, on multiplie par 3,6.<br>Pour passer de km/h à m/s, on divise par 3,6.<br>Exemple : \(10\,m/s = 10 \times 3{,}6 = 36\,km/h\).<br>Exemple : \(90\,km/h = 90 / 3{,}6 = 25\,m/s\).</p></div>
+        <div class="box warn"><div class="label">Attention aux unités</div><p>On ne peut pas diviser des km par des minutes directement ! Il faut convertir : \(30\,min = 0{,}5\,h\) ou \(2\,h = 7200\,s\). Toujours vérifier la cohérence des unités avant de calculer.</p></div>
+
+        <h2 id="c5">5. Mouvement uniforme, accéléré ou ralenti</h2>
+        <p>La trajectoire décrit la forme du chemin. Pour compléter la description, on observe l’évolution de la vitesse au cours du temps. On utilise souvent une <strong>chronophotographie</strong> : une série de photos prises à intervalles réguliers pour visualiser les positions successives.</p>
+        <p>Si les positions successives sont régulièrement espacées, la vitesse est constante. Si elles s’écartent, la vitesse augmente. Si elles se rapprochent, la vitesse diminue.</p>
+        <div class="table-wrap"><table><thead><tr><th>Type de mouvement</th><th>Critère</th><th>Chronophotographie</th><th>Exemple</th></tr></thead><tbody><tr><td>Uniforme</td><td>La vitesse reste constante.</td><td>Points également espacés</td><td>Escalator à vitesse stable, train à vitesse constante.</td></tr><tr><td>Accéléré</td><td>La vitesse augmente.</td><td>Points de plus en plus écartés</td><td>Avion au décollage, voiture qui démarre.</td></tr><tr><td>Ralenti</td><td>La vitesse diminue.</td><td>Points de plus en plus rapprochés</td><td>Coureuse après la ligne d’arrivée, voiture qui freine.</td></tr></tbody></table></div>
+        <div class="formula">Une vitesse se caractérise par une <strong>direction</strong>, un <strong>sens</strong> et une <strong>valeur</strong>.</div>
+        <div class="box def"><div class="label">Chronophotographie</div><p>Une <strong>chronophotographie</strong> est une technique qui consiste à prendre des photos à intervalles de temps égaux, puis à les superposer. Cela permet de visualiser la trajectoire et l’évolution de la vitesse sur une seule image.</p></div>
+        <div class="box prop"><div class="label">Propriété</div><p>Un mouvement peut être à la fois rectiligne et accéléré (balle qui tombe), circulaire et uniforme (aiguille d’horloge), curviligne et ralenti (ballon qui s’élève puis redescend). La trajectoire et le type de mouvement sont deux caractéristiques indépendantes.</p></div>
+
+        <h2 id="c6">6. Bilan à retenir</h2>
+        <div class="box def"><div class="label">Synthèse</div><ul><li>On choisit d’abord le <strong>système</strong> (l’objet étudié).</li><li>On décrit le mouvement dans un <strong>référentiel</strong> (objet de référence).</li><li>La <strong>trajectoire</strong> peut être rectiligne, circulaire ou curviligne.</li><li>La vitesse moyenne se calcule par \(v = \frac{d}{\Delta t}\).</li><li>Un mouvement peut être <strong>uniforme</strong> (vitesse constante), <strong>accéléré</strong> (vitesse qui augmente) ou <strong>ralenti</strong> (vitesse qui diminue).</li><li>Le mouvement est <strong>relatif</strong> : il dépend du référentiel choisi.</li></ul></div>
+        <div class="box method"><div class="label">Méthode complète pour décrire un mouvement</div><p>1. Définir le <strong>système</strong> : quel objet étudie-t-on ?<br>2. Choisir un <strong>référentiel</strong> : par rapport à quoi décrit-on le mouvement ?<br>3. Décrire la <strong>trajectoire</strong> : rectiligne, circulaire ou curviligne ?<br>4. Calculer la <strong>vitesse moyenne</strong> si possible.<br>5. Qualifier le <strong>type de mouvement</strong> : uniforme, accéléré ou ralenti ?</p></div>
+      </div>
+    </div></div></section>
+
+    <section class="panel" id="sims">
+<h2 style="text-align:center;color:var(--accent);margin-bottom:1.2rem">ðŸŽï¸ Simulateurs — Mouvement</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Vitesse — v = d / t</h3>
+    <canvas id="cvA5_5" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">v (m/s) :</label>
+      <input type="range" id="slA5_5" min="1" max="30" value="10" style="flex:1;accent-color:var(--accent)">
+      <span id="lbA5_5" style="color:var(--accent);font-weight:bold;min-width:3.5rem">10 m/s</span>
     </div>
   </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">5ᵉ</span>
-      <span class="micro">Chap. 5</span>
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Graphe distance-temps</h3>
+    <canvas id="cvB5_5" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">Vitesse :</label>
+      <input type="range" id="slB5_5" min="1" max="20" value="8" style="flex:1;accent-color:var(--accent)">
+      <span id="lbB5_5" style="color:var(--accent);font-weight:bold;min-width:3.5rem">8 m/s</span>
+      <button onclick="window._rst5=true" style="padding:.25rem .5rem;background:rgba(217,139,169,.1);border:1px solid var(--line2);border-radius:5px;color:var(--accent);cursor:pointer;font-size:.78rem">Reset</button>
     </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
   </div>
 </div>
+</section>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+    <section class="panel" id="maths"><div class="section" id="relations"><div class="grid2"><div class="card"><h3>Relations clés</h3><div class="formula">\[ v = \frac{d}{\Delta t} \]</div><div class="formula">\[ d = v \times \Delta t \]</div><div class="formula">\[ \Delta t = \frac{d}{v} \]</div></div><div class="card"><h3>Conversions utiles</h3><p>\(1\,h = 60\,min = 3600\,s\)</p><p>\(1\,km = 1000\,m\)</p><p>Pour convertir : \(1\,m/s = 3{,}6\,km/h\)</p><p>Donc : \(1\,km/h = \frac{1}{3{,}6}\,m/s\)</p></div></div><div class="card" style="margin-top:16px"><h3>Méthode pas à pas</h3><ol><li>Lire la distance et la durée.</li><li>Convertir les unités si nécessaire (durée en heures ou en secondes).</li><li>Choisir la bonne formule selon ce qu’on cherche (v, d ou Δt).</li><li>Calculer en précisant les unités.</li><li>Rédiger une phrase de conclusion complète.</li></ol></div><div class="card" style="margin-top:16px"><h3>Mini-application</h3><p>Un cycliste parcourt 18 km en 45 min. Sa vitesse moyenne vaut :</p><div class="formula">\[45\,min = 0{,}75\,h \quad ; \quad v = \frac{18}{0{,}75} = 24\,km/h\]</div></div><div class="grid2" style="margin-top:16px"><div class="card"><h3>Exemple : calculer une distance</h3><p>Une voiture roule à 90 km/h pendant 2 h 30. Quelle distance parcourt-elle ?</p><div class="formula">\[2\,h\,30 = 2{,}5\,h \quad ; \quad d = v \times \Delta t = 90 \times 2{,}5 = 225\,km\]</div></div><div class="card"><h3>Exemple : calculer une durée</h3><p>Un piéton marche à 5 km/h. Combien de temps lui faut-il pour parcourir 8 km ?</p><div class="formula">\[\Delta t = \frac{d}{v} = \frac{8}{5} = 1{,}6\,h = 1\,h\,36\,min\]</div></div></div></div></section>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">5ᵉ · Chap. 5</div>
-    <h1 class="hero-title">Caractériser le mo<span>uvement | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+    <section class="panel" id="flash"><div class="section"><div class="cards-grid" id="flashGrid"></div></div></section>
 
+    <section class="panel" id="exos"><div class="section"><div class="card exo"><span class="tag">Niveau 1 · Identifier</span><h3>Exercice 1 — Train et référentiel</h3><p>Un passager est assis dans un train qui roule. Est-il immobile ou en mouvement dans le référentiel du train ? Et dans le référentiel du quai ?</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Dans le référentiel du train, il est immobile (sa position ne change pas par rapport au train). Dans le référentiel du quai, il est en mouvement avec le train (sa position change par rapport au quai).</div></div><div class="card exo"><span class="tag">Niveau 1 · Trajectoire</span><h3>Exercice 2 — Nommer une trajectoire</h3><p>Donner le type de trajectoire pour : une cabine d’ascenseur, l’extrémité d’une aiguille d’horloge, un ballon lancé dans un panier.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Ascenseur : rectiligne (monte ou descend en ligne droite). Aiguille : circulaire (parcourt un cercle). Ballon lancé : curviligne (trajectoire courbe).</div></div><div class="card exo"><span class="tag">Niveau 1 · Système</span><h3>Exercice 3 — Choisir le système</h3><p>On observe une voiture qui roule sur une route. Propose deux systèmes différents que l’on pourrait étudier dans cette situation.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">On peut choisir la voiture entière, le centre de l’une de ses roues, le passager, ou l’extrémité de l’essuie-glace. Chaque choix conduit à une description différente du mouvement.</div></div><div class="card exo"><span class="tag">Niveau 1 · Vocabulaire</span><h3>Exercice 4 — Définir</h3><p>Donne la définition de : référentiel, trajectoire, vitesse moyenne.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Référentiel : objet de référence par rapport auquel on décrit le mouvement. Trajectoire : ensemble des positions successives occupées par le système. Vitesse moyenne : distance parcourue divisée par la durée du trajet (v = d/Δt).</div></div><div class="card exo"><span class="tag">Niveau 2 · Calculer</span><h3>Exercice 5 — Vitesse d’un bus</h3><p>Un bus parcourt 15 km en 30 min. Calculer sa vitesse moyenne en km/h.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">30 min = 0,5 h. \(v = d/\Delta t = 15/0{,}5 = 30\,km/h\).</div></div><div class="card exo"><span class="tag">Niveau 2 · Convertir</span><h3>Exercice 6 — Faucon</h3><p>Un faucon vole à 25 m/s. Convertir cette vitesse en km/h.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Pour passer de m/s à km/h, on multiplie par 3,6 : \(25 \times 3{,}6 = 90\,km/h\).</div></div><div class="card exo"><span class="tag">Niveau 2 · Calculer une distance</span><h3>Exercice 7 — Distance parcourue</h3><p>Un TGV roule à 320 km/h pendant 1 h 45 min. Quelle distance parcourt-il ?</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">1 h 45 min = 1,75 h. \(d = v \times \Delta t = 320 \times 1{,}75 = 560\,km\).</div></div><div class="card exo"><span class="tag">Niveau 2 · Calculer une durée</span><h3>Exercice 8 — Durée d’un trajet</h3><p>Un piéton marche à 4 km/h. Combien de temps lui faut-il pour parcourir 6 km ? Donner le résultat en heures et minutes.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">\(\Delta t = d/v = 6/4 = 1{,}5\,h = 1\,h\,30\,min\).</div></div><div class="card exo"><span class="tag">Niveau 2 · Chronophotographie</span><h3>Exercice 9 — Analyser une chronophotographie</h3><p>Sur une chronophotographie, les points sont de plus en plus rapprochés. Le mouvement est-il uniforme, accéléré ou ralenti ? Justifie.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Les points correspondent à des intervalles de temps égaux. S’ils sont de plus en plus rapprochés, la distance parcourue à chaque intervalle diminue : la vitesse diminue, le mouvement est ralenti.</div></div><div class="card exo"><span class="tag">Niveau 3 · Défi</span><h3>Exercice 10 — Lion contre antilope</h3><p>Une antilope court à 24,5 m/s. Un lion court à 80 km/h. Qui est le plus rapide ?</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Antilope : \(24{,}5 \times 3{,}6 = 88{,}2\,km/h\). Elle est plus rapide que le lion à 80 km/h.</div></div><div class="card exo"><span class="tag">Niveau 3 · Synthèse</span><h3>Exercice 11 — Décrire complètement un mouvement</h3><p>Un cycliste roule sur une route droite en accélérant au départ, puis stabilise sa vitesse à 25 km/h pendant 20 minutes. Décris son mouvement en précisant le système, le référentiel, la trajectoire et le type de mouvement pour chaque phase.</p><button class="showcorr" onclick="toggleCorr(this)">Afficher la correction</button><div class="correction">Système : le cycliste. Référentiel : la route (référentiel terrestre). Trajectoire : rectiligne (route droite). Phase 1 : mouvement rectiligne accéléré. Phase 2 : mouvement rectiligne uniforme (vitesse constante de 25 km/h). Distance phase 2 : \(d = 25 \times 20/60 \approx 8{,}3\,km\).</div></div></div></section>
+
+    <section class="panel" id="quiz"><div class="section"><div class="card"><h3>Quiz rapide</h3><div id="quizBox"></div><p id="quizScore" class="status"></p></div></div></section>
+
+    <section class="panel" id="tp"><div class="section"><div class="card"><span class="badge-soft">TP / activité expérimentale</span><h3>Chronophotographie et vitesse</h3><p><strong>Objectif :</strong> utiliser une série de positions successives pour qualifier un mouvement et calculer une vitesse moyenne.</p><h3>Matériel</h3><ul><li>Une balle ou un petit chariot</li><li>Un téléphone en mode rafale ou vidéo</li><li>Une règle graduée ou un mètre ruban</li><li>Un logiciel simple de lecture image par image si possible (ou application de chronophotographie)</li><li>Un chronomètre</li><li>Un support pour fixer le téléphone (trépied ou pile de livres)</li></ul><h3>Protocole détaillé</h3><ol><li>Installer le téléphone fixe (sur un trépied) de façon à filmer toute la zone de déplacement.</li><li>Placer la règle dans le champ de la caméra comme étalon de longueur.</li><li>Filmer le déplacement de la balle ou du chariot sur une ligne droite (mouvement rectiligne).</li><li>Extraire les images à intervalles de temps réguliers (par exemple toutes les 0,5 s).</li><li>Repérer la position de l’objet sur chaque image.</li><li>Mesurer les distances entre positions successives à l’aide de la règle.</li><li>Calculer la vitesse moyenne sur l’ensemble du trajet : \(v = d / \Delta t\).</li><li>Comparer les distances entre positions successives pour déterminer si le mouvement est uniforme, accéléré ou ralenti.</li></ol><h3>Précautions</h3><ul><li>Le téléphone doit rester parfaitement fixe pendant le film.</li><li>La règle doit être visible sur les images pour pouvoir mesurer les distances.</li><li>Ne pas lancer la balle trop vite pour que les positions soient bien distinctes.</li><li>Faire plusieurs essais pour confirmer les résultats.</li></ul><h3>Conclusion attendue</h3><p>Si les écarts entre positions successives sont constants, le mouvement est <strong>uniforme</strong> (vitesse constante). S’ils augmentent, il est <strong>accéléré</strong> (vitesse qui augmente). S’ils diminuent, il est <strong>ralenti</strong> (vitesse qui diminue). On peut aussi calculer la vitesse moyenne sur l’ensemble du trajet en divisant la distance totale par la durée totale.</p><h3>Prolongement possible</h3><p>Refaire l’expérience avec un mouvement circulaire (balle attachée à un fil) et observer la trajectoire. Vérifier que la vitesse peut être constante (mouvement circulaire uniforme) ou varier.</p></div></div></section>
+
+    <section class="panel" id="chatbots"><div class="section"><div class="chat-grid"><div class="bot-card"><a href="https://chat.openai.com/" target="_blank" rel="noopener"><span>💬</span>ChatGPT</a></div><div class="bot-card"><a href="https://gemini.google.com/" target="_blank" rel="noopener"><span>✨</span>Gemini</a></div><div class="bot-card"><a href="https://claude.ai/" target="_blank" rel="noopener"><span>🪶</span>Claude</a></div><div class="bot-card"><a href="https://copilot.microsoft.com/" target="_blank" rel="noopener"><span>🧭</span>Copilot</a></div></div><div class="card promptbox"><h3>Prompt prêt à copier</h3><p>À coller dans le chatbot externe de ton choix :</p><textarea id="promptText">Tu es mon tuteur de physique-chimie niveau 5e. Aide-moi à comprendre le chapitre “Caractériser le mouvement”. Explique-moi simplement : système, référentiel, trajectoire rectiligne/circulaire/curviligne, vitesse moyenne v = d/Δt, mouvement uniforme, accéléré et ralenti. Pose-moi ensuite 5 questions progressives, corrige mes réponses et donne-moi une méthode pour réussir les exercices de calcul de vitesse.</textarea><button class="copybtn" onclick="copyPrompt()">Copier le prompt</button></div></div></section>
+
+    <section class="panel" id="next"><div class="section"><div class="roadmap"><div class="step"><strong>En 4e :</strong> tu réutiliseras vitesse, distance et durée pour étudier des mouvements plus précis et interpréter des graphiques position-temps et vitesse-temps.</div><div class="step"><strong>En 3e :</strong> tu parleras davantage d’interactions et de forces : un mouvement peut changer parce qu’une action mécanique s’exerce sur le système. Tu étudieras le principe d’inertie.</div><div class="step"><strong>Au lycée :</strong> la vitesse deviendra une grandeur vectorielle, avec direction, sens et valeur, puis tu étudieras l’accélération, les lois de Newton et l’énergie cinétique.</div><div class="step"><strong>Pourquoi c’est important :</strong> cette notion sert pour comprendre les transports (vitesse limite, distances de freinage), le sport (performance, chronométrage), la sécurité routière (limites de vitesse), les satellites, la robotique, la navigation GPS et l’aéronautique.</div><div class="step"><strong>Le savais-tu ?</strong> Le GPS calcule ta position en mesurant le temps mis par des signaux radio pour aller des satellites jusqu’à ton téléphone. Tout repose sur la relation entre distance, durée et vitesse de la lumière !</div></div></div></section>
+  </main>
 </div>
-
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+// === Tab navigation (standardized) ===
+const _tabs=document.querySelectorAll('[data-tab],.tab,.tab-btn');
+const _panels=document.querySelectorAll('.panel');
+function _switchTab(tabName){
+    _tabs.forEach(b=>b.classList.remove('active'));
+    _panels.forEach(p=>p.classList.remove('active'));
+    _tabs.forEach(b=>{if(b.dataset&&b.dataset.tab===tabName)b.classList.add('active');});
+    var _map={'cours': 'cours', 'sims': 'sims', 'maths': 'maths', 'flash': 'flash', 'exos': 'exos', 'quiz': 'quiz', 'tp': 'tp', 'chatbots': 'chatbots', 'next': 'next'};
+    var panelId=_map[tabName]||tabName;
+    var el=document.getElementById(panelId);
+    if(el)el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(window.MathJax)setTimeout(()=>MathJax.typesetPromise(),100);
+}
+_tabs.forEach(btn=>{if(btn.dataset&&btn.dataset.tab)btn.addEventListener('click',()=>_switchTab(btn.dataset.tab));});
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
-});
+
+const $=id=>document.getElementById(id);
+function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark'}
+let visited=new Set(['cours']);function markProgress(){const active=document.querySelector('.panel.active')?.id;if(active)visited.add(active);const pct=Math.round(visited.size/9*100);$('pct').textContent=pct+'%';$('sideProg').style.width=pct+'%'}
+window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;const local=max?Math.round(scrollY/max*100):0;if(local>8)markProgress()});
+function toggleCorr(btn){const c=btn.nextElementSibling;c.style.display=c.style.display==='block'?'none':'block';if(window.MathJax)MathJax.typesetPromise()}
+function copyPrompt(){navigator.clipboard.writeText($('promptText').value);alert('Prompt copié !')}
+function renderTraj(){const type=$('trajType').value;const labels={line:['rectiligne','La trajectoire est une droite.'],circle:['circulaire','La trajectoire est un cercle ou un arc de cercle.'],curve:['curviligne','La trajectoire est une courbe quelconque.']};let path='',dots='';if(type==='line'){path='M70 170 L390 80';for(let i=0;i<7;i++){let x=70+i*53,y=170-i*15;dots+=`<circle cx="${x}" cy="${y}" r="6" fill="#D98BA9"/>`;}}if(type==='circle'){path='M220 65 A85 85 0 1 1 219 65';for(let i=0;i<9;i++){let a=i/9*2*Math.PI,x=220+85*Math.cos(a),y=135+85*Math.sin(a);dots+=`<circle cx="${x}" cy="${y}" r="6" fill="#D98BA9"/>`;}}if(type==='curve'){path='M45 185 C120 35 210 220 305 70 S390 155 410 105';for(let i=0;i<8;i++){let x=55+i*48,y=145+55*Math.sin(i*1.1);dots+=`<circle cx="${x}" cy="${y}" r="6" fill="#D98BA9"/>`;}}$('trajView').innerHTML=`<svg viewBox="0 0 440 260" width="100%" height="100%"><path d="${path}" fill="none" stroke="#BDA7F2" stroke-width="5" stroke-linecap="round" stroke-dasharray="9 8"/>${dots}<text x="24" y="32" fill="var(--soft)" font-size="15" font-weight="800">Trajectoire ${labels[type][0]}</text></svg>`;$('trajStatus').innerHTML=`Type : <strong>${labels[type][0]}</strong>. ${labels[type][1]}`}
+function renderSpeed(){const d=+$('distKm').value||0,t=+$('timeH').value||1;const v=d/t;const ms=v/3.6;$('speedView').innerHTML=`<svg viewBox="0 0 440 260" width="100%" height="100%"><rect x="45" y="118" width="350" height="16" rx="8" fill="rgba(217,139,169,.18)"/><circle cx="110" cy="126" r="30" fill="#F3AFC8" opacity=".75"/><circle cx="110" cy="126" r="12" fill="#251825" opacity=".75"/><path d="M155 126 L315 126" stroke="#D98BA9" stroke-width="6" marker-end="url(#arr2)"/><defs><marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#D98BA9"/></marker></defs><text x="220" y="78" text-anchor="middle" fill="var(--muted)" font-size="15" font-weight="700">v = d / Δt</text><text x="220" y="188" text-anchor="middle" fill="var(--soft)" font-size="30" font-family="Clash Display">${v.toFixed(1)} km/h</text><text x="220" y="215" text-anchor="middle" fill="var(--muted)" font-size="14">≈ ${ms.toFixed(2)} m/s</text></svg>`;$('speedStatus').innerHTML=`Pour <strong>${d} km</strong> parcourus en <strong>${t} h</strong>, la vitesse moyenne vaut <strong>${v.toFixed(1)} km/h</strong>.`}
+function renderMotion(){const type=$('motionType').value;let gaps={uniform:[0,45,90,135,180,225,270,315],accelerated:[0,24,55,95,145,205,275,355],slowed:[0,80,145,200,245,280,305,325]}[type];let names={uniform:['uniforme','les points sont régulièrement espacés.'],accelerated:['accéléré','les points sont de plus en plus espacés.'],slowed:['ralenti','les points sont de moins en moins espacés.']}[type];let dots=gaps.map((g,i)=>`<circle cx="${45+g}" cy="135" r="${i===0?8:6}" fill="${i===0?'#BDA7F2':'#D98BA9'}"/>`).join('');$('motionView').innerHTML=`<svg viewBox="0 0 440 260" width="100%" height="100%"><line x1="40" x2="400" y1="135" y2="135" stroke="rgba(217,139,169,.24)" stroke-width="12" stroke-linecap="round"/>${dots}<text x="24" y="42" fill="var(--soft)" font-size="15" font-weight="800">Mouvement ${names[0]}</text><text x="42" y="176" fill="var(--muted)" font-size="13">positions à intervalles de temps égaux</text></svg>`;$('motionStatus').innerHTML=`Mouvement <strong>${names[0]}</strong> : ${names[1]}`}
+['trajType','distKm','timeH','motionType'].forEach(id=>setTimeout(()=>$(id)?.addEventListener(id==='trajType'||id==='motionType'?'change':'input', id==='trajType'?renderTraj:id==='motionType'?renderMotion:renderSpeed),0));
+setTimeout(()=>{renderTraj();renderSpeed();renderMotion()},100);
+const flash=[['Système','Objet dont on étudie le mouvement. Il doit être clairement défini.'],['Référentiel','Objet de référence par rapport auquel on décrit le mouvement.'],['Trajectoire','Ensemble des positions successives occupées par le système au cours du temps.'],['Rectiligne','Trajectoire en ligne droite (ex. : ascenseur, train sur rail droit).'],['Circulaire','Trajectoire en cercle ou en arc de cercle (ex. : aiguille d horloge, manège).'],['Curviligne','Trajectoire courbe quelconque (ex. : ballon lancé, skieur).'],['Vitesse moyenne','Distance parcourue divisée par la durée : v = d/Δt.'],['Uniforme','La vitesse reste constante (points également espacés sur la chronophotographie).'],['Accéléré','La vitesse augmente (points de plus en plus écartés).'],['Ralenti','La vitesse diminue (points de plus en plus rapprochés).'],['Mouvement relatif','Le mouvement dépend du référentiel choisi. Un objet peut être immobile dans un référentiel et en mouvement dans un autre.'],['Conversion m/s → km/h','On multiplie par 3,6. Exemple : 10 m/s = 36 km/h.'],['Conversion km/h → m/s','On divise par 3,6. Exemple : 90 km/h = 25 m/s.'],['Référentiel terrestre','Référentiel le plus courant : le sol ou tout objet lié à la Terre.'],['Chronophotographie','Technique consistant à prendre des photos à intervalles réguliers pour visualiser les positions successives.']];
+$('flashGrid').innerHTML=flash.map(([q,a])=>`<div class="flash-card" onclick="this.classList.toggle('flipped')"><div class="flash-inner"><div class="flash-face"><strong>${q}</strong><p>Clique pour retourner la carte.</p></div><div class="flash-face back"><strong>${q}</strong><p>${a}</p></div></div></div>`).join('');
+const quiz=[{q:'Avant de décrire un mouvement, il faut d’abord choisir...',o:['la couleur de l’objet','le système et le référentiel','la météo'],a:1,e:'On précise l’objet étudié (système) et le référentiel choisi.'},{q:'Un passager assis dans un bus est immobile dans le référentiel...',o:['du bus','de la route','du Soleil'],a:0,e:'Par rapport au bus, sa position ne change pas.'},{q:'La formule de la vitesse moyenne est...',o:['v = d × Δt','v = d / Δt','v = Δt / d'],a:1,e:'La vitesse moyenne est le rapport distance sur durée : v = d/Δt.'},{q:'Une trajectoire en ligne droite est...',o:['circulaire','curviligne','rectiligne'],a:2,e:'Rectiligne signifie en ligne droite.'},{q:'Si les positions successives sont de plus en plus espacées, le mouvement est...',o:['accéléré','ralenti','immobile'],a:0,e:'À temps égal, une distance plus grande signifie une vitesse plus grande.'},{q:'Un référentiel est...',o:['un objet de référence','une unité de vitesse','un type de trajectoire'],a:0,e:'Un référentiel est l’objet par rapport auquel on décrit le mouvement.'},{q:'La trajectoire d’une aiguille d’horloge est...',o:['rectiligne','circulaire','curviligne'],a:1,e:'L’aiguille décrit un cercle : la trajectoire est circulaire.'},{q:'Pour convertir 20 m/s en km/h, on fait...',o:['20 × 3,6 = 72 km/h','20 / 3,6 = 5,6 km/h','20 × 60 = 1200 km/h'],a:0,e:'Pour passer de m/s à km/h, on multiplie par 3,6.'},{q:'Un mouvement uniforme signifie que...',o:['la vitesse augmente','la vitesse diminue','la vitesse reste constante'],a:2,e:'Uniforme = vitesse constante, points également espacés.'},{q:'Le mouvement est relatif, cela signifie que...',o:['il dépend du référentiel choisi','il ne peut pas être mesuré','il est toujours le même'],a:0,e:'Un même objet peut être immobile ou en mouvement selon le référentiel.'},{q:'Un piéton parcourt 3 km en 45 min. Sa vitesse est...',o:['3 km/h','4 km/h','9 km/h'],a:1,e:'45 min = 0,75 h. v = 3/0,75 = 4 km/h.'},{q:'Sur une chronophotographie, les points sont également espacés. Le mouvement est...',o:['accéléré','uniforme','ralenti'],a:1,e:'Des points également espacés signifient que la distance parcourue par intervalle est constante : mouvement uniforme.'},{q:'Le référentiel terrestre est...',o:['le Soleil','le sol ou tout objet lié à la Terre','un satellite'],a:1,e:'Le référentiel terrestre est le plus courant au collège.'}];let score=0,done=0;$('quizBox').innerHTML=quiz.map((it,i)=>`<div class="quiz-item"><p><strong>Question ${i+1}.</strong> ${it.q}</p><div class="options">${it.o.map((op,j)=>`<button class="opt" onclick="answer(this,${i},${j})">${op}</button>`).join('')}</div><p class="feedback" id="fb${i}">${it.e}</p></div>`).join('');function answer(btn,i,j){const item=quiz[i];const wrap=btn.parentElement;if(wrap.dataset.done)return;wrap.dataset.done=1;done++;if(j===item.a){btn.classList.add('good');score++}else{btn.classList.add('bad');wrap.children[item.a].classList.add('good')}$('fb'+i).style.display='block';$('quizScore').innerHTML=`Score : <strong>${score}/${done}</strong>`}
+markProgress();
 </script>
+<script>
+/* ===== PATCH PHYSICHEN — BUGS CORRIGÉS ===== */
+(function(){
+  if(typeof visited==='undefined'){window.visited=new Set(['cours']);}
+  /* updateProgress — était appelée mais non définie */
+  window.updateProgress=function(){
+    var tabs=document.querySelectorAll('[data-tab]');
+    var tot=tabs.length||9;
+    var pct=Math.round(visited.size/tot*100);
+    var fill=document.getElementById('progressFill');
+    var txt=document.getElementById('progressText');
+    var prog=document.getElementById('progress');
+    var pctEl=document.getElementById('pct');
+    if(fill)fill.style.width=pct+'%';
+    if(txt)txt.textContent=pct+'% du chapitre exploré';
+    if(prog)prog.style.width=pct+'%';
+    if(pctEl)pctEl.textContent=pct+'%';
+  };
+  /* showPanel — était appelée dans le topbar mais non définie */
+  window.showPanel=function(id){window.switchTab(id);};
+  /* switchTab — remplace _switchTab avec scroll fix */
+  window.switchTab=function(id){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.tab,.tab-btn').forEach(function(t){t.classList.remove('active');});
+    var panel=document.getElementById(id);
+    if(panel)panel.classList.add('active');
+    document.querySelectorAll('[data-tab="'+id+'"]').forEach(function(t){t.classList.add('active');});
+    visited.add(id);
+    updateProgress();
+    /* SCROLL FIX — affiche le panneau directement sans curseur */
+    setTimeout(function(){
+      var p=document.getElementById(id);
+      var topbarEl=document.querySelector('.topbar');
+      var topH=topbarEl?topbarEl.offsetHeight:62;
+      if(p){var y=p.getBoundingClientRect().top+window.scrollY-topH-4;window.scrollTo({top:y,behavior:'smooth'});}
+    },30);
+    if(window.MathJax)setTimeout(function(){MathJax.typesetPromise();},100);
+    /* Quiz — render au 1er clic */
+    if(id==='quiz'){
+      var box=document.getElementById('quizBox');
+      if(box&&!box.dataset.ready){
+        if(typeof renderQuiz==='function')renderQuiz();
+        if(typeof buildQuiz==='function')buildQuiz();
+      }
+    }
+  };
+  /* Réenregistrer les écouteurs de clics (remplace les anciens) */
+  document.querySelectorAll('[data-tab]').forEach(function(btn){
+    var clone=btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone,btn);
+    clone.addEventListener('click',function(){window.switchTab(clone.dataset.tab);});
+  });
+  /* Activer l'onglet cours au chargement */
+  updateProgress();
+})();
+</script>
+<script>
+function initSims(){
+window._rst5=false;
+(function(){
+  var cv=document.getElementById("cvA5_5");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var sl=document.getElementById("slA5_5"),lb=document.getElementById("lbA5_5");
+  var v=10,carX=30,trail=[];
+  if(sl)sl.addEventListener("input",function(){v=+this.value;if(lb)lb.textContent=v+" m/s";});
+  (function L(){
+    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#FFF3F8";x.fillRect(0,0,W,H);
+    // road
+    x.fillStyle="rgba(80,80,80,.3)";x.fillRect(0,H*.55,W,H*.2);
+    x.strokeStyle="rgba(255,255,0,.3)";x.lineWidth=2;x.setLineDash([20,15]);
+    x.beginPath();x.moveTo(0,H*.65);x.lineTo(W,H*.65);x.stroke();x.setLineDash([]);
+    // trail
+    trail.push(carX);if(trail.length>80)trail.shift();
+    for(var i=0;i<trail.length-1;i++){
+      var a=(i/trail.length)*.4;
+      x.fillStyle="rgba(102,204,0,"+a+")";
+      x.fillRect(trail[i],H*.6-3,4,6);
+    }
+    // car (simple rectangle with wheels)
+    x.shadowBlur=15;x.shadowColor="#D98BA9";
+    x.fillStyle="rgba(201,122,152,.9)";x.fillRect(carX,H*.53,60,22);
+    x.strokeStyle="#D98BA9";x.lineWidth=1;x.strokeRect(carX,H*.53,60,22);x.shadowBlur=0;
+    x.fillStyle="#555";x.beginPath();x.arc(carX+12,H*.55+21,8,0,6.28);x.fill();x.beginPath();x.arc(carX+48,H*.55+21,8,0,6.28);x.fill();
+    x.strokeStyle="#888";x.lineWidth=1.5;x.beginPath();x.arc(carX+12,H*.55+21,8,0,6.28);x.stroke();x.beginPath();x.arc(carX+48,H*.55+21,8,0,6.28);x.stroke();
+    // speed arrow
+    x.strokeStyle="#ffcc00";x.lineWidth=2;
+    var arrowLen=v*3;
+    x.beginPath();x.moveTo(carX+60,H*.54+11);x.lineTo(carX+60+arrowLen,H*.54+11);x.stroke();
+    x.fillStyle="#ffcc00";x.beginPath();x.moveTo(carX+60+arrowLen,H*.54+11);x.lineTo(carX+60+arrowLen-8,H*.54+5);x.lineTo(carX+60+arrowLen-8,H*.54+17);x.fill();
+    carX+=v*.04;if(carX>W-10){carX=-70;trail=[];}
+    // hud
+    x.fillStyle="rgba(102,204,0,.9)";x.font="bold 14px monospace";x.textAlign="center";
+    x.shadowBlur=8;x.shadowColor="#D98BA9";
+    x.fillText("v = "+v+" m/s",W/2,30);x.shadowBlur=0;
+    x.fillStyle="rgba(200,200,200,.6)";x.font="11px monospace";
+    x.fillText("d = "+Math.round(carX/10)+" m",W/2,46);
+    x.fillText("t = "+Math.round(t/60)+" s",W/2,60);
+    t++;requestAnimationFrame(L);
+  })();
+})();
+(function(){
+  var cv=document.getElementById("cvB5_5");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var sl=document.getElementById("slB5_5"),lb=document.getElementById("lbB5_5");
+  var v2=8,elapsed=0,pts=[];
+  if(sl)sl.addEventListener("input",function(){v2=+this.value;if(lb)lb.textContent=v2+" m/s";});
+  var ox=45,oy=H-35,gw=W-60,gh=H-55,Dmax=120,Tmax=15;
+  (function L(){
+    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#FFF3F8";x.fillRect(0,0,W,H);
+    if(window._rst5){elapsed=0;pts=[];window._rst5=false;}
+    // axes
+    x.strokeStyle="rgba(102,204,0,.4)";x.lineWidth=1.5;
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+gw,oy);x.stroke();
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox,oy-gh);x.stroke();
+    x.fillStyle="rgba(201,122,152,.7)";x.font="10px monospace";x.textAlign="center";x.fillText("Temps t (s) â†’",ox+gw/2,H-5);
+    x.save();x.translate(12,oy-gh/2);x.rotate(-Math.PI/2);x.fillText("d (m)",0,0);x.restore();
+    // grid
+    for(var i=1;i<=5;i++){
+      x.strokeStyle="rgba(255,255,255,.04)";x.lineWidth=1;
+      x.beginPath();x.moveTo(ox+i*gw/5,oy);x.lineTo(ox+i*gw/5,oy-gh);x.stroke();
+      x.beginPath();x.moveTo(ox,oy-i*gh/5);x.lineTo(ox+gw,oy-i*gh/5);x.stroke();
+      x.fillStyle="rgba(200,200,200,.3)";x.font="8px monospace";x.textAlign="center";x.fillText((Tmax*i/5).toFixed(0),ox+i*gw/5,oy+11);
+      x.textAlign="right";x.fillText((Dmax*i/5).toFixed(0),ox-3,oy-i*gh/5+4);
+    }
+    // plot
+    elapsed+=1/60;
+    var d=v2*elapsed;
+    if(d<Dmax){pts.push({tx:elapsed/Tmax*gw,dy:d/Dmax*gh});}
+    x.shadowBlur=8;x.shadowColor="#D98BA9";x.strokeStyle="#D98BA9";x.lineWidth=2;
+    x.beginPath();pts.forEach(function(p,i){var px=ox+p.tx,py=oy-p.dy;i===0?x.moveTo(px,py):x.lineTo(px,py);});x.stroke();x.shadowBlur=0;
+    if(pts.length>0){
+      var lp=pts[pts.length-1];
+      x.shadowBlur=12;x.shadowColor="#D98BA9";x.fillStyle="#D98BA9";
+      x.beginPath();x.arc(ox+lp.tx,oy-lp.dy,5,0,6.28);x.fill();x.shadowBlur=0;
+    }
+    // slope annotation
+    if(elapsed>2){
+      x.strokeStyle="rgba(255,200,0,.3)";x.lineWidth=1;x.setLineDash([4,4]);
+      x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+Tmax/Tmax*gw,oy-v2*Tmax/Dmax*gh);x.stroke();x.setLineDash([]);
+      x.fillStyle="rgba(255,200,0,.7)";x.font="10px monospace";x.textAlign="left";
+      x.fillText("pente = v = "+v2+" m/s",ox+10,oy-30);
+    }
+    x.fillStyle="rgba(102,204,0,.9)";x.font="bold 12px monospace";x.textAlign="center";
+    x.shadowBlur=8;x.shadowColor="#D98BA9";
+    x.fillText("d = v Ã— t = "+v2+" Ã— "+elapsed.toFixed(1)+" = "+d.toFixed(1)+" m",W/2,18);x.shadowBlur=0;
+    if(d>=Dmax){elapsed=0;pts=[];}
+    t++;requestAnimationFrame(L);
+  })();
+})();
+}
+</script>
+<script>
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

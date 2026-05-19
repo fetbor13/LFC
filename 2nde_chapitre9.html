@@ -1,181 +1,871 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Seconde · Chapitre 9 — Les lois de l'électricité | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<script>MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['$$','$$']],processEscapes:true},svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre']}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#FDF8F3;--bg2:#FAF0E8;--panel:#FFFFFF;--panel2:#FEFBF8;--line:#E8D5C4;--line2:#D4B89E;--text:#2C1810;--muted:#7A5C4A;--faint:#B08E78;--orange:#C87533;--orange2:#E09860;--orange3:#FDF2E9;--green:#2F855A;--green2:rgba(22,163,74,.12);--amber:#B7791F;--amber2:rgba(245,158,11,.12);--red:#B91C1C;--red2:rgba(239,68,68,.12);--purple:#5B4A9F;--purple2:rgba(91,74,159,.12);--cyan:#3A8A9F;--cyan2:rgba(58,138,159,.12);--shadow:0 14px 34px rgba(120,70,20,.055);--shadow2:0 8px 22px rgba(120,70,20,.045);--side:306px}
+[data-theme="dark"]{--bg:#1A0F08;--bg2:#221410;--panel:#2C1A10;--panel2:#3A2418;--line:#4A3020;--line2:#5E3E2C;--text:#F5E6D8;--muted:#C8A88E;--faint:#8A6A50;--orange:#E09860;--orange2:#F0B888;--orange3:rgba(224,152,96,.12);--shadow:0 18px 54px rgba(0,0,0,.32);--shadow2:0 10px 32px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(200,117,51,.055),transparent 32rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.65;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--orange);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.72);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:20px 18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(17,24,39,.72)}.brand{display:flex;align-items:center;gap:12px;margin:2px 6px 22px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#C87533,#E09860);display:grid;place-items:center;color:white;font-weight:800;font-size:14px;box-shadow:0 14px 28px rgba(200,117,51,.16)}.brand h1{font-size:16px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:16px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(200,117,51,.16);color:var(--orange);background:var(--orange3);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.micro{color:var(--faint);font-size:12px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);font-weight:800;margin:22px 10px 10px;padding:6px 10px;background:rgba(200,117,51,.06);border-radius:8px}[data-theme="dark"] .nav-label{background:rgba(224,152,96,.08)}.tablist{display:grid;gap:4px}.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:all .2s}.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}.tab.active{background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.26);box-shadow:inset 4px 0 0 var(--orange),0 8px 18px rgba(15,23,42,.035)}.tools{display:flex;gap:8px;margin-top:16px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .2s}.icon-btn:hover{border-color:var(--orange);color:var(--orange)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(253,248,243,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 30px}[data-theme="dark"] .topbar{background:rgba(26,15,8,.78)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--orange)}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px;font-weight:700}.page{max-width:1160px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.28fr .72fr;gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden}.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,117,51,.075),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--orange);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:760}.hero h2 span{color:var(--orange)}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--orange)}.hero-copy{font-size:14px;color:var(--muted);max-width:68ch}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.metric{border:1px solid var(--line);background:rgba(255,255,255,.64);border-radius:12px;padding:9px 10px}[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}.metric b{display:block;font-size:17px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:#2C1810;border:1px solid rgba(200,117,51,.15);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}.mission-1 small{background:var(--orange3);color:var(--orange)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--purple2);color:var(--purple)}.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}.panel{display:none;scroll-margin-top:82px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow2);padding:24px;margin-bottom:18px}.content-card h3{font-size:22px;letter-spacing:-.03em;margin:0 0 13px;font-weight:740}.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}.toc{position:sticky;top:82px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}.toc a:nth-of-type(1){background:var(--orange3);color:var(--orange)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--purple2);color:var(--purple)}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body p,.course-body li{color:var(--muted)}.note{border-left:4px solid var(--orange);background:var(--orange3);border-radius:0 18px 18px 0;padding:16px 18px;margin:16px 0;color:var(--text)}.warn{border-left-color:var(--amber);background:var(--amber2)}.ok{border-left-color:var(--green);background:var(--green2)}.formula{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:15px 0;text-align:center;overflow-x:auto;font-size:1.05rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;margin:16px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.08em}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}.card p,.card li{font-size:13px;color:var(--muted)}.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}.exercise h4{margin:0 0 10px}.exercise details{margin-top:12px}.exercise summary{cursor:pointer;font-weight:800;color:var(--orange);background:var(--orange3);border:1px solid rgba(200,117,51,.20);padding:9px 12px;border-radius:12px}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.flashcard{min-height:145px;perspective:1000px;cursor:pointer}.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer;transition:all .2s}.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}.mindmap{display:grid;gap:12px}.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:white;padding:18px;font-weight:800;font-size:18px}.map-branches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}.map-branch h4{margin:0 0 8px}.map-branch ul{margin:0;padding-left:18px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px;text-decoration:none;display:inline-flex;align-items:center}.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}.sim-card iframe{width:100%;height:460px;border:0}.sim-card .sim-body{padding:14px}.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}.ece-step b{display:block;margin-bottom:6px}@media(max-width:980px){.app{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.tablist{grid-template-columns:repeat(2,1fr)}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.ece-steps{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}@media(max-width:620px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main-content">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem Omnis</h1><p>Seconde</p></div></div>
+<div class="level-card">
+<div class="level-row"><span class="badge">⚡ Chapitre 9</span><span class="micro">Ondes et signaux</span></div>
+<div class="progress"><span id="masterBar" style="width:0%"></span></div>
+</div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" role="tablist">
+<button class="tab active" onclick="switchTab('cours')" data-t="cours">📚 Cours</button>
+<button class="tab" onclick="switchTab('relations')" data-t="relations">📐 Relations &amp; Formules</button>
+<button class="tab" onclick="switchTab('exercices')" data-t="exercices">✏️ Exercices</button>
+<button class="tab" onclick="switchTab('flashcards')" data-t="flashcards">🃏 Flashcards</button>
+<button class="tab" onclick="switchTab('quiz')" data-t="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" onclick="switchTab('mindmap')" data-t="mindmap">🗺️ Carte mentale</button>
+<button class="tab" onclick="switchTab('simulations')" data-t="simulations">🔬 Simulations</button>
+<button class="tab" onclick="switchTab('ece')" data-t="ece">🧪 ECE</button>
+<button class="tab" onclick="switchTab('terminale')" data-t="terminale">🚀 Vers la 1ère Spé</button>
+</div>
+<div class="tools"><button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Mode sombre">🌙</button><button class="icon-btn" title="Imprimer" onclick="window.print()">🖨️</button></div>
+</aside>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
+<div class="main" id="main-content">
+<div class="topbar"><span class="crumb">Seconde › Ondes et signaux › <b>Chap. 9 — Les lois de l'électricité</b></span><div class="top-actions"><span class="pill-btn" id="pctLabel">0 %</span></div></div>
 
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Seconde</span>
-      <span class="micro">Chap. 9</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
+<!-- ====== COURS ====== -->
+<div class="panel active" id="panel-cours">
+<div class="page">
 
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">⚡ Ondes et signaux</div>
+<h2>Les lois de <span>l'électricité</span></h2>
+<div class="instructor">Chapitre 9 — Physique-Chimie Seconde</div>
+<p class="hero-copy">Maîtrisez les lois fondamentales des circuits électriques : intensité, tension, loi d'Ohm et capteurs électriques.</p>
+<div class="hero-grid">
+<div class="metric"><b>4</b><span>Sections</span></div>
+<div class="metric"><b>6</b><span>Lois clés</span></div>
+<div class="metric"><b>4</b><span>Capteurs</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap"><canvas id="heroCanvas" width="400" height="230"></canvas></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Lois dans les circuits</b><span>Appliquer les lois de l'intensité et de la tension en série et en dérivation</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Loi d'Ohm</b><span>Utiliser la loi U = RI et tracer la caractéristique d'un dipôle</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Capteurs électriques</b><span>Comprendre le fonctionnement des capteurs et leur courbe d'étalonnage</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Seconde · Chap. 9</div>
-    <h1 class="hero-title">Les lois de l'élec<span>tricité | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<div class="content-card">
+<div class="course-grid">
+<div class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#sec1">I. Le circuit électrique</a>
+<a href="#sec2">II. Lois des circuits</a>
+<a href="#sec3">III. Caractéristique d'un dipôle</a>
+<a href="#sec4">IV. Capteurs électriques</a>
+</div>
+<div class="course-body">
 
+<h2 id="sec1">I. Le circuit électrique</h2>
+<p>Un <strong>circuit électrique</strong> est un ensemble fermé de composants (dipôles) parcouru par un courant électrique. Le courant circule du pôle <strong>+</strong> vers le pôle <strong>−</strong> à l'extérieur du générateur (sens conventionnel).</p>
+
+<h3 style="color:var(--orange);margin-top:24px;">1.1 Les dipôles</h3>
+<p>Un <strong>dipôle</strong> est un composant électrique possédant deux bornes (deux fils de connexion).</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Type de dipôle</th><th>Définition</th><th>Exemples</th></tr></thead>
+<tbody>
+<tr><td><strong>Générateur</strong></td><td>Produit le courant électrique</td><td>Pile, alimentation, panneaux solaires</td></tr>
+<tr><td><strong>Récepteur</strong></td><td>Reçoit l'énergie électrique et la transforme</td><td>Lampe, moteur, résistance, DEL</td></tr>
+<tr><td><strong>Dipôle actif</strong></td><td>Fournit de l'énergie (générateur)</td><td>Pile, générateur de tension</td></tr>
+<tr><td><strong>Dipôle passif</strong></td><td>Consomme de l'énergie (récepteur)</td><td>Résistance, lampe, moteur</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">1.2 Schématisation et grandeurs</h3>
+<p>Pour représenter un circuit, on utilise un <strong>schéma électrique</strong> avec des symboles normalisés.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th><th>Appareil de mesure</th></tr></thead>
+<tbody>
+<tr><td>Intensité du courant</td><td>\(I\)</td><td>Ampère (A)</td><td>Ampèremètre (branché en <strong>série</strong>)</td></tr>
+<tr><td>Tension électrique</td><td>\(U\)</td><td>Volt (V)</td><td>Voltmètre (branché en <strong>dérivation</strong>)</td></tr>
+<tr><td>Résistance</td><td>\(R\)</td><td>Ohm (\(\Omega\))</td><td>Ohmmètre</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+<strong>💡 Remarque :</strong> L'ampèremètre se branche <strong>en série</strong> (le courant le traverse). Le voltmètre se branche <strong>en dérivation</strong> (en parallèle) aux bornes du dipôle dont on veut mesurer la tension.
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">1.3 Maille, nœud et branche</h3>
+
+<div class="cards">
+<div class="card">
+<h4>🔗 Maille</h4>
+<p>Boucle fermée dans un circuit électrique. Une maille est un parcours fermé qui part d'un point et revient à ce point sans passer deux fois par le même fil.</p>
+</div>
+<div class="card">
+<h4>📍 Nœud</h4>
+<p>Point de connexion où se rejoignent au moins <strong>trois</strong> fils. En un nœud, le courant se partage ou se rassemble.</p>
+</div>
+<div class="card">
+<h4>〰️ Branche</h4>
+<p>Portion de circuit comprise entre <strong>deux nœuds</strong> consécutifs. Une branche ne contient pas de nœud intermédiaire.</p>
+</div>
+<div class="card">
+<h4>⚡ Circuit série vs dérivation</h4>
+<p><strong>Série</strong> : les dipôles sont sur la même branche, le courant n'a qu'un seul chemin.<br><strong>Dérivation</strong> : les dipôles sont sur des branches différentes, le courant a plusieurs chemins.</p>
+</div>
+</div>
+
+<h2 id="sec2">II. Les lois dans les circuits</h2>
+
+<h3 style="color:var(--orange);margin-top:24px;">2.1 Loi d'unicité de l'intensité (circuit série)</h3>
+<p>Dans un circuit en <strong>série</strong>, l'intensité du courant est la <strong>même en tout point</strong> du circuit :</p>
+
+<div class="formula">
+$$\boxed{I = I_1 = I_2 = I_3 = \cdots}$$
+<p style="font-size:13px;color:var(--muted);margin-top:8px;">L'intensité ne dépend pas de la position sur la branche. Le courant n'a qu'un seul chemin.</p>
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">2.2 Loi d'additivité des tensions (circuit série)</h3>
+<p>Dans un circuit en <strong>série</strong>, la tension aux bornes du générateur est égale à la <strong>somme des tensions</strong> aux bornes des récepteurs :</p>
+
+<div class="formula">
+$$\boxed{U_{\text{générateur}} = U_1 + U_2 + U_3 + \cdots}$$
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">2.3 Loi d'additivité des intensités (circuit en dérivation)</h3>
+<p>Dans un circuit en <strong>dérivation</strong>, l'intensité du courant dans la branche principale est égale à la <strong>somme des intensités</strong> dans les branches dérivées :</p>
+
+<div class="formula">
+$$\boxed{I_{\text{principale}} = I_1 + I_2 + I_3 + \cdots}$$
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">2.4 Loi d'unicité de la tension (circuit en dérivation)</h3>
+<p>La tension est la <strong>même aux bornes</strong> de dipôles branchés en dérivation :</p>
+
+<div class="formula">
+$$\boxed{U_{\text{générateur}} = U_1 = U_2 = U_3 = \cdots}$$
+</div>
+
+<div class="note ok" style="margin-top:16px;">
+<strong>✅ Bilan des lois :</strong>
+<ul style="margin:6px 0 0;padding-left:18px;">
+<li><strong>Série</strong> : unicité de I, additivité de U</li>
+<li><strong>Dérivation</strong> : additivité de I, unicité de U</li>
+</ul>
+</div>
+
+<h2 id="sec3">III. La caractéristique d'un dipôle</h2>
+
+<h3 style="color:var(--orange);margin-top:24px;">3.1 Définition</h3>
+<p>La <strong>caractéristique</strong> d'un dipôle est la courbe représentant l'évolution de la tension \(U\) à ses bornes en fonction de l'intensité \(I\) qui le traverse : c'est la courbe \(U = f(I)\).</p>
+
+<h3 style="color:var(--orange);margin-top:24px;">3.2 La loi d'Ohm</h3>
+<p>Pour un <strong>conducteur ohmique</strong> (résistance), la caractéristique est une <strong>droite passant par l'origine</strong>. La tension est proportionnelle à l'intensité :</p>
+
+<div class="formula">
+$$\boxed{U = R \times I}$$
+<p style="font-size:13px;color:var(--muted);margin-top:8px;">avec \(U\) en volts (V), \(R\) en ohms (\(\Omega\)) et \(I\) en ampères (A).</p>
+</div>
+
+<div class="note warn">
+<strong>⚠️ Attention :</strong> La loi d'Ohm ne s'applique qu'aux <strong>conducteurs ohmiques</strong> (résistances pures). Pour une lampe ou une DEL, la caractéristique n'est PAS une droite !
+</div>
+
+<h3 style="color:var(--orange);margin-top:24px;">3.3 Point de fonctionnement</h3>
+<p>Le <strong>point de fonctionnement</strong> d'un circuit est le point d'intersection entre la caractéristique du dipôle et la droite de charge du générateur. Il détermine les valeurs de \(U\) et \(I\) lorsque le dipôle est alimenté.</p>
+
+<div class="cards">
+<div class="card">
+<h4>📐 Conducteur ohmique</h4>
+<p>Caractéristique = droite passant par l'origine.<br>Pente = \(R\).<br>Exemples : résistance de carbone, fil métallique homogène.</p>
+</div>
+<div class="card">
+<h4>💡 Lampe à incandescence</h4>
+<p>Caractéristique NON linéaire (courbe).<br>La résistance augmente avec la température du filament.<br>On ne peut PAS appliquer \(U = RI\).</p>
+</div>
+<div class="card">
+<h4>🔴 DEL (diode)</h4>
+<p>Caractéristique très non linéaire.<br>Ne laisse passer le courant que dans un sens (sens passant).<br>Tension de seuil ≈ 1,6 à 2,1 V selon la couleur.</p>
+</div>
+<div class="card">
+<h4>📍 Point de fonctionnement</h4>
+<p>Se détermine graphiquement à l'intersection de la caractéristique du dipôle et de la caractéristique du générateur (ou par le calcul pour un conducteur ohmique).</p>
+</div>
+</div>
+
+<h2 id="sec4">IV. Les capteurs électriques</h2>
+
+<p>Un <strong>capteur électrique</strong> est un composant dont la résistance varie en fonction d'une grandeur physique (température, luminosité, force...). Cette variation de résistance permet de <strong>mesurer</strong> la grandeur physique.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Capteur</th><th>Grandeur mesurée</th><th>Variation de R</th><th>Symbole</th></tr></thead>
+<tbody>
+<tr><td><strong>Thermistance (CTN)</strong></td><td>Température</td><td>R ↓ quand T ↑</td><td>R avec flèche T</td></tr>
+<tr><td><strong>Photorésistance (LDR)</strong></td><td>Luminosité</td><td>R ↓ quand éclairement ↑</td><td>R avec flèche hν</td></tr>
+<tr><td><strong>Capteur de force</strong></td><td>Force / Pression</td><td>R varie avec la déformation</td><td>Jauge de contrainte</td></tr>
+<tr><td><strong>Potentiomètre</strong></td><td>Position angulaire</td><td>R varie avec l'angle</td><td>R avec flèche</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+<strong>💡 Courbe d'étalonnage :</strong> Pour utiliser un capteur, on trace sa <strong>courbe d'étalonnage</strong> : la résistance \(R\) en fonction de la grandeur physique (par ex. \(R = f(T)\) pour une thermistance). En mesurant \(R\), on peut ensuite lire la valeur de la grandeur sur la courbe.
+</div>
+
+<div class="note ok">
+<strong>✅ Application :</strong> Les capteurs sont utilisés dans de nombreux domaines : thermomètres numériques (CTN), détecteurs de luminosité (LDR dans les lampes automatiques), balances électroniques (jauge de contrainte), etc.
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ====== RELATIONS ====== -->
+<div class="panel" id="panel-relations">
+<div class="page">
+<div class="content-card">
+<h3>📐 Relations &amp; Formules</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Loi</th><th>Type de circuit</th><th>Formule</th><th>Unités</th></tr></thead>
+<tbody>
+<tr><td>Loi d'Ohm</td><td>Tout dipôle ohmique</td><td>\(U = R \times I\)</td><td>V, Ω, A</td></tr>
+<tr><td>Unicité de I</td><td>Série</td><td>\(I = I_1 = I_2\)</td><td>A</td></tr>
+<tr><td>Additivité de U</td><td>Série</td><td>\(U = U_1 + U_2\)</td><td>V</td></tr>
+<tr><td>Additivité de I</td><td>Dérivation</td><td>\(I = I_1 + I_2\)</td><td>A</td></tr>
+<tr><td>Unicité de U</td><td>Dérivation</td><td>\(U = U_1 = U_2\)</td><td>V</td></tr>
+<tr><td>Résistance équivalente (série)</td><td>Série</td><td>\(R_{\text{eq}} = R_1 + R_2\)</td><td>Ω</td></tr>
+<tr><td>Résistance équivalente (//)</td><td>Parallèle</td><td>\(\dfrac{1}{R_{\text{eq}}} = \dfrac{1}{R_1} + \dfrac{1}{R_2}\)</td><td>Ω</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="formula">
+$$\boxed{U = R \times I \qquad \text{Série : } I = I_1 = I_2,\; U = U_1 + U_2 \qquad \text{Dérivation : } I = I_1 + I_2,\; U = U_1 = U_2}$$
+</div>
+
+<div class="cards" style="margin-top:18px;">
+<div class="card">
+<h4>📐 Conductance</h4>
+<p>\(G = \dfrac{1}{R} = \dfrac{I}{U}\)<br>Unité : siemens (S).<br>1 S = 1 Ω\(^{-1}\).</p>
+</div>
+<div class="card">
+<h4>⚡ Puissance électrique</h4>
+<p>\(P = U \times I = R \times I^2 = \dfrac{U^2}{R}\)<br>Unité : watt (W).</p>
+</div>
+<div class="card">
+<h4>🔋 Énergie électrique</h4>
+<p>\(E = P \times t = U \times I \times t\)<br>Unité : joule (J) ou Wh/kWh.</p>
+</div>
+<div class="card">
+<h4>📏 Multiples et sous-multiples</h4>
+<p>1 mA = 10\(^{-3}\) A<br>1 kV = 10\(^3\) V<br>1 kΩ = 10\(^3\) Ω<br>1 MΩ = 10\(^6\) Ω</p>
+</div>
+</div>
+
+<div class="exercise" style="margin-top:18px;">
+<h4>🧮 Calculateur Ohm</h4>
+<div style="display:grid;gap:10px;margin-top:12px;">
+<div><label style="font-size:13px;font-weight:700;">Résistance R (Ω) :</label><br><input id="calcR" type="number" value="100" style="padding:8px 12px;border:1px solid var(--line);border-radius:10px;margin-top:4px;width:120px;background:var(--panel2);color:var(--text);"></div>
+<div><label style="font-size:13px;font-weight:700;">Intensité I (mA) :</label><br><input id="calcI" type="number" value="20" style="padding:8px 12px;border:1px solid var(--line);border-radius:10px;margin-top:4px;width:120px;background:var(--panel2);color:var(--text);"></div>
+<button onclick="calcOhm()" style="padding:9px 18px;border-radius:12px;background:var(--orange);color:#fff;font-weight:800;border:none;cursor:pointer;margin-top:4px;">Calculer U</button>
+<div id="ohmResult" style="font-size:14px;color:var(--green);font-weight:700;margin-top:6px;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== EXERCICES ====== -->
+<div class="panel" id="panel-exercices">
+<div class="page">
+<div class="content-card">
+<h3>✏️ Exercices</h3>
+
+<div class="exercise">
+<h4>Exercice 1 — Loi d'Ohm simple</h4>
+<p style="color:var(--muted);">Une résistance de 220 Ω est parcourue par un courant de 50 mA. Calculer la tension à ses bornes.</p>
+<details><summary>Voir la correction</summary>
+<p style="color:var(--muted);margin-top:8px;">\(U = R \times I = 220 \times 0{,}050 = 11\;\text{V}\)<br>La tension aux bornes de la résistance est de 11 V.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Circuit série</h4>
+<p style="color:var(--muted);">Dans un circuit série comprenant un générateur (12 V) et deux résistances \(R_1 = 100\;\Omega\) et \(R_2 = 200\;\Omega\), calculer l'intensité du courant et les tensions aux bornes de chaque résistance.</p>
+<details><summary>Voir la correction</summary>
+<p style="color:var(--muted);margin-top:8px;">Résistance équivalente : \(R_{\text{eq}} = R_1 + R_2 = 300\;\Omega\)<br>
+Intensité : \(I = \dfrac{U}{R_{\text{eq}}} = \dfrac{12}{300} = 0{,}040\;\text{A} = 40\;\text{mA}\)<br>
+Tension aux bornes de \(R_1\) : \(U_1 = R_1 \times I = 100 \times 0{,}040 = 4{,}0\;\text{V}\)<br>
+Tension aux bornes de \(R_2\) : \(U_2 = R_2 \times I = 200 \times 0{,}040 = 8{,}0\;\text{V}\)<br>
+Vérification : \(U_1 + U_2 = 4{,}0 + 8{,}0 = 12{,}0\;\text{V}\) ✓</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 3 — Circuit en dérivation</h4>
+<p style="color:var(--muted);">Deux résistances \(R_1 = 100\;\Omega\) et \(R_2 = 200\;\Omega\) sont branchées en dérivation aux bornes d'un générateur de 12 V. Calculer l'intensité dans chaque branche et l'intensité totale.</p>
+<details><summary>Voir la correction</summary>
+<p style="color:var(--muted);margin-top:8px;">Tension identique aux bornes de chaque résistance : \(U = U_1 = U_2 = 12\;\text{V}\)<br>
+\(I_1 = \dfrac{U}{R_1} = \dfrac{12}{100} = 0{,}120\;\text{A} = 120\;\text{mA}\)<br>
+\(I_2 = \dfrac{U}{R_2} = \dfrac{12}{200} = 0{,}060\;\text{A} = 60\;\text{mA}\)<br>
+Intensité totale : \(I = I_1 + I_2 = 120 + 60 = 180\;\text{mA}\)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Caractéristique d'une résistance</h4>
+<p style="color:var(--muted);">On mesure la tension U aux bornes d'une résistance pour différentes valeurs de I. Résultats : I = 10 mA → U = 2,2 V ; I = 20 mA → U = 4,4 V ; I = 30 mA → U = 6,6 V. La loi d'Ohm est-elle vérifiée ? Calculer R.</p>
+<details><summary>Voir la correction</summary>
+<p style="color:var(--muted);margin-top:8px;">On vérifie le rapport U/I :<br>
+2,2/0,010 = 220 Ω ; 4,4/0,020 = 220 Ω ; 6,6/0,030 = 220 Ω<br>
+Le rapport U/I est constant = 220 Ω → la loi d'Ohm est vérifiée.<br>
+La caractéristique est une droite passant par l'origine de pente R = 220 Ω.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 5 — Thermistance</h5>
+<p style="color:var(--muted);">Une thermistance CTN a une résistance de 10 kΩ à 20°C et de 2 kΩ à 60°C. On mesure R = 5 kΩ. Estimer la température à l'aide de la courbe d'étalonnage.</p>
+<details><summary>Voir la correction</summary>
+<p style="color:var(--muted);margin-top:8px;">On trace la courbe R = f(T) avec les points (20°C, 10 kΩ) et (60°C, 2 kΩ).<br>
+En supposant une variation approximativement linéaire entre ces points :<br>
+\(T \approx 20 + \dfrac{10 - 5}{10 - 2} \times (60 - 20) = 20 + \dfrac{5}{8} \times 40 = 20 + 25 = 45\;°C\)<br>
+La température estimée est d'environ 45°C (lecture sur la courbe).</p>
+</details>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ====== FLASHCARDS ====== -->
+<div class="panel" id="panel-flashcards">
+<div class="page">
+<div class="content-card">
+<h3>🃏 Flashcards</h3>
+<p style="color:var(--muted);margin-bottom:16px;">Cliquez sur une carte pour la retourner</p>
+<div class="flashcard-grid" id="fcGrid"></div>
+</div>
+</div>
+</div>
+
+<!-- ====== QUIZ ====== -->
+<div class="panel" id="panel-quiz">
+<div class="page">
+<div class="content-card">
+<h3>🧠 Quiz &amp; Chatbot</h3>
+<div id="quizArea"></div>
+<div style="text-align:center;margin-top:20px;font-size:18px;font-weight:800;color:var(--orange);" id="quizScoreDisplay"></div>
+</div>
+
+<div class="content-card" style="margin-top:18px;">
+<h3>💬 Assistant IA</h3>
+<p style="color:var(--muted);margin-bottom:12px;">Posez vos questions sur les lois de l'électricité</p>
+<textarea class="prompt-box" id="promptBox" placeholder="Ex : Quelle est la différence entre un circuit en série et en dérivation ?"></textarea>
+<div class="btn-row">
+<button class="btn primary" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value)">📋 Copier</button>
+<a href="https://claude.ai" target="_blank" class="btn">🟠 Claude ↗</a>
+<a href="https://chat.openai.com" target="_blank" class="btn">🟢 ChatGPT ↗</a>
+<a href="https://gemini.google.com" target="_blank" class="btn">🔵 Gemini ↗</a>
+<a href="https://copilot.microsoft.com" target="_blank" class="btn">🟣 Copilot ↗</a>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== MINDMAP ====== -->
+<div class="panel" id="panel-mindmap">
+<div class="page">
+<div class="content-card">
+<h3>🗺️ Carte mentale</h3>
+<div class="mindmap">
+<div class="map-center">⚡ Les lois de l'électricité</div>
+<div class="map-branches">
+<div class="map-branch">
+<h4 style="color:var(--orange);">I. Circuit électrique</h4>
+<ul><li>Dipôles (générateur/récepteur)</li><li>Grandeurs : I (A), U (V), R (Ω)</li><li>Ampèremètre en série</li><li>Voltmètre en dérivation</li><li>Maille, nœud, branche</li><li>Série vs dérivation</li></ul>
+</div>
+<div class="map-branch">
+<h4 style="color:var(--amber);">II. Lois des circuits</h4>
+<ul><li>Série : I = I₁ = I₂</li><li>Série : U = U₁ + U₂</li><li>Dérivation : I = I₁ + I₂</li><li>Dérivation : U = U₁ = U₂</li></ul>
+</div>
+<div class="map-branch">
+<h4 style="color:var(--green);">III. Caractéristique</h4>
+<ul><li>Courbe U = f(I)</li><li>Loi d'Ohm : U = R × I</li><li>Conducteur ohmique = droite</li><li>Point de fonctionnement</li><li>Lampe/DEL : non linéaire</li></ul>
+</div>
+<div class="map-branch">
+<h4 style="color:var(--purple);">IV. Capteurs</h4>
+<ul><li>Thermistance (CTN)</li><li>Photorésistance (LDR)</li><li>Capteur de force</li><li>Courbe d'étalonnage</li></ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SIMULATIONS ====== -->
+<div class="panel" id="panel-simulations">
+<div class="page">
+<div class="content-card">
+<h3>🔬 Simulations</h3>
+<p style="color:var(--muted);margin-bottom:16px;">Circuit série : visualisez les lois de l'intensité et de la tension</p>
+<canvas id="simCanvas" style="width:100%;height:420px;border-radius:18px;border:1px solid var(--line);background:var(--panel2);display:block;"></canvas>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;align-items:center;">
+<label style="font-size:13px;font-weight:700;color:var(--muted);">R₁ (Ω) :</label>
+<input type="range" id="simR1" min="50" max="500" value="150" oninput="drawSim()" style="flex:1;min-width:100px;accent-color:var(--orange);">
+<span id="simR1Val" style="font-size:13px;font-weight:700;min-width:50px;">150 Ω</span>
+<label style="font-size:13px;font-weight:700;color:var(--muted);margin-left:8px;">R₂ (Ω) :</label>
+<input type="range" id="simR2" min="50" max="500" value="300" oninput="drawSim()" style="flex:1;min-width:100px;accent-color:var(--orange);">
+<span id="simR2Val" style="font-size:13px;font-weight:700;min-width:50px;">300 Ω</span>
+</div>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;align-items:center;">
+<label style="font-size:13px;font-weight:700;color:var(--muted);">Tension (V) :</label>
+<input type="range" id="simU" min="3" max="24" value="12" oninput="drawSim()" style="flex:1;min-width:100px;accent-color:var(--orange);">
+<span id="simUVal" style="font-size:13px;font-weight:700;min-width:50px;">12 V</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== ECE ====== -->
+<div class="panel" id="panel-ece">
+<div class="page">
+<div class="content-card">
+<h3>🧪 ECE — Vérification de la loi d'Ohm</h3>
+<p style="color:var(--muted);margin-bottom:16px;">Évaluation des Compétences Expérimentales</p>
+
+<div class="ece-steps">
+<div class="ece-step"><b>① Proposer</b>Proposer un montage permettant de tracer la caractéristique U = f(I) d'un conducteur ohmique.</div>
+<div class="ece-step"><b>② Réaliser</b>Réaliser le montage (générateur ajustable, résistance, ampèremètre en série, voltmètre en dérivation).</div>
+<div class="ece-step"><b>③ Valider</b>Faire varier la tension du générateur, noter U et I pour chaque mesure, tracer la courbe et vérifier la linéarité.</div>
+<div class="ece-step"><b>④ Communiquer</b>Rédiger un compte-rendu avec le schéma du montage, le tableau de mesures, la courbe et la valeur de R déterminée.</div>
+</div>
+
+<div class="note" style="margin-top:18px;">
+<strong>💡 Schéma du montage :</strong>
+<ol style="margin:8px 0 0;padding-left:20px;">
+<li>Générateur de tension variable (alimentation stabilisée réglable).</li>
+<li>Résistance à étudier branchée en série avec l'ampèremètre.</li>
+<li>Voltmètre branché en dérivation aux bornes de la résistance.</li>
+<li>Faire varier la tension de 0 V à environ 6 V par pas de 0,5 V.</li>
+<li>Noter les couples (I, U) dans un tableau.</li>
+<li>Tracer la courbe U = f(I) : on doit obtenir une droite passant par l'origine.</li>
+<li>La pente de la droite donne la valeur de R.</li>
+</ol>
+</div>
+
+<div class="note ok" style="margin-top:12px;">
+<strong>✅ Résultat attendu :</strong> La courbe U = f(I) est une droite passant par l'origine, confirmant que U = R × I. La pente de cette droite est égale à la résistance R du conducteur ohmique.
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== VERS LA 1ÈRE SPÉ ====== -->
+<div class="panel" id="panel-terminale">
+<div class="page">
+<div class="content-card">
+<h3>🚀 Vers la 1ère Spé</h3>
+<p style="color:var(--muted);margin-bottom:16px;">Ce qui vous attend en Première Spécialité Physique-Chimie</p>
+
+<div class="cards">
+<div class="card">
+<h4>🔋 Circuits RC</h4>
+<p>Charge et décharge d'un condensateur à travers une résistance. Constante de temps τ = RC. Énergie stockée dans un condensateur.</p>
+</div>
+<div class="card">
+<h4>🧲 Circuits RL</h4>
+<p>Établissement et annulation du courant dans une bobine. Auto-induction. Constante de temps τ = L/R.</p>
+</div>
+<div class="card">
+<h4>📡 Circuits RLC</h4>
+<p>Oscillations libres et forcées. Résonance. Période propre. Oscilloscope pour observer les oscillations.</p>
+</div>
+<div class="card">
+<h4>⚡ Puissance et énergie</h4>
+<p>Puissance électrique P = UI. Énergie E = Pt. Effet Joule. Rendement d'un convertisseur. Bilan énergétique.</p>
+</div>
+</div>
+
+<div class="note ok" style="margin-top:18px;">
+<strong>✅ Ce qu'il faut retenir de la Seconde :</strong>
+<ul style="margin:6px 0 0;padding-left:18px;">
+<li>Loi d'Ohm : U = R × I</li>
+<li>Circuit série : unicité de I, additivité de U</li>
+<li>Circuit en dérivation : additivité de I, unicité de U</li>
+<li>Caractéristique d'un dipôle : courbe U = f(I)</li>
+<li>Conducteur ohmique : droite passant par l'origine</li>
+<li>Capteurs : thermistance, photorésistance, courbe d'étalonnage</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+</div>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+(function(){
+'use strict';
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* ===== THEME ===== */
+window.toggleTheme=function(){
+  const c=document.documentElement.getAttribute('data-theme');
+  const n=c==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',n);
+  localStorage.setItem('theme',n);
+  document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';
+};
+(function(){
+  const t=localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';
+})();
+
+/* ===== TABS & MASTERY ===== */
+let visitedSet=new Set(['cours']);
+window.switchTab=function(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelector('.tab[data-t="'+id+'"]').classList.add('active');
+  visitedSet.add(id);
+  updatePct();
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();
+};
+function updatePct(){
+  const p=Math.round(visitedSet.size/9*100);
+  document.getElementById('pctLabel').textContent=p+' %';
+  document.getElementById('masterBar').style.width=p+'%';
+}
+
+/* ===== FLASHCARDS (15) ===== */
+const FC=[
+{q:"Qu'est-ce qu'un dipôle ?",a:"Un composant électrique possédant deux bornes (deux fils de connexion). Exemples : pile, résistance, lampe, DEL."},
+{q:"Comment se branche un ampèremètre ?",a:"En SÉRIE dans le circuit. L'intensité du courant le traverse. Il mesure I en ampères (A)."},
+{q:"Comment se branche un voltmètre ?",a:"En DÉRIVATION (parallèle) aux bornes du dipôle. Il mesure U en volts (V)."},
+{q:"Qu'est-ce qu'un nœud ?",a:"Un point de connexion où se rejoignent au moins trois fils. En un nœud, le courant se partage ou se rassemble."},
+{q:"Loi d'unicité de I (série) ?",a:"Dans un circuit série : I = I₁ = I₂ = I₃... L'intensité est la même en tout point du circuit."},
+{q:"Loi d'additivité de U (série) ?",a:"Dans un circuit série : U_générateur = U₁ + U₂ + U₃... La tension se répartit entre les dipôles."},
+{q:"Loi d'additivité de I (dérivation) ?",a:"Dans un circuit en dérivation : I_principale = I₁ + I₂ + I₃... Les intensités s'ajoutent aux nœuds."},
+{q:"Loi d'unicité de U (dérivation) ?",a:"Dans un circuit en dérivation : U = U₁ = U₂ = U₃... La tension est identique aux bornes de chaque branche."},
+{q:"Qu'est-ce que la loi d'Ohm ?",a:"U = R × I. La tension aux bornes d'un conducteur ohmique est proportionnelle à l'intensité qui le traverse."},
+{q:"Qu'est-ce qu'un conducteur ohmique ?",a:"Un dipôle dont la caractéristique U = f(I) est une droite passant par l'origine. Sa résistance R est constante."},
+{q:"Qu'est-ce que le point de fonctionnement ?",a:"Le couple (I, U) correspondant au fonctionnement réel du dipôle dans le circuit. Il se lit sur la caractéristique."},
+{q:"Qu'est-ce qu'une thermistance CTN ?",a:"Un capteur dont la résistance diminue quand la température augmente. R ↓ quand T ↑."},
+{q:"Qu'est-ce qu'une photorésistance (LDR) ?",a:"Un capteur dont la résistance diminue quand l'éclairement augmente. R ↓ quand luminosité ↑."},
+{q:"Qu'est-ce qu'une courbe d'étalonnage ?",a:"La courbe R = f(grandeur physique) d'un capteur. Elle permet de déterminer la grandeur mesurée à partir de R."},
+{q:"Que vaut la résistance équivalente de R₁ et R₂ en série ?",a:"R_éq = R₁ + R₂. En série, les résistances s'ajoutent."}
+];
+
+function buildFCGrid(){
+  const g=document.getElementById('fcGrid');
+  g.innerHTML='';
+  FC.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='flashcard';
+    d.onclick=()=>d.classList.toggle('flipped');
+    d.innerHTML='<div class="flashcard-inner"><div class="flash-front"><b>'+(i+1)+'. '+c.q+'</b></div><div class="flash-back">'+c.a+'</div></div>';
+    g.appendChild(d);
   });
-});
+}
+buildFCGrid();
+
+/* ===== QUIZ (12 questions) ===== */
+const QS=[
+{q:"L'ampèremètre se branche :",opts:["en dérivation","en série","n'importe comment","aux bornes du générateur"],ans:1,corr:"L'ampèremètre se branche en série pour que le courant le traverse."},
+{q:"Dans un circuit série, l'intensité :",opts:["augmente le long du circuit","diminue le long du circuit","est la même en tout point","dépend de la résistance"],ans:2,corr:"Loi d'unicité : en série, I = I₁ = I₂ en tout point du circuit."},
+{q:"Dans un circuit série, les tensions :",opts:["sont toutes égales","s'additionnent","sont nulles","dépendent de l'intensité"],ans:1,corr:"Loi d'additivité : U = U₁ + U₂ + U₃... en circuit série."},
+{q:"Dans un circuit en dérivation, les intensités :",opts:["sont égales dans chaque branche","s'additionnent aux nœuds","sont nulles","dépendent de la tension"],ans:1,corr:"Loi d'additivité : I = I₁ + I₂ aux nœuds en circuit dérivé."},
+{q:"La loi d'Ohm s'écrit :",opts:["U = R / I","U = R × I","U = I / R","R = U × I"],ans:1,corr:"U = R × I avec U en V, R en Ω et I en A."},
+{q:"La caractéristique d'un conducteur ohmique est :",opts:["une courbe quelconque","une droite passant par l'origine","une parabole","une horizontale"],ans:1,corr:"Pour un conducteur ohmique, U = RI, donc U = f(I) est une droite passant par l'origine de pente R."},
+{q:"Une thermistance CTN a une résistance qui :",opts:["augmente avec T","diminue avec T","ne varie pas avec T","augmente puis diminue"],ans:1,corr:"CTN = Coefficient de Température Négatif : R diminue quand T augmente."},
+{q:"Si U = 6 V et R = 300 Ω, alors I vaut :",opts:["1800 A","50 A","20 mA","0,05 A"],ans:3,corr:"I = U/R = 6/300 = 0,02 A = 20 mA. Attention : 0,05 A = 50 mA n'est pas le bon résultat. I = 0,02 A = 20 mA."},
+{q:"En dérivation, la tension aux bornes de chaque branche est :",opts:["proportionnelle à R","différente pour chaque branche","la même pour toutes les branches","nulle"],ans:2,corr:"Loi d'unicité de U en dérivation : U = U₁ = U₂."},
+{q:"Un nœud est un point où se rejoignent au moins :",opts:["2 fils","3 fils","4 fils","1 fil"],ans:1,corr:"Un nœud est un point de jonction d'au moins 3 fils (2 branches ou plus)."},
+{q:"Une photorésistance (LDR) a une résistance qui :",opts:["augmente avec la lumière","diminue avec la lumière","ne dépend pas de la lumière","augmente avec la température"],ans:1,corr:"LDR : R diminue quand l'éclairement (lumière) augmente."},
+{q:"La résistance équivalente de R₁=100Ω et R₂=200Ω en série est :",opts:["66,7 Ω","300 Ω","150 Ω","200 Ω"],ans:1,corr:"En série : R_éq = R₁ + R₂ = 100 + 200 = 300 Ω."}
+];
+
+let qScore=0,qAnswered=0;
+function renderQuiz(){
+  const area=document.getElementById('quizArea');
+  area.innerHTML='';
+  QS.forEach((q,qi)=>{
+    const div=document.createElement('div');
+    div.className='exercise';
+    div.innerHTML='<h4>'+(qi+1)+'. '+q.q+'</h4><div id="qopts-'+qi+'">'+q.opts.map((o,oi)=>'<button class="option" onclick="answerQ('+qi+','+oi+')">'+o+'</button>').join('')+'</div><div id="corr-'+qi+'" style="display:none;margin-top:10px;padding:10px 14px;border-radius:12px;font-size:13px;"></div>';
+    area.appendChild(div);
+  });
+}
+window.answerQ=function(qi,oi){
+  const q=QS[qi];
+  const btns=document.querySelectorAll('#qopts-'+qi+' .option');
+  btns.forEach((b,bi)=>{
+    b.disabled=true;
+    b.style.cursor='default';
+    if(bi===q.ans)b.classList.add('correct');
+    else if(bi===oi)b.classList.add('wrong');
+  });
+  const corr=document.getElementById('corr-'+qi);
+  corr.style.display='block';
+  corr.style.background=oi===q.ans?'var(--green2)':'var(--red2)';
+  corr.style.color=oi===q.ans?'var(--green)':'var(--red)';
+  corr.textContent=(oi===q.ans?'✅ Correct ! ':'❌ ')+q.corr;
+  qAnswered++;
+  if(oi===q.ans)qScore++;
+  document.getElementById('quizScoreDisplay').textContent='Score : '+qScore+' / '+qAnswered;
+};
+renderQuiz();
+
+/* ===== OHM CALCULATOR ===== */
+window.calcOhm=function(){
+  const R=parseFloat(document.getElementById('calcR').value);
+  const I=parseFloat(document.getElementById('calcI').value)/1000;
+  if(!R||!I||R===0){document.getElementById('ohmResult').textContent='Valeurs invalides';return;}
+  const U=R*I;
+  const P=U*I;
+  document.getElementById('ohmResult').innerHTML='U = '+U.toFixed(2)+' V | P = '+(P*1000).toFixed(1)+' mW';
+};
+
+/* ===== HERO CANVAS — Circuit ===== */
+function drawHero(){
+  const c=document.getElementById('heroCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#2C1810';
+  ctx.fillRect(0,0,W,H);
+
+  const oc='#E09860',lc='rgba(224,152,96,0.3)',wc='#C87533';
+
+  // Circuit rectangle
+  const pad=40,top=60,bot=170,left=60,right=340;
+  // Wires
+  ctx.strokeStyle=oc;ctx.lineWidth=2;
+  // Top wire
+  ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(right,top);ctx.stroke();
+  // Right wire
+  ctx.beginPath();ctx.moveTo(right,top);ctx.lineTo(right,bot);ctx.stroke();
+  // Bottom wire
+  ctx.beginPath();ctx.moveTo(right,bot);ctx.lineTo(left,bot);ctx.stroke();
+  // Left wire (generator)
+  ctx.beginPath();ctx.moveTo(left,bot);ctx.lineTo(left,top);ctx.stroke();
+
+  // Generator symbol (left side)
+  ctx.strokeStyle=wc;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(left,95);ctx.lineTo(left,85);ctx.stroke();
+  ctx.beginPath();ctx.arc(left,100,8,0,Math.PI*2);ctx.stroke();
+  ctx.font='bold 12px Inter';ctx.fillStyle=wc;ctx.fillText('+',left-4,90);ctx.fillText('−',left-4,115);
+
+  // Resistor 1 (top)
+  ctx.strokeStyle=wc;ctx.lineWidth=2;
+  const rx1=130,ry1=top;
+  ctx.beginPath();ctx.moveTo(rx1,ry1);
+  for(let i=0;i<6;i++){ctx.lineTo(rx1+8+i*8,ry1+(i%2===0?-8:8));}
+  ctx.lineTo(rx1+56,ry1);ctx.stroke();
+  ctx.font='11px Inter';ctx.fillStyle='#E09860';ctx.fillText('R₁',rx1+20,ry1-14);
+
+  // Resistor 2 (top)
+  const rx2=230,ry2=top;
+  ctx.beginPath();ctx.moveTo(rx2,ry2);
+  for(let i=0;i<6;i++){ctx.lineTo(rx2+8+i*8,ry2+(i%2===0?-8:8));}
+  ctx.lineTo(rx2+56,ry2);ctx.stroke();
+  ctx.font='11px Inter';ctx.fillStyle='#E09860';ctx.fillText('R₂',rx2+20,ry2-14);
+
+  // Ammeter (bottom)
+  ctx.strokeStyle=wc;ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(200,bot,14,0,Math.PI*2);ctx.stroke();
+  ctx.font='bold 11px Inter';ctx.fillStyle=wc;ctx.fillText('A',193,bot+4);
+
+  // Current arrows
+  ctx.fillStyle=wc;
+  const arrows=[[100,top-2],[270,top-2],[right+2,120],[300,bot+2],[120,bot+2],[left-2,130]];
+  arrows.forEach(([x,y])=>{
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-6,y-4);ctx.lineTo(x-6,y+4);ctx.fill();
+  });
+
+  // Labels
+  ctx.font='13px Inter';ctx.fillStyle='#E09860';
+  ctx.fillText('Circuit série',W/2-40,H-10);
+  ctx.fillText('I',right+8,125);
+  ctx.fillText('U',left+20,130);
+}
+drawHero();
+
+/* ===== SIMULATION CANVAS ===== */
+window.drawSim=function(){
+  const c=document.getElementById('simCanvas');
+  if(!c)return;
+  c.width=c.offsetWidth*2;c.height=420*2;
+  const ctx=c.getContext('2d');
+  ctx.scale(2,2);
+  const W=c.offsetWidth,H=420;
+  ctx.clearRect(0,0,W,H);
+  const bg=window.getComputedStyle(document.documentElement).getPropertyValue('--panel2').trim();
+  ctx.fillStyle=bg||'#FEFBF8';ctx.fillRect(0,0,W,H);
+
+  const R1=parseFloat(document.getElementById('simR1').value);
+  const R2=parseFloat(document.getElementById('simR2').value);
+  const U=parseFloat(document.getElementById('simU').value);
+  document.getElementById('simR1Val').textContent=R1+' Ω';
+  document.getElementById('simR2Val').textContent=R2+' Ω';
+  document.getElementById('simUVal').textContent=U+' V';
+
+  const oc=window.getComputedStyle(document.documentElement).getPropertyValue('--orange').trim()||'#C87533';
+  const mc=window.getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()||'#7A5C4A';
+  const lc=window.getComputedStyle(document.documentElement).getPropertyValue('--line').trim()||'#E8D5C4';
+  const gc=window.getComputedStyle(document.documentElement).getPropertyValue('--green').trim()||'#2F855A';
+
+  // Calculate values
+  const Req=R1+R2;
+  const I=(U/Req)*1000; // mA
+  const U1=R1*(I/1000);
+  const U2=R2*(I/1000);
+
+  const cx=W/2,cy=180;
+
+  // Draw circuit
+  const l=80,t=60,b=300,r=W-80;
+
+  // Wires
+  ctx.strokeStyle=oc;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(l,t);ctx.lineTo(r,t);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(r,t);ctx.lineTo(r,b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(r,b);ctx.lineTo(l,b);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(l,b);ctx.lineTo(l,t);ctx.stroke();
+
+  // Generator
+  ctx.strokeStyle=oc;ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(l,cy,16,0,Math.PI*2);ctx.stroke();
+  ctx.font='bold 14px Inter';ctx.fillStyle=oc;
+  ctx.fillText('+',l-5,cy-6);ctx.fillText('−',l-4,cy+12);
+  ctx.font='bold 13px Inter';ctx.fillText('E = '+U+' V',l-40,b+30);
+
+  // R1
+  const rx1=cx-80;
+  ctx.strokeStyle=oc;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(rx1,t);
+  for(let i=0;i<6;i++){ctx.lineTo(rx1+8+i*8,t+(i%2===0?-8:8));}
+  ctx.lineTo(rx1+56,t);ctx.stroke();
+  ctx.font='bold 13px Inter';ctx.fillStyle=oc;
+  ctx.fillText('R₁ = '+R1+' Ω',rx1,t-16);
+  ctx.font='12px Inter';ctx.fillStyle=mc;
+  ctx.fillText('U₁ = '+U1.toFixed(2)+' V',rx1,t+22);
+
+  // R2
+  const rx2=cx+30;
+  ctx.strokeStyle=oc;ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(rx2,t);
+  for(let i=0;i<6;i++){ctx.lineTo(rx2+8+i*8,t+(i%2===0?-8:8));}
+  ctx.lineTo(rx2+56,t);ctx.stroke();
+  ctx.font='bold 13px Inter';ctx.fillStyle=oc;
+  ctx.fillText('R₂ = '+R2+' Ω',rx2,t-16);
+  ctx.font='12px Inter';ctx.fillStyle=mc;
+  ctx.fillText('U₂ = '+U2.toFixed(2)+' V',rx2,t+22);
+
+  // Ammeter
+  ctx.strokeStyle=oc;ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(cx,b,14,0,Math.PI*2);ctx.stroke();
+  ctx.font='bold 11px Inter';ctx.fillStyle=oc;ctx.fillText('A',cx-4,b+4);
+  ctx.font='12px Inter';ctx.fillStyle=mc;ctx.fillText('I = '+I.toFixed(2)+' mA',cx+20,b+4);
+
+  // Current arrows
+  ctx.fillStyle=oc;
+  [[l-3,cy+30],[r+3,cy-30],[cx-20,t-3],[cx+80,b+3]].forEach(([x,y])=>{
+    ctx.beginPath();
+    if(Math.abs(x-l)<5||Math.abs(x-r)<5){
+      const dy=y<cy?-4:4;
+      ctx.moveTo(x,y);ctx.lineTo(x-4,y-dy);ctx.lineTo(x+4,y-dy);
+    } else {
+      const dx=y<t?4:-4;
+      ctx.moveTo(x,y);ctx.lineTo(x-dx,y-4);ctx.lineTo(x-dx,y+4);
+    }
+    ctx.fill();
+  });
+
+  // Info panel
+  ctx.fillStyle=lc;
+  ctx.fillRect(20,H-110,W-40,90);
+  ctx.strokeStyle=oc;ctx.lineWidth=1;
+  ctx.strokeRect(20,H-110,W-40,90);
+
+  ctx.font='bold 14px Inter';ctx.fillStyle=oc;
+  ctx.fillText('⚡ Résultats — Circuit série',40,H-88);
+  ctx.font='13px Inter';ctx.fillStyle=mc;
+  ctx.fillText('R_éq = R₁ + R₂ = '+R1+' + '+R2+' = '+Req+' Ω',40,H-68);
+  ctx.fillText('I = U / R_éq = '+U+' / '+Req+' = '+(I/1000).toFixed(4)+' A = '+I.toFixed(2)+' mA',40,H-48);
+  ctx.fillText('U₁ = R₁ × I = '+U1.toFixed(2)+' V   |   U₂ = R₂ × I = '+U2.toFixed(2)+' V   |   U₁+U₂ = '+(U1+U2).toFixed(2)+' V ✓',40,H-28);
+};
+setTimeout(drawSim,200);
+window.addEventListener('resize',()=>setTimeout(drawSim,100));
+
+})();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>

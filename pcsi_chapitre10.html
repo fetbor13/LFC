@@ -1,181 +1,124 @@
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+﻿<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PCSI-P10 — Statique des fluides et corps pur</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · PC · LFC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">NIVEAU</span>
-      <span class="micro">Chap. X</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+:root{--bg:#f6f7f9;--paper:#fff;--paper-2:#eef3f6;--ink:#17212e;--muted:#5b6674;--soft:#8490a1;--line:#dfe5eb;--line-strong:#c4ccd6;--accent:#2563eb;--accent-bg:color-mix(in srgb,var(--accent) 12%,white);--shadow:0 18px 55px rgba(23,33,46,.12);--shadow-soft:0 12px 28px rgba(23,33,46,.08)}
+[data-theme="dark"]{--bg:#111827;--paper:#182232;--paper-2:#101827;--ink:#edf4ff;--muted:#b4c0ce;--soft:#8794a7;--line:#2a3648;--line-strong:#3a475b;--accent-bg:color-mix(in srgb,var(--accent) 14%,#182232);--shadow:0 20px 60px rgba(0,0,0,.28);--shadow-soft:0 12px 30px rgba(0,0,0,.18)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 8%,transparent) 0 1px,transparent 1px 82px),var(--bg);color:var(--ink)}a{text-decoration:none;color:inherit}.progress{position:fixed;inset:0 0 auto 0;height:3px;z-index:40}.progress span{display:block;height:100%;width:0;background:var(--accent)}
+.topbar{position:sticky;top:0;z-index:30;height:66px;display:flex;align-items:center;gap:14px;padding:0 24px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:10px;font-weight:950}.brand-mark{width:34px;height:34px;border-radius:8px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:950}.crumb{font-size:13px;color:var(--muted)}.crumb strong{color:var(--accent)}.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}.pct{font-family:Consolas,monospace;font-size:12px;color:var(--soft)}
+.small-btn{border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:8px 12px;cursor:pointer;font-weight:900}.small-btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{border-bottom:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--paper) 82%,transparent),transparent)}.hero-inner{max-width:1280px;margin:0 auto;padding:54px 36px 42px;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:34px;align-items:center}.badge{display:inline-flex;padding:6px 11px;border:1px solid color-mix(in srgb,var(--accent) 34%,var(--line));border-radius:8px;background:var(--accent-bg);color:var(--accent);font-size:12px;font-weight:950;text-transform:uppercase}h1{max-width:850px;margin:18px 0 16px;font-size:clamp(34px,5vw,64px);line-height:1.04}h1 em{font-style:normal;color:var(--accent)}.hero p{max-width:760px;color:var(--muted);font-size:17px;line-height:1.72}.identity{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow);padding:18px}.identity .big{height:90px;border-radius:8px;display:grid;place-items:center;background:var(--accent-bg);color:var(--accent);font-size:52px;font-weight:950}
+.tabs{position:sticky;top:66px;z-index:24;display:flex;gap:4px;overflow-x:auto;padding:0 24px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(18px)}.tabs button{border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);padding:15px 13px 12px;cursor:pointer;font-weight:950;white-space:nowrap}.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}.tab-panel.active{display:block}.layout{max-width:1280px;margin:0 auto;padding:36px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:30px}.toc{position:sticky;top:132px;height:fit-content;border:1px solid var(--line);border-radius:8px;background:color-mix(in srgb,var(--paper) 84%,transparent);padding:14px}.toc strong{display:block;font-size:11px;text-transform:uppercase;color:var(--soft);margin-bottom:10px}.toc a{display:block;padding:8px 9px;border-radius:8px;color:var(--muted);font-size:13px;border-left:3px solid transparent}.toc a:hover{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent)}
+.content{min-width:0}.content h2{margin:42px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);color:var(--accent);font-size:24px}.content h2:first-child{margin-top:0}.content h3{margin:28px 0 10px;font-size:18px}.content p,.content li{color:var(--muted);line-height:1.82;font-size:15px}.formula{overflow-x:auto;margin:18px 0;padding:18px 22px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);text-align:center;font-size:18px}.data-table{width:100%;border-collapse:collapse;border-radius:8px;border:1px solid var(--line);background:var(--paper);margin:18px 0}.data-table th,.data-table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.data-table th{background:var(--paper-2);font-size:12px;color:var(--soft);text-transform:uppercase}.data-table td{color:var(--muted)}
+.note,.definition,.method,.warning,.example,.exercise-card,.quiz-card,.summary-card,.oral-card,.soul-box{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:var(--paper);padding:18px 20px;box-shadow:var(--shadow-soft);margin:18px 0}.warning{border-left-color:#c2410c}.method{border-left-color:#2563eb}.example{border-left-color:#15803d}.box-title{display:block;font-size:11px;color:var(--soft);font-weight:950;text-transform:uppercase;margin-bottom:8px}.grid-2,.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.solution{display:none;border-top:1px solid var(--line);margin-top:12px;padding-top:12px;color:var(--muted)}.solution.open{display:block}.quiz-options{display:grid;gap:8px;margin-top:12px}.quiz-options button{border:1px solid var(--line);border-radius:8px;background:var(--paper-2);padding:10px;text-align:left;cursor:pointer;color:var(--ink)}.quiz-options button.correct{border-color:#15803d;background:color-mix(in srgb,#15803d 12%,var(--paper))}.quiz-options button.wrong{border-color:#c2410c;background:color-mix(in srgb,#c2410c 10%,var(--paper))}
+.chat-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow-soft);overflow:hidden}.chat-log{height:360px;overflow:auto;padding:16px;display:grid;gap:10px;background:var(--paper-2)}.chat-message{border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.65;color:var(--muted);background:var(--paper)}.chat-input-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px;border-top:1px solid var(--line)}.chat-input-row input{min-width:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper-2);color:var(--ink);padding:11px 12px}
+.lab-card{border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:18px}.lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.lab-canvas{width:100%;height:260px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);display:block;margin-top:12px}
+@media(max-width:960px){.hero-inner,.layout{grid-template-columns:1fr;padding-left:18px;padding-right:18px}.toc{display:none}.tabs{padding:0 12px}.crumb{display:none}}
+@media print{.topbar,.tabs,.toc,.small-btn,.hero{display:none!important}.tab-panel{display:block}}
+</style></head><body>
+<div class="progress"><span id="progressTop"></span></div><nav class="topbar"><a class="brand" href="index_wow.html"><span class="brand-mark">P</span><span>PhysiChem</span></a><div class="crumb">PCSI-P10 · <strong>Statique des fluides et corps pur</strong></div><div class="top-actions"><span class="pct" id="pctLabel">0%</span><button class="small-btn" id="themeBtn" onclick="toggleTheme()">Mode</button><a class="small-btn" href="index_wow.html">Index</a></div></nav>
+<header class="hero"><div class="hero-inner"><div><span class="badge">PCSI-P10 · Physique · PCSI</span><h1>Statique des fluides et corps pur <em>— PCSI</em></h1><p>Pression, hydrostatique, poussée d’Archimède, changements d’état.</p></div><div class="identity"><div class="big">ρ</div><p><strong>Objectif.</strong> Comprendre les relations, savoir les utiliser, puis expliquer le sens physique ou chimique en colle.</p></div></div></header>
+<nav class="tabs"><button class="active" onclick="showTab('cours',this)">Cours</button><button onclick="showTab('methodes',this)">Méthodes</button><button onclick="showTab('applications',this)">Applications</button><button onclick="showTab('simulation',this)">Simulation</button><button onclick="showTab('exercices',this)">Exercices</button><button onclick="showTab('oral',this)">Oral</button><button onclick="showTab('quiz',this)">Quiz</button><button onclick="showTab('concours',this)">Concours</button><button onclick="showTab('chatbot',this)">Chatbot</button><button onclick="showTab('synthese',this)">Synthèse</button></nav>
+<section class="tab-panel active" id="tab-cours"><div class="layout"><aside class="toc"><strong>Plan</strong><a href="#esprit">L’esprit du chapitre</a><a href="#pression">Pression et force pressante</a><a href="#hydro">Relation fondamentale de la statique des fluides</a><a href="#archimede">Poussée d’Archimède</a><a href="#phase">Corps pur diphasé</a><a href="#relations">Relations</a></aside><main class="content">
+<!-- PCSI PROGRAMME LOUCHART -->
+<div class="definition" id="programme-pcsi">
+  <span class="box-title">Repère programme PCSI</span>
+  <p><strong>Ancrage.</strong> Thermodynamique PCSI : statique des fluides dans un référentiel galiléen et description du corps pur.</p>
+  <p><strong>Cap à tenir.</strong> Relier pression, altitude, masse volumique et équilibre mécanique d’un élément de fluide.</p>
+  <p class="pct">Référence de cadrage : <a href="http://b.louchart.free.fr/Enseignement_superieur/Classes_prepas/PCSI/Physique/Thermodynamique.html" target="_blank" rel="noopener">B. Louchart — ressources PCSI</a> ; bloc ajouté comme synthèse pédagogique, sans reproduction des documents recensés.</p>
 </div>
-
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
-
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">NIVEAU · Chap. X</div>
-    <h1 class="hero-title">Statique des flu<span>ides et corps pur</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
-
+<div class="formula">\[ \frac{\mathrm dp}{\mathrm dz}=-\rho g,\qquad p+\rho gz=\mathrm{constante},\qquad \mu_i^\alpha=\mu_i^\beta\ \mathrm{à\ l'équilibre} \]</div>
+<table class="data-table">
+  <tr><th>Point de maîtrise</th><th>Ce que l’étudiant doit savoir faire</th></tr>
+  <tr><td><strong>Statique</strong></td><td>Écrire l’équilibre d’une tranche de fluide et choisir l’axe vertical avec soin.</td></tr><tr><td><strong>Corps pur</strong></td><td>Lire un diagramme d’état : domaines, courbes d’équilibre, point triple, point critique.</td></tr><tr><td><strong>Ordres de grandeur</strong></td><td>Comparer pression hydrostatique, pression atmosphérique et variations de masse volumique.</td></tr>
+</table>
+<div class="method">
+  <span class="box-title">Méthode de travail inspirée du découpage PCSI</span>
+  <p>Avant un exercice, nommer le bloc du programme, écrire les hypothèses, poser les grandeurs avec leurs unités, choisir la relation directrice, puis terminer par un contrôle : homogénéité, signe, limite, ordre de grandeur et cohérence expérimentale.</p>
 </div>
-
+<!-- /PCSI PROGRAMME LOUCHART -->
+<div class="soul-box" id="fil-conducteur"><span class="box-title">Fil conducteur</span><p>Les fluides imposent une idée nouvelle : une force peut être distribuée sur une surface et se traduire par une pression. En thermodynamique, le corps pur montre qu'une même matière peut changer d'état sans changer de nature chimique.</p></div><h2 id="esprit">L’esprit du chapitre</h2>
+  <div class="definition"><span class="box-title">Pourquoi on l’étudie</span><p>Statique des fluides et corps pur n’est pas une collection de formules : c’est une manière de passer d’un système réel à un modèle, une équation, puis une prédiction contrôlable. Le travail de PCSI consiste à savoir choisir le bon niveau de description, puis à vérifier que le résultat a un sens physique ou chimique.</p></div>
+  <div class="grid-2">
+    <div class="summary-card"><span class="box-title">Objets à reconnaître</span><p>Hydrostatique, Archimède, Chaleur latente, Titre vapeur. Pour chacun, l’étudiant doit savoir dire ce que représentent les grandeurs, leur unité et le domaine de validité.</p></div>
+    <div class="summary-card"><span class="box-title">Question de colle typique</span><p>“À partir d’une situation concrète, établis la relation utile, isole la grandeur demandée, puis discute les limites du modèle.”</p></div>
+  </div>
+  <div class="formula">\[ \text{observer} \longrightarrow \text{modéliser} \longrightarrow \text{calculer} \longrightarrow \text{valider} \]</div><h2 id="pression">Pression et force pressante</h2><p>La pression est une force normale par unité de surface.</p><div class="formula">\[ p=\frac{\mathrm dF_\perp}{\mathrm dS} \]</div><p>\(p\) est en pascal \(\mathrm{Pa}\), avec \(1\,\mathrm{Pa}=1\,\mathrm{N.m^{-2}}\).</p><h2 id="hydro">Relation fondamentale de la statique des fluides</h2><p>Dans un fluide homogène au repos soumis à la pesanteur, si \(z\) est vertical vers le haut :</p><div class="formula">\[ \frac{\mathrm dp}{\mathrm dz}=-\rho g,\qquad p(z)=p(z_0)+\rho g(z_0-z) \]</div><h2 id="archimede">Poussée d’Archimède</h2><p>Un corps immergé subit une force verticale vers le haut égale au poids du fluide déplacé.</p><div class="formula">\[ \vec \Pi_A=-\rho_{\mathrm f}V_{\mathrm{imm}}\vec g \]</div><h2 id="phase">Corps pur diphasé</h2><p>Lors d'un changement d'état isobare, la température peut rester constante pendant que les proportions des phases évoluent.</p><div class="formula">\[ x_v=\frac{m_v}{m_\ell+m_v},\qquad \Delta H=mL \]</div><h2 id="relations">Relations centrales</h2><table class="data-table"><tr><th>Objet</th><th>Relation</th><th>Lecture</th></tr><tr><td>Hydrostatique</td><td>\(\frac{\mathrm dp}{\mathrm dz}=-\rho g\)</td><td>(ho) en (mathrm{kg.m^{-3}}).</td></tr><tr><td>Archimède</td><td>\(\Pi_A=\rho_fV_{\mathrm{imm}}g\)</td><td>Force en N.</td></tr><tr><td>Chaleur latente</td><td>\(Q=mL\)</td><td>(L) en (mathrm{J.kg^{-1}}).</td></tr><tr><td>Titre vapeur</td><td>\(x_v=\frac{m_v}{m_\ell+m_v}\)</td><td>Sans unité.</td></tr></table></main></div></section>
+<section class="tab-panel" id="tab-methodes"><div class="layout"><aside class="toc"><strong>Méthodes</strong></aside><main class="content"><h2>Protocoles de résolution</h2><div class="method" id="m1"><span class="box-title">Choisir l’axe vertical</span><p>Fixer le sens de (z) avant de signer (mathrm dp/mathrm dz).</p>
+    <p><strong>Contexte.</strong> Cette méthode sert quand l’énoncé donne des grandeurs dispersées et qu’il faut reconnaître une structure connue plutôt que chercher une formule au hasard.</p>
+    <p><strong>Geste calculatoire.</strong> Identifier Hydrostatique, écrire \(\frac{\mathrm dp}{\mathrm dz}=-\rho g\), isoler l’inconnue, puis contrôler la lecture des unités : (ho) en (mathrm{kg.m^{-3}})..</p></div><div class="method" id="m2"><span class="box-title">Comparer les pressions</span><p>Relier deux points par (p+ho gz=mathrm{constante}).</p>
+    <p><strong>Contexte.</strong> Cette méthode sert quand l’énoncé donne des grandeurs dispersées et qu’il faut reconnaître une structure connue plutôt que chercher une formule au hasard.</p>
+    <p><strong>Geste calculatoire.</strong> Identifier Archimède, écrire \(\Pi_A=\rho_fV_{\mathrm{imm}}g\), isoler l’inconnue, puis contrôler la lecture des unités : Force en N..</p></div><div class="method" id="m3"><span class="box-title">Flottabilité</span><p>Comparer poids et poussée d’Archimède.</p>
+    <p><strong>Contexte.</strong> Cette méthode sert quand l’énoncé donne des grandeurs dispersées et qu’il faut reconnaître une structure connue plutôt que chercher une formule au hasard.</p>
+    <p><strong>Geste calculatoire.</strong> Identifier Chaleur latente, écrire \(Q=mL\), isoler l’inconnue, puis contrôler la lecture des unités : (L) en (mathrm{J.kg^{-1}})..</p></div><div class="method" id="m4"><span class="box-title">Lire un diagramme</span><p>Repérer domaine monophasé, courbe de changement d’état, point critique.</p>
+    <p><strong>Contexte.</strong> Cette méthode sert quand l’énoncé donne des grandeurs dispersées et qu’il faut reconnaître une structure connue plutôt que chercher une formule au hasard.</p>
+    <p><strong>Geste calculatoire.</strong> Identifier Titre vapeur, écrire \(x_v=\frac{m_v}{m_\ell+m_v}\), isoler l’inconnue, puis contrôler la lecture des unités : Sans unité..</p></div></main></div></section>
+<section class="tab-panel" id="tab-applications"><div class="layout"><aside class="toc"><strong>Applications</strong></aside><main class="content"><h2>Applications commentées</h2><table class="data-table"><tr><th>Objet</th><th>Relation</th><th>Lecture</th></tr><tr><td>Hydrostatique</td><td>\(\frac{\mathrm dp}{\mathrm dz}=-\rho g\)</td><td>(ho) en (mathrm{kg.m^{-3}}).</td></tr><tr><td>Archimède</td><td>\(\Pi_A=\rho_fV_{\mathrm{imm}}g\)</td><td>Force en N.</td></tr><tr><td>Chaleur latente</td><td>\(Q=mL\)</td><td>(L) en (mathrm{J.kg^{-1}}).</td></tr><tr><td>Titre vapeur</td><td>\(x_v=\frac{m_v}{m_\ell+m_v}\)</td><td>Sans unité.</td></tr></table><div class="example" id="a1"><span class="box-title">Baromètre</span><p>La pression atmosphérique est reliée à une hauteur de colonne.</p>
+    <p><strong>Lecture PCSI.</strong> L’application devient solide si l’on relie explicitement la situation à Hydrostatique, puis à la relation \(\frac{\mathrm dp}{\mathrm dz}=-\rho g\). La conclusion doit rester homogène et interprétable : (ho) en (mathrm{kg.m^{-3}})..</p></div><div class="example" id="a2"><span class="box-title">Bateau</span><p>La poussée d’Archimède compense le poids.</p>
+    <p><strong>Lecture PCSI.</strong> L’application devient solide si l’on relie explicitement la situation à Archimède, puis à la relation \(\Pi_A=\rho_fV_{\mathrm{imm}}g\). La conclusion doit rester homogène et interprétable : Force en N..</p></div><div class="example" id="a3"><span class="box-title">Ébullition</span><p>La température d’ébullition dépend de la pression extérieure.</p>
+    <p><strong>Lecture PCSI.</strong> L’application devient solide si l’on relie explicitement la situation à Chaleur latente, puis à la relation \(Q=mL\). La conclusion doit rester homogène et interprétable : (L) en (mathrm{J.kg^{-1}})..</p></div></main></div></section>
+<section class="tab-panel" id="tab-simulation"><div class="layout"><aside class="toc"><strong>Simulation</strong></aside><main class="content"><h2>Atelier interactif</h2><p>Comparer pression hydrostatique, poussée d’Archimède et changement d’état.</p><div class="lab-card"><div class="lab-grid"><label>Profondeur <input id="labA" type="range" min="1" max="100" value="40" oninput="runLab()"></label><label>Masse volumique <input id="labB" type="range" min="1" max="100" value="55" oninput="runLab()"></label></div><p class="pct" id="labText"></p><canvas class="lab-canvas" id="labCanvas"></canvas></div><div class="note"><span class="box-title">Comment lire la simulation</span><p>La courbe donne une intuition. Une réponse de concours doit ensuite revenir aux relations du cours, aux unités et au domaine de validité.</p></div></main></div></section>
+<section class="tab-panel" id="tab-exercices"><div class="layout"><aside class="toc"><strong>Exercices</strong></aside><main class="content"><h2>Exercices corrigés</h2><div class="exercise-card" id="ex1"><h3>1. Pression sous l’eau</h3><p>Calculer la surpression à \(h=10\,\mathrm m\), \(\rho=1000\,\mathrm{kg.m^{-3}}\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(\Delta p=\rho gh\simeq1000\times9{,}81\times10=9{,}8\times10^4\,\mathrm{Pa}\).</div></div><div class="exercise-card" id="ex2"><h3>2. Poussée</h3><p>Volume immergé \(2{,}0\,\mathrm L\). Calculer \(\Pi_A\) dans l’eau.</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(\Pi_A=\rho Vg=1000\times2{,}0\times10^{-3}\times9{,}81\simeq19{,}6\,\mathrm N\).</div></div><div class="exercise-card" id="ex3"><h3>3. Titre vapeur</h3><p>\(m_\ell=3\,\mathrm{kg}\), \(m_v=2\,\mathrm{kg}\). Calculer \(x_v\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(x_v=2/(3+2)=0{,}40\).</div></div><div class="exercise-card" id="ex4"><h3>4. Chaleur latente</h3><p>Vaporiser \(0{,}10\,\mathrm{kg}\) avec \(L=2{,}3\,\mathrm{MJ.kg^{-1}}\).</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">\(Q=mL=0{,}10\times2{,}3\times10^6=2{,}3\times10^5\,\mathrm J\).</div></div><div class="exercise-card" id="ex5"><h3>5. Signe</h3><p>Pourquoi la pression augmente-t-elle quand on descend ?</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution">Parce que \(\frac{\mathrm dp}{\mathrm dz}=-\rho g\) si \(z\) est orienté vers le haut.</div></div><div class="exercise-card" id="ex-synth-1"><h3>6. Problème de synthèse</h3><p>Construire une résolution qui utilise successivement Hydrostatique puis Archimède. L’objectif est de justifier le choix du modèle avant le calcul.</p><button class="small-btn" onclick="toggleSolution(this)">Voir la correction</button><div class="solution"><p>On commence par poser les hypothèses et les notations. On écrit \(\frac{\mathrm dp}{\mathrm dz}=-\rho g\) pour obtenir une première grandeur, puis \(\Pi_A=\rho_fV_{\mathrm{imm}}g\) pour relier cette grandeur à la question finale. La réponse est validée par l’homogénéité : (ho) en (mathrm{kg.m^{-3}}). puis Force en N..</p></div></div>
+  <div class="exercise-card" id="ex-synth-2"><h3>7. Oral calculatoire</h3><p>Présenter en trois minutes une résolution complète : modèle, relation, calcul, unité, limite de validité.</p><button class="small-btn" onclick="toggleSolution(this)">Voir les attendus</button><div class="solution"><p>Un bon oral annonce d’abord le système étudié, définit les grandeurs, écrit les relations en notation mathématique, effectue le calcul sans perdre les unités, puis termine par une phrase d’interprétation.</p></div></div></main></div></section>
+<section class="tab-panel" id="tab-oral"><div class="layout"><aside class="toc"><strong>Oral</strong></aside><main class="content"><h2>Questions de colle</h2><div class="grid-2"><div class="oral-card"><span class="box-title">Question</span>Explique : choisir l’axe vertical.</div><div class="oral-card"><span class="box-title">Question</span>Explique : comparer les pressions.</div><div class="oral-card"><span class="box-title">Question</span>Explique : flottabilité.</div><div class="oral-card"><span class="box-title">Question</span>Explique : lire un diagramme.</div></div><div class="summary-card"><p>À l’oral : annoncer le modèle, définir les grandeurs, écrire la relation centrale, discuter les unités, puis conclure avec une interprétation.</p></div></main></div></section>
+<section class="tab-panel" id="tab-quiz"><div class="layout"><aside class="toc"><strong>Quiz</strong></aside><main class="content"><h2>Quiz d'entraînement</h2><div id="quizBox"></div><p id="quizScore" class="pct"></p></main></div></section>
+<section class="tab-panel" id="tab-concours"><div class="layout"><aside class="toc"><strong>Concours</strong></aside><main class="content"><h2>Pièges et colle</h2><div class="grid-2"><div class="warning"><span class="box-title">Piège</span>Confondre pression scalaire et force vectorielle.</div><div class="warning"><span class="box-title">Piège</span>Oublier la conversion litre vers (mathrm{m^3}).</div><div class="warning"><span class="box-title">Piège</span>Utiliser Celsius dans une loi thermodynamique nécessitant kelvin.</div></div><div class="exercise-card"><span class="box-title">PCSI-P10</span><p>Explique la poussée d’Archimède à partir du gradient de pression.</p><button class="small-btn" onclick="toggleSolution(this)">Voir les attendus</button><div class="solution">Définir les hypothèses, écrire la relation centrale, préciser les unités, donner un exemple ou une limite, puis conclure sans réciter mécaniquement.</div></div></main></div></section>
+<section class="tab-panel" id="tab-chatbot"><div class="layout"><aside class="toc"><strong>Assistant</strong></aside><main class="content"><h2>Chatbot externe — Statique des fluides et corps pur</h2><p class="note">Écris une question libre : la page prépare un prompt PCSI rigoureux à copier ou à ouvrir dans un assistant externe.</p><div class="chat-card"><div class="chat-log" id="chatLog"></div><div class="chat-input-row"><input id="chatInput" placeholder="Pose une question de cours, d'exercice, de colle..." onkeydown="if(event.key==='Enter')sendChat()"><button class="small-btn" onclick="sendChat()">Préparer</button></div></div><div class="grid-2" style="margin-top:14px"><button class="small-btn" onclick="openExternalAssistant('chatgpt')">Ouvrir ChatGPT</button><button class="small-btn" onclick="openExternalAssistant('claude')">Ouvrir Claude</button><button class="small-btn" onclick="openExternalAssistant('perplexity')">Ouvrir Perplexity</button><button class="small-btn" onclick="copyExternalPrompt()">Copier le prompt</button></div></main></div></section>
+<section class="tab-panel" id="tab-synthese"><div class="layout"><aside class="toc"><strong>Synthèse</strong></aside><main class="content">
+<!-- PCSI LOUCHART SYNTHESE -->
+<div class="summary-card" id="programme-check">
+  <span class="box-title">Checklist programme PCSI</span>
+  <p><strong>Bloc de rattachement.</strong> Thermodynamique PCSI : statique des fluides dans un référentiel galiléen et description du corps pur.</p>
+  <ul>
+    <li><strong>Statique.</strong> Écrire l’équilibre d’une tranche de fluide et choisir l’axe vertical avec soin.</li><li><strong>Corps pur.</strong> Lire un diagramme d’état : domaines, courbes d’équilibre, point triple, point critique.</li><li><strong>Ordres de grandeur.</strong> Comparer pression hydrostatique, pression atmosphérique et variations de masse volumique.</li>
+  </ul>
+  <p><strong>Relation à réciter avec sens.</strong> \(\frac{\mathrm dp}{\mathrm dz}=-\rho g,\qquad p+\rho gz=\mathrm{constante},\qquad \mu_i^\alpha=\mu_i^\beta\ \mathrm{à\ l'équilibre}\)</p>
+</div>
+<!-- /PCSI LOUCHART SYNTHESE -->
+<h2>Synthèse active</h2><table class="data-table"><tr><th>Objet</th><th>Relation</th><th>Lecture</th></tr><tr><td>Hydrostatique</td><td>\(\frac{\mathrm dp}{\mathrm dz}=-\rho g\)</td><td>(ho) en (mathrm{kg.m^{-3}}).</td></tr><tr><td>Archimède</td><td>\(\Pi_A=\rho_fV_{\mathrm{imm}}g\)</td><td>Force en N.</td></tr><tr><td>Chaleur latente</td><td>\(Q=mL\)</td><td>(L) en (mathrm{J.kg^{-1}}).</td></tr><tr><td>Titre vapeur</td><td>\(x_v=\frac{m_v}{m_\ell+m_v}\)</td><td>Sans unité.</td></tr></table><div class="map"><div><strong>Choisir l’axe vertical</strong><p>Fixer le sens de (z) avant de signer (mathrm dp/mathrm dz).</p></div><div><strong>Comparer les pressions</strong><p>Relier deux points par (p+ho gz=mathrm{constante}).</p></div><div><strong>Flottabilité</strong><p>Comparer poids et poussée d’Archimède.</p></div><div><strong>Lire un diagramme</strong><p>Repérer domaine monophasé, courbe de changement d’état, point critique.</p></div></div><div class="summary-card"><span class="box-title">Checklist avant DS ou colle</span><p>Je sais définir chaque grandeur, écrire les relations en notation mathématique, préciser les unités, reconnaître les hypothèses et expliquer en une phrase ce que le modèle permet de comprendre.</p></div></main></div></section>
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
-});
-</script>
-</body>
-</html>
+const QUIZ=[["La pression est en",["Pa","N","J","mol"],0],["Dans l’eau au repos, la pression",["augmente avec la profondeur","diminue toujours","est nulle","est vectorielle"],0],["La poussée d’Archimède dépend du",["volume immergé","pH","courant","spin"],0],["(Q=mL) décrit",["un changement d’état","une force centrale","un filtre","une onde EM"],0],["Le titre vapeur est",["sans unité","en pascal","en tesla","en volt"],0],["En statique, un fluide est",["au repos","toujours turbulent","sans pression","sans masse"],0],["Le pascal vaut",["\\(\\mathrm{N.m^{-2}}\\)","\\(\\mathrm{J.K^{-1}}\\)","\\(\\mathrm{C.V}\\)","\\(\\mathrm{mol.L^{-1}}\\)"],0],["Un corps flotte si",["la poussée peut équilibrer le poids","son pH est grand","son indice est nul","sa charge est nulle"],0],["Le point critique concerne",["un diagramme de phase","une lentille","une pile","un réseau"],0],["(p+\rho gz) est constant si",["fluide homogène au repos","gaz réactif uniquement","ressort amorti","réaction SN2"],0]];
+const COACH={"title":"Statique des fluides et corps pur","code":"PCSI-P10","domain":"Physique","keywords":"statique fluides pression hydrostatique archimede corps pur changement etat diagramme phase","simA":"Profondeur","simB":"Masse volumique"};
+let quizDone=false,score=0,answered={};
+function showTab(id,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='quiz')renderQuiz();if(id==='chatbot')seedChatbot();if(id==='simulation')setTimeout(runLab,60);window.scrollTo({top:document.querySelector('.tabs').offsetTop,behavior:'smooth'});}
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme')||'light';const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('pcsi_theme',next);}
+function updateProgress(){const max=document.documentElement.scrollHeight-window.innerHeight;const pct=max>0?Math.round(window.scrollY/max*100):0;document.getElementById('progressTop').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+'%';}
+function toggleSolution(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'Masquer la correction':'Voir la correction';if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([sol]);}
+function renderQuiz(){if(quizDone)return;quizDone=true;document.getElementById('quizBox').innerHTML=QUIZ.map((q,idx)=>'<div class="quiz-card"><h3>Question '+(idx+1)+'</h3><p>'+q[0]+'</p><div class="quiz-options">'+q[1].map((opt,i)=>'<button onclick="answerQuiz(this,'+idx+','+i+')">'+opt+'</button>').join('')+'</div></div>').join('');if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([document.getElementById('quizBox')]);}
+function answerQuiz(btn,idx,i){if(answered[idx])return;answered[idx]=true;const buttons=btn.parentElement.querySelectorAll('button');buttons.forEach((b,k)=>{if(k===QUIZ[idx][2])b.classList.add('correct')});if(i===QUIZ[idx][2])score++;else btn.classList.add('wrong');document.getElementById('quizScore').textContent='Score : '+score+' / '+Object.keys(answered).length;}
+function seedChatbot(){const log=document.getElementById('chatLog');if(!log||log.dataset.seeded)return;log.dataset.seeded='1';appendChat('bot','<strong>Assistant externe '+COACH.code+'</strong><br>Pose une question, puis ouvre un assistant externe ou copie le prompt.');}
+function appendChat(kind,text){const log=document.getElementById('chatLog');const div=document.createElement('div');div.className='chat-message '+kind;div.innerHTML=text;log.appendChild(div);log.scrollTop=log.scrollHeight;if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([div]);}
+function buildExternalPrompt(){const q=(document.getElementById('chatInput').value.trim()||'Explique le chapitre avec exemples et exercices.');return 'Tu es professeur de PCSI. Chapitre '+COACH.code+' '+COACH.title+'. Réponds avec rigueur, relations mathématiques, unités, méthode et exemples. Question: '+q;}
+function sendChat(){seedChatbot();const input=document.getElementById('chatInput');const text=input.value.trim();if(!text)return;appendChat('user',text.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])));appendChat('bot','Question prête. Utilise ChatGPT, Claude, Perplexity ou copie le prompt.');}
+function openExternalAssistant(kind){const prompt=encodeURIComponent(buildExternalPrompt());const urls={chatgpt:'https://chat.openai.com/',claude:'https://claude.ai/new',perplexity:'https://www.perplexity.ai/search?q='+prompt};window.open(urls[kind]||urls.chatgpt,'_blank','noopener,noreferrer');}
+async function copyExternalPrompt(){try{await navigator.clipboard.writeText(buildExternalPrompt());appendChat('bot','Prompt copié.');}catch(e){appendChat('bot','Copie manuelle :<br><pre>'+buildExternalPrompt()+'</pre>');}}
+function runLab(){const canvas=document.getElementById('labCanvas');if(!canvas)return;const ctx=canvas.getContext('2d');const r=canvas.getBoundingClientRect();canvas.width=Math.floor(r.width*devicePixelRatio);canvas.height=Math.floor(r.height*devicePixelRatio);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);const w=r.width,h=r.height,a=document.getElementById('labA').value/100,b=document.getElementById('labB').value/100;ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(132,144,161,.35)';for(let i=0;i<=5;i++){const y=24+i*(h-52)/5;ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(w-18,y);ctx.stroke();}ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();ctx.lineWidth=3;ctx.beginPath();for(let px=42;px<w-18;px++){const t=(px-42)/(w-60);const y=h/2-Math.sin(2*Math.PI*(1+4*a)*t)*Math.exp(-2*b*t)*(h*.32);if(px===42)ctx.moveTo(px,y);else ctx.lineTo(px,y);}ctx.stroke();document.getElementById('labText').textContent=COACH.simA+' = '+a.toFixed(2)+' ; '+COACH.simB+' = '+b.toFixed(2)+' — relie la courbe à une relation du chapitre.';}
+window.addEventListener('scroll',updateProgress);(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('pcsi_theme')||'light');updateProgress();})();
+</script><style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+</body></html>

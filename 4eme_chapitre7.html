@@ -1,181 +1,413 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4ᵉ · Chapitre 7 — Loi d'Ohm et sécurité | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  --bg:#f0fdf9; --surface:#ffffff; --surface2:#f5fffe; --line:rgba(13,148,136,.18);
+  --text:#134e4a; --muted:#4d7c78; --soft:#5eead4; --accent:#0d9488; --accent2:#5eead4;
+  --lav:#67e8f9; --peach:#fde68a; --ok:#059669; --warn:#d97706;
+  --shadow:0 18px 45px rgba(13,148,136,.12); --shadow2:0 8px 24px rgba(13,148,136,.10);
+  --radius:22px; --side:266px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+[data-theme="dark"]{
+  --bg:#042f2e; --surface:#0a3d3b; --surface2:#0e4947; --line:rgba(45,212,191,.15);
+  --text:#ccfbf1; --muted:#7dd9c7; --soft:#4db8a8; --accent:#2dd4bf; --accent2:#134e4a;
+  --lav:#22d3ee; --peach:#fbbf24; --ok:#34d399; --warn:#f59e0b;
+  --shadow:0 20px 50px rgba(0,0,0,.28); --shadow2:0 8px 24px rgba(0,0,0,.22);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(135deg,var(--bg),var(--bg2));color:var(--text);font-family:'Instrument Sans',system-ui,sans-serif;line-height:1.65;font-size:15px}a{text-decoration:none;color:inherit}.app{display:grid;grid-template-columns:242px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.74);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:22px 18px;overflow:auto}[data-theme="dark"] .sidebar{background:rgba(16,23,37,.80)}.brand{display:flex;gap:12px;align-items:center;margin-bottom:22px}.logo{width:48px;height:48px;border-radius:17px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:grid;place-items:center;font-weight:800;font-size:19px;box-shadow:var(--shadow2)}.brand h1{font-family:'Clash Display',sans-serif;font-size:22px;line-height:1;margin:0;font-weight:500;letter-spacing:-.04em}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:22px;padding:16px;background:rgba(255,255,255,.62);box-shadow:var(--shadow2);margin-bottom:20px}.level-top{display:flex;align-items:center;justify-content:space-between}.level-pill{padding:5px 12px;border-radius:999px;background:var(--accent3);color:var(--accentInk);font-weight:700;font-size:12px;border:1px solid rgba(120,184,232,.22)}.chapter-num{color:var(--soft);font-size:12px}.progress{height:6px;border-radius:99px;background:var(--bg2);overflow:hidden;margin:15px 0 8px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--lav));border-radius:99px}.progress-label{font-size:12px;color:var(--muted)}.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--soft);font-weight:800;margin:22px 0 10px}.tab-btn{width:100%;border:none;background:transparent;text-align:left;padding:11px 12px;border-radius:15px;color:var(--muted);font:700 14px 'Instrument Sans';display:flex;gap:10px;align-items:center;cursor:pointer;margin-bottom:6px;transition:.2s}.tab-btn:hover{background:rgba(120,184,232,.10);color:var(--text)}.tab-btn.active{background:var(--accent3);color:var(--accentInk);box-shadow:inset 3px 0 0 var(--accent)}.tab-btn .ico{width:20px;text-align:center}.side-actions{margin-top:18px;display:flex;gap:8px}.small-btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 10px;color:var(--muted);font-weight:700;cursor:pointer}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(244,248,253,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;gap:12px;padding:0 28px}[data-theme="dark"] .topbar{background:rgba(16,23,37,.82)}.crumb{font-size:14px;color:var(--muted)}.crumb strong{color:var(--accentInk)}.topbar .ghost{margin-left:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:8px 14px;font-weight:800;color:var(--text);cursor:pointer}.hero{padding:26px 32px 20px}.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:stretch;max-width:1160px}.hero-card{background:rgba(255,255,255,.73);border:1px solid var(--line);border-radius:22px;padding:21px 24px;box-shadow:var(--shadow)}[data-theme="dark"] .hero-card,.media-card,.mission-card{background:rgba(24,37,58,.72)}.label{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:var(--accent3);border:1px solid rgba(120,184,232,.24);color:var(--accentInk);font-size:12px;font-weight:800;margin-bottom:8px}.hero h2{font-family:'Clash Display',sans-serif;font-weight:500;letter-spacing:-.035em;line-height:1.05;font-size:clamp(26px,3.5vw,40px);margin:5px 0 10px}.hero h2 em{font-style:normal;color:var(--accentInk)}.intro{margin:0;color:var(--muted);font-size:14px;max-width:780px}.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px}.stat{padding:10px 12px;border-radius:15px;background:var(--surface2);border:1px solid var(--line)}.stat strong{display:block;font-family:'Clash Display';font-size:22px;line-height:1;font-weight:500}.stat span{font-size:12px;color:var(--muted)}.media-card{border:1px solid var(--line);border-radius:22px;padding:12px;background:rgba(255,255,255,.72);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center}.media-card img{width:100%;height:190px;object-fit:contain;border-radius:16px;display:block;background:#fff}.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:1160px;margin-top:14px}.mission-card{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:18px;padding:15px 17px;box-shadow:var(--shadow2)}.mission-card b{font-family:'Clash Display';font-size:18px;font-weight:500}.mission-card p{margin:5px 0 0;color:var(--muted);font-size:13.5px}.tag{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(169,216,245,.23);color:var(--accentInk);font-size:11px;font-weight:800;margin-bottom:8px}.tag.p2{background:rgba(231,169,196,.22);color:#985C78}.tag.p3{background:rgba(168,167,232,.22);color:#6664AE}.panel{display:none;padding:10px 32px 70px}.panel.active{display:block}.section{max-width:1160px}.course-layout{display:grid;grid-template-columns:138px minmax(0,860px);gap:20px;align-items:start}.toc{position:sticky;top:82px;border:1px solid var(--line);background:rgba(255,255,255,.65);border-radius:17px;padding:9px;box-shadow:var(--shadow2)}[data-theme="dark"] .toc{background:rgba(24,37,58,.65)}.toc-title{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--soft);font-weight:800;margin:6px 8px 8px}.toc a{display:block;font-size:11.5px;font-weight:700;color:var(--muted);padding:7px 8px;border-radius:11px}.toc a:hover{background:var(--accent3);color:var(--accentInk)}.course{min-width:0}.course h3{font-family:'Clash Display';font-weight:500;font-size:23px;letter-spacing:-.025em;margin:18px 0 10px}.course h3:first-child{margin-top:0}.course p{color:var(--muted);margin:0 0 13px}.box{border:1px solid var(--line);border-left:4px solid var(--accent);background:var(--surface);border-radius:0 17px 17px 0;padding:16px 18px;margin:16px 0;box-shadow:var(--shadow2)}.box.warn{border-left-color:var(--warn)}.box.ok{border-left-color:var(--ok)}.box.lav{border-left-color:var(--lav)}.box-title{font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:900;color:var(--accentInk);margin-bottom:6px}.box.warn .box-title{color:var(--warn)}.box.ok .box-title{color:var(--ok)}.box.lav .box-title{color:var(--lav)}.formula{border:1px solid var(--line);background:var(--surface2);border-radius:18px;padding:15px;text-align:center;margin:14px 0;overflow:auto}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:18px;box-shadow:var(--shadow2)}.card h4{font-family:'Clash Display';font-weight:500;font-size:20px;margin:0 0 8px}.muted{color:var(--muted)}.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:17px;overflow:hidden;background:var(--surface);margin:14px 0}.table th,.table td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}.table th{background:var(--surface2);color:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.table tr:last-child td{border-bottom:none}.sim-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.sim-card{border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow2);overflow:hidden}.sim-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}.sim-head h3{margin:0;font-family:'Clash Display';font-weight:500;font-size:20px}.sim-body{padding:17px}.field{margin-bottom:12px}.field label{display:block;font-size:12px;font-weight:800;color:var(--soft);margin-bottom:6px}input[type=range],select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line2);border-radius:13px;background:var(--surface2);color:var(--text)}input[type=range]{padding:0}.lab{min-height:190px;border:1px solid var(--line);border-radius:18px;background:radial-gradient(circle at 25% 20%,rgba(120,184,232,.20),transparent 30%),var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden}.status{margin-top:11px;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:11px 12px;color:var(--muted);font-size:14px}.iframe-wrap{position:relative;width:100%;padding-bottom:60%;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--surface2)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.flash-wrap{max-width:760px}.flash-card{min-height:245px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;text-align:center;padding:28px;cursor:pointer}.flash-card h3{font-family:'Clash Display';font-size:26px;font-weight:500;margin:0}.flash-card p{max-width:590px;color:var(--muted)}.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}.btn{border:1px solid var(--line2);background:var(--surface);color:var(--text);padding:10px 15px;border-radius:14px;font-weight:800;cursor:pointer}.btn.primary{background:var(--accentInk);color:#fff}.exercise{border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow2);padding:18px;margin-bottom:14px}.exercise h4{font-family:'Clash Display';font-weight:500;font-size:20px;margin:0 0 8px}.solution{display:none;margin-top:12px}.solution.show{display:block}.quiz-card{max-width:790px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow);padding:24px}.quiz-card h3{font-family:'Clash Display';font-weight:500;font-size:24px;margin:0 0 14px}.opt{display:block;width:100%;margin:9px 0;border:1px solid var(--line2);background:var(--surface2);border-radius:15px;padding:12px;text-align:left;color:var(--text);font-weight:700;cursor:pointer}.opt.good{border-color:rgba(95,175,154,.45);background:rgba(95,175,154,.12);color:var(--ok)}.opt.bad{border-color:rgba(216,135,101,.45);background:rgba(216,135,101,.12);color:var(--warn)}.chat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.chat-link{border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow2);padding:18px;display:flex;flex-direction:column;gap:5px;transition:.2s}.chat-link:hover{transform:translateY(-2px);border-color:var(--accent)}.prompt-box{border:1px dashed var(--line2);background:var(--surface2);border-radius:18px;padding:16px;color:var(--muted);white-space:pre-wrap}.mind{border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--shadow);padding:16px}.svgtext{font-family:'Instrument Sans',sans-serif;font-weight:700}.input-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media(max-width:950px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.hero-grid,.missions,.grid2,.grid3,.sim-grid,.chat-grid,.course-layout{grid-template-columns:1fr}.toc{position:relative;top:0}.hero{padding:20px}.panel{padding:10px 20px 50px}.topbar{padding:0 18px}.media-card{max-width:270px}.course-layout{gap:14px}}
 </style>
 </head>
 <body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+    <div class="level-card"><div class="level-top"><span class="level-pill">4ème</span><span class="chapter-num">Chap. 7</span></div><div class="progress"><span id="progress"></span></div><div class="progress-label"><span id="pct">0%</span> du chapitre exploré</div></div>
+    <div class="nav-title">Sommaire</div>
+    <button class="tab-btn active" data-tab="cours"><span class="ico">📘</span>Cours</button>
+    <button class="tab-btn" data-tab="sims"><span class="ico">🎛️</span>Simulations</button>
+    <button class="tab-btn" data-tab="outils"><span class="ico">📐</span>Outils & unités</button>
+    <button class="tab-btn" data-tab="flash"><span class="ico">🃏</span>Flashcards</button>
+    <button class="tab-btn" data-tab="exos"><span class="ico">🎯</span>Exercices</button>
+    <button class="tab-btn" data-tab="quiz"><span class="ico">❓</span>Quiz</button>
+    <button class="tab-btn" data-tab="tp"><span class="ico">🧪</span>TP</button>
+    <button class="tab-btn" data-tab="ia"><span class="ico">🤖</span>Chatbots externes</button>
+    <button class="tab-btn" data-tab="suite"><span class="ico">🚀</span>Vers la 3e</button>
+    <div class="side-actions"><button class="small-btn" onclick="toggleTheme()">🌙 Thème</button><button class="small-btn" onclick="window.print()">🖨️ PDF</button></div>
+  </aside>
+  <main class="main">
+    <div class="topbar" id="top"><div class="crumb">4ème › Électricité › <strong>Loi d'Ohm et sécurité</strong></div><button class="ghost" onclick="showTab('outils')">Relations clés</button><button class="ghost" onclick="showTab('sims')">Simuler</button></div>
+    <header class="hero">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <div class="label">4e · Chapitre 7</div>
+          <h2>Loi d'Ohm & <em>sécurité</em></h2>
+          <p class="intro">Relier tension, intensité et résistance, lire une caractéristique et reconnaître les situations dangereuses : court-circuit et surcharge de multiprise.</p>
+          <div class="hero-stats"><div class="stat"><strong>3</strong><span>relations</span></div><div class="stat"><strong>10</strong><span>exercices</span></div><div class="stat"><strong>4</strong><span>simulateurs</span></div></div>
+        </div>
+        <div class="media-card"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ohms_law_voltage_source.svg" alt="Schéma illustrant la loi d'Ohm avec une source de tension et une résistance"></div>
+      </div>
+      <div class="missions"><div class="mission-card"><span class="tag">Mission 01</span><b>Calculer</b><p>Utiliser \(U=R\times I\), \(I=\frac{U}{R}\) et \(R=\frac{U}{I}\) avec les bonnes unités.</p></div><div class="mission-card"><span class="tag p2">Mission 02</span><b>Lire un graphe</b><p>Reconnaître une droite passant par l'origine et comprendre que sa pente donne la résistance.</p></div><div class="mission-card"><span class="tag p3">Mission 03</span><b>Sécuriser</b><p>Identifier court-circuit, échauffement, surcharge et danger domestique.</p></div></div>
+    </header>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
+    <section class="panel active" id="cours"><div class="section course-layout">
+      <aside class="toc"><div class="toc-title">Plan</div><a href="#c1">Ohm</a><a href="#c2">Mesurer</a><a href="#c3">Graphique</a><a href="#c4">Calculer</a><a href="#c5">Sécurité</a><a href="#c6">Bilan</a></aside>
+      <div class="course">
+        <h3 id="c1">I. Loi d'Ohm</h3>
+        <p>Une résistance est un dipôle qui freine le passage du courant électrique. Pour un dipôle ohmique, la tension \(U\) à ses bornes est proportionnelle à l'intensité \(I\) qui le traverse. Cette relation a été découverte par le physicien allemand Georg Ohm en 1827.</p>
+        <p>On peut comprendre la résistance comme un « rétrécissement » sur une route : plus le rétrécissement est important (grande résistance), plus le flux de voitures (courant) est réduit pour une même pression (tension). Une route sans obstacle correspond à une résistance nulle, où le courant passe librement.</p>
+        <div class="box"><div class="box-title">Relation essentielle</div><p>La loi d'Ohm s'écrit :</p><div class="formula">\[U = R \times I\]</div><p>avec \(U\) en volt (V), \(R\) en ohm (\(\Omega\)) et \(I\) en ampère (A). <strong>Attention :</strong> l'intensité doit toujours être exprimée en ampères dans les calculs, pas en milliampères !</p></div>
+        <div class="box lav"><div class="box-title">Sens physique</div><p>Plus la résistance est grande, plus il est difficile de faire passer un courant important. À tension donnée, une grande résistance donne donc une intensité plus faible. C'est pour cela qu'on utilise des résistances pour protéger les composants électroniques : elles limitent le courant et évitent les surintensités dangereuses.</p></div>
+        <div class="box ok"><div class="box-title">Application courante</div><p>Les résistances sont partout : dans les radiateurs électriques (elles chauffent en freinant le courant), dans les ampoules (le filament est une résistance qui chauffe jusqu'à briller), dans les chargeurs de téléphone (elles limitent le courant pour protéger la batterie). Un radiateur de 1000 Ω sous 230 V consomme un courant de \(I = U/R = 230/1000 = 0{,}23\) A.</p></div>
+
+        <h3 id="c2">II. Mesurer U et I</h3>
+        <p>Pour vérifier la loi d'Ohm, on mesure simultanément la tension aux bornes de la résistance et l'intensité qui la traverse. Ces mesures nécessitent deux appareils différents branchés de manière différente dans le circuit.</p>
+        <p>L'ampèremètre se branche en série car il doit être traversé par le courant qu'il mesure. Le voltmètre se branche en dérivation car il mesure la différence de potentiel entre deux points du circuit. L'ohmmètre, quant à lui, mesure la résistance d'un dipôle hors tension.</p>
+        <table class="table"><tr><th>Grandeur</th><th>Appareil</th><th>Branchement</th><th>Bornes</th></tr><tr><td>Intensité \(I\)</td><td>Ampèremètre</td><td>En série</td><td>mA/10A et COM</td></tr><tr><td>Tension \(U\)</td><td>Voltmètre</td><td>En dérivation</td><td>V et COM</td></tr><tr><td>Résistance \(R\)</td><td>Ohmmètre</td><td>Hors circuit</td><td>Ω et COM</td></tr></table>
+        <div class="box warn"><div class="box-title">Erreur fréquente</div><p>Ne pas brancher l'ampèremètre en dérivation aux bornes du générateur : cela revient presque à créer un court-circuit, car l'ampèremètre a une résistance interne très faible. Le courant pourrait devenir très intense et endommager l'appareil ou le circuit.</p></div>
+        <div class="box"><div class="box-title">Conseil pratique</div><p>Avant de brancher un multimètre, toujours se poser la question : « Que veux-je mesurer ? » Puis choisir le bon calibre (la plus grande valeur attendue) et les bonnes bornes. Commencer toujours par le calibre le plus élevé, puis réduire pour obtenir une mesure plus précise.</p></div>
+
+        <h3 id="c3">III. Caractéristique tension-intensité</h3>
+        <p>On place \(I\) en abscisse (axe horizontal) et \(U\) en ordonnée (axe vertical). Pour une résistance, les points s'alignent sur une droite passant par l'origine : c'est la signature d'un dipôle ohmique. Si les points ne sont pas alignés ou si la droite ne passe pas par l'origine, le dipôle n'est pas ohmique.</p>
+        <p>La caractéristique est un outil puissant : elle permet de vérifier visuellement si un dipôle obéit à la loi d'Ohm et de déterminer graphiquement la valeur de sa résistance sans calcul.</p>
+        <div class="box ok"><div class="box-title">À retenir</div><p>Le coefficient directeur de la droite \(U=f(I)\) est la résistance \(R\). Plus la droite est pentue, plus \(R\) est grande. Pour calculer \(R\) graphiquement, on choisit un point sur la droite et on calcule \(R = U/I\).</p></div>
+        <div class="box lav"><div class="box-title">Exemple</div><p>Sur le graphique, on lit que pour \(I = 0{,}02\) A, on a \(U = 4{,}4\) V. Donc \(R = U/I = 4{,}4 / 0{,}02 = 220\;\Omega\). On peut vérifier en prenant un autre point : pour \(I = 0{,}05\) A, on devrait trouver \(U = 220 \times 0{,}05 = 11\) V.</p></div>
+
+        <h3 id="c4">IV. Méthode de calcul</h3>
+        <p>On peut calculer la tension, l'intensité ou la résistance selon la grandeur cherchée. La clé est d'identifier la grandeur inconnue et d'utiliser la bonne forme de la loi d'Ohm.</p>
+        <div class="grid3"><div class="card"><h4>Tension</h4><div class="formula">\[U=R\times I\]</div><p class="muted">Ex. \(R=100\Omega\), \(I=0{,}05A\) donc \(U=5V\). On multiplie la résistance par l'intensité.</p></div><div class="card"><h4>Intensité</h4><div class="formula">\[I=\frac{U}{R}\]</div><p class="muted">On divise la tension par la résistance. Plus R est grand, plus I est petit.</p></div><div class="card"><h4>Résistance</h4><div class="formula">\[R=\frac{U}{I}\]</div><p class="muted">Attention : \(I\) doit être en ampères. 100 mA = 0,100 A.</p></div></div>
+        <div class="box"><div class="box-title">Méthode 5C appliquée</div><p><strong>Chercher</strong> la grandeur · <strong>Connaître</strong> les données · <strong>Convertir</strong> si nécessaire (mA → A) · <strong>Calculer</strong> avec la bonne formule · <strong>Conclure</strong> avec l'unité et une phrase.</p></div>
+        <div class="box warn"><div class="box-title">Conversions indispensables</div><p>100 mA = 0,100 A · 20 mA = 0,020 A · 500 mA = 0,500 A · 1 mA = 0,001 A. On divise toujours par 1000 pour passer des mA aux A. C'est l'erreur la plus fréquente dans les calculs de la loi d'Ohm !</p></div>
+
+        <h3 id="c5">V. Court-circuit et surcharge</h3>
+        <p>Un dipôle est court-circuité si ses deux bornes sont reliées par un très bon conducteur. Le courant emprunte alors le chemin de plus faible résistance, ce qui peut créer une surintensité dangereuse. Le court-circuit est l'une des principales causes d'incendie d'origine électrique dans les habitations.</p>
+        <p>La surcharge se produit quand on branche trop d'appareils puissants sur une même prise ou multiprise. Chaque appareil consomme du courant, et la somme de ces courants peut dépasser ce que les fils peuvent supporter sans chauffer dangereusement.</p>
+        <div class="box warn"><div class="box-title">Danger</div><p>Si le générateur est court-circuité, l'intensité peut devenir très grande car \(I = U/R\) et \(R\) est très petit (résistance du fil quasiment nulle). Les fils chauffent (effet Joule) et peuvent provoquer un incendie. Une multiprise surchargée présente le même risque d'échauffement progressif.</p></div>
+        <table class="table"><tr><th>Situation</th><th>Diagnostic</th><th>Risque</th></tr><tr><td>Un récepteur court-circuité en série, mais un autre reste dans le circuit</td><td>Risque limité</td><td>Le récepteur court-circuité ne fonctionne plus, l'autre fonctionne plus</td></tr><tr><td>Générateur relié directement par un fil</td><td>Court-circuit dangereux</td><td>Échauffement, détérioration, incendie possible</td></tr><tr><td>Multiprise avec trop d'appareils puissants</td><td>Surcharge</td><td>Échauffement des fils, fonte de l'isolant, incendie</td></tr><tr><td>Fils endommagés ou dénudés</td><td>Risque de court-circuit</td><td>Contact entre fils, étincelle, incendie</td></tr></table>
+        <div class="box ok"><div class="box-title">Protection</div><p>Les disjoncteurs et les fusibles protègent les circuits : si l'intensité dépasse une valeur limite, ils coupent le courant. Le disjoncteur peut être réarmé, le fusible doit être remplacé. Ne jamais remplacer un fusible par un objet métallique (comme du papier aluminium) : cela annule la protection !</p></div>
+
+        <h3 id="c6">VI. Bilan</h3>
+        <p>La loi d'Ohm est à la fois un outil de calcul, une méthode graphique et un point d'entrée vers la sécurité électrique. Elle relie trois grandeurs fondamentales de l'électricité et permet de comprendre pourquoi certaines situations sont dangereuses.</p>
+        <table class="table"><tr><th>Notion</th><th>À retenir</th></tr><tr><td>Loi d'Ohm</td><td>\(U = R \times I\) avec U en V, R en Ω, I en A</td></tr><tr><td>Caractéristique</td><td>Droite passant par l'origine → dipôle ohmique</td></tr><tr><td>Pente</td><td>Le coefficient directeur donne R</td></tr><tr><td>Court-circuit</td><td>I devient très grand → échauffement</td></tr><tr><td>Surcharge</td><td>Trop d'appareils → échauffement des fils</td></tr><tr><td>Protection</td><td>Fusibles et disjoncteurs coupent le courant</td></tr></table>
+      </div>
+    </div></section>
+
+    <section class="panel" id="sims">
+<h2 style="text-align:center;color:var(--accent);margin-bottom:1.2rem">ðŸ“Š Simulateurs — Loi d'Ohm</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:#1a0800;border:1px solid #ff6a0035;border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Graphe U = f(I)</h3>
+    <canvas id="cvA7_4" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">Râ‚ (Î©):</label><input type="range" id="slA7a" min="10" max="300" value="100" step="10" style="flex:1;accent-color:var(--accent)"><span id="lbA7a" style="color:#ff6a00;font-size:.78rem;min-width:3rem">100</span></div>
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">Râ‚‚ (Î©):</label><input type="range" id="slA7b" min="10" max="300" value="150" step="10" style="flex:1;accent-color:#ffcc00"><span id="lbA7b" style="color:#ffcc00;font-size:.78rem;min-width:3rem">150</span></div>
     </div>
   </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">4ᵉ</span>
-      <span class="micro">Chap. 7</span>
+  <div class="card" style="background:#1a0800;border:1px solid #ff6a0035;border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Circuit et mesures</h3>
+    <canvas id="cvB7_4" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">Tension (V) :</label>
+      <input type="range" id="slB7_4" min="1" max="20" value="6" style="flex:1;accent-color:var(--accent)">
+      <span id="lbB7_4" style="color:var(--accent);font-weight:bold;min-width:2.5rem">6 V</span>
     </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
   </div>
 </div>
+</section>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+    <section class="panel" id="outils"><div class="section course">
+      <h3>Outils mathématiques et unités</h3>
+      <div class="grid3"><div class="card"><h4>Conversions mA → A</h4><p class="muted">\(1A=1000mA\), donc \(20mA=0{,}020A\). On divise toujours par 1000.</p></div><div class="card"><h4>Proportionnalité</h4><p class="muted">Si \(R\) est constante, quand \(I\) double, \(U\) double. C'est une relation de proportionnalité.</p></div><div class="card"><h4>Pente</div><p class="muted">Sur le graphe \(U=f(I)\), \(R=\frac{\Delta U}{\Delta I}\). La résistance est la pente de la droite.</p></div></div>
+      <table class="table"><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th><th>À vérifier</th></tr><tr><td>Tension</td><td>\(U\)</td><td>volt (V)</td><td>voltmètre en dérivation</td></tr><tr><td>Intensité</td><td>\(I\)</td><td>ampère (A)</td><td>ampèremètre en série</td></tr><tr><td>Résistance</td><td>\(R\)</td><td>ohm (Ω)</td><td>ohmmètre hors circuit</td></tr></table>
+      <div class="box warn"><div class="box-title">Point de vigilance</div><p>Dans les calculs, l'intensité doit être en ampères. Une erreur classique consiste à utiliser directement 100 mA comme si c'était 100 A. Or 100 mA = 0,100 A, ce qui est 1000 fois plus petit ! Cette erreur change complètement le résultat du calcul.</p></div>
+      <div class="box"><div class="box-title">Triangle de la loi d'Ohm</div><p>Comme pour \(v = d/\Delta t\), dessine un triangle avec \(U\) en haut, \(R\) et \(I\) en bas. Cache la grandeur cherchée : ce qui reste te donne la formule. Cache \(U\) → \(R \times I\). Cache \(I\) → \(U/R\). Cache \(R\) → \(U/I\).</p></div>
+    </div></section>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">4ᵉ · Chap. 7</div>
-    <h1 class="hero-title">Loi d'Ohm et séc<span>urité | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+    <section class="panel" id="flash"><div class="section flash-wrap"><div class="flash-card" onclick="flipFlash()"><div><h3 id="flashQ"></h3><p id="flashA"></p><p class="muted">Clique pour retourner la carte.</p></div></div><div class="controls"><button class="btn" onclick="prevFlash()">← Précédente</button><button class="btn primary" onclick="flipFlash()">Retourner</button><button class="btn" onclick="nextFlash()">Suivante →</button><button class="btn" onclick="shuffleFlash()">Mélanger</button></div></div></section>
 
+    <section class="panel" id="exos"><div class="section course">
+      <div class="exercise"><h4>Exercice 1 — Application directe</h4><p>Une résistance de \(100\Omega\) est traversée par un courant de \(0{,}05A\). Calcule la tension à ses bornes.</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>\(U=R\times I=100\times0{,}05=5V\).</p></div></div>
+      <div class="exercise"><h4>Exercice 2 — Conversion obligatoire</h4><p>Aux bornes d'une résistance, on mesure \(U=12V\) et \(I=100mA\). Calcule \(R\).</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>On convertit \(100mA=0{,}100A\). Donc \(R=\frac{U}{I}=\frac{12}{0{,}100}=120\Omega\).</p></div></div>
+      <div class="exercise"><h4>Exercice 3 — Identifier un dipôle ohmique</h4><p>Un tableau de mesures donne des points alignés sur une droite passant par l'origine dans un graphique \(U=f(I)\). Que peux-tu conclure ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>Le dipôle est ohmique : \(U\) est proportionnelle à \(I\). Il obéit à la loi d'Ohm et sa résistance est constante, égale à la pente de la droite.</p></div></div>
+      <div class="exercise"><h4>Exercice 4 — Sécurité</h4><p>Une multiprise supporte au maximum 3500 W. On branche deux radiateurs de 2000 W. Est-ce acceptable ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box warn"><p>Puissance totale : \(2000+2000=4000W\), supérieure à 3500 W. La multiprise est surchargée : risque d'échauffement, de fonte de l'isolant et d'incendie. Ne pas brancher les deux radiateurs sur la même multiprise.</p></div></div>
+      <div class="exercise"><h4>Exercice 5 — Calcul d'intensité</h4><p>Une résistance de \(470\Omega\) est soumise à une tension de 9 V. Calcule l'intensité qui la traverse en mA.</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>\(I = U/R = 9/470 \approx 0{,}0191\) A, soit environ 19,1 mA.</p></div></div>
+      <div class="exercise"><h4>Exercice 6 — Lecture graphique</h4><p>Sur la caractéristique \(U=f(I)\) d'une résistance, on lit que pour \(I = 0{,}03\) A, on a \(U = 6{,}6\) V. Quelle est la valeur de la résistance ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>\(R = U/I = 6{,}6 / 0{,}03 = 220\;\Omega\). La résistance est de 220 Ω.</p></div></div>
+      <div class="exercise"><h4>Exercice 7 — Court-circuit</h4><p>Un générateur de 6 V est court-circuité par un fil de résistance quasi nulle (0,01 Ω). Calcule l'intensité du courant. Pourquoi est-ce dangereux ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box warn"><p>\(I = U/R = 6 / 0{,}01 = 600\) A ! Cette intensité gigantesque va provoquer un échauffement extrême des fils, pouvant causer un incendie. C'est pour cela qu'on ne doit jamais court-circuiter un générateur.</p></div></div>
+      <div class="exercise"><h4>Exercice 8 — Comparaison de résistances</h4><p>Deux résistances \(R_1 = 100\;\Omega\) et \(R_2 = 470\;\Omega\) sont soumises à la même tension de 12 V. Laquelle est traversée par le courant le plus intense ? Calcule les deux intensités.</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p>\(I_1 = 12/100 = 0{,}12\) A = 120 mA. \(I_2 = 12/470 \approx 0{,}0255\) A ≈ 25,5 mA. \(R_1\) est traversée par le courant le plus intense car sa résistance est plus petite.</p></div></div>
+      <div class="exercise"><h4>Exercice 9 — Méthode 5C complète</h4><p>Une DEL (diode électroluminescente) fonctionne sous \(U = 2V\) avec un courant de \(20mA\). Quelle résistance faut-il placer en série pour la protéger si le générateur fournit \(9V\) ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box ok"><p><strong>C</strong>hercher : la résistance de protection. <strong>C</strong>onnaître : \(U_{RES} = 9 - 2 = 7V\), \(I = 20 mA = 0{,}020 A\). <strong>C</strong>onvertir : I en A (déjà fait). <strong>C</strong>alculer : \(R = U/I = 7/0{,}020 = 350\;\Omega\). <strong>C</strong>onclure : Il faut une résistance d'au moins 350 Ω pour protéger la DEL.</p></div></div>
+      <div class="exercise"><h4>Exercice 10 — Bilan sécurité</h4><p>Explique pourquoi un fusible de 10 A protège un circuit. Que se passe-t-il si le courant dépasse 10 A ? Pourquoi ne faut-il jamais le remplacer par un objet métallique ?</p><button class="btn" onclick="toggleSol(this)">Correction</button><div class="solution box warn"><p>Le fusible fond quand l'intensité dépasse sa valeur nominale (10 A), coupant ainsi le circuit et empêchant l'échauffement des fils. Si on le remplace par un objet métallique, le courant peut passer sans limite : plus de protection, risque d'échauffement et d'incendie.</p></div></div>
+    </div></section>
+
+    <section class="panel" id="quiz"><div class="section quiz-card"><h3 id="quizQ"></h3><div id="quizOpts"></div><div class="status" id="quizFeed" style="display:none"></div><div class="controls"><button class="btn" onclick="nextQuiz()">Question suivante</button></div></div></section>
+
+    <section class="panel" id="tp"><div class="section course"><h3>TP — Vérifier la loi d'Ohm</h3>
+      <div class="grid2"><div class="card"><h4>Objectif</h4><p class="muted">Montrer expérimentalement que, pour une résistance, \(U\) et \(I\) sont proportionnelles et déterminer la valeur de R à partir du graphique.</p></div><div class="card"><h4>Matériel</h4><p class="muted">Générateur réglable (0-12 V), résistance (220 Ω ou 470 Ω), ampèremètre, voltmètre, fils de connexion, interrupteur, plaque de montage.</p></div></div>
+      <div class="box"><div class="box-title">Protocole détaillé</div><p>1. Monter le circuit en série : générateur → interrupteur → résistance → ampèremètre. 2. Brancher le voltmètre en dérivation aux bornes de la résistance. 3. Vérifier les bornes des appareils (COM, V, mA) et les calibres. 4. Fermer l'interrupteur et régler le générateur à 0 V. 5. Augmenter progressivement la tension de 1 V en 1 V jusqu'à 10 V. 6. Pour chaque valeur, relever \(U\) (V) et \(I\) (mA) dans un tableau. 7. Ouvrir l'interrupteur entre chaque mesure. 8. Tracer le graphique \(U = f(I)\) avec \(I\) en abscisse et \(U\) en ordonnée. 9. Vérifier que les points sont alignés sur une droite passant par l'origine. 10. Calculer la pente de la droite et comparer avec la valeur indiquée sur la résistance.</p></div>
+      <div class="box warn"><div class="box-title">Sécurité</div><p>Ne jamais dépasser la tension maximale indiquée par le professeur. Ne pas toucher les fils lorsque le circuit est fermé. Toujours ouvrir l'interrupteur avant de modifier le circuit. Vérifier les calibres avant de fermer le circuit pour ne pas endommager les multimètres.</p></div>
+      <table class="table"><tr><th>Observation</th><th>Conclusion</th></tr><tr><td>Les points sont alignés et passent par l'origine</td><td>Le dipôle obéit à la loi d'Ohm : c'est un dipôle ohmique</td></tr><tr><td>La droite est plus pentue</td><td>La résistance est plus grande (R = pente)</td></tr><tr><td>Les points ne sont pas alignés</td><td>Le dipôle n'est pas ohmique (ex : ampoule, diode)</td></tr><tr><td>La valeur de R calculée ≈ valeur indiquée</td><td>La mesure est cohérente, les incertitudes sont faibles</td></tr></table>
+      <div class="box ok"><div class="box-title">Conclusion attendue</div><p>La caractéristique U = f(I) est une droite passant par l'origine, ce qui confirme que la résistance est un dipôle ohmique. La pente de cette droite correspond à la valeur de la résistance. Les écarts éventuels par rapport à la valeur indiquée s'expliquent par les incertitudes de mesure et la tolérance de la résistance (généralement ±5 % ou ±10 %).</p></div>
+    </div></section>
+
+    <section class="panel" id="ia"><div class="section"><div class="chat-grid"><a class="chat-link" href="https://chat.openai.com/" target="_blank"><b>ChatGPT</b><span class="muted">ouvrir</span></a><a class="chat-link" href="https://gemini.google.com/" target="_blank"><b>Gemini</b><span class="muted">ouvrir</span></a><a class="chat-link" href="https://claude.ai/" target="_blank"><b>Claude</b><span class="muted">ouvrir</span></a><a class="chat-link" href="https://copilot.microsoft.com/" target="_blank"><b>Copilot</b><span class="muted">ouvrir</span></a></div><h3 style="font-family:'Clash Display';font-weight:500">Prompt prêt à copier</h3><div class="prompt-box" id="promptText">Tu es mon professeur de physique-chimie niveau 4e. Aide-moi à réviser le chapitre "Loi d'Ohm et sécurité". Explique-moi en détail :
+
+1. La loi d'Ohm : U = R × I et ses trois formes (calculer U, I ou R)
+2. Les unités : volt (V), ohm (Ω), ampère (A) et la conversion mA → A
+3. Le branchement du voltmètre (en dérivation) et de l'ampèremètre (en série)
+4. La caractéristique U = f(I) : droite passant par l'origine = dipôle ohmique
+5. Comment lire la résistance sur le graphique (pente de la droite)
+6. Le court-circuit : pourquoi c'est dangereux (I devient très grand)
+7. La surcharge de multiprise : pourquoi les fils chauffent
+8. Les protections : fusibles, disjoncteurs
+9. La méthode des 5C appliquée à un calcul d'Ohm
+
+Donne-moi ensuite 5 exercices progressifs (Niveau 1 à Niveau 3) avec corrections détaillées utilisant la méthode des 5C.</div><div class="controls" style="justify-content:flex-start"><button class="btn" onclick="copyPrompt()">Copier le prompt</button></div></div></section>
+
+    <section class="panel" id="suite"><div class="section course"><h3>Vers la 3e : ce que ce chapitre prépare</h3>
+      <div class="grid3"><div class="card"><h4>Puissance électrique</h4><p class="muted">En 3e, tu relieras puissance, tension et intensité avec \(P=U\times I\). Tu comprendras pourquoi les appareils puissants consomment plus de courant et pourquoi les multiprises ont une puissance maximale.</p></div><div class="card"><h4>Énergie électrique</h4><p class="muted">Tu comprendras la consommation d'un appareil en wattheure ou kilowattheure, et comment lire une facture d'électricité. La relation \(E = P \times t\) reliera puissance et énergie.</p></div><div class="card"><h4>Sécurité domestique</h4><p class="muted">Tu utiliseras ces notions pour expliquer le rôle des fusibles, des disjoncteurs, du disjoncteur différentiel et de la prise de terre dans l'installation électrique de ta maison.</p></div></div>
+      <div class="box ok"><div class="box-title">Pourquoi c'est important</div><p>La loi d'Ohm permet de comprendre les circuits, mais aussi d'éviter les erreurs dangereuses dans la vie quotidienne. Chaque année en France, des incendies d'origine électrique font des victimes. Comprendre ces notions, c'est se protéger et protéger les autres.</p></div>
+      <div class="box lav"><div class="box-title">Connexion avec le chapitre suivant</div><p>Dans le chapitre suivant, tu étudieras les signaux sonores. Tu découvriras comment le son se propage et se mesure. Bien que ce chapitre porte sur un domaine différent (acoustique vs électricité), tu retrouveras la même relation \(v = d/\Delta t\) vue au chapitre 5, et les mêmes compétences de calcul et de raisonnement scientifique.</p></div>
+      <div class="box warn"><div class="box-title">Rappel sécurité quotidien</div><p>Ne jamais utiliser une multiprise pour brancher plusieurs appareils puissants (radiateur, four, lave-linge). Ne jamais enlever la broche de terre d'une fiche. Ne jamais manipuler un appareil électrique les mains mouillées. Faire vérifier l'installation électrique par un professionnel tous les 10 ans.</p></div>
+    </div></section>
+  </main>
 </div>
-
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+// === Tab navigation (standardized) ===
+const _tabs=document.querySelectorAll('[data-tab],.tab,.tab-btn');
+const _panels=document.querySelectorAll('.panel');
+function _switchTab(tabName){
+    _tabs.forEach(b=>b.classList.remove('active'));
+    _panels.forEach(p=>p.classList.remove('active'));
+    _tabs.forEach(b=>{if(b.dataset&&b.dataset.tab===tabName)b.classList.add('active');});
+    var _map={'cours': 'cours', 'sims': 'sims', 'outils': 'outils', 'flash': 'flash', 'exos': 'exos', 'quiz': 'quiz', 'tp': 'tp', 'ia': 'ia', 'suite': 'suite'};
+    var panelId=_map[tabName]||tabName;
+    var el=document.getElementById(panelId);
+    if(el)el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(window.MathJax)setTimeout(()=>MathJax.typesetPromise(),100);
+}
+_tabs.forEach(btn=>{if(btn.dataset&&btn.dataset.tab)btn.addEventListener('click',()=>_switchTab(btn.dataset.tab));});
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
-});
+
+const tabs=[...document.querySelectorAll('.tab-btn')],panels=[...document.querySelectorAll('.panel')];
+
+function updateProgress(){let n=tabs.findIndex(b=>b.classList.contains('active'))+1;let pct=Math.round(n/tabs.length*100);document.getElementById('progress').style.width=pct+'%';document.getElementById('pct').textContent=pct+'%';}
+function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';drawGraph()}
+function toggleSol(btn){btn.nextElementSibling.classList.toggle('show')}function copyPrompt(){navigator.clipboard?.writeText(document.getElementById('promptText').innerText);alert('Prompt copié !')}
+function calcU(){const R=+ohmR.value||0,I=(+ohmI.value||0)/1000;const U=R*I;ohmU.value=U.toFixed(2);ohmStatus.innerHTML=`\(U=R\\times I=${R}\\times${I.toFixed(3)}=${U.toFixed(2)}V\)`;MathJax?.typesetPromise?.()}
+function calcI(){const R=+ohmR.value||0,U=+ohmU.value||0;if(R<=0)return;const I=U/R;ohmI.value=(I*1000).toFixed(1);ohmStatus.innerHTML=`\(I=\\frac{U}{R}=\\frac{${U}}{${R}}=${I.toFixed(3)}A=${(I*1000).toFixed(1)}mA\)`;MathJax?.typesetPromise?.()}
+function calcR(){const U=+ohmU.value||0,I=(+ohmI.value||0)/1000;if(I<=0)return;const R=U/I;ohmR.value=R.toFixed(0);ohmStatus.innerHTML=`\(R=\\frac{U}{I}=\\frac{${U}}{${I.toFixed(3)}}=${R.toFixed(0)}\\Omega\)`;MathJax?.typesetPromise?.()}
+function drawGraph(){const c=document.getElementById('graphCanvas');if(!c)return;const ctx=c.getContext('2d'),W=c.width,H=c.height,R=+graphR.value;document.getElementById('rLabel').textContent=R;ctx.clearRect(0,0,W,H);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--surface2');ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(85,128,170,.25)';ctx.lineWidth=1;for(let x=50;x<W-25;x+=50){ctx.beginPath();ctx.moveTo(x,20);ctx.lineTo(x,H-35);ctx.stroke()}for(let y=20;y<H-35;y+=35){ctx.beginPath();ctx.moveTo(45,y);ctx.lineTo(W-25,y);ctx.stroke()}ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(45,H-35);ctx.lineTo(W-25,H-35);ctx.moveTo(45,H-35);ctx.lineTo(45,20);ctx.stroke();ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent');ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(45,H-35);const imax=0.1, umax=50;for(let k=0;k<=100;k++){const I=imax*k/100,U=R*I,x=45+(W-80)*(I/imax),y=H-35-(H-60)*(Math.min(U,umax)/umax);ctx.lineTo(x,y)}ctx.stroke();ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accentInk');ctx.font='600 13px Instrument Sans';ctx.fillText('I (A)',W-63,H-12);ctx.fillText('U (V)',10,28);graphStatus.innerHTML=`La pente de la droite vaut la résistance : ici \(R=${R}\\Omega\). À \(I=0{,}050A\), \(U=${(R*0.05).toFixed(1)}V\). Plus R est grand, plus la droite est pentue.`;MathJax?.typesetPromise?.()}
+graphR.addEventListener('input',drawGraph);
+function renderSafety(){const v=safeCase.value;const data={normal:['rgba(95,175,154,.35)','Circuit normal','Le courant traverse la résistance : le circuit fonctionne normalement. Aucun danger particulier.'],lamp:['rgba(243,189,154,.45)','Récepteur court-circuité','Le courant contourne la lampe par le fil. Elle ne fonctionne plus, mais le danger dépend du reste du circuit.'],gen:['rgba(216,135,101,.55)','Danger : générateur court-circuité','Le courant peut devenir très intense car la résistance du fil est quasi nulle : échauffement et risque d\'incendie !'],multi:['rgba(216,135,101,.45)','Surcharge de multiprise','Trop d\'appareils puissants branchés : les fils peuvent chauffer dangereusement. La puissance totale dépasse la limite.']};const d=data[v];safeLab.innerHTML=`<svg viewBox="0 0 420 210" width="100%" height="190"><rect x="65" y="55" width="290" height="110" rx="18" fill="${d[0]}" stroke="rgba(85,128,170,.35)"/><text x="210" y="95" text-anchor="middle" font-size="19" font-weight="800" fill="var(--text)">${d[1]}</text><text x="210" y="125" text-anchor="middle" font-size="13" fill="var(--muted)">${v==='gen'?'fil direct entre + et −':v==='multi'?'puissance totale trop grande':v==='lamp'?'un dipôle est contourné':'dipôles correctement placés'}</text><circle cx="95" cy="110" r="17" fill="var(--surface)" stroke="var(--accent)"/><text x="95" y="116" text-anchor="middle" font-weight="800" fill="var(--accentInk)">G</text><rect x="285" y="98" width="42" height="24" rx="6" fill="var(--surface)" stroke="var(--accent)"/><text x="306" y="115" text-anchor="middle" font-size="12" font-weight="800" fill="var(--accentInk)">R</text></svg>`;safeStatus.textContent=d[2]}
+safeCase.addEventListener('change',renderSafety);
+const cards=[['Quelle est la loi d\'Ohm ?','Aux bornes d\'un dipôle ohmique : U = R × I.'],['Unités dans U = R × I ?','U en volt (V), R en ohm (Ω), I en ampère (A).'],['Comment brancher un voltmètre ?','En dérivation aux bornes du dipôle.'],['Comment brancher un ampèremètre ?','En série dans la branche où circule le courant.'],['Que montre une droite passant par l\'origine ?','U et I sont proportionnelles : le dipôle est ohmique.'],['Qu\'est-ce qu\'un court-circuit ?','Les deux bornes d\'un dipôle sont reliées par un très bon conducteur.'],['Pourquoi une surcharge est dangereuse ?','Elle provoque un échauffement des fils et un risque d\'incendie.'],['Conversion 100 mA → A ?','100 mA = 0,100 A. On divise par 1000.'],['Que signifie la pente de U=f(I) ?','La pente donne la résistance R = ΔU/ΔI.'],['Quel appareil mesure la résistance ?','L\'ohmmètre, branché hors circuit (dipôle isolé).'],['Comment calcule-t-on I avec U et R ?','I = U / R. On divise la tension par la résistance.'],['Que fait un fusible ?','Il fond si l\'intensité dépasse sa valeur nominale, coupant le circuit.'],['Quel est le rôle d\'un disjoncteur ?','Il coupe le courant en cas de surintensité, et peut être réarmé.']];let fi=0,flipped=false;function showFlash(){flashQ.textContent=flipped?'Réponse':cards[fi][0];flashA.textContent=flipped?cards[fi][1]:''}function flipFlash(){flipped=!flipped;showFlash()}function nextFlash(){fi=(fi+1)%cards.length;flipped=false;showFlash()}function prevFlash(){fi=(fi-1+cards.length)%cards.length;flipped=false;showFlash()}function shuffleFlash(){cards.sort(()=>Math.random()-.5);fi=0;flipped=false;showFlash()}
+const quiz=[{q:'La loi d\'Ohm s\'écrit :',o:['U = R × I','R = U × I','I = U × R','U = I / R'],a:0,e:'Pour une résistance, la tension vaut résistance × intensité.'},{q:'100 mA correspond à :',o:['0,100 A','100 A','0,001 A','0,010 A'],a:0,e:'On divise par 1000 : 100 mA = 0,100 A.'},{q:'Le voltmètre se branche :',o:['en dérivation','en série','hors circuit uniquement','n\'importe comment'],a:0,e:'Le voltmètre mesure la tension aux bornes d\'un dipôle, donc en dérivation.'},{q:'Une droite U=f(I) qui passe par l\'origine montre que :',o:['U et I sont proportionnelles','la résistance est nulle','le circuit est court-circuité','le générateur est déchargé'],a:0,e:'La proportionnalité est la signature d\'un dipôle ohmique.'},{q:'Le danger principal d\'un court-circuit est :',o:['l\'échauffement et l\'incendie','la baisse de tension sans risque','la disparition de la résistance','rien de spécial'],a:0,e:'Le courant peut devenir très intense et chauffer les fils dangereusement.'},{q:'Si R = 220 Ω et I = 50 mA, alors U vaut :',o:['11 V','0,011 V','11000 V','4,4 V'],a:0,e:'I = 0,050 A. U = 220 × 0,050 = 11 V.'},{q:'L\'ampèremètre se branche :',o:['en série','en dérivation','hors circuit','en parallèle avec le voltmètre'],a:0,e:'L\'ampèremètre doit être traversé par le courant qu\'il mesure, donc en série.'},{q:'Si U = 6 V et R = 300 Ω, l\'intensité vaut :',o:['20 mA','0,02 A','2 A','50 mA'],a:0,e:'I = U/R = 6/300 = 0,020 A = 20 mA.'},{q:'Un fusible sert à :',o:['couper le courant si l\'intensité est trop grande','augmenter la tension','mesurer la résistance','stocker de l\'énergie'],a:0,e:'Le fusible fond si l\'intensité dépasse sa valeur nominale, protégeant le circuit.'},{q:'Sur le graphique U=f(I), une pente plus raide signifie :',o:['une résistance plus grande','une résistance plus petite','une tension plus grande','un court-circuit'],a:0,e:'La pente de la droite est égale à R. Plus la pente est forte, plus R est grand.'}];let qi=0;function renderQuiz(){const q=quiz[qi];quizQ.textContent=q.q;quizFeed.style.display='none';quizOpts.innerHTML=q.o.map((x,i)=>`<button class="opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join('')}function answerQuiz(i){const q=quiz[qi];[...quizOpts.children].forEach((b,k)=>{b.disabled=true;b.classList.add(k===q.a?'good':(k===i?'bad':''))});quizFeed.style.display='block';quizFeed.textContent=q.e}function nextQuiz(){qi=(qi+1)%quiz.length;renderQuiz()}
+calcU();drawGraph();renderSafety();showFlash();updateProgress();
 </script>
+<script>
+/* ===== PATCH PHYSICHEN — BUGS CORRIGÉS ===== */
+(function(){
+  if(typeof visited==='undefined'){window.visited=new Set(['cours']);}
+  /* updateProgress — était appelée mais non définie */
+  window.updateProgress=function(){
+    var tabs=document.querySelectorAll('[data-tab]');
+    var tot=tabs.length||9;
+    var pct=Math.round(visited.size/tot*100);
+    var fill=document.getElementById('progressFill');
+    var txt=document.getElementById('progressText');
+    var prog=document.getElementById('progress');
+    var pctEl=document.getElementById('pct');
+    if(fill)fill.style.width=pct+'%';
+    if(txt)txt.textContent=pct+'% du chapitre exploré';
+    if(prog)prog.style.width=pct+'%';
+    if(pctEl)pctEl.textContent=pct+'%';
+  };
+  /* showPanel — était appelée dans le topbar mais non définie */
+  window.showPanel=function(id){window.switchTab(id);};
+  /* switchTab — remplace _switchTab avec scroll fix */
+  window.switchTab=function(id){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.tab,.tab-btn').forEach(function(t){t.classList.remove('active');});
+    var panel=document.getElementById(id);
+    if(panel)panel.classList.add('active');
+    document.querySelectorAll('[data-tab="'+id+'"]').forEach(function(t){t.classList.add('active');});
+    visited.add(id);
+    updateProgress();
+    /* SCROLL FIX — affiche le panneau directement sans curseur */
+    setTimeout(function(){
+      var p=document.getElementById(id);
+      var topbarEl=document.querySelector('.topbar');
+      var topH=topbarEl?topbarEl.offsetHeight:62;
+      if(p){var y=p.getBoundingClientRect().top+window.scrollY-topH-4;window.scrollTo({top:y,behavior:'smooth'});}
+    },30);
+    if(window.MathJax)setTimeout(function(){MathJax.typesetPromise();},100);
+    /* Quiz — render au 1er clic */
+    if(id==='quiz'){
+      var box=document.getElementById('quizBox');
+      if(box&&!box.dataset.ready){
+        if(typeof renderQuiz==='function')renderQuiz();
+        if(typeof buildQuiz==='function')buildQuiz();
+      }
+    }
+  };
+  /* Réenregistrer les écouteurs de clics (remplace les anciens) */
+  document.querySelectorAll('[data-tab]').forEach(function(btn){
+    var clone=btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone,btn);
+    clone.addEventListener('click',function(){window.switchTab(clone.dataset.tab);});
+  });
+  /* Activer l'onglet cours au chargement */
+  updateProgress();
+})();
+</script>
+<script>
+function initSims(){
+(function(){
+  var cv=document.getElementById("cvA7_4");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var s1=document.getElementById("slA7a"),s2=document.getElementById("slA7b");
+  var l1=document.getElementById("lbA7a"),l2=document.getElementById("lbA7b");
+  var R1=100,R2=150;
+  if(s1)s1.addEventListener("input",function(){R1=+this.value;if(l1)l1.textContent=R1;});
+  if(s2)s2.addEventListener("input",function(){R2=+this.value;if(l2)l2.textContent=R2;});
+  var ox=50,oy=H-35,gw=W-65,gh=H-55,Imax=0.12;
+  (function L(){
+    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#fff8f2";x.fillRect(0,0,W,H);
+    // axes
+    x.strokeStyle="rgba(255,106,0,.4)";x.lineWidth=1.5;
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+gw,oy);x.stroke();
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox,oy-gh);x.stroke();
+    x.fillStyle="rgba(255,106,0,.7)";x.font="10px monospace";x.textAlign="center";
+    x.fillText("I (A) →",ox+gw/2,H-5);
+    x.save();x.translate(12,oy-gh/2);x.rotate(-Math.PI/2);x.fillText("U (V)",0,0);x.restore();
+    // grid
+    for(var i=1;i<=5;i++){
+      x.strokeStyle="rgba(255,255,255,.05)";x.lineWidth=1;
+      var gx=ox+i*gw/5,gy2=oy-i*gh/5;
+      x.beginPath();x.moveTo(gx,oy);x.lineTo(gx,oy-gh);x.stroke();
+      x.beginPath();x.moveTo(ox,gy2);x.lineTo(ox+gw,gy2);x.stroke();
+      x.fillStyle="rgba(200,200,200,.35)";x.font="8px monospace";x.textAlign="center";
+      x.fillText((Imax*i/5).toFixed(3),gx,oy+11);x.textAlign="right";x.fillText((i*4).toFixed(0),ox-3,gy2+3);
+    }
+    // R1 line
+    x.shadowBlur=8;x.shadowColor="var(--accent,#ff6a00)";x.strokeStyle="#e05a00";x.lineWidth=2;
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+gw,oy-R1*Imax/20*gh);x.stroke();
+    // R2 line
+    x.shadowColor="#ffcc00";x.strokeStyle="#ffcc00";
+    x.beginPath();x.moveTo(ox,oy);x.lineTo(ox+gw,oy-R2*Imax/20*gh);x.stroke();
+    x.shadowBlur=0;
+    // moving point
+    var IpI=(t*.0005)%Imax;
+    var px1=ox+IpI/Imax*gw,py1=oy-R1*IpI/20*gh;
+    var px2=ox+IpI/Imax*gw,py2_2=oy-R2*IpI/20*gh;
+    x.shadowBlur=12;x.shadowColor="var(--accent,#ff6a00)";x.fillStyle="#e05a00";x.beginPath();x.arc(px1,py1,5,0,6.28);x.fill();
+    x.shadowColor="#ffcc00";x.fillStyle="#ffcc00";x.beginPath();x.arc(px2,py2_2,5,0,6.28);x.fill();x.shadowBlur=0;
+    x.fillStyle="#e05a00";x.font="bold 10px monospace";x.textAlign="left";x.fillText("Râ‚="+R1+"Î© (pente)",8,15);
+    x.fillStyle="#ffcc00";x.fillText("Râ‚‚="+R2+"Î© (pente)",8,28);
+    t++;requestAnimationFrame(L);
+  })();
+})();
+(function(){
+  var cv=document.getElementById("cvB7_4");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var sl=document.getElementById("slB7_4"),lb=document.getElementById("lbB7_4");
+  var U=6,R=150;
+  if(sl)sl.addEventListener("input",function(){U=+this.value;if(lb)lb.textContent=U+" V";});
+  var elec=[];for(var i=0;i<12;i++)elec.push({pos:i/12});
+  var cx=W/2,cy=H/2;
+  var circ=[[cx-110,cy-70],[cx+110,cy-70],[cx+110,cy+70],[cx-110,cy+70]];
+  function pathPos2(frac){
+    var tot=0,segs=[];
+    for(var i2=0;i2<4;i2++){var n=circ[(i2+1)%4],c=circ[i2];var d=Math.hypot(n[0]-c[0],n[1]-c[1]);segs.push({d:d,sx:c[0],sy:c[1],ex:n[0],ey:n[1]});tot+=d;}
+    var tgt=frac*tot;for(var j=0;j<4;j++){if(tgt<=segs[j].d){var r=tgt/segs[j].d;return[segs[j].sx+r*(segs[j].ex-segs[j].sx),segs[j].sy+r*(segs[j].ey-segs[j].sy)];}tgt-=segs[j].d;}
+    return circ[0];
+  }
+  (function L(){
+    x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||"#fff8f2";x.fillRect(0,0,W,H);
+    x.strokeStyle="rgba(255,106,0,.35)";x.lineWidth=3;
+    x.beginPath();circ.forEach(function(p,i){i===0?x.moveTo(p[0],p[1]):x.lineTo(p[0],p[1]);});x.closePath();x.stroke();
+    // battery
+    x.fillStyle="rgba(255,106,0,.2)";x.fillRect(circ[3][0]-12,cy-25,24,50);
+    x.strokeStyle="#e05a00";x.lineWidth=2;x.strokeRect(circ[3][0]-12,cy-25,24,50);
+    x.fillStyle="#e05a00";x.font="bold 9px monospace";x.textAlign="center";x.textBaseline="middle";x.fillText(U+"V",circ[3][0],cy);x.textBaseline="alphabetic";
+    // resistor
+    x.fillStyle="rgba(255,170,0,.2)";x.fillRect(circ[1][0]-12,cy-20,24,40);
+    x.strokeStyle="#ffaa00";x.lineWidth=1.5;x.strokeRect(circ[1][0]-12,cy-20,24,40);
+    x.fillStyle="#ffaa00";x.font="bold 9px monospace";x.textAlign="center";x.textBaseline="middle";x.fillText(R+"Î©",circ[1][0],cy);x.textBaseline="alphabetic";
+    // voltmeter
+    var I=U/R;
+    x.fillStyle="rgba(100,200,100,.2)";x.fillRect(cx-18,circ[0][1]-12,36,24);
+    x.strokeStyle="#44cc44";x.lineWidth=1.5;x.strokeRect(cx-18,circ[0][1]-12,36,24);
+    x.fillStyle="#44cc44";x.font="bold 8px monospace";x.textAlign="center";x.textBaseline="middle";
+    x.fillText("V "+U,cx,circ[0][1]);x.textBaseline="alphabetic";
+    // ammeter
+    x.fillStyle="rgba(200,100,100,.2)";x.fillRect(cx-18,circ[2][1]-12,36,24);
+    x.strokeStyle="#cc4444";x.lineWidth=1.5;x.strokeRect(cx-18,circ[2][1]-12,36,24);
+    x.fillStyle="#cc4444";x.font="bold 8px monospace";x.textAlign="center";x.textBaseline="middle";
+    x.fillText("A "+I.toFixed(3),cx,circ[2][1]);x.textBaseline="alphabetic";
+    // electrons
+    elec.forEach(function(e){e.pos=(e.pos+.003*U/6)%1;var ep=pathPos2(e.pos);x.shadowBlur=8;x.shadowColor="#ffcc44";x.fillStyle="#ffcc44";x.beginPath();x.arc(ep[0],ep[1],3,0,6.28);x.fill();x.shadowBlur=0;});
+    x.fillStyle="rgba(255,106,0,.9)";x.font="bold 12px monospace";x.textAlign="center";
+    x.fillText("U="+U+"V  R="+R+"Î©  I="+I.toFixed(3)+"A",W/2,H-8);
+    t++;requestAnimationFrame(L);
+  })();
+})();
+}
+</script>
+<script>
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

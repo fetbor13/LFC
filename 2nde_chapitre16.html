@@ -1,181 +1,860 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Seconde · Chapitre 16 — La transformation physique | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#FDF8F3;--bg2:#FAF0E8;--panel:#FFFFFF;--panel2:#FEFBF8;--line:#E8D5C4;--line2:#D4B89E;--text:#2C1810;--muted:#7A5C4A;--faint:#B08E78;--orange:#C87533;--orange2:#E09860;--orange3:#FDF2E9;--green:#2F855A;--green2:rgba(22,163,74,.12);--amber:#B7791F;--amber2:rgba(245,158,11,.12);--red:#B91C1C;--red2:rgba(239,68,68,.12);--purple:#5B4A9F;--purple2:rgba(91,74,159,.12);--cyan:#3A8A9F;--cyan2:rgba(58,138,159,.12);--shadow:0 14px 34px rgba(120,70,20,.055);--shadow2:0 8px 22px rgba(120,70,20,.045);--side:306px}
+[data-theme="dark"]{--bg:#1A0F08;--bg2:#221410;--panel:#2C1A10;--panel2:#3A2418;--line:#4A3020;--line2:#5E3E2C;--text:#F5E6D8;--muted:#C8A88E;--faint:#8A6A50;--orange:#E09860;--orange2:#F0B888;--orange3:rgba(224,152,96,.12);--shadow:0 18px 54px rgba(0,0,0,.32);--shadow2:0 10px 32px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(200,117,51,.055),transparent 32rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.65;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--orange);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.72);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:20px 18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(17,24,39,.72)}.brand{display:flex;align-items:center;gap:12px;margin:2px 6px 22px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#C87533,#E09860);display:grid;place-items:center;color:white;font-weight:800;font-size:14px;box-shadow:0 14px 28px rgba(200,117,51,.16)}.brand h1{font-size:16px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:16px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(200,117,51,.16);color:var(--orange);background:var(--orange3);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.micro{color:var(--faint);font-size:12px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);font-weight:800;margin:22px 10px 10px;padding:6px 10px;background:rgba(200,117,51,.06);border-radius:8px}[data-theme="dark"] .nav-label{background:rgba(224,152,96,.08)}.tablist{display:grid;gap:4px}.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:all .2s}.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}.tab.active{background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.26);box-shadow:inset 4px 0 0 var(--orange),0 8px 18px rgba(15,23,42,.035)}.tools{display:flex;gap:8px;margin-top:16px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .2s}.icon-btn:hover{border-color:var(--orange);color:var(--orange)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(253,248,243,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 30px}[data-theme="dark"] .topbar{background:rgba(26,15,8,.78)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--orange)}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}.pill-btn:hover{border-color:var(--orange);color:var(--orange)}.page{max-width:1160px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.28fr .72fr;gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden}.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,117,51,.075),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--orange);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:760}.hero h2 span{color:var(--orange)}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--orange)}.hero-copy{font-size:14px;color:var(--muted);max-width:68ch}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.metric{border:1px solid var(--line);background:rgba(255,255,255,.64);border-radius:12px;padding:9px 10px}[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}.metric b{display:block;font-size:17px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:#2C1810;border:1px solid rgba(200,117,51,.15);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}.mission-1 small{background:var(--orange3);color:var(--orange)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--purple2);color:var(--purple)}.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}.panel{display:none;scroll-margin-top:82px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow2);margin-bottom:16px}.content-card h3{margin:0 0 12px;font-size:20px;letter-spacing:-.03em;font-weight:700}.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}.toc{position:sticky;top:82px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}.toc a:nth-of-type(1){background:var(--orange3);color:var(--orange)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.note{border-left:4px solid var(--orange);background:var(--orange3);border-radius:0 18px 18px 0;padding:16px 18px;margin:16px 0;color:var(--text)}.warn{border-left-color:var(--amber);background:var(--amber2)}.ok{border-left-color:var(--green);background:var(--green2)}.formula{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:15px 0;text-align:center;overflow-x:auto;font-size:1.05rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;margin:16px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.08em}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}.card p,.card li{font-size:13px;color:var(--muted)}.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}.exercise h4{margin:0 0 10px}.exercise details{margin-top:12px}.exercise summary{cursor:pointer;font-weight:800;color:var(--orange);background:var(--orange3);border:1px solid rgba(200,117,51,.20);padding:9px 12px;border-radius:12px}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.chip.blue{background:var(--orange3);border-color:rgba(200,117,51,.20);color:var(--orange)}.chip.amber{background:var(--amber2);border-color:rgba(183,121,31,.18);color:var(--amber)}.chip.green{background:var(--green2);border-color:rgba(47,133,90,.18);color:var(--green)}.chip.purple{background:var(--purple2);border-color:rgba(91,74,159,.18);color:var(--purple)}.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.flashcard{min-height:145px;perspective:1000px;cursor:pointer}.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer;transition:all .2s}.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}.mindmap{display:grid;gap:12px}.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:white;padding:18px;font-weight:800;font-size:18px}.map-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}.map-branch h4{margin:0 0 8px}.map-branch ul{margin:0;padding-left:18px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px;text-decoration:none;display:inline-flex;align-items:center}.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}.sim-card iframe{width:100%;height:460px;border:0}.sim-card .sim-body{padding:14px}.neon-sim{border:1px solid rgba(224,152,96,.18);border-radius:18px;overflow:hidden;background:#2C1810;box-shadow:var(--shadow)}.neon-sim canvas{width:100%;display:block}.neon-sim .sim-body{padding:14px;background:#221410;border-top:1px solid rgba(224,152,96,.12)}.neon-sim h4{color:#E09860;margin:0 0 6px}.neon-sim p{color:#8A6A50;font-size:13px;margin:0}.neon-input{border:1px solid rgba(224,152,96,.3);background:#2C1A10;color:#E09860;border-radius:10px;padding:7px 10px;width:100%}.neon-label{font-size:12px;color:#8A6A50;font-weight:800;display:block;margin-bottom:4px}.neon-result{background:rgba(224,152,96,.07);border:1px solid rgba(224,152,96,.18);border-radius:14px;padding:12px;color:#E09860;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7}.sim-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}.ece-step b{display:block;margin-bottom:6px}@media(max-width:980px){.app{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.tablist{grid-template-columns:repeat(2,1fr)}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.ece-steps,.sim-inputs{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}@media(max-width:620px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem Omnis</h1><p>Seconde</p></div></div>
+<div class="level-card"><div class="level-row"><span class="badge">❄️ Chapitre 16</span><span class="micro">Constitution de la matière</span></div><div class="progress"><span id="masterBar"></span></div></div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" role="tablist">
+<button class="tab active" onclick="switchTab('cours')" data-t="cours">📚 Cours</button>
+<button class="tab" onclick="switchTab('relations')" data-t="relations">📐 Relations &amp; Dimensions</button>
+<button class="tab" onclick="switchTab('exercices')" data-t="exercices">✏️ Exercices</button>
+<button class="tab" onclick="switchTab('flashcards')" data-t="flashcards">🃏 Flashcards</button>
+<button class="tab" onclick="switchTab('quiz')" data-t="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" onclick="switchTab('mindmap')" data-t="mindmap">🗺️ Carte mentale</button>
+<button class="tab" onclick="switchTab('simulations')" data-t="simulations">🔬 Simulations</button>
+<button class="tab" onclick="switchTab('ece')" data-t="ece">🧪 ECE</button>
+<button class="tab" onclick="switchTab('terminale')" data-t="terminale">🚀 Vers la 1ère Spé</button>
+</div>
+<div class="tools"><button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Mode sombre">🌙</button><a href="index.html" class="icon-btn" title="Accueil">🏠</a></div>
+</aside>
+<div class="main" id="main">
+<div class="topbar"><span class="crumb">Seconde › Constitution de la matière › <b>Chap. 16 — La transformation physique</b></span><div class="top-actions"><span class="pill-btn" id="pctLabel">0 %</span></div></div>
+<div class="page">
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Seconde</span>
-      <span class="micro">Chap. 16</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<!-- HERO -->
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">❄️ Chapitre 16</div>
+<h2>La transformation <span>physique</span></h2>
+<p class="hero-copy">Les 6 changements d'état, modèle microscopique, énergie des changements d'état, formule Q = m × L, endothermique et exothermique.</p>
+<div class="instructor">Programme officiel — Seconde Physique-Chimie</div>
+<div class="hero-grid">
+<div class="metric"><b>2</b><span>sections de cours</span></div>
+<div class="metric"><b>15</b><span>flashcards</span></div>
+<div class="metric"><b>10</b><span>questions quiz</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap"><canvas id="heroCanvas" width="500" height="230"></canvas></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<!-- MISSIONS -->
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Les 6 changements d'état</b><span>Fusion, solidification, vaporisation, liquéfaction, sublimation, condensation</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Modèle microscopique</b><span>Notation (s)/(l)/(g), agitation thermique, liaison intermoléculaire</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Énergie et changements d'état</b><span>Q = m × L, endothermique/exothermique, énergies opposées</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Seconde · Chap. 16</div>
-    <h1 class="hero-title">La transformation p<span>hysique | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<!-- ═══════ COURS ═══════ -->
+<div class="panel active" id="p-cours">
+<div class="content-card">
+<div class="course-grid">
+<nav class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#s1">I. Les changements d'état</a>
+<a href="#s2">II. Énergie d'un changement d'état</a>
+</nav>
+<div class="course-body">
+
+<h2 id="s1">I. Les changements d'état</h2>
+
+<h3>I.1 Les six changements d'état</h3>
+<div class="note"><strong>Définition — Changement d'état</strong>
+<p>Un <strong>changement d'état</strong> (ou transition de phase) est une transformation physique au cours de laquelle un corps pur passe d'un état à un autre. La <strong>composition chimique ne change pas</strong> : c'est le même corps avant et après.</p></div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Changement d'état</th><th>État initial → État final</th><th>Sens du transfert thermique</th></tr></thead>
+<tbody>
+<tr><td><strong>Fusion</strong></td><td>Solide → Liquide</td><td>Endothermique (absorbe Q > 0)</td></tr>
+<tr><td><strong>Solidification</strong></td><td>Liquide → Solide</td><td>Exothermique (libère Q < 0)</td></tr>
+<tr><td><strong>Vaporisation</strong></td><td>Liquide → Gaz</td><td>Endothermique (absorbe Q > 0)</td></tr>
+<tr><td><strong>Liquéfaction</strong></td><td>Gaz → Liquide</td><td>Exothermique (libère Q < 0)</td></tr>
+<tr><td><strong>Sublimation</strong></td><td>Solide → Gaz</td><td>Endothermique (absorbe Q > 0)</td></tr>
+<tr><td><strong>Condensation</strong> (dépôt)</td><td>Gaz → Solide</td><td>Exothermique (libère Q < 0)</td></tr>
+</tbody></table></div>
+
+<h3>I.2 Vaporisation, évaporation et ébullition</h3>
+<div class="note warn"><strong>Attention — Trois types de vaporisation</strong>
+<p>La <strong>vaporisation</strong> est le passage du liquide au gaz. Il existe trois modes :</p>
+<ul>
+<li><strong>Évaporation</strong> : lente, se produit à toute température, à la surface libre du liquide</li>
+<li><strong>Ébullition</strong> : rapide, se produit à une température caractéristique (température d'ébullition), avec formation de bulles dans tout le liquide</li>
+<li><strong>Ébullition</strong> = vaporisation « rapide » à θ<sub>ébullition</sub></li>
+</ul></div>
+
+<div class="cards">
+<div class="card">
+<h4>Exemples d'évaporation</h4>
+<ul>
+<li>Flaqui d'eau qui sèche au soleil</li>
+<li>Alcool qui s'évapore sur la peau (sensation de froid)</li>
+<li>Linge qui sèche sur l'étendoir</li>
+</ul>
+</div>
+<div class="card">
+<h4>Exemples d'ébullition</h4>
+<ul>
+<li>Eau à 100 °C sous Patm (bulles de vapeur)</li>
+<li>Éthanol à 78 °C sous Patm</li>
+<li>Pression inférieure → θ<sub>éb</sub> plus basse</li>
+</ul>
+</div>
+</div>
+
+<h3>I.3 Notation des états physiques</h3>
+<div class="note"><strong>Convention — Notation (s), (l), (g)</strong>
+<p>L'état physique d'une espèce chimique est indiqué en indice entre parenthèses :</p></div>
+
+<div class="formula">\[\text{H}_2\text{O}_{(s)} = \text{glace} \quad;\quad \text{H}_2\text{O}_{(l)} = \text{eau liquide} \quad;\quad \text{H}_2\text{O}_{(g)} = \text{vapeur d'eau}\]</div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>État</th><th>Notation</th><th>Exemples</th></tr></thead>
+<tbody>
+<tr><td>Solide</td><td>(s)</td><td>\(\mathrm{Fe_{(s)}}\), \(\mathrm{NaCl_{(s)}}\), \(\mathrm{H_2O_{(s)}}\) (glace)</td></tr>
+<tr><td>Liquide</td><td>(l)</td><td>\(\mathrm{H_2O_{(l)}}\), \(\mathrm{C_2H_6O_{(l)}}\) (éthanol)</td></tr>
+<tr><td>Gaz</td><td>(g)</td><td>\(\mathrm{O_{2(g)}}\), \(\mathrm{CO_{2(g)}}\), \(\mathrm{H_2O_{(g)}}\) (vapeur)</td></tr>
+</tbody></table></div>
+
+<h3>I.4 Modèle microscopique des changements d'état</h3>
+<div class="note ok"><strong>Interprétation microscopique</strong>
+<p>Les changements d'état s'expliquent par la modification de l'<strong>agitation thermique</strong> et des <strong>liaisons intermoléculaires</strong> :</p></div>
+
+<div class="cards">
+<div class="card">
+<h4>État solide (s)</h4>
+<ul>
+<li>Entités très proches et ordonnées</li>
+<li>Liaisons intermoléculaires fortes</li>
+<li>Petites vibrations autour de positions fixes</li>
+<li>Forme et volume propres</li>
+</ul>
+</div>
+<div class="card">
+<h4>État liquide (l)</h4>
+<ul>
+<li>Entités proches mais désordonnées</li>
+<li>Liaisons intermoléculaires plus faibles</li>
+<li>Mouvements de glissement entre entités</li>
+<li>Volume propre, forme variable</li>
+</ul>
+</div>
+<div class="card">
+<h4>État gazeux (g)</h4>
+<ul>
+<li>Entités très éloignées et très désordonnées</li>
+<li>Liaisons intermoléculaires quasi nulles</li>
+<li>Mouvements rapides et aléatoires</li>
+<li>Pas de forme ni volume propres</li>
+</ul>
+</div>
+<div class="card">
+<h4>Fusion microscopique</h4>
+<ul>
+<li>La température augmente → agitation augmente</li>
+<li>Les liaisons se brisent partiellement</li>
+<li>Passage de l'ordre (solide) au désordre (liquide)</li>
+<li>Énergie absorbée pour briser les liaisons</li>
+</ul>
+</div>
+</div>
+
+<h3>I.5 Distinction fusion et dissolution</h3>
+<div class="note warn"><strong>Attention — Fusion ≠ Dissolution</strong>
+<p>La <strong>fusion</strong> est un changement d'état (même corps, état différent). La <strong>dissolution</strong> est un mélange (le soluté disparaît dans le solvant).</p></div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Critère</th><th>Fusion</th><th>Dissolution</th></tr></thead>
+<tbody>
+<tr><td>Définition</td><td>Passage solide → liquide</td><td>Soluté se dissout dans un solvant</td></tr>
+<tr><td>Exemple</td><td>Glace → eau liquide</td><td>Sel → eau salée</td></tr>
+<tr><td>Composition</td><td>Même espèce chimique</td><td>Mélange de deux espèces</td></tr>
+<tr><td>Température</td><td>Palier à θ<sub>fusion</sub></td><td>Pas de palier (progressif)</td></tr>
+</tbody></table></div>
+
+<h2 id="s2">II. Énergie d'un changement d'état</h2>
+
+<h3>II.1 Changements d'état endothermiques et exothermiques</h3>
+<div class="note"><strong>Définition — Endothermique (Q > 0)</strong>
+<p>Un changement d'état <strong>endothermique</strong> absorbe de l'énergie (chaleur) : \(Q > 0\). Le système « prend » de la chaleur au milieu extérieur.</p></div>
+<div class="note ok"><strong>Définition — Exothermique (Q < 0)</strong>
+<p>Un changement d'état <strong>exothermique</strong> libère de l'énergie (chaleur) : \(Q < 0\). Le système « cède » de la chaleur au milieu extérieur.</p></div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Changement d'état</th><th>Type</th><th>Q</th><th>Sens</th></tr></thead>
+<tbody>
+<tr><td>Fusion</td><td>Endothermique</td><td>\(Q > 0\)</td><td>Absorbe de la chaleur</td></tr>
+<tr><td>Solidification</td><td>Exothermique</td><td>\(Q < 0\)</td><td>Libère de la chaleur</td></tr>
+<tr><td>Vaporisation</td><td>Endothermique</td><td>\(Q > 0\)</td><td>Absorbe de la chaleur</td></tr>
+<tr><td>Liquéfaction</td><td>Exothermique</td><td>\(Q < 0\)</td><td>Libère de la chaleur</td></tr>
+<tr><td>Sublimation</td><td>Endothermique</td><td>\(Q > 0\)</td><td>Absorbe de la chaleur</td></tr>
+<tr><td>Condensation (dépôt)</td><td>Exothermique</td><td>\(Q < 0\)</td><td>Libère de la chaleur</td></tr>
+</tbody></table></div>
+
+<h3>II.2 Énergie massique de changement d'état</h3>
+<div class="note"><strong>Définition — Énergie massique L</strong>
+<p>L'<strong>énergie massique de changement d'état</strong> \(L\) est l'énergie nécessaire pour effectuer le changement d'état d'<strong>un kilogramme</strong> de corps pur à sa température de changement d'état :</p></div>
+<div class="formula">\[\boxed{Q = m \times L}\]</div>
+<p>avec \(Q\) en joules (J), \(m\) en kilogrammes (kg) et \(L\) en joules par kilogramme (\(\mathrm{J \cdot kg^{-1}}\)).</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th>Corps pur</th><th>\(L_{\text{fusion}}\) (kJ/kg)</th><th>\(L_{\text{vaporisation}}\) (kJ/kg)</th><th>θ<sub>fusion</sub> (°C)</th><th>θ<sub>ébullition</sub> (°C)</th></tr></thead>
+<tbody>
+<tr><td>Eau</td><td>334</td><td>2 260</td><td>0</td><td>100</td></tr>
+<tr><td>Éthanol</td><td>109</td><td>846</td><td>−114</td><td>78</td></tr>
+<tr><td>Fer</td><td>247</td><td>6 340</td><td>1 538</td><td>2 862</td></tr>
+<tr><td>Azote</td><td>26</td><td>199</td><td>−210</td><td>−196</td></tr>
+</tbody></table></div>
+
+<h3>II.3 Énergies opposées pour changements inverses</h3>
+<div class="note ok"><strong>Propriété fondamentale</strong>
+<p>Les énergies massiques de deux changements d'état inverses sont <strong>opposées</strong> :</p></div>
+<div class="formula">\[\boxed{L_{\text{solidification}} = -L_{\text{fusion}} \quad ; \quad L_{\text{liquéfaction}} = -L_{\text{vaporisation}} \quad ; \quad L_{\text{condensation}} = -L_{\text{sublimation}}}\]</div>
+<p>Exemple : \(L_{\text{fusion}}(\text{eau}) = 334\;\mathrm{kJ \cdot kg^{-1}}\) donc \(L_{\text{solidification}}(\text{eau}) = -334\;\mathrm{kJ \cdot kg^{-1}}\).</p>
+
+<h3>II.4 Exemple : énergie libérée par la solidification de l'eau</h3>
+<div class="note"><strong>Application numérique</strong>
+<p>Calculer l'énergie libérée lorsque \(50\;\mathrm{g}\) d'eau liquide à 0 °C se transforment en glace à 0 °C.</p></div>
+
+<div class="formula">\[m = 50\;\mathrm{g} = 0{,}050\;\mathrm{kg}\]
+\[L_{\text{solidification}} = -L_{\text{fusion}} = -334\;\mathrm{kJ \cdot kg^{-1}} = -334\,000\;\mathrm{J \cdot kg^{-1}}\]
+\[Q = m \times L_{\text{solidification}} = 0{,}050 \times (-334\,000) = -16\,700\;\mathrm{J} = \mathbf{-16{,}7\;\mathrm{kJ}}\]</div>
+<p>Le signe négatif indique que l'énergie est <strong>libérée</strong> (exothermique). La solidification de l'eau dégage 16,7 kJ de chaleur.</p>
 
 </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ RELATIONS & DIMENSIONS ═══════ -->
+<div class="panel" id="p-relations">
+<div class="content-card">
+<h3>📐 Relations &amp; Grandeurs — La transformation physique</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Variables &amp; Unités</th><th>Sens physique</th></tr></thead>
+<tbody>
+<tr><td>\(Q = m \times L\)</td><td>\(Q\) en J ; \(m\) en kg ; \(L\) en J·kg⁻¹</td><td>Énergie de changement d'état</td></tr>
+<tr><td>\(L_{\text{solidif.}} = -L_{\text{fusion}}\)</td><td>\(L\) en J·kg⁻¹</td><td>Énergies opposées pour changements inverses</td></tr>
+<tr><td>\(L_{\text{liq.}} = -L_{\text{vap.}}\)</td><td>\(L\) en J·kg⁻¹</td><td>Liquéfaction et vaporisation</td></tr>
+<tr><td>\(L_{\text{cond.}} = -L_{\text{subl.}}\)</td><td>\(L\) en J·kg⁻¹</td><td>Condensation et sublimation</td></tr>
+</tbody></table></div>
+</div>
+<div class="content-card" style="margin-top:16px">
+<h3>🧮 Calculatrice — Q = m × L</h3>
+<div class="neon-sim">
+<canvas id="calcCanvas" height="220"></canvas>
+<div class="sim-body">
+<h4>Calcul d'énergie de changement d'état</h4>
+<div class="sim-inputs">
+<div><label class="neon-label">Masse m (g)</label><input class="neon-input" id="s-m" value="50" type="number" step="1" oninput="calcQ()"/></div>
+<div><label class="neon-label">L (kJ/kg)</label><input class="neon-input" id="s-L" value="334" type="number" step="1" oninput="calcQ()"/></div>
+<div><label class="neon-label">Type</label><select class="neon-input" id="s-type" onchange="calcQ()"><option value="endo">Endothermique (fusion, vap.)</option><option value="exo">Exothermique (solidif., liq.)</option></select></div>
+</div>
+<div class="neon-result" id="s-result">—</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ EXERCICES ═══════ -->
+<div class="panel" id="p-exercices">
+<div class="content-card">
+<h3>✏️ Exercices progressifs</h3>
+
+<div style="margin-bottom:10px"><span class="chip blue">S'entraîner</span></div>
+<div class="exercise">
+<h4>Exercice 1 — Nommer les changements d'état <span class="chip">APP</span></h4>
+<p>Nommer le changement d'état correspondant :<br>
+a) Passage de l'eau liquide à la vapeur d'eau<br>
+b) Passage de la glace à l'eau liquide<br>
+c) Passage de la vapeur d'eau à l'eau liquide<br>
+d) Passage du CO₂ solide (glace carbonique) au CO₂ gazeux</p>
+<details><summary>Correction</summary>
+<p>a) <strong>Vaporisation</strong> (endothermique)<br>
+b) <strong>Fusion</strong> (endothermique)<br>
+c) <strong>Liquéfaction</strong> (exothermique)<br>
+d) <strong>Sublimation</strong> (endothermique — pas de passage par l'état liquide)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Énergie de fusion <span class="chip">APP · REA</span></h4>
+<p>Calculer l'énergie nécessaire pour faire fondre \(200\;\mathrm{g}\) de glace à 0 °C. Donnée : \(L_{\text{fusion}}(\text{eau}) = 334\;\mathrm{kJ \cdot kg^{-1}}\).</p>
+<details><summary>Correction</summary>
+<p>\(m = 200\;\mathrm{g} = 0{,}200\;\mathrm{kg}\)<br>
+\(Q = m \times L_{\text{fusion}} = 0{,}200 \times 334\,000 = 66\,800\;\mathrm{J} = \mathbf{66{,}8\;\mathrm{kJ}}\)<br>
+La fusion est endothermique : \(Q > 0\), l'énergie est absorbée.</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip amber">Appliquer</span></div>
+<div class="exercise">
+<h4>Exercice 3 — Solidification de l'eau <span class="chip">APP · REA</span></h4>
+<p>Calculer l'énergie libérée lors de la solidification de \(50\;\mathrm{g}\) d'eau à 0 °C.</p>
+<details><summary>Correction</summary>
+<p>\(m = 0{,}050\;\mathrm{kg}\), \(L_{\text{solidification}} = -L_{\text{fusion}} = -334\;\mathrm{kJ \cdot kg^{-1}}\)<br>
+\(Q = m \times L_{\text{solidification}} = 0{,}050 \times (-334\,000) = -16\,700\;\mathrm{J} = \mathbf{-16{,}7\;\mathrm{kJ}}\)<br>
+\(Q < 0\) : énergie <strong>libérée</strong> (exothermique).</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Vaporisation de l'éthanol <span class="chip">REA · ANA</span></h4>
+<p>Quelle masse d'éthanol peut être vaporisée avec \(100\;\mathrm{kJ}\) d'énergie ? Donnée : \(L_{\text{vap}}(\text{éthanol}) = 846\;\mathrm{kJ \cdot kg^{-1}}\).</p>
+<details><summary>Correction</summary>
+<p>\(Q = m \times L_{\text{vap}}\) → \(m = Q / L_{\text{vap}} = 100 / 846 = 0{,}118\;\mathrm{kg} = \mathbf{118\;\mathrm{g}}\).</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip purple">Approfondir</span></div>
+<div class="exercise">
+<h4>Exercice 5 — Fusion vs dissolution <span class="chip">ANA · VAL</span></h4>
+<p>On place un morceau de sucre dans l'eau. Le sucre « fond » dans l'eau. Est-ce une fusion ou une dissolution ? Justifier.</p>
+<details><summary>Correction</summary>
+<p>C'est une <strong>dissolution</strong>, pas une fusion ! Le sucre ne passe pas de l'état solide à l'état liquide. Il se dissout dans l'eau : on obtient un mélange (eau sucrée). La preuve : le sucre seul ne fond qu'à 186 °C, alors qu'il se dissout dans l'eau à température ambiante.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 6 — Comparaison d'énergies <span class="chip">ANA · VAL</span></h4>
+<p>Pour l'eau, \(L_{\text{fusion}} = 334\;\mathrm{kJ \cdot kg^{-1}}\) et \(L_{\text{vaporisation}} = 2\,260\;\mathrm{kJ \cdot kg^{-1}}\). Pourquoi la vaporisation nécessite-t-elle beaucoup plus d'énergie que la fusion ?</p>
+<details><summary>Correction</summary>
+<p>La fusion ne brise que <strong>partiellement</strong> les liaisons intermoléculaires (les entités restent proches dans le liquide). La vaporisation nécessite de briser <strong>complètement</strong> ces liaisons pour que les entités soient éloignées dans le gaz. Il faut donc beaucoup plus d'énergie : \(L_{\text{vap}} \approx 7 \times L_{\text{fusion}}\) pour l'eau.</p>
+</details>
+</div>
+</div>
+</div>
+
+<!-- ═══════ FLASHCARDS ═══════ -->
+<div class="panel" id="p-flashcards">
+<div class="content-card">
+<h3>🃏 Flashcards — La transformation physique</h3>
+<p style="color:var(--muted);margin-bottom:18px">Cliquez sur une carte pour la retourner.</p>
+<div class="flashcard-grid" id="fcGrid"></div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+<button class="btn" onclick="renderFC()">↺ Réinitialiser</button>
+</div>
+</div>
+</div>
+
+<!-- ═══════ QUIZ & CHATBOT ═══════ -->
+<div class="panel" id="p-quiz">
+<div class="content-card">
+<h3>🧠 Quiz — La transformation physique</h3>
+<div id="quizArea"></div>
+</div>
+<div class="content-card" style="margin-top:16px">
+<h3>🤖 Chatbot IA — Aide personnalisée</h3>
+<div class="ai-grid">
+<div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:10px">Copiez ce prompt contextualisé dans l'IA de votre choix :</p>
+<textarea class="prompt-box" id="promptBox" readonly>Tu es professeur de physique-chimie niveau Seconde. Explique le chapitre "La transformation physique" : les 6 changements d'état (fusion, solidification, vaporisation, liquéfaction, sublimation, condensation), distinction évaporation/ébullition/vaporisation, notation (s)/(l)/(g), modèle microscopique (agitation thermique, liaisons intermoléculaires), distinction fusion/dissolution, énergie de changement d'état (endothermique Q>0, exothermique Q<0), énergie massique L en J/kg, formule Q=m×L, énergies opposées L_solidification=-L_fusion, exemple 50g d'eau gelant. Donne des exemples numériques avec formules LaTeX et unités.</textarea>
+<div class="btn-row">
+<button class="btn primary" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value)">📋 Copier</button>
+<a href="https://claude.ai" target="_blank" class="btn">Claude ↗</a>
+<a href="https://chat.openai.com" target="_blank" class="btn">ChatGPT ↗</a>
+<a href="https://gemini.google.com" target="_blank" class="btn">Gemini ↗</a>
+<a href="https://copilot.microsoft.com" target="_blank" class="btn">Copilot ↗</a>
+</div>
+</div>
+<div>
+<h4 style="margin:0 0 10px">Questions suggérées</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" onclick="setPrompt('Quels sont les 6 changements d\'état ? Classez-les en endothermiques et exothermiques.')">Les 6 changements d'état</button>
+<button class="btn" onclick="setPrompt('Pourquoi L_vaporisation de l\'eau est-elle 7 fois plus grande que L_fusion ? Expliquez avec le modèle microscopique.')">L_vap vs L_fusion</button>
+<button class="btn" onclick="setPrompt('Comment utiliser Q = m × L ? Montrez un exemple complet avec la solidification de 50 g d\'eau.')">Calcul Q = m × L</button>
+<button class="btn" onclick="setPrompt('Quelle est la différence entre fusion et dissolution ? Donnez des exemples.')">Fusion vs dissolution</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ CARTE MENTALE ═══════ -->
+<div class="panel" id="p-mindmap">
+<div class="content-card">
+<h3>🗺️ Carte mentale — La transformation physique</h3>
+<div class="mindmap">
+<div class="map-center">❄️ La transformation physique</div>
+<div class="map-branches">
+<div class="map-branch" style="border-color:rgba(200,117,51,.3)">
+<h4 style="color:var(--orange)">🧊 Endothermique</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Fusion (s → l)</li>
+<li>Vaporisation (l → g)</li>
+<li>Sublimation (s → g)</li>
+<li>Q > 0 (absorbe chaleur)</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(183,121,31,.3)">
+<h4 style="color:var(--amber)">🔥 Exothermique</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Solidification (l → s)</li>
+<li>Liquéfaction (g → l)</li>
+<li>Condensation (g → s)</li>
+<li>Q < 0 (libère chaleur)</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(91,74,159,.3)">
+<h4 style="color:var(--purple)">⚡ Énergie Q</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Q = m × L</li>
+<li>L en J/kg</li>
+<li>L_solidif = −L_fusion</li>
+<li>L_liq = −L_vap</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(47,133,90,.3)">
+<h4 style="color:var(--green)">🔬 Microscopique</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Solide : ordonné, lié</li>
+<li>Liquide : proche, mobile</li>
+<li>Gaz : éloigné, libre</li>
+<li>Fusion = briser liaisons</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(58,138,159,.3)">
+<h4 style="color:var(--cyan)">💧 Eau</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>L_fusion = 334 kJ/kg</li>
+<li>L_vap = 2 260 kJ/kg</li>
+<li>θ_fus = 0 °C</li>
+<li>θ_éb = 100 °C</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(185,28,28,.3)">
+<h4 style="color:var(--red)">⚠️ Attention</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Fusion ≠ dissolution</li>
+<li>Vaporisation ≠ ébullition</li>
+<li>(s)/(l)/(g) à préciser</li>
+<li>Chgmt d'état : même corps</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ SIMULATIONS ═══════ -->
+<div class="panel" id="p-simulations">
+<div class="content-card">
+<h3>🔬 Simulations interactives</h3>
+<div class="neon-sim" style="margin-bottom:18px">
+<canvas id="simCanvas" height="280"></canvas>
+<div class="sim-body">
+<h4>Simulation — Changements d'état et agitation moléculaire</h4>
+<p>Visualisez l'agitation des molécules dans les trois états de la matière.</p>
+<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+<button class="btn primary" onclick="startSim()">▶ Démarrer</button>
+<button class="btn" onclick="stopSim()">⏹ Arrêter</button>
+</div>
+</div>
+</div>
+<div class="sim-grid-2">
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">États de la matière (PhET)</h4><p style="color:var(--muted);font-size:13px">Explorez solide, liquide, gaz et les transitions.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/states-of-matter-basics/latest/states-of-matter-basics_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Changements d'état avancés (PhET)</h4><p style="color:var(--muted);font-size:13px">Énergie, température et transitions de phase.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/states-of-matter/latest/states-of-matter_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ ECE ═══════ -->
+<div class="panel" id="p-ece">
+<div class="content-card">
+<h3>🧪 ECE — Détermination de l'énergie massique de fusion de la glace</h3>
+<p style="color:var(--muted);margin-bottom:16px">TP : Déterminer expérimentalement \(L_{\text{fusion}}\) de la glace par calorimétrie.</p>
+<div class="ece-steps">
+<div class="ece-step">
+<b>① Matériel</b>
+<p style="color:var(--muted);font-size:13px">Calorimètre, thermomètre (0,1 °C), balance (0,1 g), glaçons, eau chaude, bécher, chronomètre.</p>
+</div>
+<div class="ece-step">
+<b>② Mesure initiale</b>
+<p style="color:var(--muted);font-size:13px">Verser une masse \(m_1\) d'eau chaude (≈ 50 °C) dans le calorimètre. Mesurer la température initiale \(\theta_1\).</p>
+</div>
+<div class="ece-step">
+<b>③ Ajout de la glace</b>
+<p style="color:var(--muted);font-size:13px">Ajouter rapidement une masse \(m_2\) de glaçons (essuyés) à 0 °C. Fermer le calorimètre et agiter doucement.</p>
+</div>
+<div class="ece-step">
+<b>④ Mesure finale</b>
+<p style="color:var(--muted);font-size:13px">Attendre l'équilibre thermique (température stable). Relever la température finale \(\theta_f\). Peser pour vérifier \(m_2\).</p>
+</div>
+<div class="ece-step">
+<b>⑤ Calcul</b>
+<p style="color:var(--muted);font-size:13px">Bilan énergétique : \(m_1 c_e (\theta_1 - \theta_f) = m_2 L_{\text{fusion}} + m_2 c_e (\theta_f - 0)\). En déduire \(L_{\text{fusion}}\).</p>
+</div>
+<div class="ece-step">
+<b>⑥ Conclusion</b>
+<p style="color:var(--muted);font-size:13px">Comparer avec la valeur de référence \(L_{\text{fusion}} = 334\;\mathrm{kJ \cdot kg^{-1}}\). Discuter des incertitudes (pertes thermiques, glaçons pas à 0 °C).</p>
+</div>
+</div>
+<div class="neon-sim" style="margin-top:18px">
+<canvas id="eceCanvas" height="240"></canvas>
+<div class="sim-body">
+<h4>Visualisation — Calorimétrie et fusion de la glace</h4>
+<p>L'eau chaude (rouge) cède de la chaleur à la glace (bleue) qui fond. La température finale est intermédiaire.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ VERS LA 1ÈRE SPÉ ═══════ -->
+<div class="panel" id="p-terminale">
+<div class="content-card">
+<h3>🚀 Vers la 1ère Spé</h3>
+<div class="cards">
+<div class="card">
+<h4>Ce qui sera approfondi en 1ère</h4>
+<ul>
+<li><strong>Thermodynamique</strong> : premier principe (\(\Delta U = Q + W\)), énergie interne, transferts thermiques</li>
+<li><strong>Enthalpie de changement d'état</strong> : \(\Delta H\) au lieu de \(Q\), enthalpie de fusion, de vaporisation</li>
+<li><strong>Diagrammes de phase</strong> : diagramme (P, T), point triple, point critique, courbes de coexistence</li>
+<li><strong>Transferts thermiques</strong> : conduction, convection, rayonnement, résistance thermique</li>
+</ul>
+</div>
+<div class="card">
+<h4>Liens avec d'autres notions</h4>
+<ul>
+<li><strong>Chapitre Atomes</strong> : liaisons intermoléculaires, énergie de liaison</li>
+<li><strong>Chapitre Solutions</strong> : dissolution, solubilité, concentration</li>
+<li><strong>SVT — Climat</strong> : cycle de l'eau, évaporation, précipitations</li>
+<li><strong>Mathématiques</strong> : proportionnalité, calculs d'incertitude</li>
+</ul>
+</div>
+</div>
+<div class="content-card" style="background:var(--orange3);border-color:rgba(200,117,51,.22);margin-top:16px">
+<h4 style="color:var(--orange)">🏆 Mini-défi — Vers la 1ère</h4>
+<p style="color:var(--muted)">On veut vaporiser complètement \(100\;\mathrm{g}\) d'eau initialement à \(20\;\mathrm{°C}\). Sachant que \(c_e = 4{,}18\;\mathrm{kJ \cdot kg^{-1} \cdot °C^{-1}}\) et \(L_{\text{vap}} = 2\,260\;\mathrm{kJ \cdot kg^{-1}}\), calculer l'énergie totale nécessaire.</p>
+<details><summary style="cursor:pointer;color:var(--orange);font-weight:700">Réponse</summary>
+<p style="color:var(--muted)"><strong>Étape 1</strong> — Chauffer de 20 °C à 100 °C : \(Q_1 = m \times c_e \times \Delta\theta = 0{,}100 \times 4\,180 \times 80 = 33\,440\;\mathrm{J} = 33{,}4\;\mathrm{kJ}\)<br>
+<strong>Étape 2</strong> — Vaporiser à 100 °C : \(Q_2 = m \times L_{\text{vap}} = 0{,}100 \times 2\,260\,000 = 226\,000\;\mathrm{J} = 226\;\mathrm{kJ}\)<br>
+<strong>Total</strong> : \(Q = Q_1 + Q_2 = 33{,}4 + 226 = \mathbf{259{,}4\;\mathrm{kJ}}\)<br>
+La vaporisation nécessite beaucoup plus d'énergie que le chauffage !</p>
+</details>
+</div>
+</div>
+</div>
+
+</div><!-- /page -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+/* ══ THEME ══ */
+(function(){const t=localStorage.getItem('pc_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pc_theme',n);drawHero();drawECE();drawSimCanvas();}
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* ══ TABS ══ */
+const PANELS={cours:'p-cours',relations:'p-relations',exercices:'p-exercices',flashcards:'p-flashcards',quiz:'p-quiz',mindmap:'p-mindmap',simulations:'p-simulations',ece:'p-ece',terminale:'p-terminale'};
+const visited=new Set();
+function switchTab(t){
+  Object.values(PANELS).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const el=document.getElementById(PANELS[t]);if(el)el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  visited.add(t);updateMastery();
+  if(t==='flashcards'&&!fcBuilt)buildFC();
+  if(t==='quiz'&&!quizBuilt)buildQuiz();
+  if(t==='simulations')setTimeout(startSim,200);
+  if(t==='ece')setTimeout(drawECE,100);
+  if(t==='relations')setTimeout(calcQ,100);
+}
+function updateMastery(){const pct=Math.round(visited.size/9*100);document.getElementById('masterBar').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+' %';}
+
+/* ══ HERO CANVAS — phase transitions ══ */
+const hC=document.getElementById('heroCanvas');
+const hCtx=hC.getContext('2d');
+let hParts=[];
+function initHero(){
+  hParts=[];
+  for(let i=0;i<40;i++){
+    const state=i<14?'s':i<28?'l':'g';
+    hParts.push({x:20+Math.random()*460,y:20+Math.random()*190,vx:state==='g'?(Math.random()-.5)*3:(Math.random()-.5)*0.3,vy:state==='g'?(Math.random()-.5)*3:(Math.random()-.5)*0.3,r:state==='s'?4:state==='l'?3:2,state});
+  }
+}
+function drawHero(){
+  const W=hC.width=hC.offsetWidth||500,H=hC.height=hC.offsetHeight||230;
+  const ctx=hCtx;const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=dark?'#1A0F08':'#FAF0E8';ctx.fillRect(0,0,W,H);
+  // Zone labels
+  ctx.font='bold 10px Inter';ctx.fillStyle='rgba(200,117,51,0.5)';
+  ctx.fillText('Solide (s)',15,20);ctx.fillText('Liquide (l)',175,20);ctx.fillText('Gaz (g)',375,20);
+  // Dividers
+  ctx.strokeStyle='rgba(200,117,51,0.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(165,10);ctx.lineTo(165,H-10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(335,10);ctx.lineTo(335,H-10);ctx.stroke();
+  ctx.setLineDash([]);
+  // Particles
+  hParts.forEach(p=>{
+    const col=p.state==='s'?'rgba(91,74,159,':p.state==='l'?'rgba(47,133,164,':'rgba(200,117,51,';
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=col+'0.6)';ctx.fill();
+    if(p.state==='s'){ctx.strokeStyle=col+'0.3)';ctx.lineWidth=0.5;ctx.stroke();}
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<5||p.x>W-5)p.vx*=-1;
+    if(p.y<5||p.y>H-5)p.vy*=-1;
   });
-});
+  // Arrows
+  const t=Date.now()/1500;
+  ctx.fillStyle='rgba(200,117,51,'+(0.4+0.3*Math.sin(t))+')';
+  ctx.font='bold 16px Inter';ctx.textAlign='center';
+  ctx.fillText('→',165,H/2);
+  ctx.fillText('→',335,H/2);
+  ctx.font='9px Inter';ctx.fillStyle='rgba(200,117,51,0.4)';
+  ctx.fillText('fusion',165,H/2+14);
+  ctx.fillText('vaporisation',335,H/2+14);
+  ctx.textAlign='left';
+}
+initHero();
+(function hloop(){drawHero();requestAnimationFrame(hloop);})();
+
+/* ══ SIMULATION ══ */
+let simRunning=false,simAnim=null;
+function startSim(){if(simRunning)return;simRunning=true;(function sl(){if(!simRunning)return;drawSimCanvas();simAnim=requestAnimationFrame(sl);})();}
+function stopSim(){simRunning=false;if(simAnim)cancelAnimationFrame(simAnim);}
+function drawSimCanvas(){
+  const c=document.getElementById('simCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=280;
+  const ctx=c.getContext('2d');const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=dark?'#1A0F08':'#FAF0E8';ctx.fillRect(0,0,W,H);
+  const t=Date.now()/1000;
+  // 3 zones: solid, liquid, gas
+  const zw=W/3;
+  // Solid zone
+  ctx.fillStyle='rgba(91,74,159,0.06)';ctx.fillRect(0,0,zw,H);
+  ctx.strokeStyle='rgba(91,74,159,0.2)';ctx.lineWidth=1;ctx.strokeRect(0,0,zw,H);
+  ctx.font='bold 11px Inter';ctx.fillStyle=dark?'#A08ED8':'#5B4A9F';ctx.textAlign='center';ctx.fillText('Solide (s)',zw/2,20);
+  // Grid of particles
+  for(let i=0;i<5;i++){for(let j=0;j<4;j++){
+    const px=30+i*45+Math.sin(t+i+j)*2;const py=40+j*50+Math.cos(t+i-j)*2;
+    ctx.fillStyle='rgba(91,74,159,0.5)';ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();
+    // bonds
+    if(i<4){ctx.strokeStyle='rgba(91,74,159,0.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(px+5,py);ctx.lineTo(px+40,py+Math.sin(t)*2);ctx.stroke();}
+  }}
+  // Liquid zone
+  ctx.fillStyle='rgba(47,133,164,0.06)';ctx.fillRect(zw,0,zw,H);
+  ctx.strokeStyle='rgba(47,133,164,0.2)';ctx.strokeRect(zw,0,zw,H);
+  ctx.fillStyle=dark?'#6BC4D8':'#3A8A9F';ctx.fillText('Liquide (l)',zw+zw/2,20);
+  for(let i=0;i<15;i++){
+    const px=zw+20+Math.random()*(zw-40);const py=40+i*15+Math.sin(t*2+i)*5;
+    ctx.fillStyle='rgba(47,133,164,0.5)';ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();
+  }
+  // Gas zone
+  ctx.fillStyle='rgba(200,117,51,0.06)';ctx.fillRect(2*zw,0,zw,H);
+  ctx.strokeStyle='rgba(200,117,51,0.2)';ctx.strokeRect(2*zw,0,zw,H);
+  ctx.fillStyle=dark?'#E09860':'#C87533';ctx.fillText('Gaz (g)',2*zw+zw/2,20);
+  for(let i=0;i<10;i++){
+    const px=2*zw+20+((t*30+i*50)%(zw-40));const py=40+((t*20+i*40)%(H-60));
+    ctx.fillStyle='rgba(200,117,51,0.4)';ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);ctx.fill();
+  }
+  ctx.textAlign='left';
+}
+
+/* ══ ECE CANVAS ══ */
+function drawECE(){
+  const c=document.getElementById('eceCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=240;
+  const ctx=c.getContext('2d');const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=dark?'#1A0F08':'#FAF0E8';ctx.fillRect(0,0,W,H);
+  // Calorimeter
+  const cx=W/2,cy=120,cw=160,ch=140;
+  ctx.strokeStyle=dark?'rgba(224,152,96,0.5)':'rgba(200,117,51,0.4)';ctx.lineWidth=3;
+  ctx.strokeRect(cx-cw/2,cy-ch/2,cw,ch);
+  // Lid
+  ctx.strokeRect(cx-cw/2-5,cy-ch/2-10,cw+10,10);
+  // Thermometer
+  ctx.strokeStyle='rgba(185,28,28,0.5)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx+10,cy-ch/2-10);ctx.lineTo(cx+10,cy-ch/2-40);ctx.stroke();
+  ctx.fillStyle='rgba(185,28,28,0.7)';ctx.beginPath();ctx.arc(cx+10,cy-ch/2-43,5,0,Math.PI*2);ctx.fill();
+  // Water (warm)
+  ctx.fillStyle='rgba(200,117,51,0.2)';ctx.fillRect(cx-cw/2+3,cy,ch-6,ch/2-3);
+  // Ice cubes
+  const t=Date.now()/2000;
+  const iceY=cy+20+Math.sin(t)*3;
+  ctx.fillStyle='rgba(47,133,164,0.3)';ctx.fillRect(cx-30,iceY,20,15);ctx.fillRect(cx+10,iceY+5,20,15);
+  // Labels
+  ctx.font='bold 11px Inter';ctx.fillStyle=dark?'#E09860':'#C87533';ctx.textAlign='center';
+  ctx.fillText('Calorimètre',cx,cy-ch/2-55);
+  ctx.font='9px Inter';ctx.fillStyle=dark?'#8A6A50':'#7A5C4A';
+  ctx.fillText('Eau chaude',cx,ch/2+15);
+  ctx.fillText('Glaçons',cx,ch/2+28);
+  ctx.fillText('Q = m₁c(θ₁-θf) = m₂L + m₂c(θf-0)',W/2,H-15);
+  ctx.textAlign='left';
+}
+
+/* ══ CALCULATOR ══ */
+function calcQ(){
+  const m=parseFloat(document.getElementById('s-m').value)||50;
+  const L=parseFloat(document.getElementById('s-L').value)||334;
+  const type=document.getElementById('s-type').value;
+  const mKg=m/1000;
+  const sign=type==='endo'?1:-1;
+  const Q=mKg*L*1000*sign;
+  const qKJ=Q/1000;
+  const typeLabel=type==='endo'?'ENDOTHERMIQUE (absorbe)':'EXOTHERMIQUE (libère)';
+  const changeName=type==='endo'?'fusion / vaporisation / sublimation':'solidification / liquéfaction / condensation';
+  document.getElementById('s-result').textContent=
+    `m = ${m} g = ${mKg.toFixed(4)} kg\nL = ${L} kJ/kg = ${(L*1000).toFixed(0)} J/kg\n\n`+
+    `Q = m × L = ${mKg.toFixed(4)} × ${(sign*L*1000).toFixed(0)}\n`+
+    `Q = ${Q.toFixed(0)} J = ${qKJ.toFixed(2)} kJ\n\n`+
+    `→ ${typeLabel}\n→ Changement : ${changeName}`;
+  const c=document.getElementById('calcCanvas');if(!c)return;
+  c.width=c.offsetWidth||500;const W=c.width;
+  const ctx=c.getContext('2d');const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=dark?'#1A0F08':'#FAF0E8';ctx.fillRect(0,0,W,220);
+  // Energy bar
+  const barW=Math.min(Math.abs(qKJ)/500*W*0.7,W*0.7);
+  const barCol=type==='endo'?'rgba(200,117,51,':'rgba(47,133,90,';
+  ctx.fillStyle=barCol+'0.15)';ctx.fillRect(40,60,W-80,40);
+  ctx.fillStyle=barCol+'0.6)';ctx.fillRect(40,60,barW,40);
+  ctx.strokeStyle=barCol+'0.8)';ctx.lineWidth=1;ctx.strokeRect(40,60,W-80,40);
+  ctx.font='bold 12px Inter';ctx.textAlign='center';
+  ctx.fillStyle=dark?'#E09860':'#C87533';
+  ctx.fillText(`Q = ${qKJ.toFixed(1)} kJ`,W/2,85);
+  ctx.fillText(type==='endo'?'→ Absorbe de l\'énergie':'→ Libère de l\'énergie',W/2,130);
+  ctx.font='10px Inter';ctx.fillStyle=dark?'#8A6A50':'#7A5C4A';
+  ctx.fillText(`${changeName}`,W/2,150);
+  ctx.textAlign='left';
+}
+
+/* ══ FLASHCARDS ══ */
+const FC_DATA=[
+  {q:'Les 6 changements d\'état',a:'Fusion (s→l), Solidification (l→s), Vaporisation (l→g), Liquéfaction (g→l), Sublimation (s→g), Condensation (g→s).'},
+  {q:'Fusion : définition',a:'Passage de l\'état solide à l\'état liquide. Endothermique (Q > 0). Ex : glace → eau à 0 °C.'},
+  {q:'Vaporisation vs évaporation vs ébullition',a:'Vaporisation = passage l→g (terme général). Évaporation = lente, surface, toute θ. Ébullition = rapide, bulles, à θ_ébullition.'},
+  {q:'Notation des états physiques',a:'(s) = solide, (l) = liquide, (g) = gaz. Ex : H₂O(s) = glace, H₂O(l) = eau, H₂O(g) = vapeur.'},
+  {q:'Modèle microscopique : solide',a:'Entités ordonnées, liaisons fortes, petites vibrations. Forme et volume propres.'},
+  {q:'Modèle microscopique : liquide',a:'Entités proches mais désordonnées, liaisons faibles, glissement. Volume propre, forme variable.'},
+  {q:'Modèle microscopique : gaz',a:'Entités éloignées, liaisons quasi nulles, mouvements rapides. Pas de forme ni volume propres.'},
+  {q:'Fusion vs dissolution',a:'Fusion = changement d\'état (même corps, s→l). Dissolution = mélange (soluté + solvant). Sucre qui fond dans l\'eau = dissolution !'},
+  {q:'Endothermique : définition',a:'Absorbe de la chaleur (Q > 0). Fusion, vaporisation, sublimation.'},
+  {q:'Exothermique : définition',a:'Libère de la chaleur (Q < 0). Solidification, liquéfaction, condensation.'},
+  {q:'Formule Q = m × L',a:'Q en J, m en kg, L en J/kg. L = énergie massique de changement d\'état.'},
+  {q:'L_solidification = ?',a:'L_solidification = −L_fusion. Les énergies sont opposées pour les changements inverses.'},
+  {q:'L_fusion(eau) = ?',a:'334 kJ/kg = 334 000 J/kg. Pour 1 kg de glace → eau à 0 °C.'},
+  {q:'L_vaporisation(eau) = ?',a:'2 260 kJ/kg ≈ 7 × L_fusion. Beaucoup plus d\'énergie car il faut briser toutes les liaisons.'},
+  {q:'Pourquoi L_vap >> L_fus ?',a:'La fusion brise partiellement les liaisons (entités restent proches). La vaporisation les brise complètement (entités éloignées dans le gaz).'}
+];
+let fcBuilt=false,fcOrder=[];
+function buildFC(){fcBuilt=true;fcOrder=[...Array(FC_DATA.length).keys()];renderFC();}
+function renderFC(){
+  const g=document.getElementById('fcGrid');if(!g)return;
+  g.innerHTML=fcOrder.map(i=>{
+    const c=FC_DATA[i];
+    return`<div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flash-front"><b>${c.q}</b><p style="font-size:11px;color:var(--faint);margin-top:8px">Cliquez pour voir la réponse</p></div>
+        <div class="flash-back">${c.a}</div>
+      </div></div>`;
+  }).join('');
+}
+function shuffleFC(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}renderFC();}
+
+/* ══ QUIZ ══ */
+const QUIZ=[
+  {q:'Le passage solide → liquide est :',opts:['La solidification','La fusion','La sublimation','La liquéfaction'],c:1,e:'Fusion : solide → liquide. Endothermique.'},
+  {q:'Le passage gaz → solide est :',opts:['La sublimation','La liquéfaction','La condensation (dépôt)','La vaporisation'],c:2,e:'Condensation (dépôt) : gaz → solide. Ex : givre.'},
+  {q:'Un changement endothermique :',opts:['Libère Q < 0','Absorbe Q > 0','Ne transfère pas d\'énergie','A toujours Q = 0'],c:1,e:'Endothermique = absorbe de la chaleur (Q > 0). Fusion, vaporisation, sublimation.'},
+  {q:'La formule Q = m × L s\'applique :',opts:['À tout transfert thermique','Seulement aux changements d\'état','Au chauffage sans changement d\'état','À la dissolution'],c:1,e:'Q = m × L est valable uniquement pendant un changement d\'état (palier de température).'},
+  {q:'L_solidification(eau) = ?',opts:['334 kJ/kg','-334 kJ/kg','2 260 kJ/kg','-2 260 kJ/kg'],c:1,e:'L_solidification = -L_fusion = -334 kJ/kg. Le signe négatif indique que l\'énergie est libérée.'},
+  {q:'L\'évaporation est :',opts:['Rapide et à θ_éb','Lente et à toute température','Rapide avec bulles','Identique à l\'ébullition'],c:1,e:'L\'évaporation est lente, se produit à la surface et à toute température.'},
+  {q:'La notation (g) signifie :',opts:['Gramme','Gaz','Glace','Grand'],c:1,e:'(g) = état gazeux. Ex : H₂O(g) = vapeur d\'eau.'},
+  {q:'Si 50 g d\'eau gelent, l\'énergie libérée est :',opts:['16,7 kJ','-16,7 kJ','334 kJ','-334 kJ'],c:1,e:'Q = 0,050 × (-334 000) = -16 700 J = -16,7 kJ. Négatif = libérée.'},
+  {q:'Fusion et dissolution :',opts:['C\'est la même chose','Fusion = changement d\'état, dissolution = mélange','Dissolution est plus rapide','Fusion nécessite un solvant'],c:1,e:'Fusion = même corps change d\'état. Dissolution = mélange de deux espèces.'},
+  {q:'Pourquoi L_vap >> L_fus ?',opts:['Car la vaporisation est plus rapide','Car il faut briser complètement les liaisons','Car la température est plus élevée','Car la masse diminue'],c:1,e:'La vaporisation brise totalement les liaisons (entités éloignées dans le gaz), la fusion ne les brise que partiellement.'}
+];
+let quizBuilt=false,qi=0,qscore=0;
+function buildQuiz(){quizBuilt=true;qi=0;qscore=0;showQ();}
+function showQ(){
+  const a=document.getElementById('quizArea');if(!a)return;
+  if(qi>=QUIZ.length){a.innerHTML=`<div style="border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;text-align:center;box-shadow:var(--shadow2)"><div style="font-size:52px;font-weight:800;color:var(--orange)">${qscore}/${QUIZ.length}</div><p style="color:var(--muted)">${Math.round(qscore/QUIZ.length*100)} % — ${qscore>=8?'🏆 Excellent !':qscore>=6?'👍 Bien !':'📚 Relis le cours'}</p><button class="btn primary" onclick="qi=0;qscore=0;showQ()">🔄 Recommencer</button></div>`;return;}
+  const q=QUIZ[qi];
+  a.innerHTML=`<div style="border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)"><div style="font-size:11px;font-weight:800;color:var(--faint);letter-spacing:.1em;margin-bottom:8px">Q ${qi+1} / ${QUIZ.length}</div>
+  <p style="font-weight:700;margin-bottom:12px">${q.q}</p>
+  ${q.opts.map((o,i)=>`<button class="option" id="opt${i}" onclick="answerQ(${i})">${o}</button>`).join('')}
+  <div id="qexp" style="display:none;margin-top:12px;padding:12px;background:var(--green2);border-radius:12px;font-size:13px;color:var(--green)"></div>
+  <button id="qnext" style="display:none;margin-top:10px" class="btn primary" onclick="qi++;showQ()">Suivante →</button>
+  </div>`;
+}
+function answerQ(i){
+  const q=QUIZ[qi];
+  document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+  document.getElementById('opt'+q.c).classList.add('correct');
+  if(i!==q.c)document.getElementById('opt'+i).classList.add('wrong');
+  else qscore++;
+  const ex=document.getElementById('qexp');ex.textContent='💡 '+q.e;ex.style.display='block';
+  document.getElementById('qnext').style.display='inline-flex';
+}
+function setPrompt(t){document.getElementById('promptBox').value=t;}
+
+/* ══ INIT ══ */
+setTimeout(()=>{calcQ();drawECE();},300);
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>

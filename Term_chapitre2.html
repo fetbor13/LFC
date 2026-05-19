@@ -1,181 +1,1126 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terminale Spé · Chapitre 2 — Analyse spectrale | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<meta name="description" content="Cours Terminale spécialité physique-chimie : analyse spectrale, photons, absorbance, loi de Beer-Lambert, étalonnage, ECE et ouverture PCSI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)'], ['$', '$']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  --bg:#f6f8fb;--bg2:#edf2f7;--panel:#fff;--panel2:#fbfcfe;--line:#d8e0ea;--line2:#c7d2df;
+  --text:#111827;--muted:#607084;--faint:#8a98aa;--blue:#0f766e;--blue2:#0369a1;--blue3:#e6f6f3;
+  --green:#15803d;--green2:#ecfdf3;--amber:#c2410c;--amber2:#fff0e8;--red:#b42318;--red2:#fff0ef;
+  --mauve:#4f46e5;--mauve2:#eeedff;--cyan:#0369a1;--cyan2:#e8f5ff;
+  --shadow:0 18px 38px rgba(17,24,39,.08);--shadow2:0 10px 24px rgba(17,24,39,.065);
+  --side:286px;--content:1280px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+[data-theme="dark"]{
+  --bg:#0b1018;--bg2:#111827;--panel:#151c28;--panel2:#182233;--line:#2a3444;--line2:#39475c;
+  --text:#f3f7fb;--muted:#a9b6c7;--faint:#7f8da1;--blue:#5eead4;--blue2:#7dd3fc;--blue3:rgba(20,184,166,.12);
+  --green:#86efac;--green2:rgba(34,197,94,.12);--amber:#fb923c;--amber2:rgba(251,146,60,.12);
+  --red:#fca5a5;--red2:rgba(248,113,113,.12);--mauve:#a5b4fc;--mauve2:rgba(99,102,241,.16);
+  --cyan:#7dd3fc;--cyan2:rgba(14,165,233,.13);--shadow:0 18px 44px rgba(0,0,0,.28);--shadow2:0 10px 30px rgba(0,0,0,.24);
+}
+*{box-sizing:border-box;letter-spacing:0}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.62;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--blue);color:white;padding:10px 16px;border-radius:0 0 8px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(15,23,42,.78)}.brand{display:flex;align-items:center;gap:10px;margin:2px 0 18px}.brand-mark{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;color:white;box-shadow:var(--shadow);font-weight:800}.brand h1{font-size:17px;line-height:1.1;margin:0;font-weight:800}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow);margin-bottom:14px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);color:var(--blue);background:var(--blue3);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800}.micro{color:var(--faint);font-size:11px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--faint);font-weight:800;margin:18px 0 8px}.tablist{display:grid;gap:7px}.tab{width:100%;display:grid;grid-template-columns:30px 1fr;align-items:center;gap:9px;border-radius:8px;padding:10px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-weight:780;font-size:13px;text-align:left;transition:.18s}.tab-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);font-size:14px;line-height:1}.tab:hover{border-color:var(--line);background:var(--panel);color:var(--text)}.tab.active{border-color:rgba(15,118,110,.35);background:var(--blue3);color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.tools{display:flex;gap:8px;margin-top:14px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:8px;display:grid;place-items:center;cursor:pointer}.icon-btn:hover{border-color:var(--blue);color:var(--blue)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(246,248,251,.84);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}[data-theme="dark"] .topbar{background:rgba(11,16,24,.84)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--blue);font-weight:760}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn,.primary,.secondary{border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:800}.pill-btn,.secondary{border:1px solid var(--line);background:var(--panel);color:var(--text)}.primary{background:var(--text);color:var(--panel);border:1px solid var(--text)}.pill-btn:hover,.secondary:hover{border-color:var(--blue);color:var(--blue)}.page{max-width:var(--content);margin:0 auto;padding:22px}.hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(340px,.96fr);gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;min-height:214px}.hero-card:before{content:"";position:absolute;right:-120px;top:-120px;width:310px;height:310px;background:radial-gradient(circle,rgba(15,118,110,.09),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.10em}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--blue)}.hero h2{font-size:clamp(31px,4.2vw,42px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 12px;font-weight:800}.hero h2 span{color:var(--blue)}.hero-copy{font-size:15px;color:var(--muted);max-width:72ch;margin:0}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.metric{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px}.metric b{display:block;font-size:20px;color:var(--text);line-height:1}.metric span{font-size:12px;color:var(--muted)}.real-hero-img{height:100%;max-height:214px;min-height:214px;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--line);background:var(--bg2);box-shadow:var(--shadow)}.real-hero-img img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.96) contrast(1.04)}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow)}.useful-card small{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;margin-bottom:8px;background:var(--bg);color:var(--muted)}.useful-card b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}.useful-card span{display:block;color:var(--muted);font-size:13px}.mission-1{background:linear-gradient(180deg,var(--blue3),var(--panel))}.mission-2{background:linear-gradient(180deg,var(--amber2),var(--panel))}.mission-3{background:linear-gradient(180deg,var(--mauve2),var(--panel))}.panel{display:none;scroll-margin-top:78px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}.content-card h3{margin:0 0 12px;font-size:25px;letter-spacing:-.03em;font-weight:800}.content-card p{color:var(--muted)}.course-grid{display:grid;grid-template-columns:158px minmax(0,1fr);gap:24px}.toc{position:sticky;top:78px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:flex;align-items:center;gap:8px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 9px;font-weight:760;font-size:12px;color:var(--muted)}.toc a:nth-of-type(1){background:var(--blue3);color:var(--blue)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--mauve2);color:var(--mauve)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.toc a:nth-of-type(6){background:var(--red2);color:var(--red)}.toc a.active{box-shadow:inset 4px 0 0 currentColor;border-color:currentColor}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--blue);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:800;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.box{border-radius:0 8px 8px 0;padding:16px 18px;margin:18px 0;border-left:4px solid;background:var(--panel);box-shadow:var(--shadow2);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.box-label{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}.box.def{border-left-color:var(--blue)}.box.def .box-label{color:var(--blue)}.box.prop{border-left-color:var(--mauve)}.box.prop .box-label{color:var(--mauve)}.box.warn{border-left-color:var(--amber)}.box.warn .box-label{color:var(--amber)}.box.ok{border-left-color:var(--green)}.box.ok .box-label{color:var(--green)}.formula{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin:14px 0;text-align:center;overflow-x:auto;font-size:17px}.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line);margin:18px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:780}.card p,.card li{font-size:13px;color:var(--muted)}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.chip.blue{background:var(--blue3);color:var(--blue)}.chip.green{background:var(--green2);color:var(--green)}.chip.amber{background:var(--amber2);color:var(--amber)}.chip.mauve{background:var(--mauve2);color:var(--mauve)}details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 14px;margin:10px 0}summary{cursor:pointer;font-weight:800;color:var(--text)}details p{margin-bottom:0}.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:13px}.step b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue);color:white;font-size:12px;margin-bottom:8px}.step span{display:block;font-weight:800;font-size:13px}.step small{display:block;color:var(--muted);font-size:11.5px;line-height:1.45;margin-top:4px}.exercise-list{display:grid;gap:12px}.exercise-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}.exercise-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.exercise-title h4{margin:0;font-size:15px;font-weight:780}.exercise-title small{color:var(--muted);white-space:nowrap}.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.flash-layout{display:grid;grid-template-columns:1fr 290px;gap:16px}.flash-card{height:270px;border-radius:8px;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel),var(--panel2));box-shadow:var(--shadow);display:grid;place-items:center;text-align:center;padding:28px;cursor:pointer;position:relative}.flash-card h3{font-size:23px;letter-spacing:-.035em;margin:0}.flash-card p{color:var(--muted)}.flash-card .hint{position:absolute;bottom:14px;color:var(--faint);font-size:12px}.answers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.quiz-ai-grid{display:grid;grid-template-columns:minmax(300px,.95fr) minmax(340px,1.05fr);gap:16px;align-items:start}.quiz-card,.ai-helper-card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:18px;box-shadow:var(--shadow2)}.quiz-card h4,.ai-helper-card h4{margin:0 0 6px;font-size:18px;letter-spacing:-.025em}.options{display:grid;gap:9px;margin-top:14px}.option{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:11px 13px;cursor:pointer;text-align:left}.option:hover{border-color:var(--blue)}.option.correct{border-color:var(--green);background:var(--green2);color:var(--green)}.option.wrong{border-color:var(--red);background:var(--red2);color:var(--red)}.ai-choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.ai-choice{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:9px 8px;cursor:pointer;font-weight:800;font-size:12px;color:var(--text)}.ai-choice:hover{border-color:var(--mauve);color:var(--mauve);background:var(--mauve2)}.ai-label{display:block;margin:10px 0 6px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.ai-textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);padding:12px 14px;min-height:128px;outline:none}.prompt-box{white-space:pre-wrap;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;line-height:1.6}.mindmap{width:100%;min-height:430px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.mindmap svg{width:100%;height:auto;display:block}.footer-nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.note{font-size:12px;color:var(--faint);margin-top:8px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.sim-block-title{margin:20px 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--faint);font-weight:800}.phet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}.sim-card-large{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;overflow:hidden;box-shadow:var(--shadow2)}.sim-card-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.sim-card-head>span{font-size:22px}.sim-card-head h4{margin:0;font-size:15px;font-weight:780;color:var(--text)}.sim-card-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}.iframe-wrap{position:relative;width:100%;padding-bottom:62%;background:var(--bg2)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.future-sim-suite{display:grid;gap:18px;margin:18px 0 24px}.future-sim-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:16px 18px;box-shadow:var(--shadow2)}.future-sim-title h4{margin:0;font-size:18px;color:var(--text);font-weight:820}.future-sim-title p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:78ch}.future-badge{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:800;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 30%,transparent);background:var(--cyan2);border-radius:999px;padding:6px 9px;white-space:nowrap}.future-lab-grid{display:grid;grid-template-columns:1fr;gap:18px}.future-lab{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);overflow:hidden}.future-lab-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px 9px;border-bottom:1px solid var(--line)}.future-lab-head h4{margin:0;font-size:15px;color:var(--text);font-weight:820}.future-lab-head p{margin:4px 0 0;font-size:11.5px;color:var(--muted)}.future-lab-body{display:grid;grid-template-columns:minmax(230px,300px) minmax(0,1fr);gap:16px;padding:14px 16px 16px}.future-controls{display:grid;gap:10px;align-content:start}.future-control{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:9px 10px}.future-control label{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;font-weight:780;color:var(--text)}.future-control output{font-family:"IBM Plex Mono",monospace;color:var(--blue);white-space:nowrap;font-size:11px}.future-control input{width:100%;margin-top:9px;appearance:none;height:22px;background:transparent;cursor:pointer}.future-control input::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}.future-control input::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);margin-top:-7px;box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-control input::-moz-range-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan))}.future-control input::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-canvas-wrap{border:1px solid rgba(47,98,136,.16);border-radius:8px;overflow:hidden;background:var(--bg);min-width:0}.future-canvas{display:block;width:100%;height:380px}.future-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.future-metric{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 10px;min-height:56px}.future-metric span{display:block;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}.future-metric b{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--text)}.future-equation{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:10px 12px;margin-top:8px;color:var(--muted);font-size:12px}
+@media(max-width:1100px){.future-lab-body{grid-template-columns:1fr}.future-canvas{height:320px}.app{display:block}.rail{position:relative;height:auto}.tablist{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.course-grid,.cards,.quiz-ai-grid,.useful-strip{grid-template-columns:1fr}.real-hero-img{min-height:230px;max-height:230px}.toc{position:relative;top:auto}.topbar{position:relative}.phet-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.page{padding:14px}.hero h2{font-size:32px}.tablist,.hero-grid,.method-grid,.future-metrics,.ai-choice-row{grid-template-columns:1fr}.top-actions{display:none}.real-hero-img{min-height:200px;max-height:200px}.content-card{padding:16px}.future-sim-title{display:block}.future-badge{display:inline-flex;margin-top:10px}.flash-layout{grid-template-columns:1fr}.iframe-wrap{padding-bottom:76%}}
+.key-formula{position:relative}
+.key-formula::before{content:"★ À retenir";position:absolute;top:-10px;right:12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:10px;font-weight:800;letter-spacing:.12em;padding:3px 9px;border-radius:999px;animation:kfPulse 2.8s ease-in-out infinite;pointer-events:none}
+@keyframes kfPulse{0%,100%{box-shadow:0 0 0 0 rgba(79,70,229,.45)}55%{box-shadow:0 0 0 7px rgba(79,70,229,0)}}
+#readProgress{height:3px;background:linear-gradient(90deg,var(--blue),var(--mauve));width:0%;border-radius:0 2px 2px 0;transition:width .18s;margin-bottom:18px}
+@media print{.rail,.topbar,.top-actions,.tools,.useful-strip,.footer-nav,.future-controls{display:none!important}.app{display:block}.page{max-width:100%;padding:0}.panel{display:block!important}.content-card{box-shadow:none;break-inside:avoid}.hero{grid-template-columns:1fr}.real-hero-img{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail" aria-label="Navigation du chapitre">
+  <div class="brand"><div class="brand-mark" aria-hidden="true">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+  <div class="level-card"><div class="level-row"><span class="badge">Terminale Spé</span><span class="micro">Chap. 02</span></div><div class="progress"><span id="masteryBar"></span></div><div class="micro" style="margin-top:8px"><span id="progressText">0%</span> du chapitre exploré</div></div>
+  <div class="nav-label">Sommaire</div>
+  <nav class="tablist" role="tablist" aria-label="Onglets du chapitre">
+    <button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+    <button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+    <button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+    <button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">▣</span><span class="tab-text">Flashcards</span></button>
+    <button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">◎</span><span class="tab-text">Carte mentale</span></button>
+    <button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">⚙</span><span class="tab-text">Simulations</span></button>
+    <button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✓</span><span class="tab-text">Quiz § Chatbot</span></button>
+    <button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+    <button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+  </nav>
+  <div class="tools"><button class="icon-btn" id="themeBtn" title="Thème">◐</button><button class="icon-btn" onclick="window.print()" title="Imprimer">⎙</button><button class="icon-btn" onclick="copyCurrentPrompt()" title="Copier prompt IA">⌘</button></div>
+</aside>
+<main class="main" id="main">
+<div class="topbar"><div class="crumb">Terminale Spé › Chimie › <b>Analyse spectrale</b></div><div class="top-actions"><button class="pill-btn" onclick="switchTab('outils')">Relations clés</button><button class="pill-btn" onclick="switchTab('simulations')">Simuler</button></div></div>
+<div class="page">
+<section class="hero" aria-label="Introduction du chapitre">
+  <div class="hero-card">
+    <div class="eyebrow">Terminale Spé · Chapitre 02</div>
+    <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+    <h2>Analyse <span>spectrale</span></h2>
+    <p class="hero-copy">Relier une lumière à son spectre, comprendre l’énergie d’un photon, puis utiliser l’absorbance pour déterminer une concentration. Ce chapitre transforme une couleur en information quantitative : identifier une espèce, suivre une transformation, contrôler une solution ou vérifier une dilution.</p>
+    <div class="hero-grid"><div class="metric"><b>3</b><span>idées physiques</span></div><div class="metric"><b>6</b><span>relations utiles</span></div><div class="metric"><b>2</b><span>simulations pleine largeur</span></div></div>
+  </div>
+  <figure class="real-hero-img" aria-label="Spectrophotomètre UV-visible"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/DU640_spectrophotometer.jpg" alt="Spectrophotomètre UV-visible de laboratoire"></figure>
+</section>
+<section class="useful-strip" aria-label="Objectifs">
+  <div class="useful-card mission-1"><small>Comprendre</small><b>Du spectre à la matière</b><span>Un spectre révèle les radiations émises, transmises ou absorbées par une espèce chimique.</span></div>
+  <div class="useful-card mission-2"><small>Mesurer</small><b>Beer-Lambert</b><span>Une absorbance devient une concentration si la solution est diluée et la mesure correctement étalonnée.</span></div>
+  <div class="useful-card mission-3"><small>Réussir</small><b>ECE et Bac</b><span>Choisir \(\lambda_{\max}\), faire le blanc, tracer une droite et discuter le domaine de validité.</span></div>
+</section>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · PC · LFC</p>
+<section class="panel active" id="tab-cours">
+<div class="content-card">
+<h3>Cours complet</h3>
+<div class="course-grid">
+  <aside class="toc" aria-label="Plan du cours">
+    <div class="toc-title">Plan rapide</div>
+    <a href="#c1">1. Pourquoi un spectre ?</a>
+    <a href="#c2">2. Photon et longueur d’onde</a>
+    <a href="#c3">3. Absorption, couleur, concentration</a>
+    <a href="#c4">4. Loi de Beer-Lambert</a>
+    <a href="#c5">5. Dosage par étalonnage</a>
+    <a href="#c6">6. Pièges expérimentaux</a>
+    <a href="#c7">7. Spectroscopie IR</a>
+    <a href="#c8">8. RMN du proton</a>
+    <a href="#c9">9. Applications</a>
+  </aside>
+  <article class="course-body">
+    <h2 id="c1">1. Pourquoi un spectre ?</h2>
+    <p>La lumière blanche contient un ensemble continu de radiations visibles, de longueurs d’onde approximativement comprises entre \(400\,\mathrm{nm}\) et \(800\,\mathrm{nm}\). Un prisme, un réseau ou un spectroscope sépare ces radiations : on obtient un <strong>spectre</strong>. En physique-chimie, ce n’est pas seulement une belle bande colorée : c’est une signature. Une lampe, une étoile, une solution colorée ou un gaz excité ne modifient pas la lumière de la même façon.</p>
+    <div class="box def"><div class="box-label">Définition</div><p>Un <strong>spectre d’émission</strong> indique les radiations produites par une source. Un <strong>spectre d’absorption</strong> indique les radiations retirées à une lumière incidente après traversée d’un milieu. Une espèce chimique absorbe fortement certaines longueurs d’onde : ces absorptions sont liées à sa structure électronique ou moléculaire.</p></div>
+    <p>En Terminale, l’analyse spectrale sert surtout à deux choses : <strong>identifier</strong> une espèce grâce à une signature spectrale et <strong>doser</strong> une espèce colorée grâce à l’absorbance. L’idée importante est de passer d’une observation qualitative, « la solution est bleue », à une grandeur mesurable, \(A\), exploitable dans un calcul.</p>
+
+    <h2 id="c2">2. Photon et longueur d’onde</h2>
+    <p>Une radiation monochromatique peut être décrite par sa fréquence \(\nu\), sa période \(T\), sa longueur d’onde dans le vide \(\lambda\), ou l’énergie d’un photon \(E\). Ces grandeurs sont reliées : une radiation de petite longueur d’onde est plus énergétique qu’une radiation de grande longueur d’onde.</p>
+    <div class="formula key-formula">\[
+      c=\lambda \nu,\qquad E=h\nu=\frac{h\,c}{\lambda}
+    \]</div>
+    <p>Dans ces relations, \(c=2{,}998\times10^8\,\mathrm{m\,s^{-1}}\) est la célérité de la lumière dans le vide, \(h=6{,}626\times10^{-34}\,\mathrm{J\,s}\) est la constante de Planck, \(\lambda\) s’exprime en \(\mathrm{m}\), \(\nu\) en \(\mathrm{Hz}\), et \(E\) en \(\mathrm{J}\). Attention : les longueurs d’onde visibles sont souvent données en \(\mathrm{nm}\), avec \(1\,\mathrm{nm}=10^{-9}\,\mathrm{m}\).</p>
+    <div class="box ok"><div class="box-label">Lecture physique</div><p>Une absorption à \(450\,\mathrm{nm}\) signifie que l’espèce prélève des photons plus énergétiques qu’à \(650\,\mathrm{nm}\). Les spectres ne sont donc pas de simples couleurs : ils traduisent des échanges d’énergie quantifiés.</p></div>
+
+    <h2 id="c3">3. Absorption, couleur, concentration</h2>
+    <p>Une solution colorée absorbe une partie de la lumière qu’elle reçoit. Si une solution absorbe surtout dans le bleu-violet, la lumière transmise est enrichie en jaune-orangé : la couleur perçue est souvent proche de la couleur complémentaire des radiations absorbées. Cette règle donne une intuition, mais la mesure quantitative se fait avec l’absorbance.</p>
+    <div class="formula key-formula">\[
+      T=\frac{I}{I_0},\qquad A=-\log_{10}(T)=-\log_{10}\!\left(\frac{I}{I_0}\right)
+    \]</div>
+    <p>\(I_0\) est l’intensité lumineuse incidente, \(I\) l’intensité transmise, \(T\) la transmittance et \(A\) l’absorbance. La transmittance \(T\) et l’absorbance \(A\) sont sans unité. Plus la solution absorbe, plus \(I\) est petit, plus \(T\) diminue et plus \(A\) augmente.</p>
+
+    <h2 id="c4">4. Loi de Beer-Lambert</h2>
+    <p>Pour une solution colorée suffisamment diluée et une radiation monochromatique choisie, l’absorbance est proportionnelle à la concentration de l’espèce absorbante et à l’épaisseur de solution traversée.</p>
+    <div class="formula key-formula">\[
+      A=\varepsilon(\lambda)\,\ell\,c
+    \]</div>
+    <p>\(\varepsilon(\lambda)\) est le coefficient d’absorption molaire, dépendant de l’espèce et de la longueur d’onde ; \(\ell\) est l’épaisseur de la cuve ; \(c\) est la concentration molaire. En pratique de lycée, si \(\ell\) est en \(\mathrm{cm}\) et \(c\) en \(\mathrm{mol\,L^{-1}}\), alors \(\varepsilon\) s’exprime souvent en \(\mathrm{L\,mol^{-1}\,cm^{-1}}\). À longueur d’onde et cuve fixées, on écrit souvent \(A=k\,c\), avec \(k=\varepsilon(\lambda)\ell\).</p>
+    <div class="box warn"><div class="box-label">Domaine de validité</div><p>La loi est fiable pour des solutions diluées, limpides, homogènes, avec une radiation presque monochromatique, une cuve propre, une orientation conservée et un appareil réglé par un blanc. Si l’absorbance devient trop grande, la relation peut perdre sa linéarité.</p></div>
+    <details><summary>🔬 Démonstration — Établir \(A = \varepsilon \ell c\) à partir de l’absorption infinitésimale</summary>
+    <p>On modélise la traversée d’une cuve de largeur \(\ell\) en la découpant en tranches infinitésimales d’épaisseur \(\mathrm{d}x\). Sur chaque tranche, la lumière subit une atténuation proportionnelle à l’intensité locale et à la concentration :</p>
+    <div class="formula">\[\mathrm{d}I = -\alpha\, c\, I\, \mathrm{d}x\]</div>
+    <p>C’est une équation différentielle du type \(\dfrac{\mathrm{d}I}{\mathrm{d}x} = -\alpha c\, I\), dont la solution est une décroissance exponentielle :</p>
+    <div class="formula">\[I(x) = I_0\,\mathrm{e}^{-\alpha c x} \implies I(\ell) = I_0\,\mathrm{e}^{-\alpha c \ell}\]</div>
+    <p>En calculant l’absorbance (\(\log\) en base 10) :</p>
+    <div class="formula">\[A = -\log_{10}\!\left(\frac{I}{I_0}\right) = -\log_{10}\!\left(\mathrm{e}^{-\alpha c \ell}\right) = \frac{\alpha\,c\,\ell}{\ln 10}\]</div>
+    <p>En posant \(\varepsilon(\lambda) = \dfrac{\alpha}{\ln 10}\), on retrouve \(\boxed{A = \varepsilon(\lambda)\,\ell\,c}\). Le coefficient \(\varepsilon\) dépend de l’espèce et de la longueur d’onde ; il est indépendant de \(c\) et \(\ell\) — c’est le fondement de la linéarité de Beer-Lambert.</p>
+    </details>
+
+    <h2 id="c5">5. Dosage par étalonnage</h2>
+    <p>Pour doser une espèce colorée, on prépare des solutions étalons de concentrations connues, on mesure leur absorbance à une longueur d’onde adaptée, puis on trace \(A=f(c)\). La concentration inconnue est obtenue par lecture graphique ou par calcul avec la droite d’étalonnage.</p>
+    <div class="method-grid">
+      <div class="step"><b>1</b><span>Choisir \(\lambda\)</span><small>On se place souvent à \(\lambda_{\max}\), où l’absorbance est forte et la mesure plus sensible.</small></div>
+      <div class="step"><b>2</b><span>Faire le blanc</span><small>Le solvant et la cuve ne doivent pas être comptés comme absorption de l’espèce dosée.</small></div>
+      <div class="step"><b>3</b><span>Étalonner</span><small>On mesure les étalons et on ajuste une droite \(A=k\,c+b\), idéalement avec \(b\simeq0\).</small></div>
+      <div class="step"><b>4</b><span>Exploiter</span><small>On vérifie que \(A_{\mathrm{inconnue}}\) est dans le domaine étalonné, puis \(c=(A-b)/k\).</small></div>
     </div>
-  </div>
+    <div class="box prop"><div class="box-label">Exemple guidé</div><p>Une droite d’étalonnage donne \(A=1{,}80\times10^3\,c\) avec \(c\) en \(\mathrm{mol\,L^{-1}}\). Pour une solution inconnue d’absorbance \(A=0{,}540\), on obtient \[
+      c=\frac{A}{k}=\frac{0{,}540}{1{,}80\times10^3}=3{,}00\times10^{-4}\,\mathrm{mol\,L^{-1}}.
+    \]</p></div>
+    <details><summary>🔬 Démonstration — Pourquoi mesurer à \(\lambda_{\max}\) améliore la sensibilité</summary>
+    <p>La sensibilité d’un dosage est la variation d’absorbance obtenue pour une petite variation de concentration. D’après \(A = \varepsilon(\lambda)\,\ell\,c\), la sensibilité vaut :</p>
+    <div class="formula">\[\frac{\mathrm{d}A}{\mathrm{d}c} = \varepsilon(\lambda)\,\ell\]</div>
+    <p>Plus \(\varepsilon(\lambda)\) est grand, plus une petite variation de \(c\) produit une grande variation de \(A\) — donc une meilleure précision sur la mesure. Or \(\varepsilon(\lambda)\) est maximal à \(\lambda_{\max}\), là où l’espèce absorbe le plus fortement.</p>
+    <p><strong>Exemple :</strong> pour l’érythrosine, \(\varepsilon(525\,\mathrm{nm}) \approx 9{,}0 \times 10^4\,\mathrm{L\,mol^{-1}\,cm^{-1}}\) contre \(\varepsilon(400\,\mathrm{nm}) \approx 1{,}2 \times 10^4\,\mathrm{L\,mol^{-1}\,cm^{-1}}\). Une même variation de \(c\) donne une variation d’absorbance 7,5 fois plus grande à \(\lambda_{\max}\) — soit une mesure 7,5 fois plus sensible.</p>
+    <p>De plus, travailler à \(\lambda_{\max}\) minimise l’influence des variations de longueur d’onde de la source, car la courbe \(\varepsilon(\lambda)\) est à son maximum local (dérivée nulle) : un léger décalage de \(\lambda\) a peu d’effet sur la valeur mesurée.</p>
+    </details>
 
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Terminale Spé</span>
-      <span class="micro">Chap. 2</span>
+    <h2 id="c6">6. Pièges expérimentaux</h2>
+    <p>Un dosage spectrophotométrique peut être très précis, mais seulement si la mesure est soignée. Les erreurs fréquentes viennent d’un mauvais blanc, d’une cuve sale, d’une dilution mal réalisée, d’une longueur d’onde mal choisie, ou d’une solution inconnue trop concentrée. Une absorbance n’a pas d’unité : écrire \(A=0{,}42\,\mathrm{mol\,L^{-1}}\) est une erreur. La concentration, elle, garde son unité et doit être cohérente avec la droite utilisée.</p>
+    <div class="box ok"><div class="box-label">Idée à retenir</div><p>Le spectrophotomètre ne « donne » pas directement une concentration. Il mesure une absorbance. C’est le modèle \(A=k\,c\), construit et validé par l’étalonnage, qui autorise ensuite le passage de \(A\) à \(c\).</p></div>
+
+    <h2 id="c7">7. Spectroscopie infrarouge (IR)</h2>
+    <p>La spectroscopie infrarouge exploite un domaine de rayonnement situé au-delà du rouge visible. Contrairement à l’UV-visible qui sonde les transitions électroniques, le rayonnement IR met en jeu les <strong>vibrations des liaisons</strong> d’une molécule. Chaque type de liaison vibre à une fréquence qui lui est propre : on obtient ainsi une <strong>empreinte moléculaire</strong>.</p>
+    <div class="box def"><div class="box-label">Grandeur : le nombre d’onde</div><p>En IR, on repère les absorptions par le <strong>nombre d’onde</strong> \(\tilde{\nu}\), exprimé en \(\mathrm{cm^{-1}}\) :</p>
+    <p style="text-align:center">\[\tilde{\nu}=\frac{1}{\lambda_{\mathrm{cm}}}=\frac{\nu}{c}\]</p>
+    <p>avec \(\lambda_{\mathrm{cm}}\) la longueur d’onde en \(\mathrm{cm}\) et \(c\) en \(\mathrm{cm\,s^{-1}}\). Le domaine IR utile en chimie organique va de \(400\,\mathrm{cm^{-1}}\) à \(4000\,\mathrm{cm^{-1}}\). Plus le nombre d’onde est grand, plus la liaison est rigide et légère.</p></div>
+
+    <h3>Principe d’absorption</h3>
+    <p>Une liaison moléculaire absorbe une radiation IR si deux conditions sont réunies : la fréquence du rayonnement coïncide avec une <strong>fréquence propre de vibration</strong> de la liaison, et cette vibration s’accompagne d’une <strong>variation du moment dipolaire</strong>. Une liaison symétrique comme \(\mathrm{H_2}\) n’absorbe donc pas. En revanche, les liaisons \(\mathrm{O{-}H}\), \(\mathrm{C{=}O}\), \(\mathrm{N{-}H}\) sont de très bons absorbants IR.</p>
+    <p>Il existe deux grandes familles de vibrations :</p>
+    <ul>
+      <li><strong>Élongation</strong> (stretching) : variation de la longueur de liaison — se produit à plus grand nombre d’onde ;</li>
+      <li><strong>Déformation</strong> (bending) : variation de l’angle de valence — se produit à plus faible nombre d’onde.</li>
+    </ul>
+
+    <h3>Tableau des bandes caractéristiques</h3>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Liaison / groupe</th><th>Domaine (\(\mathrm{cm^{-1}}\))</th><th>Aspect</th><th>Interprétation</th></tr></thead>
+    <tbody>
+    <tr><td>\(\mathrm{O{-}H}\) alcool (liée)</td><td>3200 – 3600</td><td>Large, étalée</td><td>Liaison hydrogène intermol. : élargit la bande.</td></tr>
+    <tr><td>\(\mathrm{O{-}H}\) acide (liée)</td><td>2500 – 3300</td><td>Très large</td><td>Forte liaison hydrogène dans les dimères d’acides carboxyliques.</td></tr>
+    <tr><td>\(\mathrm{N{-}H}\) amine / amide</td><td>3100 – 3500</td><td>Fine(s)</td><td>Amine primaire : 2 bandes ; secondaire : 1 bande.</td></tr>
+    <tr><td>\(\mathrm{C{-}H}\) sp3 / sp2</td><td>2850 – 3100</td><td>Fins</td><td>Présents dans presque toutes les molécules organiques.</td></tr>
+    <tr><td>\(\mathrm{C{\equiv}N}\) nitrile</td><td>2200 – 2260</td><td>Fin, intense</td><td>Zone peu encombrée : facile à repérer.</td></tr>
+    <tr><td>\(\mathrm{C{=}O}\) carbonyle</td><td>1650 – 1850</td><td>Très intense</td><td>Bande la plus utile en identification.</td></tr>
+    <tr><td>— acide carboxylique</td><td>1700 – 1725</td><td>Fort</td><td>Accompagné de la bande O–H très large.</td></tr>
+    <tr><td>— ester</td><td>1730 – 1750</td><td>Fort</td><td>Pas de bande O–H.</td></tr>
+    <tr><td>— aldéhyde</td><td>1720 – 1740</td><td>Fort</td><td>Deux bandes C–H vers 2700–2850 cm⁻¹.</td></tr>
+    <tr><td>— cétone</td><td>1705 – 1725</td><td>Fort</td><td>Pas de O–H ni de bande C–H d’aldéhyde.</td></tr>
+    <tr><td>— amide</td><td>1630 – 1680</td><td>Fort</td><td>Conjugaison avec N abaisse la fréquence.</td></tr>
+    <tr><td>\(\mathrm{C{=}C}\) alcène</td><td>1620 – 1680</td><td>Moyen</td><td>Peut se superposer à un amide.</td></tr>
+    <tr><td>\(\mathrm{C{-}O}\)</td><td>1050 – 1300</td><td>Fort</td><td>Alcools, esters, éthers.</td></tr>
+    <tr><td>Empreinte digitale</td><td>400 – 1500</td><td>Complexe</td><td>Zone unique par molécule, difficile à interpréter seule.</td></tr>
+    </tbody></table></div>
+
+    <h3>Méthode de lecture d’un spectre IR</h3>
+    <div class="method-grid">
+      <div class="step"><b>1</b><span>Zone 2500–4000 cm⁻¹</span><small>Chercher une bande O–H (large) ou N–H. Une bande très étalée de 2500 à 3300 cm⁻¹ signe un acide carboxylique.</small></div>
+      <div class="step"><b>2</b><span>Zone 1650–1850 cm⁻¹</span><small>Chercher le carbonyle C=O : bande intense et fine. Préciser la fonction selon la position exacte et les autres bandes présentes.</small></div>
+      <div class="step"><b>3</b><span>Croiser les bandes</span><small>C=O à 1700–1725 + O–H large → acide. C=O à 1730–1750 sans O–H → ester. C=O + 2 bandes vers 2720 cm⁻¹ → aldéhyde.</small></div>
+      <div class="step"><b>4</b><span>Conclure</span><small>Énoncer les groupes fonctionnels identifiés et ceux exclus. L’absence d’une bande est aussi une information.</small></div>
     </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
 
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
+    <div class="box warn"><div class="box-label">Pièges fréquents</div><ul>
+      <li>Confondre \(\mathrm{O{-}H}\) d’alcool (3200–3600, large) et \(\mathrm{N{-}H}\) d’amine (3100–3500, plus fin) : regarder la forme de la bande.</li>
+      <li>Oublier que le \(\mathrm{C{=}O}\) d’un <strong>acide</strong> est <em>toujours</em> accompagné d’un \(\mathrm{O{-}H}\) très étalé.</li>
+      <li>Confondre \(\mathrm{C{=}C}\) et \(\mathrm{C{=}O}\) : le carbonyle est plus intense et à plus grand nombre d’onde.</li>
+      <li>La zone empreinte (< 1500 cm⁻¹) ne doit pas être interprétée liaison par liaison sans données de référence.</li>
+    </ul></div>
 
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
+    <div class="box prop"><div class="box-label">Exemple guidé — identification d’un spectre IR</div><p>Un composé organique présente : une bande large et intense autour de \(3300\,\mathrm{cm^{-1}}\), une bande forte à \(1715\,\mathrm{cm^{-1}}\) et des bandes C–H vers \(2950\,\mathrm{cm^{-1}}\). Conclusion : présence d’un groupe \(\mathrm{O{-}H}\) (bande large à 3300) et d’un carbonyle \(\mathrm{C{=}O}\) (à 1715 cm⁻¹). La coexistence de O–H et C=O vers 1715 cm⁻¹ est caractéristique d’un <strong>acide carboxylique</strong>. L’absence de bandes vers 2700–2850 cm⁻¹ exclut un aldéhyde.</p></div>
+
+    <h2 id="c8">8. Spectroscopie RMN du proton</h2>
+    <p>La <strong>résonance magnétique nucléaire (RMN)</strong> du proton complète l’IR en donnant des informations sur l’environnement chimique des atomes d’hydrogène \({}^1\mathrm{H}\).</p>
+    <div class="box def"><div class="box-label">Principe</div>
+    <p>Les noyaux \({}^1\mathrm{H}\) placés dans un champ magnétique intense absorbent des radiations radiofréquence. Le <strong>déplacement chimique</strong> \(\delta\) (en ppm) caractérise l’environnement électronique du proton : plus le proton est déblindé (voisin d’un atome électronégatif), plus \(\delta\) est grand.</p></div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Type de proton</th><th>\(\delta\) (ppm)</th><th>Environnement</th></tr></thead>
+    <tbody>
+    <tr><td>H sur C saturé (alkyle)</td><td>0 – 2</td><td>Alcane, groupes \(\mathrm{CH_3}\), \(\mathrm{CH_2}\)</td></tr>
+    <tr><td>H voisin de C=O</td><td>2 – 3</td><td>Cétone, aldéhyde (côté chaîne)</td></tr>
+    <tr><td>H sur C—O</td><td>3 – 5</td><td>Alcool, éther, ester (côté O)</td></tr>
+    <tr><td>H aromatique</td><td>6 – 8</td><td>Cycle benzénique</td></tr>
+    <tr><td>H aldéhydique (CHO)</td><td>9 – 10</td><td>Fonction aldéhyde</td></tr>
+    <tr><td>H carboxylique (COOH)</td><td>10 – 13</td><td>Acide carboxylique</td></tr>
+    </tbody></table></div>
+    <div class="box def"><div class="box-label">Informations extraites d’un spectre RMN</div>
+    <ul>
+    <li><strong>Nombre de signaux</strong> : nombre de groupes de protons chimiquement différents (protons équivalents).</li>
+    <li><strong>Déplacement chimique \(\delta\)</strong> : nature de l’environnement (tableau ci-dessus).</li>
+    <li><strong>Intégration (courbe d’intégration)</strong> : proportionnelle au nombre de protons donnant le signal.</li>
+    <li><strong>Multiplicité</strong> : règle des \((n+1)\) — un proton entouré de \(n\) protons voisins donne un signal à \((n+1)\) pics.</li>
+    </ul></div>
+    <div class="box warn"><div class="box-label">Pièges fréquents en RMN</div><ul>
+    <li>Confondre <em>protons équivalents</em> (même \(\delta\)) et <em>protons voisins</em> (couplage spin-spin).</li>
+    <li>Le proton OH d’un alcool peut apparaître comme un singulet large et échangeable (disparaît avec D₂O).</li>
+    <li>La multiplicité ne s’applique que si les protons voisins sont portés par des carbones adjacents.</li></ul></div>
+    <details><summary>🔬 Démonstration — Règle des \((n+1)\) : origine de la multiplicité des signaux RMN</summary>
+    <p>Un proton H soumis à un champ magnétique peut être dans l’état de spin \(+\tfrac{1}{2}\) (aligné) ou \(-\tfrac{1}{2}\) (anti-aligné). Chaque proton voisin crée un petit champ supplémentaire qui modifie légèrement la fréquence de résonance de H.</p>
+    <p><strong>Avec 1 voisin :</strong> le voisin peut être \(+\tfrac{1}{2}\) ou \(-\tfrac{1}{2}\) avec la même probabilité → 2 fréquences légèrement différentes → <em>doublet</em> (2 pics d’égale hauteur).</p>
+    <p><strong>Avec 2 voisins :</strong> les combinaisons possibles sont \((+,+)\), \((+,-)\), \((-,+)\), \((-,-)\). Les deux configurations centrales donnent le même décalage → intensités 1:2:1 → <em>triplet</em>.</p>
+    <p>En généralisant, \(n\) protons voisins équivalents produisent \((n+1)\) pics d’intensités données par les coefficients binomiaux de la ligne \(n\) du triangle de Pascal :</p>
+    <div class="formula">\[n=0:\ 1 \quad n=1:\ 1\,1 \quad n=2:\ 1\,2\,1 \quad n=3:\ 1\,3\,3\,1\]</div>
+    <p>Ainsi un triplet (\(n=2\)) a des pics d’intensité relative \(1:2:1\), et un quadruplet (\(n=3\)) a des intensités \(1:3:3:1\). C’est la règle des \((n+1)\).</p>
+    </details>
+
+    <h2 id="c9">9. Applications de l’analyse spectrale</h2>
+    <p>L’analyse spectrale est utilisée dans de nombreux domaines professionnels et scientifiques.</p>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Domaine</th><th>Application</th><th>Technique</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Contrôle qualité</strong></td><td>Vérifier la concentration d’un colorant alimentaire</td><td>Spectrophotométrie UV-Visible</td></tr>
+    <tr><td><strong>Médecine</strong></td><td>Dosage de l’hémoglobine sanguine</td><td>Spectrophotométrie</td></tr>
+    <tr><td><strong>Environnement</strong></td><td>Dosage des nitrates dans l’eau potable</td><td>Spectrophotométrie + réactif coloré</td></tr>
+    <tr><td><strong>Pharmacie</strong></td><td>Identifier le principe actif d’un médicament</td><td>Spectroscopie IR + RMN</td></tr>
+    <tr><td><strong>Agroalimentaire</strong></td><td>Contrôler la teneur en additif ou en sucre</td><td>Courbe d’étalonnage UV-Vis</td></tr>
+    <tr><td><strong>Criminalistique</strong></td><td>Identifier une substance inconnue</td><td>Comparaison IR avec base de données</td></tr>
+    </tbody></table></div>
+    <div class="box ok"><div class="box-label">Synthèse du chapitre</div>
+    <p>L’analyse spectrale repose sur trois piliers : <strong>mesurer</strong> l’absorbance (loi de Beer-Lambert), <strong>identifier</strong> les groupes fonctionnels (spectroscopie IR) et <strong>caractériser</strong> l’environnement des protons (RMN). Chaque technique fournit des informations complémentaires pour identifier ou doser une espèce chimique.</p></div>
+  </article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-outils">
+<div class="content-card">
+<h3>Relations mathématiques, grandeurs et unités</h3>
+<p>Les relations sont écrites en notation MathJax pour éviter les formules en texte brut. Les logarithmes sont en base \(10\) pour l’absorbance.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Écriture rigoureuse</th><th>Grandeurs, unités et domaine</th></tr></thead>
+<tbody>
+<tr><td>Onde lumineuse</td><td>\(\displaystyle c=\lambda \nu\)</td><td>\(c\) en \(\mathrm{m\,s^{-1}}\), \(\lambda\) en \(\mathrm{m}\), \(\nu\) en \(\mathrm{Hz}=\mathrm{s^{-1}}\). Dans le vide, \(c=2{,}998\times10^8\,\mathrm{m\,s^{-1}}\).</td></tr>
+<tr><td>Énergie d’un photon</td><td>\(\displaystyle E=h\nu=\frac{h\,c}{\lambda}\)</td><td>\(E\) en \(\mathrm{J}\), \(h=6{,}626\times10^{-34}\,\mathrm{J\,s}\). Plus \(\lambda\) est petite, plus le photon est énergétique.</td></tr>
+<tr><td>Transmittance</td><td>\(\displaystyle T=\frac{I}{I_0}\)</td><td>\(I_0\) et \(I\) sont deux intensités lumineuses dans la même unité. \(T\) est sans unité et \(0<T\leq1\).</td></tr>
+<tr><td>Absorbance</td><td>\(\displaystyle A=-\log_{10}(T)=-\log_{10}\!\left(\frac{I}{I_0}\right)\)</td><td>\(A\) est sans unité. Lorsque \(I\) diminue, \(A\) augmente.</td></tr>
+<tr><td>Beer-Lambert</td><td>\(\displaystyle A=\varepsilon(\lambda)\,\ell\,c\)</td><td>\(\ell\) en \(\mathrm{cm}\), \(c\) en \(\mathrm{mol\,L^{-1}}\), \(\varepsilon\) en \(\mathrm{L\,mol^{-1}\,cm^{-1}}\) dans l’usage courant de laboratoire.</td></tr>
+<tr><td>Droite d’étalonnage</td><td>\(\displaystyle A=k\,c+b,\qquad c=\frac{A-b}{k}\)</td><td>\(k\) dépend de l’espèce, de \(\lambda\), de la cuve et des unités choisies. \(b\) doit être faible si le blanc est correct.</td></tr>
+<tr><td>Dilution</td><td>\(\displaystyle C_m V_m=C_f V_f,\qquad F=\frac{C_m}{C_f}=\frac{V_f}{V_m}\)</td><td>\(C_m\), \(C_f\) en \(\mathrm{mol\,L^{-1}}\) ; \(V_m\), \(V_f\) dans la même unité de volume.</td></tr>
+<tr><td>Incertitude simple</td><td>\(\displaystyle u(c)\simeq\frac{u(A)}{k}\)</td><td>Valable si \(k\) est considéré comme connu. En PCSI, on ajoute l’incertitude sur la pente et on exploite les résidus.</td></tr>
+<tr><td>Nombre d’onde IR</td><td>\(\displaystyle \tilde{\nu}=\frac{1}{\lambda_{\mathrm{cm}}}=\frac{\nu}{c}\)</td><td>\(\tilde{\nu}\) en \(\mathrm{cm^{-1}}\), \(\lambda\) en cm. Domaine utile : 400–4000 cm⁻¹. Plus \(\tilde{\nu}\) est grand, plus la liaison est énergétique.</td></tr>
+<tr><td>Conversion nm ↔ cm⁻¹</td><td>\(\displaystyle \tilde{\nu}\ (\mathrm{cm^{-1}})=\frac{10^7}{\lambda\ (\mathrm{nm})}\)</td><td>Ex. : \(\lambda=3000\,\mathrm{nm}\) correspond à \(\tilde{\nu}=3333\,\mathrm{cm^{-1}}\).</td></tr>
+</tbody>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>Conversions à maîtriser</h4><p>\(1\,\mathrm{nm}=10^{-9}\,\mathrm{m}\), \(1\,\mathrm{L}=10^{-3}\,\mathrm{m^3}\), \(1\,\mathrm{mL}=10^{-3}\,\mathrm{L}\). Avant \(E=\frac{hc}{\lambda}\), toujours convertir \(\lambda\) en \(\mathrm{m}\).</p></div>
+  <div class="card"><h4>Lecture graphique</h4><p>Si la droite est \(A=k\,c+b\), on ne force pas automatiquement \(b=0\). On vérifie d’abord l’expérience : blanc, cuve, domaine de linéarité, points aberrants.</p></div>
+</div>
+</div>
+<article class="content-card" style="margin-top:16px">
+<h3>Calculateurs interactifs</h3>
+<p style="color:var(--muted);margin-bottom:14px">Entrez les valeurs connues et cliquez sur Calculer — le résultat s’affiche en notation scientifique avec les unités.</p>
+<div class="cards">
+  <div class="card">
+    <h4>⚡ Énergie d’un photon</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(E=h\nu=\dfrac{hc}{\lambda}\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Longueur d’onde \(\lambda\) (nm)</label>
+    <input id="ch2Lambda" type="number" value="520" min="1" max="10000" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:5px 0 10px;font-size:14px">
+    <button onclick="calcPhoton()" style="width:100%;padding:8px;border-radius:6px;background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="photonResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h4>🧪 Beer-Lambert : trouver \(c\)</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(c=\dfrac{A}{\varepsilon\,\ell}\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Absorbance \(A\)</label>
+    <input id="blA" type="number" value="0.54" step="0.01" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(\varepsilon\) (L·mol⁻¹·cm⁻¹)</label>
+    <input id="blEps" type="number" value="2380" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Épaisseur \(\ell\) (cm)</label>
+    <input id="blL" type="number" value="1" step="0.1" min="0.1" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcBL()" style="width:100%;padding:8px;border-radius:6px;background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="blResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h4>📈 Étalonnage : \(A \to c\)</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(c=\dfrac{A-b}{k}\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Absorbance mesurée \(A\)</label>
+    <input id="etA" type="number" value="0.45" step="0.01" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Pente \(k\) (L·mol⁻¹)</label>
+    <input id="etK" type="number" value="1800" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Ordonnée à l’origine \(b\)</label>
+    <input id="etB" type="number" value="0" step="0.01" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcEtal()" style="width:100%;padding:8px;border-radius:6px;background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="etalResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h4>🔄 Dilution</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(c_m V_m = c_f V_f\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(c_m\) (mol·L⁻¹) — solution mère</label>
+    <input id="dilCm" type="number" value="0.001" step="0.0001" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_m\) (mL) — volume prélevé</label>
+    <input id="dilVm" type="number" value="10" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_f\) (mL) — volume final</label>
+    <input id="dilVf" type="number" value="100" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcDilution()" style="width:100%;padding:8px;border-radius:6px;background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="dilResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+</div>
+</article>
+</section>
+
+<section class="panel" id="tab-exercices">
+<div class="content-card">
+<h3>Exercices d’entraînement</h3>
+<p>La première série sert à construire les automatismes attendus en Terminale : choix de longueur d’onde, lecture de spectre, dilution, droite d’étalonnage, domaine de validité et conclusion chiffrée. Les annales VecteurBac vérifiées sont placées juste après, avec accès direct au sujet.</p>
+
+<h4 style="margin:18px 0 10px">Problèmes guidés — niveau Terminale spécialité</h4>
+<div class="exercise-list">
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>1. Identifier des colorants dans une boisson</h4><small>Spectre · couleur</small></div>
+    <p>Une boisson verte présente deux maxima d’absorbance : \(\lambda_1=430\,\mathrm{nm}\) et \(\lambda_2=635\,\mathrm{nm}\). Trois colorants étalons donnent les maxima suivants : E102 à \(430\,\mathrm{nm}\), E131 à \(630\,\mathrm{nm}\), E133 à \(610\,\mathrm{nm}\). On dispose aussi d’un cercle chromatique.</p>
+    <ol>
+      <li>Identifier les deux colorants les plus probablement présents.</li>
+      <li>Expliquer pourquoi une absorption dans le bleu-violet peut conduire à une couleur perçue jaune-orangé.</li>
+      <li>Dire pourquoi la superposition de deux absorptions peut rendre la couleur finale difficile à prévoir à l’œil nu.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>Le maximum à \(430\,\mathrm{nm}\) correspond au colorant E102. Le maximum à \(635\,\mathrm{nm}\) est plus proche de E131 que de E133 : on retient donc E102 et E131. Une solution absorbe certaines radiations et transmet davantage les autres ; la couleur perçue est liée aux radiations transmises, souvent proches de la couleur complémentaire des radiations absorbées. Quand plusieurs colorants absorbent simultanément, le spectre transmis résulte de plusieurs retraits de lumière : l’observation à l’œil n’est plus suffisante, d’où l’intérêt du spectre.</p></details>
+  </article>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>2. Construire et exploiter une droite d’étalonnage</h4><small>Beer-Lambert</small></div>
+    <p>On dose un colorant E102 à \(\lambda=450\,\mathrm{nm}\). Les solutions étalons donnent :</p>
+    <div class="table-wrap"><table><thead><tr><th>\(c\) en \(\mathrm{mol\,L^{-1}}\)</th><th>\(1{,}0\times10^{-5}\)</th><th>\(2{,}0\times10^{-5}\)</th><th>\(3{,}0\times10^{-5}\)</th><th>\(4{,}0\times10^{-5}\)</th><th>\(5{,}0\times10^{-5}\)</th></tr></thead><tbody><tr><td>\(A\)</td><td>0,155</td><td>0,309</td><td>0,462</td><td>0,621</td><td>0,771</td></tr></tbody></table></div>
+    <p>Une boisson commerciale est diluée quatre fois. La solution diluée donne \(A_d=0{,}540\).</p>
+    <ol>
+      <li>Justifier que la loi de Beer-Lambert semble utilisable.</li>
+      <li>Déterminer une valeur approchée de la pente \(k\) dans \(A=k\,c\).</li>
+      <li>Calculer la concentration \(c_d\) de la solution diluée, puis la concentration \(c_0\) dans la boisson commerciale.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>Les points sont presque alignés et l’ordonnée à l’origine est proche de \(0\), ce qui est cohérent avec \(A=k\,c\). Une estimation avec le dernier point donne \(\displaystyle k\simeq\frac{0{,}771}{5{,}0\times10^{-5}}=1{,}54\times10^4\,\mathrm{L\,mol^{-1}}\). Ainsi \(\displaystyle c_d=\frac{A_d}{k}=\frac{0{,}540}{1{,}54\times10^4}=3{,}5\times10^{-5}\,\mathrm{mol\,L^{-1}}\). Comme la boisson a été diluée \(4\) fois, \(\displaystyle c_0=4c_d=1{,}4\times10^{-4}\,\mathrm{mol\,L^{-1}}\).</p></details>
+  </article>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>3. Passer de la concentration à une masse consommée</h4><small>Application santé</small></div>
+    <p>On reprend le résultat précédent : \(c_0=1{,}4\times10^{-4}\,\mathrm{mol\,L^{-1}}\). La masse molaire du colorant vaut \(M=534\,\mathrm{g\,mol^{-1}}\). Un verre contient \(V=3{,}0\,\mathrm{cL}\) de boisson.</p>
+    <ol>
+      <li>Calculer la quantité de matière \(n\) de colorant dans un verre.</li>
+      <li>En déduire la masse \(m\) de colorant en \(\mathrm{mg}\).</li>
+      <li>Comparer à une dose journalière admissible de \(7{,}5\,\mathrm{mg\,kg^{-1}}\) pour un élève de masse \(50\,\mathrm{kg}\).</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>\(V=3{,}0\,\mathrm{cL}=3{,}0\times10^{-2}\,\mathrm{L}\). Donc \(\displaystyle n=c_0V=1{,}4\times10^{-4}\times3{,}0\times10^{-2}=4{,}2\times10^{-6}\,\mathrm{mol}\). La masse vaut \(\displaystyle m=nM=4{,}2\times10^{-6}\times534=2{,}24\times10^{-3}\,\mathrm{g}=2{,}24\,\mathrm{mg}\). Pour \(50\,\mathrm{kg}\), la DJA vaut \(7{,}5\times50=375\,\mathrm{mg}\). La masse de colorant dans un verre est très inférieure à cette valeur, sous réserve que le modèle et les données soient valables.</p></details>
+  </article>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>4. Choisir la longueur d’onde de dosage</h4><small>Argumentation Bac</small></div>
+    <p>Pour doser un colorant, deux longueurs d’onde sont possibles : \(420\,\mathrm{nm}\) et \(450\,\mathrm{nm}\). À \(450\,\mathrm{nm}\), le colorant dosé absorbe fortement, tandis qu’un autre colorant présent dans le mélange absorbe peu. À \(420\,\mathrm{nm}\), les deux colorants absorbent.</p>
+    <ol>
+      <li>Quelle longueur d’onde faut-il choisir ?</li>
+      <li>Rédiger une justification expérimentale complète.</li>
+      <li>Expliquer le lien avec la sensibilité de la mesure.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>On choisit \(450\,\mathrm{nm}\). À cette longueur d’onde, le colorant dosé absorbe fortement, donc la variation de concentration modifie nettement \(A\). L’autre colorant absorbe peu, donc il perturbe moins la mesure. La sensibilité est liée à la pente \(k\) de la droite \(A=k\,c\) : plus \(k\) est grand, plus une petite variation de \(c\) produit une variation mesurable de \(A\).</p></details>
+  </article>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>5. Exploiter \(A=\varepsilon(\lambda)\ell c\)</h4><small>Relation directe</small></div>
+    <p>Une solution d’érythrosine est mesurée dans une cuve de longueur \(\ell=1{,}0\,\mathrm{cm}\). On donne \(\varepsilon=8{,}2\times10^4\,\mathrm{L\,mol^{-1}\,cm^{-1}}\) et \(A=0{,}44\).</p>
+    <ol>
+      <li>Déterminer la concentration \(c\) de la solution.</li>
+      <li>Dire ce qui se passerait si on utilisait une cuve de \(\ell=0{,}50\,\mathrm{cm}\) avec la même solution.</li>
+      <li>Préciser l’unité de \(c\) et pourquoi \(A\) n’a pas d’unité.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>\(\displaystyle c=\frac{A}{\varepsilon\ell}=\frac{0{,}44}{8{,}2\times10^4\times1{,}0}=5{,}4\times10^{-6}\,\mathrm{mol\,L^{-1}}\). Si \(\ell\) est divisée par \(2\), l’absorbance est aussi divisée par \(2\), donc \(A\simeq0{,}22\). L’absorbance est un logarithme d’un rapport d’intensités : elle est sans unité.</p></details>
+  </article>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>6. Décider si une mesure est exploitable</h4><small>Domaine de validité</small></div>
+    <p>Une gamme étalon est linéaire jusqu’à \(A=1{,}15\). Une solution inconnue donne \(A=1{,}82\). Après dilution par un facteur \(F=5{,}0\), on mesure \(A_d=0{,}364\). La droite de la gamme est \(A=1{,}80\times10^4\,c\).</p>
+    <ol>
+      <li>Pourquoi ne faut-il pas exploiter directement \(A=1{,}82\) ?</li>
+      <li>Calculer la concentration de la solution diluée.</li>
+      <li>En déduire la concentration de la solution initiale.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary><p>\(A=1{,}82\) est hors du domaine linéaire validé : l’extrapolation serait risquée. Pour la solution diluée, \(\displaystyle c_d=\frac{A_d}{k}=\frac{0{,}364}{1{,}80\times10^4}=2{,}02\times10^{-5}\,\mathrm{mol\,L^{-1}}\). La solution initiale est \(5{,}0\) fois plus concentrée : \(\displaystyle c_0=F c_d=1{,}01\times10^{-4}\,\mathrm{mol\,L^{-1}}\).</p></details>
+  </article>
+</div>
+
+  <article class="exercise-card">
+    <div class="exercise-title"><h4>7. Identifier un composé par spectroscopie IR</h4><small>Spectre IR · groupes fonctionnels</small></div>
+    <p>Un composé organique de formule brute \(\mathrm{C_3H_6O}\) présente le spectre IR suivant :</p>
+    <ul>
+      <li>bande intense et fine à \(1715\,\mathrm{cm^{-1}}\) ;</li>
+      <li>bandes C–H entre \(2900\) et \(3000\,\mathrm{cm^{-1}}\) ;</li>
+      <li>aucune bande large entre \(2500\) et \(3600\,\mathrm{cm^{-1}}\).</li>
+    </ul>
+    <ol>
+      <li>À quelle famille de liaison correspond la bande à \(1715\,\mathrm{cm^{-1}}\) ?</li>
+      <li>L'absence de bande large entre \(2500\) et \(3600\,\mathrm{cm^{-1}}\) permet-elle d'exclure un acide carboxylique ? Justifier.</li>
+      <li>Parmi les formules semi-développées suivantes, laquelle est compatible avec le spectre : \(\mathrm{CH_3{-}CO{-}CH_3}\) (propanone) ou \(\mathrm{CH_3{-}CH_2{-}CHO}\) (propanal) ? Justifier en précisant les bandes attendues pour chaque composé.</li>
+    </ol>
+    <details><summary>Correction détaillée</summary>
+      <p><strong>1.</strong> La bande à \(1715\,\mathrm{cm^{-1}}\) correspond à une liaison \(\mathrm{C{=}O}\) (carbonyle). Le domaine 1650–1850 cm⁻¹ est caractéristique de cette liaison.</p>
+      <p><strong>2.</strong> Oui. Un acide carboxylique possède obligatoirement un groupe \(\mathrm{O{-}H}\) qui donne une bande très large entre 2500 et 3300 cm⁻¹. Son absence permet d'exclure cette famille.</p>
+      <p><strong>3.</strong> Le propanal \(\mathrm{CH_3{-}CH_2{-}CHO}\) présente en plus de la bande C=O deux bandes fines caractéristiques vers \(2720\) et \(2820\,\mathrm{cm^{-1}}\) dues à la liaison C–H de l'aldéhyde. Ces bandes ne sont pas mentionnées dans le spectre. La propanone \(\mathrm{CH_3{-}CO{-}CH_3}\) donne une bande C=O vers 1715 cm⁻¹ sans ces bandes supplémentaires : elle est compatible avec le spectre donné.</p>
+    </details>
+  </article>
+
+<h4 style="margin:24px 0 10px">Exercices Bac — VecteurBac vérifiés</h4>
+<p class="note">Les titres ci-dessous sont ceux affichés sur VecteurBac. Les boutons « Sujet PDF » ouvrent directement le sujet ; le bouton « Page VecteurBac » donne accès à la page du sujet et à son corrigé.</p>
+<div class="cards">
+  <article class="card">
+    <h4>étude de colorants dans une boisson</h4>
+    <p>Exercice C, \(5\) points, Métropole septembre 2022 sujet 2. Très bon sujet pour spectres, choix de \(\lambda\), dilution et dosage par étalonnage.</p>
+    <div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2022/12/etude-de-colorants-dans-une-boisson-Exercice-C-au-choix-5-points-Metropole-septembre-Sujet-2-2022-specialite-physique-chimie.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/etude-de-colorants-dans-une-boisson/">Page VecteurBac</a></div>
+  </article>
+  <article class="card">
+    <h4>L’érythrosine, colorant alimentaire</h4>
+    <p>Exercice 2, \(4{,}5\) points, Centres étrangers 2023 sujet 2. Intéressant pour \(A=\varepsilon\ell c\), choix de longueur d’onde et lien absorbance-cinétique.</p>
+    <div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2023/03/Lerythrosine-colorant-alimentaire.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/lerythrosine-colorant-alimentaire/">Page VecteurBac</a></div>
+  </article>
+  <article class="card">
+    <h4>Analyse d’un pigment à base d’oxyde de fer</h4>
+    <p>Exercice C, \(5\) points, Amérique du Nord 2021 sujet 2. Sujet complet sur spectre d’absorption, gamme étalon, dilution et teneur d’un échantillon.</p>
+    <div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2022/03/Ame%CC%81rique-du-nord-2021-sujet-2-Exercice-C-analyse-dun-pigment-a%CC%80-base-doxyde-de-fer.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/analyse-dun-pigment-a-base-doxyde-de-fer/">Page VecteurBac</a></div>
+  </article>
+  <article class="card">
+    <h4>Santé alimentaire - ne pas abuser des nitrites</h4>
+    <p>Exercice 3, \(4\) points, Asie 2024 sujet 2. Bon entraînement sur Beer-Lambert appliquée à une problématique alimentaire.</p>
+    <div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2024/06/Asie-2.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/sante-alimentaire-ne-pas-abuser-des-nitrites/">Page VecteurBac</a></div>
+  </article>
+  <article class="card">
+    <h4>Technique de dosage de l’urée</h4>
+    <p>Exercice 2, \(5\) points, Amérique du Nord sujet 1. Sujet plus riche, mêlant spectroscopie, titrage et Beer-Lambert.</p>
+    <div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2023/04/Exercice-2-Technique-de-dosage-de-luree-5-points.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/technique-de-dosage-de-luree/">Page VecteurBac</a></div>
+  </article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-flashcards">
+<div class="content-card">
+<h3>Flashcards</h3>
+<div class="flash-layout">
+  <div><div class="flash-card" id="flashCard" tabindex="0" role="button" aria-label="Carte mémoire"><div><h3 id="flashQuestion">Question</h3><p id="flashAnswer" style="display:none"></p></div><span class="hint">Cliquer pour retourner</span></div><div class="answers"><button class="secondary" onclick="prevFlash()">Précédente</button><button class="primary" onclick="flipFlash()">Retourner</button><button class="secondary" onclick="nextFlash()">Suivante</button></div></div>
+  <div class="card"><h4>Mode d’emploi</h4><p>Réponds oralement avant de retourner la carte. Les formules sont rendues avec MathJax après chaque changement.</p><p class="note"><span id="flashIndex">1</span>/<span id="flashTotal">10</span></p></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-mindmap">
+<div class="content-card">
+<h3>Carte mentale</h3>
+<div class="mindmap" style="background:#050e1a">
+<svg viewBox="0 0 1100 520" role="img" aria-label="Carte mentale de l'analyse spectrale">
+<defs>
+<style>
+@keyframes mmDraw{from{stroke-dashoffset:420}to{stroke-dashoffset:0}}
+@keyframes mmFade{from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes mmPulse{0%,100%{opacity:1}50%{opacity:.7}}
+.mm-l1{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw .7s .15s ease forwards}
+.mm-l2{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw .7s .30s ease forwards}
+.mm-l3{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw .7s .45s ease forwards}
+.mm-l4{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw .7s .60s ease forwards}
+.mm-l5{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw .7s .75s ease forwards}
+.mm-n0{opacity:0;animation:mmFade .5s .05s ease forwards,mmPulse 3s 1s infinite}
+.mm-n1{opacity:0;animation:mmFade .5s .80s ease forwards}
+.mm-n2{opacity:0;animation:mmFade .5s .95s ease forwards}
+.mm-n3{opacity:0;animation:mmFade .5s 1.10s ease forwards}
+.mm-n4{opacity:0;animation:mmFade .5s 1.25s ease forwards}
+.mm-n5{opacity:0;animation:mmFade .5s 1.40s ease forwards}
+</style>
+<linearGradient id="mm-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d9488"/><stop offset="1" stop-color="#0369a1"/></linearGradient>
+<filter id="mm-glow-c"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="mm-glow-b"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1100" height="520" fill="#050e1a"/>
+<!-- Connexions animées -->
+<path class="mm-l1" d="M550 255 C450 210 360 170 248 122" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="mm-l2" d="M550 255 C660 200 760 165 895 120" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="mm-l3" d="M550 265 C470 300 390 340 242 395" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="mm-l4" d="M550 265 C650 308 750 348 892 398" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="mm-l5" d="M550 245 C548 190 547 145 548 78" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<!-- Nœud central -->
+<g class="mm-n0" filter="url(#mm-glow-b)">
+  <rect x="405" y="200" width="290" height="120" rx="14" fill="url(#mm-g)"/>
+  <text x="550" y="248" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="Inter,sans-serif">Analyse spectrale</text>
+  <text x="550" y="272" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="13" font-family="Inter,sans-serif">identifier · mesurer · doser</text>
+  <text x="550" y="296" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="12" font-family="Inter,sans-serif">UV-Vis · IR · RMN</text>
+</g>
+<!-- Spectres -->
+<g class="mm-n1" filter="url(#mm-glow-c)">
+  <rect x="82" y="62" width="330" height="108" rx="12" fill="#0d1f2d" stroke="rgba(0,240,255,.35)" stroke-width="1.5"/>
+  <text x="247" y="98" text-anchor="middle" fill="#5eead4" font-size="18" font-weight="800" font-family="Inter,sans-serif">Spectres</text>
+  <text x="247" y="120" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Inter,sans-serif">émission / absorption</text>
+  <text x="247" y="138" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">couleur complémentaire · λmax</text>
+</g>
+<!-- Photon -->
+<g class="mm-n2" filter="url(#mm-glow-c)">
+  <rect x="752" y="62" width="305" height="108" rx="12" fill="#0d1f2d" stroke="rgba(125,211,252,.35)" stroke-width="1.5"/>
+  <text x="904" y="98" text-anchor="middle" fill="#7dd3fc" font-size="18" font-weight="800" font-family="Inter,sans-serif">Photon</text>
+  <text x="904" y="120" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">E = hν = hc/λ</text>
+  <text x="904" y="138" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">h = 6,626×10⁻³⁴ J·s</text>
+</g>
+<!-- Beer-Lambert -->
+<g class="mm-n3" filter="url(#mm-glow-c)">
+  <rect x="68" y="352" width="345" height="108" rx="12" fill="#0d1f2d" stroke="rgba(251,146,60,.35)" stroke-width="1.5"/>
+  <text x="240" y="388" text-anchor="middle" fill="#fb923c" font-size="18" font-weight="800" font-family="Inter,sans-serif">Beer-Lambert</text>
+  <text x="240" y="410" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">A = ε(λ) · ℓ · c</text>
+  <text x="240" y="428" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">solution diluée · cuve propre · blanc</text>
+</g>
+<!-- Étalonnage -->
+<g class="mm-n4" filter="url(#mm-glow-c)">
+  <rect x="752" y="356" width="310" height="108" rx="12" fill="#0d1f2d" stroke="rgba(167,139,250,.35)" stroke-width="1.5"/>
+  <text x="907" y="392" text-anchor="middle" fill="#a78bfa" font-size="18" font-weight="800" font-family="Inter,sans-serif">Étalonnage</text>
+  <text x="907" y="414" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">A = k·c + b → c inconnu</text>
+  <text x="907" y="432" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">droite · domaine · incertitude</text>
+</g>
+<!-- ECE -->
+<g class="mm-n5" filter="url(#mm-glow-c)">
+  <rect x="388" y="20" width="324" height="96" rx="12" fill="#0d1f2d" stroke="rgba(134,239,172,.35)" stroke-width="1.5"/>
+  <text x="550" y="57" text-anchor="middle" fill="#86efac" font-size="18" font-weight="800" font-family="Inter,sans-serif">ECE · Protocole</text>
+  <text x="550" y="78" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">blanc · λmax · gamme · conclure</text>
+  <text x="550" y="97" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">A sans unité · c avec unité</text>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-simulations">
+<div class="content-card">
+<h3>Simulations modernes</h3>
+<p>Les deux animations générées ci-dessous utilisent toute la largeur utile de la page. Les simulations PhET Colorado restent en dessous, côte à côte sur grand écran.</p>
+<div class="future-sim-suite">
+  <div class="future-sim-title"><div><h4>Spectres et dosage : laboratoire dynamique</h4><p>Manipule l’absorption, la concentration et le bruit expérimental pour voir apparaître les limites du modèle.</p></div><span class="future-badge">Canvas · interactif</span></div>
+  <div class="future-lab-grid">
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Spectre d’absorption et couleur transmise</h4><p>La courbe noire indique les longueurs d’onde absorbées ; la bande supérieure montre ce que la solution laisse passer.</p></div><span class="chip blue">spectre</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>Longueur d’onde absorbée <output id="specLambdaOut">520 nm</output></label><input id="specLambda" type="range" min="420" max="700" value="520"></div>
+          <div class="future-control"><label>Largeur de bande <output id="specWidthOut">45 nm</output></label><input id="specWidth" type="range" min="18" max="90" value="45"></div>
+          <div class="future-control"><label>Concentration relative <output id="specConcOut">0.65</output></label><input id="specConc" type="range" min="10" max="100" value="65"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(\lambda_{\max}\)</span><b id="specM1">520 nm</b></div><div class="future-metric"><span>\(A_{\max}\)</span><b id="specM2">0.98</b></div><div class="future-metric"><span>couleur</span><b id="specM3">transmise</b></div></div>
+          <div class="future-equation">\(\displaystyle A(\lambda)\approx A_{\max}\exp\!\left[-\frac{(\lambda-\lambda_{\max})^2}{2\sigma^2}\right]\)</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="spectrumCanvas" aria-label="Simulation de spectre d'absorption"></canvas></div>
+      </div>
+    </article>
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Étalonnage Beer-Lambert et concentration inconnue</h4><p>Observe comment une droite \(A=k\,c+b\) permet de retrouver une concentration si le point inconnu reste dans le domaine étalonné.</p></div><span class="chip green">dosage</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>Pente \(k\) <output id="calKOut">2200 L·mol⁻¹</output></label><input id="calK" type="range" min="900" max="3600" step="100" value="2200"></div>
+          <div class="future-control"><label>Concentration inconnue <output id="calCOut">2.4e-4 mol·L⁻¹</output></label><input id="calC" type="range" min="30" max="520" value="240"></div>
+          <div class="future-control"><label>Bruit de mesure <output id="calNoiseOut">0.015</output></label><input id="calNoise" type="range" min="0" max="40" value="15"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(A_u\)</span><b id="calM1">0.528</b></div><div class="future-metric"><span>\(c_u\)</span><b id="calM2">2.4e-4</b></div><div class="future-metric"><span>validité</span><b id="calM3">ok</b></div></div>
+          <div class="future-equation">\(\displaystyle c_u=\frac{A_u-b}{k}\), avec \(A_u\) dans le domaine de la gamme étalon.</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="calibrationCanvas" aria-label="Simulation de droite d'étalonnage"></canvas></div>
+      </div>
+    </article>
+  </div>
+</div>
+<div class="sim-block-title">Simulations PhET Colorado conservées</div>
+<div class="phet-grid">
+  <article class="sim-card-large"><div class="sim-card-head"><span>🧪</span><div><h4>Beer’s Law Lab</h4><p>Faire varier concentration et trajet optique pour visualiser \(A=\varepsilon\ell c\).</p></div></div><div class="iframe-wrap"><iframe title="PhET Beer’s Law Lab" loading="lazy" src="https://phet.colorado.edu/sims/html/beers-law-lab/latest/beers-law-lab_fr.html"></iframe></div></article>
+  <article class="sim-card-large"><div class="sim-card-head"><span>🌈</span><div><h4>Color Vision</h4><p>Relier lumière incidente, filtres et couleur perçue.</p></div></div><div class="iframe-wrap"><iframe title="PhET Color Vision" loading="lazy" src="https://phet.colorado.edu/sims/html/color-vision/latest/color-vision_fr.html"></iframe></div></article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-quiz">
+<div class="content-card">
+<h3>Quiz et chatbot externe</h3>
+<div class="quiz-ai-grid">
+  <div class="quiz-card"><h4>Quiz interactif</h4><p id="quizProgress" class="note"></p><div id="quizQuestion"></div><div id="quizOptions" class="options"></div><div class="answers"><button class="secondary" onclick="prevQuiz()">Précédent</button><button class="primary" onclick="nextQuiz()">Suivant</button><button class="secondary" onclick="resetQuiz()">Recommencer</button></div><p id="quizFeedback" class="note"></p></div>
+  <div class="ai-helper-card"><h4>Assistant externe</h4><p>Le site statique prépare une question complète ; la réponse est donnée par l’assistant externe choisi.</p><div class="ai-choice-row"><button class="ai-choice" onclick="setAIIntent('simple')">Cours simple</button><button class="ai-choice" onclick="setAIIntent('indice')">Indice</button><button class="ai-choice" onclick="setAIIntent('correction')">Correction</button><button class="ai-choice" onclick="setAIIntent('prepa')">Prépa PCSI</button></div><label class="ai-label" for="aiQuestion">Question de l’élève</label><textarea class="ai-textarea" id="aiQuestion">Explique-moi comment utiliser la loi de Beer-Lambert pour déterminer une concentration inconnue.</textarea><div class="btn-row"><button class="primary" onclick="openAI('chatgpt')">ChatGPT</button><button class="secondary" onclick="openAI('claude')">Claude</button><button class="secondary" onclick="openAI('perplexity')">Perplexity</button><button class="secondary" onclick="copyCurrentPrompt()">Copier</button></div><details class="ai-preview"><summary>Voir le prompt envoyé</summary><div class="prompt-box" id="promptPreview"></div></details></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-ece">
+<div class="content-card">
+<h3>ECE : dosage spectrophotométrique</h3>
+<div class="cards">
+  <div class="card"><h4>Situation type</h4><p>On veut déterminer la concentration d’une espèce colorée dans une boisson, une solution antiseptique ou un mélange réactionnel. La méthode repose sur une gamme étalon et une mesure d’absorbance.</p><div class="chips"><span class="chip blue">blanc</span><span class="chip green">\(\lambda_{\max}\)</span><span class="chip amber">gamme étalon</span></div></div>
+  <div class="card"><h4>Critères d’évaluation</h4><ul><li>Rincer et manipuler la cuve sans toucher les faces optiques.</li><li>Choisir une longueur d’onde cohérente avec le spectre.</li><li>Tracer \(A=f(c)\), vérifier la linéarité et exploiter la droite.</li><li>Présenter le résultat avec unité, chiffres significatifs et discussion.</li></ul></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Étape</th><th>Action attendue</th><th>Justification scientifique</th></tr></thead>
+<tbody>
+<tr><td>Réglage</td><td>Faire le blanc avec solvant et cuve.</td><td>On impose \(A=0\) pour ce qui n’est pas l’espèce absorbante.</td></tr>
+<tr><td>Spectre</td><td>Repérer \(\lambda_{\max}\).</td><td>La sensibilité est meilleure car \(\left|\frac{\Delta A}{\Delta c}\right|\) est plus grande.</td></tr>
+<tr><td>Étalonnage</td><td>Mesurer plusieurs solutions de concentration connue.</td><td>On construit expérimentalement \(A=k\,c+b\).</td></tr>
+<tr><td>Inconnue</td><td>Mesurer \(A_u\), puis calculer \(c_u=\frac{A_u-b}{k}\).</td><td>La relation n’est utilisée que dans le domaine validé par les étalons.</td></tr>
+<tr><td>Conclusion</td><td>Comparer, arrondir et discuter.</td><td>Un résultat sans unité ni incertitude qualitative n’est pas une conclusion expérimentale.</td></tr>
+</tbody>
+</table></div>
+
+<h3 style="margin-top:28px">Situations expérimentales complètes</h3>
+<p style="color:var(--muted);margin-bottom:16px">Quatre situations couvrant l’étalonnage, le dosage, l’identification IR et la vérification de Beer-Lambert.</p>
+<div class="cards">
+  <div class="card">
+    <h4>ECE 1 — Courbe d’étalonnage \(A=f(c)\)</h4>
+    <div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div>
+    <p><strong>Contexte :</strong> On souhaite déterminer la concentration en permanganate de potassium d’une solution aqueuse par spectrophotométrie.</p>
+    <p><strong>Question :</strong> Proposer un protocole pour tracer la courbe d’étalonnage et déterminer la concentration inconnue.</p>
+    <div class="formula">\(\varepsilon = 2380\,\mathrm{L\,mol^{-1}\,cm^{-1}}\) à \(525\,\mathrm{nm}\)</div>
+    <details><summary>Indice</summary><p>Préparer 5 solutions étalons par dilution, mesurer \(A\) à \(\lambda_{\max}=525\,\mathrm{nm}\), tracer \(A=f(c)\), puis mesurer \(A_{\text{inconnu}}\) et lire \(c\) sur la courbe.</p></details>
+    <details><summary>Réponse attendue</summary><p>Décrire le blanc (solvant pur), les dilutions (fioles jaugées), les mesures à \(\lambda_{\max}\), la vérification de la linéarité, puis la lecture de \(c_{\text{inconnu}}\).</p></details>
+  </div>
+  <div class="card">
+    <h4>ECE 2 — Dosage spectrophotométrique de la Bétadine</h4>
+    <div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div>
+    <p><strong>Contexte :</strong> On dose le diiode \(\mathrm{I_2}\) dans une solution commerciale de Bétadine par spectrophotométrie UV-Visible.</p>
+    <p><strong>Question :</strong> Comment déterminer la concentration en diiode de la Bétadine ?</p>
+    <div class="formula">\(\varepsilon(\mathrm{I_2})=920\,\mathrm{L\,mol^{-1}\,cm^{-1}}\) à \(490\,\mathrm{nm}\)</div>
+    <details><summary>Indice</summary><p>La Bétadine est trop concentrée : diluer (facteur \(F\)), mesurer \(A_{\text{dilué}}\), calculer \(c_{\text{dilué}}=A/(\varepsilon\ell)\), puis \(c_{\text{initial}}=F\times c_{\text{dilué}}\).</p></details>
+    <details><summary>Réponse attendue</summary><p>Justifier la dilution (\(A<2\)), réaliser le blanc, mesurer \(A\), calculer \(c\) en utilisant Beer-Lambert avec les unités, puis multiplier par le facteur de dilution.</p></details>
+  </div>
+  <div class="card">
+    <h4>ECE 3 — Identification par spectre IR</h4>
+    <div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div>
+    <p><strong>Contexte :</strong> On dispose d’un spectre IR d’un composé organique inconnu. On souhaite identifier les fonctions chimiques présentes.</p>
+    <p><strong>Question :</strong> Exploiter le spectre IR pour identifier les groupes fonctionnels.</p>
+    <div class="formula">C=O : \(1700\,\mathrm{cm^{-1}}\) (fin, intense) · O–H : \(3200\text{–}3600\,\mathrm{cm^{-1}}\) (large)</div>
+    <details><summary>Indice</summary><p>Chercher d’abord la bande C=O vers \(1700\,\mathrm{cm^{-1}}\). Si présente + bande O–H large : acide carboxylique. Si C=O sans O–H large : cétone ou aldéhyde.</p></details>
+    <details><summary>Réponse attendue</summary><p>Repérer les bandes, les associer aux liaisons (tables), déduire les fonctions, puis confronter aux données de l’énoncé pour identifier le composé.</p></details>
+  </div>
+  <div class="card">
+    <h4>ECE 4 — Vérification de Beer-Lambert</h4>
+    <div class="chips"><span class="chip blue">APP</span><span class="chip green">ANA</span><span class="chip amber">REA</span><span class="chip mauve">VAL</span></div>
+    <p><strong>Contexte :</strong> On souhaite vérifier expérimentalement que la loi de Beer-Lambert est valable pour une solution de sulfate de cuivre.</p>
+    <p><strong>Question :</strong> Comment vérifier la proportionnalité entre \(A\) et \(c\) ?</p>
+    <div class="formula">\(A=\varepsilon\ell c\) : si Beer-Lambert vérifié, \(A=f(c)\) est une droite passant par l’origine</div>
+    <details><summary>Indice</summary><p>Préparer des solutions de concentrations différentes, mesurer \(A\) pour chacune, tracer \(A=f(c)\), vérifier la linéarité (\(R^2>0{,}99\)) et le passage par l’origine.</p></details>
+    <details><summary>Réponse attendue</summary><p>Décrire le protocole (dilutions, mesures), tracer le graphique, calculer le coefficient de détermination \(R^2\), conclure sur la validité de la loi dans le domaine étudié.</p></details>
   </div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<div class="box ok"><div class="box-label">Méthode ECE à automatiser</div>
+<p>Lire toute la situation avant de manipuler, identifier la grandeur mesurée (absorbance), écrire Beer-Lambert avec les unités, puis conclure en comparant la valeur expérimentale à la valeur attendue avec une incertitude ou un écart relatif.</p>
+<div class="formula">\[
+u_c=\sqrt{u_A^2+u_B^2}
+\qquad;\qquad
+\varepsilon_r=\frac{|x_{\mathrm{exp}}-x_{\mathrm{ref}}|}{x_{\mathrm{ref}}}\times100
+\]</div>
+<p>\(u_c\) est l’incertitude-type composée, \(u_A\) et \(u_B\) des contributions d’incertitude, \(x_{\mathrm{exp}}\) la valeur mesurée et \(x_{\mathrm{ref}}\) la valeur de référence.</p>
+</div>
+<div class="box warn"><div class="box-label">Réflexe de copie</div>
+<p>Dans une réponse ECE, une absorbance sans unité vérifiée ou une relation Beer-Lambert non nommée coûte cher. Écris toujours la relation, les grandeurs utilisées, les unités, puis la conclusion expérimentale.</p>
+</div>
+</div>
+</section>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Terminale Spé · Chap. 2</div>
-    <h1 class="hero-title">Analyse spectr<span>ale | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<section class="panel" id="tab-prepa">
+<div class="content-card">
+<h3>Vers la prépa PCSI</h3>
+<p>En PCSI, l’analyse spectrale devient plus quantitative : on relie les niveaux d’énergie, l’absorption exponentielle et l’exploitation statistique d’une droite expérimentale.</p>
 
+<h3 style="margin-top:24px;color:var(--blue)">1. Changement de regard</h3>
+<div class="box prop"><div class="box-label">Transitions quantiques et spectres</div>
+<p>En prépa, on relie les spectres d’absorption aux <strong>transitions quantiques</strong> entre niveaux d’énergie. L’absorption d’un photon correspond au passage d’un état fondamental à un état excité : \(\Delta E = E_f - E_i = h\nu\).</p>
+<p>La <strong>spectroscopie FTIR</strong> (transformée de Fourier) remplace le monochromateur par un interféromètre, permettant une acquisition simultanée de tout le spectre.</p>
+<p>La <strong>résolution spectrale</strong> \(R = \lambda/\Delta\lambda\) quantifie la capacité à séparer deux raies proches.</p>
+</div>
+
+<h3 style="color:var(--blue)">2. Relations propres au supérieur</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Écriture rigoureuse</th><th>Commentaire</th></tr></thead>
+<tbody>
+<tr><td><strong>Beer-Lambert (généralisé)</strong></td><td>\(A = \varepsilon \times \ell \times c\)</td><td>Valable pour les solutions diluées (\(\varepsilon\) indépendant de \(c\)).</td></tr>
+<tr><td><strong>Transmittance \(\to\) Absorbance</strong></td><td>\(T = 10^{-A}\)</td><td>Forme exponentielle : \(I = I_0 \times 10^{-\varepsilon\ell c}\).</td></tr>
+<tr><td><strong>Élargissement des raies</strong></td><td>\(\Delta\nu \sim 1/\Delta t\)</td><td>Élargissement naturel (Heisenberg), thermique (Doppler), par pression.</td></tr>
+<tr><td><strong>Résolution spectrale</strong></td><td>\(R = \lambda/\Delta\lambda\)</td><td>Capacité à séparer deux longueurs d’onde proches.</td></tr>
+</tbody>
+</table></div>
+
+<div class="cards">
+  <div class="card"><h4>3. Origine exponentielle de Beer-Lambert</h4><p>Sur une tranche d’épaisseur \(\mathrm{d}x\), on modélise l’absorption par \(\mathrm{d}I=-\alpha I\,\mathrm{d}x\). On obtient l’équation différentielle \(\displaystyle \frac{\mathrm{d}I}{\mathrm{d}x}=-\alpha I\), donc \(\displaystyle I(x)=I_0\,\mathrm{e}^{-\alpha x}\). Pour une cuve d’épaisseur \(\ell\), \[
+  A=-\log_{10}\!\left(\frac{I}{I_0}\right)=\frac{\alpha \ell}{\ln 10}.
+\] Si \(\alpha\) est proportionnel à \(c\), on retrouve \(A=\varepsilon\ell c\).</p></div>
+  <div class="card"><h4>4. Transition énergétique</h4><p>Une raie d’absorption correspond à une différence d’énergie \(\Delta E\) : \[
+  \Delta E=h\nu=\frac{hc}{\lambda}.
+\] En prépa, on vérifie les ordres de grandeur en \(\mathrm{eV}\) avec \(1\,\mathrm{eV}=1{,}602\times10^{-19}\,\mathrm{J}\), puis on relie les domaines spectral, électronique et moléculaire.</p></div>
+  <div class="card"><h4>5. Régression et résidus</h4><p>La droite \(A=k\,c+b\) n’est pas seulement tracée à la main. On ajuste \(k\) et \(b\), on observe les résidus \(r_i=A_i-(k c_i+b)\), puis on décide si le modèle linéaire est acceptable.</p></div>
+</div>
+
+<h3 style="margin-top:24px;color:var(--blue)">Mini-démonstration : \(A = -\log(T)\)</h3>
+<div class="box def"><div class="box-label">Démonstration</div>
+<p>À partir de la loi de décroissance exponentielle de l’intensité lumineuse dans un milieu absorbant :</p>
+<div class="formula">\[I = I_0 \times 10^{-\varepsilon\ell c}\]</div>
+<p>En divisant par \(I_0\) : \(\displaystyle\frac{I}{I_0} = 10^{-\varepsilon\ell c} = T\)</p>
+<p>En prenant le logarithme décimal : \(\log(T) = -\varepsilon\ell c = -A\)</p>
+<p>D’où : \(\boxed{A = -\log(T)}\)</p>
+</div>
+
+<h3 style="color:var(--blue)">Application guidée : dosage du permanganate</h3>
+<div class="box ok"><div class="box-label">Exercice résolu</div>
+<p><strong>Énoncé :</strong> Une solution de permanganate de potassium (\(\mathrm{KMnO_4}\)) dans une cuve de \(1{,}0\,\mathrm{cm}\) présente une absorbance \(A = 0{,}714\) à \(525\,\mathrm{nm}\). Le coefficient d’extinction molaire vaut \(\varepsilon = 2380\,\mathrm{L\,mol^{-1}\,cm^{-1}}\).</p>
+<p><strong>Résolution :</strong></p>
+<p>1. Écrire Beer-Lambert : \(A = \varepsilon \times \ell \times c\)</p>
+<p>2. Isoler \(c\) : \(\displaystyle c = \frac{A}{\varepsilon \times \ell}\)</p>
+<p>3. Application numérique :</p>
+<div class="formula">\[c = \frac{0{,}714}{2380 \times 1{,}0} = 3{,}0 \times 10^{-4}\,\mathrm{mol\,L^{-1}}\]</div>
+<p>4. Vérification : \(A = 2380 \times 1{,}0 \times 3{,}0\times10^{-4} = 0{,}714\) — cohérent.</p>
+</div>
+
+<div class="box prop"><div class="box-label">Application prépa courte</div><p>Si \(I/I_0=0{,}20\), alors \(\displaystyle A=-\log_{10}(0{,}20)=0{,}699\). Si \(A=k c\) avec \(k=3{,}50\times10^3\,\mathrm{L\,mol^{-1}}\), alors \(\displaystyle c=2{,}00\times10^{-4}\,\mathrm{mol\,L^{-1}}\). L’étape PCSI consiste ensuite à justifier pourquoi le modèle est linéaire et à estimer la fiabilité de \(k\).</p></div>
+
+<h3 style="color:var(--blue)">Mini-colle</h3>
+<div class="box warn"><div class="box-label">Questions de colle — Analyse spectrale</div>
+<p><strong>Q1.</strong> Démontrer la relation \(A = -\log(T)\) à partir de la loi exponentielle d’atténuation.</p>
+<p><strong>Q2.</strong> Une solution d’absorbance \(A=0{,}8\) est diluée par 4. Quelle est la nouvelle absorbance ? Justifier.</p>
+<p><strong>Q3.</strong> Un spectre IR présente une bande fine et intense à \(1710\,\mathrm{cm^{-1}}\) et une bande large à \(3350\,\mathrm{cm^{-1}}\). Proposer une structure possible pour la molécule.</p>
+<p style="color:var(--faint);font-size:12px;margin-top:14px">Indice Q2 : \(A\) est proportionnelle à \(c\) (Beer-Lambert). Q3 : C=O + O–H large \(\to\) acide carboxylique.</p>
+</div>
+</div>
+</section>
+
+<div class="footer-nav"><button class="secondary" onclick="prevPanel()">← Onglet précédent</button><button class="primary" onclick="nextPanel()">Onglet suivant →</button></div>
+</div>
+</main>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
+const tabs = Array.from(document.querySelectorAll('.tab'));
+const panels = Array.from(document.querySelectorAll('.panel'));
+const visited = new Set(['cours']);
+function typeset(){ if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise().catch(function(){}); } }
+function switchTab(name, shouldScroll){
+  if(shouldScroll === undefined) shouldScroll = true;
+  tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+  panels.forEach(function(p){ p.classList.toggle('active', p.id === 'tab-' + name); });
+  visited.add(name);
+  updateProgress();
+  if(name === 'simulations'){ setTimeout(drawAllSims, 60); }
+  if(name === 'quiz'){ updatePromptPreview(); renderQuiz(); }
+  typeset();
+  if(shouldScroll){
+    const panel = document.getElementById('tab-' + name);
+    if(panel){ requestAnimationFrame(function(){ panel.scrollIntoView({behavior:'auto', block:'start'}); }); }
+  }
+}
+tabs.forEach(function(t){ t.addEventListener('click', function(){ switchTab(t.dataset.tab, true); }); });
+function updateProgress(){
+  const pct = Math.round(visited.size / tabs.length * 100);
+  document.getElementById('masteryBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+function currentTabIndex(){ return tabs.findIndex(function(t){ return t.classList.contains('active'); }); }
+function nextPanel(){ const i=currentTabIndex(); switchTab(tabs[(i+1)%tabs.length].dataset.tab); }
+function prevPanel(){ const i=currentTabIndex(); switchTab(tabs[(i-1+tabs.length)%tabs.length].dataset.tab); }
+document.getElementById('themeBtn').addEventListener('click', function(){
+  const root = document.documentElement;
+  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  drawAllSims();
 });
+updateProgress();
+
+const flashcards = [
+  {q:"Que mesure l’absorbance ?", a:"Elle mesure la capacité d’un milieu à absorber une radiation : \\(A=-\\log_{10}(I/I_0)\\)."},
+  {q:"Unité de l’absorbance ?", a:"Aucune : \\(A\\) est une grandeur sans unité."},
+  {q:"Relation photon-longueur d’onde ?", a:"\\(E=h\\nu=\\frac{hc}{\\lambda}\\), avec \\(\\lambda\\) en \\(\\mathrm{m}\\)."},
+  {q:"Loi de Beer-Lambert ?", a:"\\(A=\\varepsilon(\\lambda)\\ell c\\), valable pour une solution diluée et limpide."},
+  {q:"Pourquoi choisir \\(\\lambda_{\\max}\\) ?", a:"La mesure est plus sensible : une petite variation de concentration provoque une variation d’absorbance plus visible."},
+  {q:"À quoi sert le blanc ?", a:"À annuler l’absorption du solvant, de la cuve et du montage optique."},
+  {q:"Que faire si \\(A\\) est hors gamme ?", a:"Diluer la solution inconnue, refaire la mesure puis corriger par le facteur de dilution."},
+  {q:"Formule de dilution ?", a:"\\(C_mV_m=C_fV_f\\), volumes dans la même unité."},
+  {q:"Que signifie une droite \\(A=k c+b\\) ?", a:"\\(k\\) est la sensibilité de l’étalonnage ; \\(b\\) représente un décalage expérimental."},
+  {q:"Couleur absorbée et couleur vue ?", a:"La couleur perçue est liée aux radiations transmises, souvent proches de la couleur complémentaire de celles absorbées."},
+  {q:"Qu'est-ce que le nombre d'onde \\(\\tilde{\\nu}\\) ?", a:"\\(\\tilde{\\nu}=1/\\lambda_{\\mathrm{cm}}\\), en \\(\\mathrm{cm^{-1}}\\). Plus il est grand, plus la liaison est énergétique. Domaine IR utile : 400–4000 cm⁻¹."},
+  {q:"Quelle bande IR signe un groupe carbonyle C=O ?", a:"Une bande intense et fine entre 1650 et 1850 cm⁻¹. Sa position exacte précise la fonction : ester ≈ 1735, cétone ≈ 1715, acide ≈ 1710 cm⁻¹."},
+  {q:"Comment reconnaître un acide carboxylique en IR ?", a:"Présence simultanée d'une bande C=O (1700–1725 cm⁻¹) ET d'une bande O–H très large et étalée entre 2500 et 3300 cm⁻¹."},
+  {q:"Que signifie l'absence de bande entre 3200 et 3600 cm⁻¹ ?", a:"Pas de groupe O–H d'alcool ni de N–H d'amine. On peut exclure les alcools, phénols et acides carboxyliques (pour ces derniers, vérifier aussi l'absence de O–H entre 2500 et 3300 cm⁻¹)."},
+  {q:"Qu'est-ce que la zone empreinte digitale en IR ?", a:"La région 400–1500 cm⁻¹. Elle est unique pour chaque molécule mais difficile à interpréter bande par bande. On l'utilise pour confirmer une identité par comparaison avec un spectre de référence."},
+  {q:"Quel est le principe de la RMN du proton ?", a:"Résonance magnétique nucléaire : les noyaux \\({}^1\\mathrm{H}\\) absorbent des radiations radio en présence d'un champ magnétique. Le déplacement chimique \\(\\delta\\) (en ppm) caractérise l'environnement du proton."},
+  {q:"L'absorbance est-elle additive ?", a:"Oui : \\(A(\\lambda)=A_1(\\lambda)+A_2(\\lambda)\\) si plusieurs espèces absorbent à la même longueur d'onde. Cela permet de doser des mélanges en mesurant à plusieurs \\(\\lambda\\)."},
+  {q:"Quelles sont les bandes IR caractéristiques de la liaison O–H ?", a:"Bande large et forte entre 3200 et 3600 cm⁻¹ pour un alcool. Pour un acide carboxylique, la bande O–H est encore plus large, étalée de 2500 à 3300 cm⁻¹, à cause des liaisons hydrogène."},
+  {q:"Comment distinguer un spectre d'émission d'un spectre d'absorption ?", a:"Le spectre d'émission montre les radiations produites (raies brillantes sur fond sombre). Le spectre d'absorption montre les radiations retirées (raies sombres sur spectre continu ou bandes d'absorption)."},
+  {q:"Qu'est-ce que le déplacement chimique \\(\\delta\\) en RMN ?", a:"C'est la position du signal en ppm. Il caractérise l'environnement électronique du proton : plus le proton est déblindé (voisin d'un atome électronégatif), plus \\(\\delta\\) est grand."},
+  {q:"Que donne la règle des \\((n+1)\\) en RMN ?", a:"Un proton entouré de \\(n\\) protons voisins (sur les carbones adjacents) produit un signal à \\((n+1)\\) pics : singulet (0 voisin), doublet (1), triplet (2), quadruplet (3)."},
+  {q:"Comment lire le nombre de protons sur un spectre RMN ?", a:"La courbe d'intégration est proportionnelle au nombre de protons donnant chaque signal. On lit les hauteurs relatives des paliers."},
+  {q:"Que se passe-t-il si on ajoute de l'eau lourde D₂O au tube RMN ?", a:"Les protons labiles (O–H, N–H) s'échangent avec le deutérium et leur signal disparaît. Cela permet de les identifier."},
+  {q:"Quel \\(\\delta\\) pour un proton aldéhydique CHO ?", a:"Entre 9 et 10 ppm. C'est un signal caractéristique, souvent un singulet ou un doublet selon la molécule."}
+];
+let flashIndex = 0, flashBack = false;
+function renderFlash(){
+  const f=flashcards[flashIndex];
+  document.getElementById('flashQuestion').innerHTML = flashBack ? 'Réponse' : f.q;
+  const ans=document.getElementById('flashAnswer');
+  ans.style.display = flashBack ? 'block' : 'none';
+  ans.innerHTML = f.a;
+  document.getElementById('flashIndex').textContent = flashIndex + 1;
+  document.getElementById('flashTotal').textContent = flashcards.length;
+  typeset();
+}
+function flipFlash(){ flashBack=!flashBack; renderFlash(); }
+function nextFlash(){ flashIndex=(flashIndex+1)%flashcards.length; flashBack=false; renderFlash(); }
+function prevFlash(){ flashIndex=(flashIndex-1+flashcards.length)%flashcards.length; flashBack=false; renderFlash(); }
+document.getElementById('flashCard').addEventListener('click', flipFlash);
+document.getElementById('flashCard').addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); flipFlash(); } });
+renderFlash();
+
+const quiz = [
+  {q:"La relation correcte pour l’énergie d’un photon est :", o:["\\(E=h\\lambda\\)","\\(E=\\frac{hc}{\\lambda}\\)","\\(E=\\frac{\\lambda}{hc}\\)","\\(E=c\\lambda\\)"], a:1, exp:"On utilise \\(E=h\\nu\\) et \\(c=\\lambda\\nu\\), donc \\(E=\\frac{hc}{\\lambda}\\)."},
+  {q:"L’absorbance \\(A\\) est :", o:["en \\(\\mathrm{mol\\,L^{-1}}\\)","en \\(\\mathrm{J}\\)","sans unité","en \\(\\mathrm{m}\\)"], a:2, exp:"C’est un logarithme d’un rapport d’intensités."},
+  {q:"Si \\(I/I_0=0{,}10\\), alors :", o:["\\(A=0{,}10\\)","\\(A=1{,}00\\)","\\(A=10\\)","\\(A=-1\\)"], a:1, exp:"\\(A=-\\log_{10}(0{,}10)=1{,}00\\)."},
+  {q:"Dans \\(A=\\varepsilon\\ell c\\), \\(\\ell\\) désigne :", o:["la longueur d’onde","l’épaisseur de la cuve","l’énergie du photon","la fréquence"], a:1, exp:"\\(\\ell\\) est le trajet optique dans la solution."},
+  {q:"Pour une droite \\(A=k c+b\\), la concentration inconnue vaut :", o:["\\(c=k(A-b)\\)","\\(c=\\frac{A-b}{k}\\)","\\(c=\\frac{k}{A-b}\\)","\\(c=A+k+b\\)"], a:1, exp:"On isole \\(c\\) dans \\(A=k c+b\\)."},
+  {q:"Pourquoi faire un blanc ?", o:["Pour colorer la solution","Pour régler la contribution du solvant et de la cuve à zéro","Pour augmenter la concentration","Pour changer \\(h\\)"], a:1, exp:"Le blanc retire ce qui n’est pas dû à l’espèce absorbante."},
+  {q:"La loi de Beer-Lambert est surtout fiable si la solution est :", o:["très concentrée","opaque","diluée et limpide","solide"], a:2, exp:"Les interactions et la diffusion deviennent gênantes hors de ce domaine."},
+  {q:"Si on dilue une solution mère 10 fois, alors :", o:["\\(c_f=10c_m\\)","\\(c_f=c_m/10\\)","\\(c_f=c_m+10\\)","\\(c_f=0\\)"], a:1, exp:"Le facteur de dilution \\(F=\\frac{c_m}{c_f}=10\\)."},
+  {q:"À \\(\\lambda_{\\max}\\), la mesure est intéressante car :", o:["l’absorbance est minimale","l’absorbance est plus sensible à la concentration","la lumière n’a pas d’énergie","la cuve disparaît"], a:1, exp:"La pente de réponse est plus exploitable."},
+  {q:"Si l’inconnue donne une absorbance au-dessus de la gamme étalon, il faut :", o:["extrapoler sans discussion","diluer puis mesurer à nouveau","changer la constante de Planck","ignorer la valeur"], a:1, exp:"L’extrapolation hors domaine validé n’est pas fiable."},
+  {q:"En spectroscopie IR, le nombre d’onde \\(\\tilde{\\nu}\\) s’exprime en :", o:["\\(\\mathrm{nm}\\)","\\(\\mathrm{Hz}\\)","\\(\\mathrm{cm^{-1}}\\)","\\(\\mathrm{J}\\)"], a:2, exp:"\\(\\tilde{\\nu}=1/\\lambda_{\\mathrm{cm}}\\) est exprimé en \\(\\mathrm{cm^{-1}}\\). Le domaine utile est 400–4000 cm⁻¹."},
+  {q:"Une bande IR intense et fine vers 1715 cm⁻¹ indique la présence de :", o:["une liaison O–H","une liaison C–H","une liaison C=O","une liaison C≡N"], a:2, exp:"Le carbonyle C=O absorbe entre 1650 et 1850 cm⁻¹. C’est la bande la plus utile pour identifier une fonction organique."},
+  {q:"Un spectre IR montre une bande C=O à 1715 cm⁻¹ et une bande O–H très large entre 2500 et 3300 cm⁻¹. Le composé est :", o:["un ester","une cétone","un alcool","un acide carboxylique"], a:3, exp:"La coexistence d’un C=O et d’un O–H très étalé (liaison hydrogène forte dans les dimères) est la signature d’un acide carboxylique."},
+  {q:"Comment différencier un aldéhyde d’une cétone par IR ?", o:["L’aldéhyde a un C=O à plus grand nombre d’onde","L’aldéhyde présente deux bandes C–H fines vers 2720 et 2820 cm⁻¹","La cétone possède une bande O–H","Ils sont indifférenciables"], a:1, exp:"L’aldéhyde présente deux bandes fines caractéristiques vers 2720–2820 cm⁻¹ dues à la liaison C–H du groupe –CHO, absentes pour une cétone."},
+  {q:"En RMN, le déplacement chimique \\(\\delta\\) s’exprime en :", o:["\\(\\mathrm{cm^{-1}}\\)","\\(\\mathrm{Hz}\\)","ppm","\\(\\mathrm{mol\\,L^{-1}}\\)"], a:2, exp:"Le déplacement chimique \\(\\delta\\) est exprimé en parties par million (ppm) par rapport à une référence (TMS)."},
+  {q:"Un signal RMN qui apparaît comme un triplet signifie que le proton a :", o:["0 voisin","1 voisin","2 voisins","3 voisins"], a:2, exp:"Règle des \\((n+1)\\) : triplet = \\(n+1=3\\), donc \\(n=2\\) protons voisins."},
+  {q:"En ajoutant D₂O à un échantillon RMN, on observe la disparition d’un signal. Ce signal correspondait à :", o:["un proton aromatique","un proton C–H saturé","un proton labile (O–H ou N–H)","un proton aldéhydique"], a:2, exp:"Les protons O–H et N–H sont labiles : ils s’échangent avec le deutérium de D₂O et leur signal disparaît."}
+];
+let quizIndex = 0, quizScore = 0, answered = {};
+function renderQuiz(){
+  const q=quiz[quizIndex];
+  document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex+1) + '/' + quiz.length + ' · score ' + quizScore;
+  document.getElementById('quizQuestion').innerHTML = '<h4>' + q.q + '</h4>';
+  const box=document.getElementById('quizOptions');
+  box.innerHTML='';
+  q.o.forEach(function(opt,i){
+    const btn=document.createElement('button');
+    btn.className='option';
+    btn.innerHTML=opt;
+    btn.onclick=function(){ answerQuiz(i, btn); };
+    if(answered[quizIndex] !== undefined){
+      btn.disabled=true;
+      if(i === q.a) btn.classList.add('correct');
+      if(i === answered[quizIndex] && i !== q.a) btn.classList.add('wrong');
+    }
+    box.appendChild(btn);
+  });
+  document.getElementById('quizFeedback').innerHTML = answered[quizIndex] !== undefined ? q.exp : 'Choisis une réponse.';
+  typeset();
+}
+function answerQuiz(i){
+  if(answered[quizIndex] !== undefined) return;
+  answered[quizIndex]=i;
+  if(i===quiz[quizIndex].a) quizScore++;
+  renderQuiz();
+}
+function nextQuiz(){ quizIndex=(quizIndex+1)%quiz.length; renderQuiz(); }
+function prevQuiz(){ quizIndex=(quizIndex-1+quiz.length)%quiz.length; renderQuiz(); }
+function resetQuiz(){ quizIndex=0; quizScore=0; answered={}; renderQuiz(); }
+renderQuiz();
+
+let aiIntent = 'simple';
+function setAIIntent(intent){ aiIntent=intent; updatePromptPreview(); }
+function buildAIPrompt(){
+  const question = document.getElementById('aiQuestion').value.trim() || 'Explique-moi ce chapitre.';
+  const intents = {
+    simple:"Explique le cours simplement, avec intuition avant calcul.",
+    indice:"Aide-moi par indices progressifs sans donner immédiatement toute la réponse.",
+    correction:"Donne une correction détaillée, étape par étape, avec unités et vérifications.",
+    prepa:"Prolonge au niveau prépa PCSI : modèle, hypothèses, équation, limites et ordre de grandeur."
+  };
+  return "Tu es un tuteur expert de physique-chimie. Niveau : Terminale spécialité, avec ouverture PCSI. Chapitre : Analyse spectrale, photons, absorbance, Beer-Lambert et dosage par étalonnage.\\n"
+    + "Consigne : " + intents[aiIntent] + "\\n"
+    + "Réponds en français, de manière structurée, avec formules en LaTeX, unités, grandeurs définies et raisonnement détaillé.\\n"
+    + "Question de l’élève : " + question;
+}
+function updatePromptPreview(){ const p=document.getElementById('promptPreview'); if(p) p.textContent=buildAIPrompt(); }
+const aiQuestion = document.getElementById('aiQuestion');
+if(aiQuestion) aiQuestion.addEventListener('input', updatePromptPreview);
+function openAI(provider){
+  const prompt = encodeURIComponent(buildAIPrompt());
+  const urls = {
+    chatgpt:'https://chat.openai.com/?q=' + prompt,
+    claude:'https://claude.ai/new?q=' + prompt,
+    perplexity:'https://www.perplexity.ai/search?q=' + prompt
+  };
+  window.open(urls[provider] || urls.chatgpt, '_blank', 'noopener,noreferrer');
+}
+async function copyCurrentPrompt(){
+  const text=buildAIPrompt();
+  try{ await navigator.clipboard.writeText(text); }catch(e){}
+  updatePromptPreview();
+}
+updatePromptPreview();
+
+(function(){
+  const bar=document.createElement('div');
+  bar.id='readProgress';
+  const body=document.querySelector('.course-body');
+  if(body) body.insertBefore(bar,body.firstChild);
+  function updateReadProgress(){
+    const panel=document.getElementById('tab-cours');
+    if(!panel||!panel.classList.contains('active')){bar.style.width='0%';return;}
+    const cb=panel.querySelector('.course-body');
+    if(!cb) return;
+    const rect=cb.getBoundingClientRect();
+    const total=cb.scrollHeight-window.innerHeight;
+    const pct=total>0?Math.max(0,Math.min(100,-rect.top/total*100)):0;
+    bar.style.width=pct+'%';
+  }
+  window.addEventListener('scroll',updateReadProgress,{passive:true});
+  document.querySelector('.main')&&document.querySelector('.main').addEventListener('scroll',updateReadProgress,{passive:true});
+})();
+function fmtSci(n){
+  if(n===0) return '0';
+  const e=Math.floor(Math.log10(Math.abs(n)));
+  const m=(n/Math.pow(10,e)).toFixed(3);
+  return m+'\\times10^{'+e+'}';
+}
+function calcPhoton(){
+  const lnm=Number(document.getElementById('ch2Lambda').value);
+  if(!lnm||lnm<=0){document.getElementById('photonResult').innerHTML='Valeur invalide.';return;}
+  const h=6.626e-34,c=2.998e8,eV=1.602e-19,l=lnm*1e-9;
+  const nu=c/l, E=h*nu;
+  document.getElementById('photonResult').innerHTML=
+    '\\(\\nu = '+fmtSci(nu)+'\\,\\mathrm{Hz}\\)<br>'
+    +'\\(E = '+fmtSci(E)+'\\,\\mathrm{J}\\)<br>'
+    +'\\(E = '+(E/eV).toFixed(3)+'\\,\\mathrm{eV}\\)';
+  typeset();
+}
+function calcBL(){
+  const A=Number(document.getElementById('blA').value);
+  const eps=Number(document.getElementById('blEps').value);
+  const l=Number(document.getElementById('blL').value);
+  if(!eps||!l){document.getElementById('blResult').innerHTML='\\(\\varepsilon\\) ou \\(\\ell\\) nul.';typeset();return;}
+  const c=A/(eps*l);
+  document.getElementById('blResult').innerHTML=
+    '\\(c = \\dfrac{'+A.toFixed(3)+'}{'+eps+'\\times'+l+'} = '+fmtSci(c)+'\\,\\mathrm{mol\\cdot L^{-1}}\\)';
+  typeset();
+}
+function calcEtal(){
+  const A=Number(document.getElementById('etA').value);
+  const k=Number(document.getElementById('etK').value);
+  const b=Number(document.getElementById('etB').value);
+  if(!k){document.getElementById('etalResult').innerHTML='Pente \\(k\\) nulle.';typeset();return;}
+  const c=(A-b)/k;
+  if(c<0){document.getElementById('etalResult').innerHTML='\\(c < 0\\) : absorbance en dessous de \\(b\\), vérifier la gamme.';typeset();return;}
+  document.getElementById('etalResult').innerHTML=
+    '\\(c = \\dfrac{'+A.toFixed(3)+' - '+b.toFixed(3)+'}{'+k+'} = '+fmtSci(c)+'\\,\\mathrm{mol\\cdot L^{-1}}\\)';
+  typeset();
+}
+function calcDilution(){
+  const cm=Number(document.getElementById('dilCm').value);
+  const Vm=Number(document.getElementById('dilVm').value);
+  const Vf=Number(document.getElementById('dilVf').value);
+  if(!Vf||!Vm){document.getElementById('dilResult').innerHTML='Volume nul.';return;}
+  const cf=cm*Vm/Vf, F=Vf/Vm;
+  document.getElementById('dilResult').innerHTML=
+    '\\(c_f = \\dfrac{'+cm+'\\times'+Vm+'}{'+Vf+'} = '+fmtSci(cf)+'\\,\\mathrm{mol\\cdot L^{-1}}\\)<br>'
+    +'Facteur de dilution \\(F = '+F.toFixed(1)+'\\)';
+  typeset();
+}
+function dprCanvas(canvas){
+  const rect=canvas.getBoundingClientRect();
+  const w=Math.max(620, Math.floor(rect.width || 980));
+  const h=Math.max(300, Math.floor(rect.height || 380));
+  const dpr=window.devicePixelRatio || 1;
+  canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function wavelengthRGB(lambda){
+  let r=0,g=0,b=0;
+  if(lambda>=380&&lambda<440){r=-(lambda-440)/(440-380);b=1;}
+  else if(lambda<490){g=(lambda-440)/(490-440);b=1;}
+  else if(lambda<510){g=1;b=-(lambda-510)/(510-490);}
+  else if(lambda<580){r=(lambda-510)/(580-510);g=1;}
+  else if(lambda<645){r=1;g=-(lambda-645)/(645-580);}
+  else {r=1;}
+  const f=lambda<420?0.3+0.7*(lambda-380)/(420-380):lambda>700?0.3+0.7*(780-lambda)/(780-700):1;
+  return [Math.round(255*r*f),Math.round(255*g*f),Math.round(255*b*f)];
+}
+function rgbString(arr){ return 'rgb(' + arr[0] + ',' + arr[1] + ',' + arr[2] + ')'; }
+function drawSpectrum(){
+  const canvas=document.getElementById('spectrumCanvas'); if(!canvas) return;
+  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
+  const lm=Number(document.getElementById('specLambda').value);
+  const sig=Number(document.getElementById('specWidth').value);
+  const conc=Number(document.getElementById('specConc').value)/100;
+  document.getElementById('specLambdaOut').textContent=lm+' nm';
+  document.getElementById('specWidthOut').textContent=sig+' nm';
+  document.getElementById('specConcOut').textContent=conc.toFixed(2);
+  const bg=ctx.createLinearGradient(0,0,w,h); bg.addColorStop(0,'#06111f'); bg.addColorStop(1,'#0d2630'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(180,220,255,.10)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=42){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=42){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  const left=54,right=w-34,top=54,bandH=72,base=h-58,plotH=h-175;
+  const grad=ctx.createLinearGradient(left,0,right,0);
+  for(let L=400;L<=700;L+=10){grad.addColorStop((L-400)/300,rgbString(wavelengthRGB(L)));}
+  ctx.fillStyle=grad; ctx.fillRect(left,top,right-left,bandH);
+  for(let i=0;i<300;i++){
+    const L=400+i; const x=left+(L-400)/300*(right-left);
+    const A=1.55*conc*Math.exp(-Math.pow(L-lm,2)/(2*sig*sig));
+    ctx.fillStyle='rgba(2,6,23,'+Math.min(.82,A*.55).toFixed(3)+')';
+    ctx.fillRect(x,top,Math.ceil((right-left)/300)+1,bandH);
+  }
+  ctx.strokeStyle='rgba(255,255,255,.78)'; ctx.lineWidth=1; ctx.strokeRect(left,top,right-left,bandH);
+  ctx.beginPath();
+  for(let i=0;i<=300;i++){
+    const L=400+i; const x=left+i/300*(right-left);
+    const A=1.55*conc*Math.exp(-Math.pow(L-lm,2)/(2*sig*sig));
+    const y=base-A/1.65*plotH;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.save(); ctx.shadowBlur=22; ctx.shadowColor='rgba(0,255,213,.85)'; ctx.globalAlpha=.36; ctx.strokeStyle='#00ffd5'; ctx.lineWidth=5.4; ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.shadowBlur=9; ctx.shadowColor='rgba(0,255,213,.55)'; ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+  const xlm=left+(lm-400)/300*(right-left);
+  ctx.save(); ctx.shadowBlur=9; ctx.shadowColor='rgba(125,211,252,.7)'; ctx.strokeStyle='rgba(125,211,252,.92)'; ctx.setLineDash([5,8]); ctx.beginPath();ctx.moveTo(xlm,top-14);ctx.lineTo(xlm,base+12);ctx.stroke(); ctx.restore(); ctx.setLineDash([]);
+  ctx.fillStyle='rgba(255,255,255,.82)'; ctx.font='12px Inter, sans-serif'; ctx.fillText('400 nm',left,top+bandH+22); ctx.fillText('700 nm',right-48,top+bandH+22); ctx.fillText('Absorbance',left,base-plotH-16); ctx.fillText('λmax = '+lm+' nm',xlm+8,top-18);
+  const absorbed=wavelengthRGB(lm); const transmitted=[255-absorbed[0],255-absorbed[1],255-absorbed[2]].map(function(v){return Math.max(35,Math.min(245,v));});
+  ctx.fillStyle=rgbString(transmitted); ctx.fillRect(right-138,base-56,92,34); ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.strokeRect(right-138,base-56,92,34); ctx.fillStyle='rgba(255,255,255,.8)'; ctx.fillText('couleur transmise',right-160,base-65);
+  document.getElementById('specM1').textContent=lm+' nm';
+  document.getElementById('specM2').textContent=(1.55*conc).toFixed(2);
+  document.getElementById('specM3').textContent='visible';
+}
+function drawCalibration(){
+  const canvas=document.getElementById('calibrationCanvas'); if(!canvas) return;
+  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
+  const k=Number(document.getElementById('calK').value);
+  const cu=Number(document.getElementById('calC').value)*1e-6;
+  const noise=Number(document.getElementById('calNoise').value)/1000;
+  document.getElementById('calKOut').textContent=k+' L·mol⁻¹';
+  document.getElementById('calCOut').textContent=cu.toExponential(1).replace('e','×10^')+' mol·L⁻¹';
+  document.getElementById('calNoiseOut').textContent=noise.toFixed(3);
+  const bg=ctx.createLinearGradient(0,0,w,h); bg.addColorStop(0,'#06111f'); bg.addColorStop(1,'#0c1b34'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  const left=66,right=w-38,top=34,bottom=h-58; const cMax=5.4e-4; const aMax=1.35;
+  function X(c){return left+c/cMax*(right-left);} function Y(a){return bottom-a/aMax*(bottom-top);}
+  ctx.strokeStyle='rgba(180,220,255,.12)'; ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){const x=left+i/6*(right-left);ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke();}
+  for(let i=0;i<=5;i++){const y=bottom-i/5*(bottom-top);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,.75)'; ctx.lineWidth=1.5; ctx.beginPath();ctx.moveTo(left,bottom);ctx.lineTo(right,bottom);ctx.moveTo(left,bottom);ctx.lineTo(left,top);ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(cMax),Y(k*cMax));
+  ctx.save(); ctx.shadowBlur=20; ctx.shadowColor='rgba(0,255,213,.85)'; ctx.globalAlpha=.36; ctx.strokeStyle='#00ffd5'; ctx.lineWidth=5.2; ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.shadowBlur=8; ctx.shadowColor='rgba(0,255,213,.55)'; ctx.strokeStyle='#5eead4'; ctx.lineWidth=2.2; ctx.stroke(); ctx.restore();
+  for(let i=0;i<=6;i++){
+    const c=i*cMax/6; const a=k*c + Math.sin(i*2.17)*noise;
+    ctx.beginPath(); ctx.arc(X(c),Y(a),4.5,0,Math.PI*2);
+    ctx.save(); ctx.shadowBlur=11; ctx.shadowColor='rgba(125,211,252,.85)'; ctx.fillStyle='#7dd3fc'; ctx.fill(); ctx.restore();
+    ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.stroke();
+  }
+  const Au=k*cu + noise*.35; const xu=X(cu), yu=Y(Au);
+  ctx.save(); ctx.shadowBlur=9; ctx.shadowColor='rgba(251,146,60,.75)'; ctx.setLineDash([6,7]); ctx.strokeStyle='#fb923c'; ctx.beginPath();ctx.moveTo(left,yu);ctx.lineTo(xu,yu);ctx.lineTo(xu,bottom);ctx.stroke(); ctx.restore(); ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(xu,yu,7,0,Math.PI*2);
+  ctx.save(); ctx.shadowBlur=15; ctx.shadowColor='rgba(251,146,60,.85)'; ctx.fillStyle='#fb923c'; ctx.fill(); ctx.restore();
+  ctx.strokeStyle='white'; ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.82)'; ctx.font='12px Inter, sans-serif'; ctx.fillText('A',30,top+10); ctx.fillText('c (mol·L⁻¹)',right-88,bottom+34); ctx.fillText('inconnue',xu+10,yu-12); ctx.fillText('droite A = k c',left+16,top+24);
+  document.getElementById('calM1').textContent=Au.toFixed(3);
+  document.getElementById('calM2').textContent=cu.toExponential(2).replace('e','×10^');
+  document.getElementById('calM3').textContent=Au<1.2?'ok':'à diluer';
+}
+function drawAllSims(){ drawSpectrum(); drawCalibration(); }
+['specLambda','specWidth','specConc','calK','calC','calNoise'].forEach(function(id){
+  const el=document.getElementById(id); if(el) el.addEventListener('input', drawAllSims);
+});
+window.addEventListener('resize', function(){ clearTimeout(window.__simTO); window.__simTO=setTimeout(drawAllSims,120); });
+setTimeout(drawAllSims,150);
 </script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

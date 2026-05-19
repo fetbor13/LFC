@@ -1,181 +1,607 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3ᵉ · Chapitre 7 — Puissance et électricité | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  --bg:#f4f5ff;--bg2:#eceeff;--surface:#ffffff;--surface2:#f6f7ff;--line:rgba(79,70,229,.16);--line2:rgba(79,70,229,.26);--text:#1e1b4b;--muted:#5b57a0;--soft:#9b99d8;--accent:#4f46e5;--accent2:#818cf8;--accent3:#e0e7ff;--accentBg:#eef2ff;--ok:#4299e1;--warn:#d97706;--danger:#e53e3e;--shadow:0 14px 45px rgba(79,70,229,.10);--shadow2:0 6px 18px rgba(79,70,229,.08);--radius:24px;--side:272px;--card:#ffffff;--card2:#f6f7ff;--ink:#1e1b4b;--peach:#a78bfa;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+[data-theme="dark"]{
+  --bg:#0d0c2b;--bg2:#121040;--surface:#17154e;--surface2:#1c1a58;--line:rgba(129,140,248,.15);--line2:rgba(129,140,248,.25);--text:#e0e7ff;--muted:#a5b4fc;--soft:#7e82e8;--accent:#818cf8;--accent2:#a5b4fc;--accent3:rgba(99,102,241,.15);--accentBg:rgba(79,70,229,.12);--ok:#60a5fa;--warn:#f59e0b;--danger:#f87171;--card:#17154e;--card2:#1c1a58;--ink:#e0e7ff;--peach:#c4b5fd;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Instrument Sans',system-ui,sans-serif;background:radial-gradient(circle at 18% 0,rgba(196,181,253,.30),transparent 32%),linear-gradient(135deg,var(--bg),var(--bg2));color:var(--ink);line-height:1.7}
+a{text-decoration:none;color:inherit}
+.layout{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}
+aside{position:sticky;top:0;height:100vh;padding:20px 18px;background:rgba(255,255,255,.72);backdrop-filter:blur(22px);border-right:1px solid var(--line);overflow:auto}
+[data-theme="dark"] aside{background:rgba(22,18,33,.78)}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:22px}
+.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--peach));display:grid;place-items:center;color:white;font-weight:800;box-shadow:var(--shadow2)}
+.brand h1{margin:0;font-size:20px;letter-spacing:-.04em;font-weight:650}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.level-card{border:1px solid var(--line);background:rgba(255,255,255,.66);border-radius:22px;padding:18px;margin-bottom:22px;box-shadow:var(--shadow2)}
+[data-theme="dark"] .level-card{background:rgba(255,255,255,.04)}
+.pill-level{display:inline-flex;border-radius:999px;background:var(--accent3);border:1px solid var(--line);padding:5px 12px;color:var(--soft);font-weight:700;font-size:12px}
+.progress{height:7px;background:rgba(125,93,180,.12);border-radius:999px;margin:16px 0 8px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--peach));border-radius:999px}
+.small{font-size:12px;color:var(--muted)}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;color:var(--muted);margin:12px 8px}
+.nav{display:grid;gap:7px}
+.nav button{border:1px solid transparent;background:transparent;text-align:left;padding:12px 13px;border-radius:16px;color:var(--muted);font:600 14px/1.2 'Instrument Sans';cursor:pointer;display:flex;gap:10px;align-items:center;transition:.2s}
+.nav button:hover{background:rgba(167,139,250,.10);color:var(--ink)}
+.nav button.active{background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(246,182,200,.12));border-color:var(--line);color:var(--ink);box-shadow:var(--shadow2)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(167,139,250,.15)}
+.side-note{margin-top:18px;border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.62);font-size:13px;color:var(--muted)}
+[data-theme="dark"] .side-note{background:rgba(255,255,255,.04)}
+main{min-width:0}
+.topbar{height:64px;display:flex;align-items:center;gap:12px;padding:0 28px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.58);backdrop-filter:blur(18px);position:sticky;top:0;z-index:10}
+[data-theme="dark"] .topbar{background:rgba(18,16,26,.72)}
+.breadcrumb{color:var(--muted);font-size:14px}
+.top-actions{margin-left:auto;display:flex;gap:10px}
+.chip-btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;font-weight:700;color:var(--ink);cursor:pointer}
+.content{padding:30px 34px 70px;max-width:1280px}
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) 270px;gap:18px;align-items:stretch;margin-bottom:22px}
+.hero-text{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:26px;padding:24px 28px;box-shadow:var(--shadow)}
+[data-theme="dark"] .hero-text{background:rgba(255,255,255,.04)}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--soft);font-weight:800}
+.hero h2{font-size:clamp(30px,4vw,46px);line-height:1.03;letter-spacing:-.06em;margin:14px 0 12px;font-weight:520}
+.hero h2 em{font-style:normal;color:var(--soft)}
+.lead{font-size:15.5px;color:var(--muted);max-width:800px;margin:0}
+.hero-visual{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:26px;padding:14px;box-shadow:var(--shadow);display:grid;place-items:center}
+.hero-visual img{width:100%;height:210px;object-fit:cover;border-radius:18px;background:white}
+.caption{font-size:11px;color:var(--muted);margin-top:8px;text-align:center}
+.quick-grid,.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.mini-card,.card,.sim-card,.quiz-card{border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:20px;padding:17px;box-shadow:var(--shadow2)}
+[data-theme="dark"] .mini-card,[data-theme="dark"] .card,[data-theme="dark"] .sim-card,[data-theme="dark"] .quiz-card{background:rgba(255,255,255,.04)}
+.mini-card strong{display:block;font-size:20px;font-weight:600;letter-spacing:-.04em}
+.mini-card span,.card p{color:var(--muted)}
+section{display:none}
+section.active{display:block}
+.section-title{font-size:24px;letter-spacing:-.04em;font-weight:600;margin:0 0 12px}
+.course-layout{display:grid;grid-template-columns:150px minmax(0,1fr);gap:22px}
+.toc{position:sticky;top:86px;align-self:start;border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.58)}
+[data-theme="dark"] .toc{background:rgba(255,255,255,.04)}
+.toc a{display:block;border-radius:13px;padding:8px 10px;font-size:12.5px;color:var(--muted);font-weight:650}
+.toc a:nth-child(1){background:rgba(167,139,250,.13)}.toc a:nth-child(2){background:rgba(246,182,200,.13)}.toc a:nth-child(3){background:rgba(155,201,255,.14)}.toc a:nth-child(4){background:rgba(243,199,126,.16)}.toc a:nth-child(5){background:rgba(134,200,184,.14)}
+.article h3{font-size:22px;font-weight:600;letter-spacing:-.035em;margin:26px 0 10px}
+.note{border-left:4px solid var(--accent);background:var(--accent3);border-radius:0 16px 16px 0;padding:14px 16px;margin:14px 0;color:var(--ink)}
+.note.warning{border-left-color:var(--danger);background:rgba(217,130,156,.12)}
+.formula{border:1px solid var(--line);background:var(--card2);border-radius:18px;padding:15px;text-align:center;margin:14px 0;font-size:17px;overflow:auto}
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);margin:14px 0}
+.table th,.table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.table tr:last-child td{border-bottom:0}
+.table th{background:var(--card2);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sim-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin:14px 0 24px}
+canvas{max-width:100%;border-radius:18px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line)}
+.controls{display:grid;gap:14px}
+.control label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
+.control input,.control select,.prompt-box{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:10px;color:var(--ink);font:600 14px 'Instrument Sans'}
+.control input[type=range]{padding:0}
+.readout{border:1px solid var(--line);background:var(--card2);border-radius:16px;padding:14px;margin-top:12px;color:var(--muted)}
+.readout strong{color:var(--ink)}
+.flash-grid,.exo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.flip{min-height:170px;perspective:900px}
+.flip-inner{position:relative;min-height:170px;transform-style:preserve-3d;transition:.5s;cursor:pointer}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border:1px solid var(--line);border-radius:20px;background:var(--card);box-shadow:var(--shadow2);display:grid;place-items:center;padding:18px;text-align:center;backface-visibility:hidden}
+.back{transform:rotateY(180deg);background:var(--accent3)}
+details{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--card2);margin-top:10px}
+summary{cursor:pointer;font-weight:700}
+.answers{display:grid;gap:9px}
+.answers button{border:1px solid var(--line);background:var(--card2);border-radius:14px;padding:11px;text-align:left;cursor:pointer;color:var(--ink)}
+.answers button.good{border-color:rgba(134,200,184,.8);background:rgba(134,200,184,.18)}
+.answers button.bad{border-color:rgba(217,130,156,.8);background:rgba(217,130,156,.16)}
+.ai-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ai-card{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:18px;box-shadow:var(--shadow2)}
+.ai-card a{display:inline-flex;margin-top:12px;border-radius:999px;background:var(--accent3);padding:9px 13px;color:var(--soft);font-weight:800}
+.prompt-box{min-height:170px;font-weight:500;line-height:1.6}
+button.copy{border:0;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--peach));color:white;padding:10px 16px;font-weight:800;cursor:pointer}
+@media(max-width:980px){.layout{grid-template-columns:1fr}aside{position:relative;height:auto}.hero,.quick-grid,.grid-2,.grid-3,.flash-grid,.exo-grid,.ai-grid,.sim-layout,.course-layout{grid-template-columns:1fr}.toc{position:relative;top:auto}.content{padding:22px}.topbar{position:relative}.hero-visual img{height:180px}}
 </style>
 </head>
 <body>
+<div class="layout">
+<aside>
+  <div class="brand"><div class="logo">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+  <div class="level-card"><span class="pill-level">3e · lavande pastel</span><div class="progress"><span id="sideProgress"></span></div><div class="small" id="progressText">0% du chapitre exploré</div></div>
+  <div class="nav-title">Sommaire</div>
+  <nav class="nav" id="sideNav">
+    <button class="active" data-target="accueil"><span class="dot"></span>Accueil</button>
+    <button data-target="cours"><span class="dot"></span>Cours enrichi</button>
+    <button data-target="outils"><span class="dot"></span>Outils maths & unités</button>
+    <button data-target="simulations"><span class="dot"></span>Simulations</button>
+    <button data-target="flashcards"><span class="dot"></span>Flashcards</button>
+    <button data-target="exercices"><span class="dot"></span>Exercices</button>
+    <button data-target="quiz"><span class="dot"></span>Quiz</button>
+    <button data-target="tp"><span class="dot"></span>TP / activités</button>
+    <button data-target="chatbots"><span class="dot"></span>Chatbots externes</button>
+    <button data-target="suite"><span class="dot"></span>Vers la suite</button>
+  </nav>
+  <div class="side-note"><b>Idée centrale :</b><br>la puissance indique la rapidité d'un transfert d'énergie ; en électricité, elle se relie à la tension et à l'intensité.</div>
+</aside>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
+<main>
+  <div class="topbar">
+    <div class="breadcrumb">Collège › 3e › <strong>Chapitre 7 · Puissance et électricité</strong></div>
+    <div class="top-actions"><button class="chip-btn" onclick="showSection('outils')">Relations clés</button><button class="chip-btn" onclick="toggleTheme()" id="themeBtn">🌙</button></div>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-text">
+        <span class="eyebrow">3e · Chapitre 7</span>
+        <h2>Puissance <em>et électricité</em></h2>
+        <p class="lead">Relier tension, intensité, puissance et énergie électrique, puis comprendre comment une centrale convertit une source d'énergie en électricité.</p>
+      </div>
+      <div class="hero-visual">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Electric_power_transmission_line.JPG" alt="Lignes de transport d'énergie électrique">
+        <div class="caption">Image web — transport de l'énergie électrique par lignes haute tension.</div>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <div class="mini-card"><strong>\(P=U\times I\)</strong><span>puissance électrique d'un dipôle en watt.</span></div>
+      <div class="mini-card"><strong>\(E=P\times \Delta t\)</strong><span>énergie transférée pendant une durée donnée.</span></div>
+      <div class="mini-card"><strong>kWh</strong><span>\(1\,kWh=3{,}6\times10^6\,J\).</span></div>
+    </div>
+
+    <section id="accueil" class="active">
+      <h2 class="section-title">Entrée dans le chapitre</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Ce qu'on observe</h3><p>Une lampe de 5 W consomme moins qu'un four de 2000 W. La puissance indique la rapidité d'un transfert d'énergie.</p></div>
+        <div class="card"><h3>Ce qu'on calcule</h3><p>On utilise \(P=U\times I\) puis \(E=P\times\Delta t\) pour estimer une consommation électrique.</p></div>
+        <div class="card"><h3>Ce qu'on comprend</h3><p>Une centrale est une chaîne énergétique : source → convertisseur → énergie électrique + pertes.</p></div>
+      </div>
+    </section>
+
+    <section id="cours">
+      <h2 class="section-title">Cours enrichi</h2>
+      <div class="course-layout">
+        <aside class="toc">
+          <a href="#c1">I. Rappels</a>
+          <a href="#c2">II. Puissance</a>
+          <a href="#c3">III. Énergie</a>
+          <a href="#c4">IV. Récepteurs</a>
+          <a href="#c5">V. Production</a>
+        </aside>
+        <div class="article">
+          <h3 id="c1">I. Rappels d'électricité</h3>
+          <p>Un circuit électrique contient un générateur, des récepteurs, des fils et parfois des appareils de mesure. Les récepteurs convertissent l'énergie électrique en une autre forme d'énergie. Avant d'aborder la puissance, il est essentiel de maîtriser les grandeurs fondamentales : la tension et l'intensité.</p>
+          <p>La tension électrique, notée \(U\), est la différence de potentiel entre deux points d'un circuit. C'est elle qui « pousse » les électrons et crée le courant. Elle se mesure en volt (\(V\)) avec un voltmètre branché en dérivation (en parallèle). La tension du secteur en France est de \(230\,V\) : c'est une tension alternative sinusoïdale de fréquence \(50\,Hz\).</p>
+          <p>L'intensité du courant, notée \(I\), représente le débit de charges électriques. C'est la quantité d'électrons qui traversent un conducteur par unité de temps. Elle se mesure en ampère (\(A\)) avec un ampèremètre branché en série. Un courant de \(1\,A\) correspond à environ \(6{,}25 \times 10^{18}\) électrons par seconde !</p>
+          <div class="note"><b>Tension.</b> La tension \(U\) se mesure en volt \(V\) avec un voltmètre branché en dérivation.</div>
+          <div class="note"><b>Intensité.</b> L'intensité \(I\) se mesure en ampère \(A\) avec un ampèremètre branché en série.</div>
+          <div class="note"><b>Analogie hydraulique.</b> Imaginez un tuyau d'eau : la tension est comme la pression de l'eau (la force qui pousse), l'intensité est comme le débit (la quantité d'eau qui passe par seconde). Plus la pression est forte et le débit important, plus l'énergie transmise est grande.</div>
+          <table class="table"><tr><th>Loi</th><th>Montage</th><th>Relation</th></tr><tr><td>Unicité de l'intensité</td><td>série</td><td>\(I_G=I_1=I_2\)</td></tr><tr><td>Loi des nœuds</td><td>dérivation</td><td>\(I_G=I_1+I_2\)</td></tr><tr><td>Additivité des tensions</td><td>série</td><td>\(U_G=U_1+U_2\)</td></tr><tr><td>Loi d'Ohm</td><td>résistance</td><td>\(U=R\times I\)</td></tr></table>
+
+          <h3 id="c2">II. Puissance électrique</h3>
+          <p>La puissance indique la quantité d'énergie transférée par unité de temps. Plus la puissance d'un appareil est grande, plus il transfère rapidement de l'énergie. C'est une notion essentielle pour comprendre pourquoi un grille-pain de 1000 W chauffe plus vite qu'un de 500 W, ou pourquoi une ampoule de 60 W brille plus qu'une de 25 W.</p>
+          <p>La puissance électrique d'un dipôle se calcule en multipliant la tension à ses bornes par l'intensité du courant qui le traverse. Cette relation fondamentale relie les trois grandeurs électriques les plus importantes du programme de 3e.</p>
+          <p>Sur la plaque signalétique d'un appareil électrique, on trouve généralement deux indications : la tension nominale (par exemple \(230\,V\)) et la puissance nominale (par exemple \(2000\,W\)). Ces valeurs correspondent au fonctionnement normal de l'appareil. Si la tension est différente, la puissance réelle sera différente aussi.</p>
+          <div class="formula">\[P=U\times I\]</div>
+          <table class="table"><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th></tr><tr><td>Puissance</td><td>\(P\)</td><td>watt \(W\)</td></tr><tr><td>Tension</td><td>\(U\)</td><td>volt \(V\)</td></tr><tr><td>Intensité</td><td>\(I\)</td><td>ampère \(A\)</td></tr></table>
+          <div class="note"><b>Exemple guidé.</b> Un appareil sous \(U=230\,V\), traversé par \(I=2{,}0\,A\), a pour puissance \(P=230\times2{,}0=460\,W\).</div>
+          <div class="note"><b>Puissance de quelques appareils.</b> Lampe LED : 5-15 W, réfrigérateur : 150 W, lave-linge : 2000 W, four électrique : 2500 W, micro-ondes : 1000 W. Plus la puissance est élevée, plus l'appareil consomme rapidement de l'énergie.</div>
+          <div class="note"><b>Retrouver \(U\) ou \(I\).</b> À partir de \(P = U \times I\) : \(U = P / I\) et \(I = P / U\). Par exemple, un sèche-cheveux de 1200 W sous 230 V est traversé par \(I = 1200 / 230 \simeq 5{,}2\,A\).</div>
+          <div class="note warning"><b>Erreur fréquente.</b> Le kilowatt est une unité de puissance, pas d'énergie : \(1\,kW=1000\,W\). Le kilowattheure (kWh) est une unité d'énergie. Ne pas confondre kW et kWh !</div>
+
+          <h3 id="c3">III. Énergie électrique consommée</h3>
+          <p>L'énergie transférée dépend de la puissance de l'appareil et de sa durée de fonctionnement. Un appareil de forte puissance qui fonctionne peu peut consommer moins qu'un appareil de faible puissance qui fonctionne en permanence.</p>
+          <p>C'est cette énergie que le compteur électrique mesure et que vous payez sur votre facture. Le compteur affiche la consommation en kilowattheures (kWh). Plus vous utilisez d'appareils puissants pendant longtemps, plus votre facture augmente.</p>
+          <p>Pour calculer l'énergie en joules, il faut utiliser la puissance en watts et le temps en secondes. Pour obtenir l'énergie en kilowattheures, il faut utiliser la puissance en kilowatts et le temps en heures. Les deux unités mesurent la même grandeur (l'énergie), mais le kWh est plus adapté aux ordres de grandeur domestiques.</p>
+          <div class="formula">\[E=P\times \Delta t\]</div>
+          <p>Si \(P\) est en watt et \(\Delta t\) en seconde, \(E\) est en joule. Dans la vie courante, on utilise souvent le kilowattheure.</p>
+          <div class="formula">\[1\,kWh=1000\,W\times3600\,s=3{,}6\times10^6\,J\]</div>
+          <div class="note"><b>Exemple.</b> Un radiateur de \(1500\,W=1{,}5\,kW\) fonctionne \(2\,h\). Il consomme \(E=1{,}5\times2=3\,kWh\). En joules : \(3 \times 3{,}6 \times 10^6 = 1{,}08 \times 10^7\,J\).</div>
+          <div class="note"><b>Calcul du coût.</b> Si le prix du kWh est de \(0{,}20\,€\), le radiateur de l'exemple précédent coûte \(3 \times 0{,}20 = 0{,}60\,€\) pour 2 heures de fonctionnement.</div>
+          <div class="note"><b>Analogie.</b> Imaginez un robinet qui remplit une baignoire : la puissance est le débit du robinet (litres par minute), l'énergie est le volume total d'eau dans la baignoire (en litres). Plus le débit est fort ou plus on attend longtemps, plus la baignoire se remplit.</div>
+
+          <h3 id="c4">IV. Récepteurs, générateurs et chaînes énergétiques</h3>
+          <p>Un récepteur reçoit de l'énergie électrique et la convertit en une autre forme utile, avec des pertes. Un générateur reçoit une autre forme d'énergie et fournit de l'énergie électrique. La chaîne énergétique est un schéma qui montre le parcours de l'énergie.</p>
+          <p>Dans toute conversion d'énergie, une partie est perdue sous forme thermique (chaleur) ou sonore (bruit). C'est inévitable : aucune machine n'a un rendement de 100 %. Par exemple, une lampe à incandescence convertit seulement environ 5 % de l'énergie électrique en lumière et 95 % en chaleur. Les LED font beaucoup mieux : environ 40 % en lumière.</p>
+          <p>Le rendement est le rapport entre l'énergie utile et l'énergie reçue : \(\eta = E_{utile} / E_{reçue}\). Il est toujours inférieur à 1 (ou 100 %). Plus le rendement est élevé, moins il y a de pertes.</p>
+          <table class="table"><tr><th>Objet</th><th>Type</th><th>Chaîne énergétique</th></tr><tr><td>Lampe</td><td>récepteur</td><td>électrique → lumineuse + thermique</td></tr><tr><td>Moteur</td><td>récepteur</td><td>électrique → mécanique + thermique</td></tr><tr><td>Alternateur</td><td>générateur</td><td>mécanique → électrique + thermique</td></tr><tr><td>Panneau photovoltaïque</td><td>générateur</td><td>rayonnante → électrique + thermique</td></tr><tr><td>Résistance (radiateur)</td><td>récepteur</td><td>électrique → thermique</td></tr><tr><td>Pile</td><td>générateur</td><td>chimique → électrique + thermique</td></tr></table>
+          <div class="note"><b>Conventions de schématisation.</b> La chaîne énergétique se lit de gauche à droite. On utilise des rectangles pour les réservoirs d'énergie, des cercles pour les convertisseurs, et des flèches pour les transferts. Les pertes sortent vers le bas ou le haut.</div>
+
+          <h3 id="c5">V. Production d'électricité</h3>
+          <p>La majorité des centrales utilisent un alternateur. Une turbine mise en rotation entraîne l'alternateur, qui produit une tension alternative. C'est le principe commun à presque toutes les centrales, quelle que soit la source d'énergie primaire.</p>
+          <p>L'alternateur fonctionne sur le principe de l'induction électromagnétique découvert par Michael Faraday en 1831 : quand un conducteur se déplace dans un champ magnétique, une tension apparaît à ses bornes. Dans un alternateur, c'est la rotation d'un rotor (aimant ou électroaimant) à l'intérieur d'un stator (bobines de fil) qui crée le courant alternatif.</p>
+          <p>En France, environ 70 % de l'électricité est produite par les centrales nucléaires, 15 % par l'hydraulique, et le reste par les éoliennes, le solaire et les centrales thermiques à flamme. Le mix énergétique évolue vers davantage de renouvelables.</p>
+          <div class="note"><b>Énergie renouvelable.</b> Vent, Soleil, eau en mouvement, géothermie ou biomasse : la source se reconstitue à l'échelle humaine. Elles ne produisent pas (ou peu) de gaz à effet de serre.</div>
+          <div class="note"><b>Énergie non renouvelable.</b> Charbon, pétrole, gaz naturel ou uranium : les stocks sont limités à l'échelle humaine. Leur combustion libère du CO₂ (sauf l'uranium qui produit des déchets radioactifs).</div>
+          <table class="table"><tr><th>Centrale</th><th>Source</th><th>Conversion principale</th></tr><tr><td>Éolienne</td><td>vent</td><td>cinétique → électrique</td></tr><tr><td>Hydraulique</td><td>eau en mouvement</td><td>mécanique → électrique</td></tr><tr><td>Thermique</td><td>combustible</td><td>chimique → thermique → mécanique → électrique</td></tr><tr><td>Nucléaire</td><td>uranium</td><td>nucléaire → thermique → mécanique → électrique</td></tr><tr><td>Solaire photovoltaïque</td><td>lumière</td><td>rayonnante → électrique</td></tr></table>
+          <div class="note"><b>Rendement des centrales.</b> Centrale thermique à flamme : environ 35-40 %. Centrale nucléaire : environ 33 %. Éolienne : environ 30-45 %. Panneau solaire : environ 15-22 %. Hydraulique : environ 80-90 % (le meilleur rendement !).</div>
+          <div class="note"><b>Analogie pour comprendre une centrale.</b> Imaginez une bicyclette avec une dynamo : vos jambes (énergie mécanique) font tourner la roue (turbine), qui entraîne la dynamo (alternateur), qui produit de l'électricité pour la lampe. C'est exactement le même principe, mais à une échelle gigantesque !</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="outils">
+      <h2 class="section-title">Outils mathématiques & unités</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Puissance</h3><p>\(P=U\times I\). Donc \(U=\frac{P}{I}\) et \(I=\frac{P}{U}\).</p></div>
+        <div class="card"><h3>Énergie</h3><p>\(E=P\times\Delta t\). Si \(P\) est en W, \(\Delta t\) doit être en s pour obtenir des joules.</p></div>
+        <div class="card"><h3>Conversions</h3><p>\(1\,kW=1000\,W\), \(1\,MW=10^6\,W\), \(1\,h=3600\,s\), \(1\,kWh=3{,}6\times10^6\,J\).</p></div>
+        <div class="card"><h3>Méthode 5C</h3><p>On cherche, on connaît, on choisit la relation, on convertit, on calcule et on conclut avec l'unité.</p></div>
+        <div class="card"><h3>Calcul du coût</h3><p>\(\text{coût} = E\,(\text{kWh}) \times \text{prix du kWh}\). Exemple : \(10\,kWh \times 0{,}20\,€ = 2{,}00\,€\).</p></div>
+        <div class="card"><h3>Rendement</h3><p>\(\eta = \frac{E_{utile}}{E_{reçue}} = \frac{P_{utile}}{P_{reçue}}\). Le rendement est toujours inférieur à 1 (ou 100 %).</p></div>
+      </div>
+    </section>
+
+    <section id="simulations"><h2 style="text-align:center;color:var(--accent);text-shadow:none;margin-bottom:1.2rem">⚡ Simulateurs — Puissance Électrique</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Circuit P = U × I</h3>
+    <canvas id="cvA7" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">U (V) :</label><input type="range" id="slA7u" min="1" max="24" value="12" style="flex:1;accent-color:var(--accent)"><span id="lbA7u" style="color:var(--accent);font-size:.8rem">12</span></div>
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">I (A) :</label><input type="range" id="slA7i" min=".1" max="5" value="1" step=".1" style="flex:1;accent-color:#ffcc00"><span id="lbA7i" style="color:#ffcc00;font-size:.8rem">1.0</span></div>
     </div>
   </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">3ᵉ</span>
-      <span class="micro">Chap. 7</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
-</div>
-
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
-
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">3ᵉ · Chap. 7</div>
-    <h1 class="hero-title">Puissance et élect<span>ricité | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Effet Joule — Dissipation thermique</h3>
+    <canvas id="cvB7" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">R (Ω) :</label>
+      <input type="range" id="slB7" min="1" max="100" value="10" style="flex:1;accent-color:var(--accent)">
+      <span id="lbB7" style="color:var(--accent);font-weight:bold;min-width:3rem">10 Ω</span>
     </div>
   </div>
+</div></section>
 
+    <section id="flashcards">
+      <h2 class="section-title">Flashcards</h2>
+      <div class="flash-grid">
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Unité de la puissance ?</b></div><div class="face back">Le watt, \(W\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Formule de la puissance électrique ?</b></div><div class="face back">\(P=U\times I\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Formule de l'énergie ?</b></div><div class="face back">\(E=P\times\Delta t\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Un kilowattheure ?</b></div><div class="face back">Énergie consommée par \(1\,kW\) pendant \(1\,h\). Soit \(3{,}6 \times 10^6\,J\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Récepteur électrique ?</b></div><div class="face back">Il reçoit de l'énergie électrique et la convertit en une autre forme (lumière, chaleur, mouvement…).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Rôle d'un alternateur ?</b></div><div class="face back">Convertir une énergie mécanique en énergie électrique.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>1 kWh = ? J</b></div><div class="face back">\(3{,}6 \times 10^6\,J\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Tension nominale ?</b></div><div class="face back">Tension pour laquelle un appareil est conçu et fonctionne normalement.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Rendement ?</b></div><div class="face back">\(\eta = E_{utile} / E_{reçue}\). Toujours < 1 (ou 100 %).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Énergie renouvelable ?</b></div><div class="face back">Source qui se renouvelle à l'échelle humaine : vent, soleil, eau, géothermie, biomasse.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Générateur électrique ?</b></div><div class="face back">Il convertit une forme d'énergie (mécanique, chimique, rayonnante) en énergie électrique.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Retrouver \(I\) à partir de \(P\) et \(U\) ?</b></div><div class="face back">\(I = P / U\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Conversion W → kW ?</b></div><div class="face back">Diviser par 1000. Exemple : \(2000\,W = 2\,kW\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Quel est le meilleur rendement parmi ces centrales ?</b></div><div class="face back">Hydraulique (80-90 %), car il y a moins de conversions intermédiaires.</div></div></div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2 class="section-title">Exercices progressifs</h2>
+      <div class="exo-grid">
+        <div class="card"><h3>Niveau 1 — Calculer \(P\)</h3><p>Un appareil est soumis à \(U=230\,V\) et \(I=1{,}5\,A\). Calculer \(P\).</p><details><summary>Correction</summary>\(P=230\times1{,}5=345\,W\).</details></div>
+        <div class="card"><h3>Niveau 1 — Convertir</h3><p>Convertir \(2{,}4\,kW\) en watts puis \(3600\,W\) en kW.</p><details><summary>Correction</summary>\(2{,}4\,kW=2400\,W\). \(3600\,W = 3{,}6\,kW\).</details></div>
+        <div class="card"><h3>Niveau 1 — Vrai ou faux</h3><p>« Le kilowatt est une unité d'énergie. » Vrai ou faux ?</p><details><summary>Correction</summary>Faux. Le kilowatt est une unité de puissance. L'unité d'énergie est le joule ou le kilowattheure.</details></div>
+        <div class="card"><h3>Niveau 2 — Calculer \(I\)</h3><p>Un sèche-cheveux de \(1200\,W\) fonctionne sous \(230\,V\). Calculer l'intensité.</p><details><summary>Correction</summary>\(I=P/U=1200/230\simeq5{,}2\,A\).</details></div>
+        <div class="card"><h3>Niveau 2 — Énergie</h3><p>Un radiateur de \(1{,}5\,kW\) fonctionne \(3\,h\). Calculer l'énergie consommée en kWh.</p><details><summary>Correction</summary>\(E=1{,}5\times3=4{,}5\,kWh\).</details></div>
+        <div class="card"><h3>Niveau 2 — Coût</h3><p>Un lave-linge de \(2{,}0\,kW\) fonctionne \(1{,}5\,h\). Calculer le coût au tarif de \(0{,}20\,€/kWh\).</p><details><summary>Correction</summary>\(E = 2{,}0 \times 1{,}5 = 3{,}0\,kWh\). Coût = \(3{,}0 \times 0{,}20 = 0{,}60\,€\).</details></div>
+        <div class="card"><h3>Niveau 2 — Énergie en joules</h3><p>Un appareil de \(500\,W\) fonctionne \(10\) minutes. Calculer l'énergie en joules.</p><details><summary>Correction</summary>\(\Delta t = 10 \times 60 = 600\,s\). \(E = 500 \times 600 = 300\,000\,J = 3 \times 10^5\,J\).</details></div>
+        <div class="card"><h3>Niveau 3 — Joules</h3><p>Convertir \(4{,}5\,kWh\) en joules.</p><details><summary>Correction</summary>\(4{,}5\times3{,}6\times10^6=1{,}62\times10^7\,J\).</details></div>
+        <div class="card"><h3>Niveau 3 — Centrale</h3><p>Schématiser la chaîne énergétique d'une éolienne.</p><details><summary>Correction</summary>Énergie cinétique du vent → turbine/alternateur → énergie électrique + pertes thermiques/sonores. Les pertes sont inévitables lors de toute conversion.</details></div>
+        <div class="card"><h3>Niveau 3 — Défi : facture électrique</h3><p>Une famille utilise un four (2,5 kW, 1 h/jour), une lampe (0,05 kW, 5 h/jour) et un réfrigérateur (0,15 kW, 24 h/jour). Calculer la consommation journalière en kWh, puis le coût mensuel (30 jours) au tarif de 0,20 €/kWh.</p><details><summary>Correction</summary>Four : \(2{,}5 \times 1 = 2{,}5\,kWh\). Lampe : \(0{,}05 \times 5 = 0{,}25\,kWh\). Frigo : \(0{,}15 \times 24 = 3{,}6\,kWh\). Total/jour : \(6{,}35\,kWh\). Mensuel : \(6{,}35 \times 30 = 190{,}5\,kWh\). Coût : \(190{,}5 \times 0{,}20 = 38{,}10\,€\).</details></div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <h2 class="section-title">Quiz interactif</h2>
+      <div id="quizBox"></div>
+      <div class="readout" id="quizScore">Score : 0/0</div>
+    </section>
+
+    <section id="tp">
+      <h2 class="section-title">TP / activités expérimentales</h2>
+      <div class="grid-2">
+        <div class="card"><h3>TP réel — Puissance d'une lampe</h3><p><b>Objectif :</b> mesurer \(U\) et \(I\), puis calculer \(P\).</p><p><b>Matériel :</b> générateur basse tension (6 V), lampe à incandescence (ou LED), ampèremètre, voltmètre, fils de connexion, interrupteur.</p><p><b>Protocole détaillé :</b></p><p>1. Réaliser le circuit : générateur → interrupteur → lampe, avec l'ampèremètre en série et le voltmètre en dérivation aux bornes de la lampe.</p><p>2. Fermer l'interrupteur et noter la tension \(U\) aux bornes de la lampe (en V).</p><p>3. Noter l'intensité \(I\) traversant la lampe (en A).</p><p>4. Calculer \(P = U \times I\).</p><p>5. Comparer avec la puissance nominale indiquée sur la lampe.</p><p><b>Sécurité :</b> ne jamais court-circuiter le générateur. Vérifier les calibres des appareils de mesure avant la mise sous tension. Ne pas dépasser la tension nominale de la lampe.</p><p><b>Exploitation :</b> si \(U\) est égale à la tension nominale, \(P\) calculée doit être proche de la puissance nominale. Sinon, la lampe fonctionne en sous-tension ou surtension.</p><p><b>Conclusion attendue :</b> la puissance calculée \(P = U \times I\) permet de vérifier le bon fonctionnement d'un appareil électrique.</p></div>
+        <div class="card"><h3>Activité — Facture électrique</h3><p><b>Objectif :</b> estimer la consommation d'un appareil domestique en \(kWh\), puis calculer un coût approximatif.</p><p><b>Protocole :</b></p><p>1. Relever la puissance nominale sur la plaque signalétique d'un appareil (en W).</p><p>2. Estimer la durée d'utilisation quotidienne (en h).</p><p>3. Convertir la puissance en kW.</p><p>4. Calculer l'énergie journalière : \(E = P \times \Delta t\) en kWh.</p><p>5. Calculer l'énergie mensuelle et annuelle.</p><p>6. Estimer le coût avec le tarif du kWh (environ 0,20 €).</p><p><b>Exemple :</b> un téléviseur de 100 W utilisé 4 h/jour consomme \(0{,}1 \times 4 = 0{,}4\,kWh\) par jour, soit \(146\,kWh\) par an, pour un coût d'environ \(29\,€\)/an.</p></div>
+        <div class="card"><h3>TP maison — Chaîne énergétique</h3><p><b>Objectif :</b> construire la chaîne énergétique d'un objet du quotidien.</p><p><b>Protocole :</b> choisir un appareil (lampe, ventilateur, bouilloire, etc.), identifier la forme d'énergie entrante, le type de conversion, l'énergie utile et les pertes. Dessiner la chaîne énergétique avec les conventions : rectangles pour les réservoirs, cercles pour les convertisseurs, flèches pour les transferts.</p><p><b>Exemple pour une bouilloire :</b> énergie électrique → bouilloire → énergie thermique (utile) + pertes sonores et thermiques.</p></div>
+      </div>
+    </section>
+
+    <section id="chatbots">
+      <h2 class="section-title">Chatbots externes</h2>
+      <p class="lead">L'élève choisit son assistant IA et colle le prompt ci-dessous.</p>
+      <div class="ai-grid">
+        <div class="ai-card"><h3>ChatGPT</h3><p>Aide aux explications, exercices et méthodes.</p><a href="https://chatgpt.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Gemini</h3><p>Reformulation et entraînement.</p><a href="https://gemini.google.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Claude</h3><p>Explications longues et vérification du raisonnement.</p><a href="https://claude.ai/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Copilot</h3><p>Recherche, synthèse et questions rapides.</p><a href="https://copilot.microsoft.com/" target="_blank">Ouvrir ↗</a></div>
+      </div>
+      <h3>Prompt prêt à copier</h3>
+      <textarea id="aiPrompt" class="prompt-box">Tu es mon tuteur de physique-chimie niveau 3e. Chapitre : Puissance et électricité. Explique-moi en détail : 1) Les rappels d'électricité : tension (volt, voltmètre en dérivation), intensité (ampère, ampèremètre en série), loi des nœuds, additivité des tensions, loi d'Ohm, avec l'analogie hydraulique. 2) La puissance électrique P = U × I : définition, unité (watt), puissance nominale, plaque signalétique, exemples de puissance d'appareils courants, retrouver U ou I à partir de P. 3) L'énergie électrique E = P × Δt : définition, unités (joule et kWh), conversion entre J et kWh (1 kWh = 3,6 × 10⁶ J), calcul du coût électrique. 4) Récepteurs et générateurs : différence, chaîne énergétique, rendement (toujours < 100 %), conventions de schématisation. 5) L'alternateur : principe de l'induction électromagnétique, rôle dans les centrales. 6) La production d'électricité : énergies renouvelables vs non renouvelables, les 5 types de centrales, le mix énergétique français, les rendements comparés. Pose-moi ensuite 8 questions progressives (2 faciles, 3 moyennes, 3 difficiles) avec correction détaillée incluant le raisonnement complet et les calculs.</textarea><br><br>
+      <button class="copy" onclick="copyPrompt()">Copier le prompt</button>
+    </section>
+
+    <section id="suite">
+      <h2 class="section-title">Vers la classe supérieure</h2>
+      <div class="grid-2">
+        <div class="card"><h3>En 2nde</h3><p>Tu réutiliseras les bilans d'énergie, les conversions et la notion de puissance pour analyser des systèmes énergétiques. Tu étudieras les transferts thermiques, la conservation de l'énergie et le premier principe de la thermodynamique. La puissance sera appliquée aux mouvements et aux forces.</p></div>
+        <div class="card"><h3>Au lycée</h3><p>Puissance, rendement, énergie et conversion seront utilisés en électricité (courant alternatif, puissance active/réactive), mécanique (puissance mécanique, travail des forces) et thermodynamique (machines thermiques, rendement de Carnot). Tu découvriras aussi l'électricité en régime variable avec les condensateurs et les bobines.</p></div>
+        <div class="card"><h3>Connexions avec d'autres sciences</h3><p>En SVT, la chaîne énergétique s'applique aux êtres vivants (photosynthèse, respiration). En géographie, le mix énergétique et la transition énergétique sont des enjeux majeurs. En économie, le coût de l'énergie influence toutes les activités humaines. La compréhension de la puissance et de l'énergie est transversale !</p></div>
+        <div class="card"><h3>Pour aller plus loin</h3><p>Le courant alternatif, que nous utilisons au quotidien, varie sinusoïdalement. La tension du secteur (230 V) est en fait une valeur efficace, pas maximale. La tension maximale est d'environ 325 V ! En terminale, tu étudieras les circuits RLC et les oscillations électriques, qui sont à la base de la radio, du WiFi et des télécommunications.</p></div>
+      </div>
+    </section>
+  </div>
+</main>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
-});
+const sections=[...document.querySelectorAll('main section')];
+const buttons=[...document.querySelectorAll('#sideNav button')];
+function showSection(id){
+  sections.forEach(s=>s.classList.toggle('active',s.id===id));
+  buttons.forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='simulations') setTimeout(drawAll,80);
+  if(id==='quiz') renderQuiz();
+  const idx=Math.max(0,buttons.findIndex(b=>b.dataset.target===id));
+  const pct=Math.round((idx)/(buttons.length-1)*100);
+  document.getElementById('sideProgress').style.width=pct+'%';
+  document.getElementById('progressText').textContent=pct+'% du chapitre exploré';
+}
+buttons.forEach(btn=>btn.addEventListener('click',()=>showSection(btn.dataset.target)));
+function toggleTheme(){const h=document.documentElement;const n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';setTimeout(drawAll,80)}
+function copyPrompt(){navigator.clipboard?.writeText(document.getElementById('aiPrompt').value); alert('Prompt copié.');}
+if(window.CanvasRenderingContext2D&&!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this}}
+const fmt=(n,d=1)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d}).format(n);
+const voltage=document.getElementById('voltage'),current=document.getElementById('current'),powerKW=document.getElementById('powerKW'),hours=document.getElementById('hours'),price=document.getElementById('price'),plant=document.getElementById('plant'),eff=document.getElementById('eff');
+[voltage,current,powerKW,hours,price,plant,eff].forEach(e=>e&&e.addEventListener('input',drawAll));
+function drawPower(){
+ const c=document.getElementById('powerCanvas'),x=c.getContext('2d'),U=+voltage.value,I=+current.value,P=U*I;
+ document.getElementById('uV').textContent=U+' V';document.getElementById('iV').textContent=fmt(I,1)+' A';
+ x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 24px Instrument Sans';x.fillText('Puissance électrique',45,55);
+ x.font='600 17px Instrument Sans';x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');x.fillText(`U = ${U} V · I = ${fmt(I,1)} A`,45,95);
+ const max=400*16,w=Math.min(580,P/max*580);x.fillStyle='rgba(167,139,250,.18)';x.fillRect(70,170,580,42);x.fillStyle='#A78BFA';x.fillRect(70,170,w,42);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 34px Instrument Sans';x.fillText(`P = ${fmt(P,0)} W`,70,150);
+ document.getElementById('powerRead').innerHTML=`<strong>Résultat :</strong> P = U × I = ${U} × ${fmt(I,1)} = ${fmt(P,0)} W, soit ${fmt(P/1000,2)} kW.`;
+}
+function drawEnergy(){
+ const c=document.getElementById('energyCanvas'),x=c.getContext('2d'),P=+powerKW.value,t=+hours.value,pr=+price.value,E=P*t,cost=E*pr;
+ document.getElementById('pV').textContent=fmt(P,2)+' kW';document.getElementById('tV').textContent=fmt(t,1)+' h';document.getElementById('priceV').textContent=fmt(pr,2)+' €/kWh';
+ x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 24px Instrument Sans';x.fillText('Énergie consommée',45,55);
+ for(let i=0;i<12;i++){const h=20+(P/4)*110*(i+1)/12;x.fillStyle=`rgba(167,139,250,${.18+i*.035})`;x.fillRect(75+i*48,285-h,28,h)}
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 30px Instrument Sans';x.fillText(`${fmt(E,2)} kWh`,45,115);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');x.font='600 16px Instrument Sans';x.fillText(`Coût estimé : ${fmt(cost,2)} €`,45,150);
+ document.getElementById('energyRead').innerHTML=`<strong>Consommation :</strong> ${fmt(E,2)} kWh, soit ${fmt(E*3.6e6,0)} J. Coût estimé : ${fmt(cost,2)} €.`;
+}
+function drawPlant(){
+ const c=document.getElementById('plantCanvas'),x=c.getContext('2d'),eta=+eff.value/100,type=plant.value;
+ document.getElementById('effV').textContent=Math.round(eta*100)+'%';
+ const data={wind:['vent','turbine + alternateur','électricité','éolienne'],hydro:['eau en mouvement','turbine + alternateur','électricité','centrale hydraulique'],thermal:['combustible','chaudière + turbine + alternateur','électricité','centrale thermique'],nuclear:['uranium','réacteur + turbine + alternateur','électricité','centrale nucléaire'],solar:['lumière solaire','cellule photovoltaïque','électricité','panneau solaire']};
+ const d=data[type],Ein=1000,Eout=Ein*eta,loss=Ein-Eout;
+ x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 24px Instrument Sans';x.fillText(d[3],45,55);
+ function box(tx,ty,w,h,t,fill){x.fillStyle=fill;x.strokeStyle='rgba(125,93,180,.25)';x.lineWidth=2;x.beginPath();x.roundRect(tx,ty,w,h,18);x.fill();x.stroke();x.fillStyle='#241E33';x.font='700 15px Instrument Sans';wrap(t,tx+14,ty+30,w-28,19)}
+ function wrap(t,x0,y0,w,lh){let words=t.split(' '),line='';for(const word of words){let test=line+word+' ';if(x.measureText(test).width>w){x.fillText(line,x0,y0);line=word+' ';y0+=lh}else line=test}x.fillText(line,x0,y0)}
+ function arrow(x1,y1,x2,y2,col){x.strokeStyle=col;x.lineWidth=6;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();x.fillStyle=col;x.beginPath();x.moveTo(x2,y2);x.lineTo(x2-16,y2-9);x.lineTo(x2-16,y2+9);x.closePath();x.fill()}
+ box(45,145,150,78,d[0],'rgba(196,181,253,.45)');box(285,145,180,78,d[1],'rgba(246,182,200,.42)');box(555,95,130,72,d[2],'rgba(134,200,184,.35)');box(555,230,130,72,'pertes thermiques','rgba(217,130,156,.22)');
+ arrow(200,184,280,184,'#A78BFA');arrow(470,165,550,130,'#86C8B8');arrow(470,205,550,263,'#D9829C');
+ document.getElementById('plantRead').innerHTML=`<strong>Chaîne énergétique :</strong> ${d[0]} → ${d[1]} → ${d[2]} + pertes. Pour 1000 J reçus : ${fmt(Eout,0)} J utiles et ${fmt(loss,0)} J dissipés.`;
+}
+function drawAll(){drawPower();drawEnergy();drawPlant()}
+const qs=[
+ ['La puissance se mesure en…',['joule','watt','volt','ampère'],'watt','L\'unité de puissance est le watt, W.'],
+ ['La formule de la puissance électrique est…',['P = U × I','P = U / I','E = P / t','U = R / I'],'P = U × I','Elle relie puissance, tension et intensité.'],
+ ['Un kWh est une unité de…',['puissance','énergie','tension','intensité'],'énergie','Le kilowattheure mesure une énergie consommée.'],
+ ['Un moteur électrique est un…',['générateur','récepteur','nœud','voltmètre'],'récepteur','Il reçoit de l\'énergie électrique et la convertit.'],
+ ['Dans une éolienne, l\'alternateur transforme…',['mécanique en électrique','électrique en chaleur','chimique en lumière','nucléaire en son'],'mécanique en électrique','La rotation entraîne l\'alternateur.'],
+ ['1 kWh correspond à…',['1000 J','3 600 J','3 600 000 J','360 J'],'3 600 000 J','1 kWh = 1000 W × 3600 s = 3,6 × 10⁶ J.'],
+ ['La relation E = P × Δt donne E en joules si…',['P en W et Δt en h','P en kW et Δt en h','P en W et Δt en s','P en J et Δt en s'],'P en W et Δt en s','Pour obtenir des joules : P en watts, t en secondes.'],
+ ['Un alternateur fonctionne grâce à…',['la combustion','l\'induction électromagnétique','la radioactivité','la gravitation'],'l\'induction électromagnétique','Un conducteur en mouvement dans un champ magnétique crée une tension.'],
+ ['Le rendement d\'une centrale est toujours…',['égal à 100 %','supérieur à 100 %','inférieur à 100 %','égal à 0 %'],'inférieur à 100 %','Il y a toujours des pertes (chaleur, son).'],
+ ['Quel type de centrale a le meilleur rendement ?',['Thermique à flamme','Nucléaire','Éolienne','Hydraulique'],'Hydraulique','Le rendement hydraulique atteint 80-90 %.'],
+ ['La puissance nominale d\'un appareil est…',['la puissance maximale possible','la puissance pour son fonctionnement normal','la puissance au démarrage','une puissance quelconque'],'la puissance pour son fonctionnement normal','Elle correspond à la tension nominale indiquée sur la plaque signalétique.']
+];let qDone=false;
+function renderQuiz(){if(qDone)return;qDone=true;let score=0,done=0;const box=document.getElementById('quizBox');box.innerHTML=qs.map((q,i)=>`<div class="quiz-card"><h3>Question ${i+1}</h3><p>${q[0]}</p><div class="answers">${q[1].map(a=>`<button onclick="answer(this,'${a.replace(/'/g,"\\'")}','${q[2].replace(/'/g,"\\'")}',${i})">${a}</button>`).join('')}</div><div class="readout" id="explain${i}" style="display:none">${q[3]}</div></div>`).join('');window.answer=(btn,a,good,i)=>{const parent=btn.closest('.answers');if(parent.dataset.done)return;parent.dataset.done=1;done++;if(a===good){score++;btn.classList.add('good')}else{btn.classList.add('bad');[...parent.children].find(b=>b.textContent===good)?.classList.add('good')}document.getElementById('explain'+i).style.display='block';document.getElementById('quizScore').textContent=`Score : ${score}/${done}`}}
+drawAll();
 </script>
+<script>
+/* ===== PATCH PHYSICHEN — BUGS CORRIGÉS ===== */
+(function(){
+  if(typeof visited==='undefined'){window.visited=new Set(['cours']);}
+  /* updateProgress — était appelée mais non définie */
+  window.updateProgress=function(){
+    var tabs=document.querySelectorAll('[data-tab]');
+    var tot=tabs.length||9;
+    var pct=Math.round(visited.size/tot*100);
+    var fill=document.getElementById('progressFill');
+    var txt=document.getElementById('progressText');
+    var prog=document.getElementById('progress');
+    var pctEl=document.getElementById('pct');
+    if(fill)fill.style.width=pct+'%';
+    if(txt)txt.textContent=pct+'% du chapitre exploré';
+    if(prog)prog.style.width=pct+'%';
+    if(pctEl)pctEl.textContent=pct+'%';
+  };
+  /* showPanel — était appelée dans le topbar mais non définie */
+  window.showPanel=function(id){window.switchTab(id);};
+  /* switchTab — remplace _switchTab avec scroll fix */
+  window.switchTab=function(id){
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.tab,.tab-btn').forEach(function(t){t.classList.remove('active');});
+    var panel=document.getElementById(id);
+    if(panel)panel.classList.add('active');
+    document.querySelectorAll('[data-tab="'+id+'"]').forEach(function(t){t.classList.add('active');});
+    visited.add(id);
+    updateProgress();
+    /* SCROLL FIX — affiche le panneau directement sans curseur */
+    setTimeout(function(){
+      var p=document.getElementById(id);
+      var topbarEl=document.querySelector('.topbar');
+      var topH=topbarEl?topbarEl.offsetHeight:62;
+      if(p){var y=p.getBoundingClientRect().top+window.scrollY-topH-4;window.scrollTo({top:y,behavior:'smooth'});}
+    },30);
+    if(window.MathJax)setTimeout(function(){MathJax.typesetPromise();},100);
+    /* Quiz — render au 1er clic */
+    if(id==='quiz'){
+      var box=document.getElementById('quizBox');
+      if(box&&!box.dataset.ready){
+        if(typeof renderQuiz==='function')renderQuiz();
+        if(typeof buildQuiz==='function')buildQuiz();
+      }
+    }
+  };
+  /* Réenregistrer les écouteurs de clics (remplace les anciens) */
+  document.querySelectorAll('[data-tab]').forEach(function(btn){
+    var clone=btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone,btn);
+    clone.addEventListener('click',function(){window.switchTab(clone.dataset.tab);});
+  });
+  /* Activer l'onglet cours au chargement */
+  updateProgress();
+})();
+</script>
+<script>
+function initSims(){
+(function(){
+  var cv=document.getElementById("cvA7");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var slu=document.getElementById("slA7u"),sli=document.getElementById("slA7i");
+  var lbu=document.getElementById("lbA7u"),lbi=document.getElementById("lbA7i");
+  var U=12,I=1,electrons=[];
+  for(var i=0;i<20;i++)electrons.push({pos:i/20,speed:.004+Math.random()*.002});
+  function upd(){U=+slu.value;I=+sli.value;if(lbu)lbu.textContent=U;if(lbi)lbi.textContent=I.toFixed(1);}
+  if(slu)slu.addEventListener("input",upd);
+  if(sli)sli.addEventListener("input",upd);
+  // circuit path points (rectangle)
+  var pts=[[80,60],[W-80,60],[W-80,H-60],[80,H-60]];
+  function pathPos(frac){
+    var tot=0,segs=[];
+    for(var i=0;i<pts.length;i++){var nx=pts[(i+1)%pts.length],cx2=pts[i];var d=Math.hypot(nx[0]-cx2[0],nx[1]-cx2[1]);segs.push({d:d,sx:cx2[0],sy:cx2[1],ex:nx[0],ey:nx[1]});tot+=d;}
+    var target=frac*tot;
+    for(var j=0;j<segs.length;j++){if(target<=segs[j].d){var r=target/segs[j].d;return[segs[j].sx+r*(segs[j].ex-segs[j].sx),segs[j].sy+r*(segs[j].ey-segs[j].sy)];}target-=segs[j].d;}
+    return pts[0];
+  }
+  (function L(){
+    x.fillStyle=(getComputedStyle(document.documentElement).getPropertyValue("--bg")||"#F7F4FC").trim();x.fillRect(0,0,W,H);
+    // circuit wires
+    x.strokeStyle="rgba(167,139,250,.4)";x.lineWidth=3;
+    x.beginPath();x.moveTo(pts[0][0],pts[0][1]);
+    pts.forEach(function(p){x.lineTo(p[0],p[1]);});
+    x.closePath();x.stroke();
+    // battery (left side)
+    x.fillStyle="rgba(167,139,250,.2)";x.fillRect(72,H/2-25,16,50);
+    x.strokeStyle="#A78BFA";x.lineWidth=2;x.strokeRect(72,H/2-25,16,50);
+    x.fillStyle="#A78BFA";x.font="bold 14px monospace";x.textAlign="center";x.textBaseline="middle";
+    x.fillText("+",80,H/2-12);x.fillText("−",80,H/2+12);x.textBaseline="alphabetic";
+    // bulb (top right area)
+    var bx2=W/2,by2=60;
+    x.shadowBlur=20+Math.sin(t*.1)*5;x.shadowColor="#ffcc00";
+    x.fillStyle="rgba(255,200,0,"+(0.3+I/10)+")";
+    x.beginPath();x.arc(bx2,by2,18,0,6.28);x.fill();x.shadowBlur=0;
+    x.strokeStyle="#ffcc00";x.lineWidth=2;x.strokeRect(bx2-12,by2-25,24,20);
+    // electrons
+    electrons.forEach(function(e){
+      e.pos=(e.pos+e.speed*I)%1;
+      var ep=pathPos(e.pos);
+      x.shadowBlur=8;x.shadowColor="#ffcc00";x.fillStyle="#ffcc00";
+      x.beginPath();x.arc(ep[0],ep[1],3.5,0,6.28);x.fill();x.shadowBlur=0;
+    });
+    var P=U*I;
+    x.fillStyle="rgba(167,139,250,.9)";x.font="bold 13px monospace";x.textAlign="center";
+    x.fillText("P = "+U+" × "+I.toFixed(1)+" = "+P.toFixed(1)+" W",W/2,H-12);
+    x.fillStyle="rgba(200,200,200,.6)";x.font="10px monospace";
+    x.fillText("U="+U+"V   I="+I.toFixed(1)+"A",W/2,H-26);
+    t++;requestAnimationFrame(L);
+  })();
+})();
+(function(){
+  var cv=document.getElementById("cvB7");if(!cv)return;
+  var x=cv.getContext("2d"),W=cv.width,H=cv.height,t=0;
+  var sl=document.getElementById("slB7"),lb=document.getElementById("lbB7");
+  var R=10,I2=2;
+  if(sl)sl.addEventListener("input",function(){R=+this.value;if(lb)lb.textContent=R+" Ω";});
+  var heatParts=[];
+  for(var i=0;i<30;i++)heatParts.push({x:W/2-40+Math.random()*80,y:H*.3+Math.random()*80,vx:(Math.random()-.5)*.5,vy:-Math.random()*.8-.2,life:Math.random()*60});
+  (function L(){
+    x.fillStyle=(getComputedStyle(document.documentElement).getPropertyValue("--bg")||"#F7F4FC").trim();x.fillRect(0,0,W,H);
+    var P=I2*I2*R;
+    var heat=Math.min(1,P/200);
+    // resistor
+    var rx=W/2-50,ry=H*.3,rw=100,rh=60;
+    var rc="hsl("+(120-heat*120)+",100%,45%)";
+    x.shadowBlur=10+heat*20;x.shadowColor=rc;
+    x.fillStyle=rc+"44";x.fillRect(rx,ry,rw,rh);
+    x.strokeStyle=rc;x.lineWidth=2;x.strokeRect(rx,ry,rw,rh);x.shadowBlur=0;
+    x.fillStyle=rc;x.font="bold 11px monospace";x.textAlign="center";x.textBaseline="middle";
+    x.fillText(R+"Ω",W/2,H*.3+30);x.textBaseline="alphabetic";
+    // heat particles
+    heatParts.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy*(0.5+heat);p.life++;
+      if(p.life>60||p.y<H*.1){p.x=W/2-40+Math.random()*80;p.y=H*.3;p.vy=-Math.random()*.8-.2;p.vx=(Math.random()-.5)*.5;p.life=0;}
+      var a=1-(p.life/60);
+      x.fillStyle="rgba(255,"+(100+Math.round(heat*155))+",0,"+a+")";
+      x.beginPath();x.arc(p.x,p.y,3+heat*3,0,6.28);x.fill();
+    });
+    x.fillStyle="rgba(167,139,250,.9)";x.font="bold 12px monospace";x.textAlign="center";
+    x.fillText("P = R×I² = "+R+"×"+I2+"² = "+P.toFixed(0)+" W",W/2,H-25);
+    x.fillStyle="rgba(200,200,200,.6)";x.font="10px monospace";
+    x.fillText("Chaleur dissipée : "+P.toFixed(0)+" joules/s",W/2,H-10);
+    t++;requestAnimationFrame(L);
+  })();
+})();
+}
+</script>
+<script>
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

@@ -1,181 +1,1072 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1ʳᵉ Spé · Chapitre 18 — Optique ondulatoire | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+(function(){var t=localStorage.getItem('pco_theme')||'light';
+document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  --bg:#fbf5f7;--bg2:#f3eaf0;--surface:#ffffff;--surface2:#fdf8fb;
+  --blue:#9f4f68;--blue2:#b96a82;--blue3:#d4899f;
+  --text:#1a0a12;--text2:#5a2d42;--text3:#8a5a6a;
+  --border:rgba(159,79,104,0.15);--border2:rgba(159,79,104,0.30);
+  --ok:#2d9e6b;--ok-bg:#eaf7f0;--ok-bd:rgba(45,158,107,0.3);
+  --warn:#c07820;--warn-bg:#fdf5ea;--warn-bd:rgba(192,120,32,0.3);
+  --prop:#6b5fad;--prop-bg:#f0eefb;--prop-bd:rgba(107,95,173,0.3);
+  --radius:14px;--radius-sm:9px;
+  --shadow:0 2px 16px rgba(159,79,104,0.10);
+  --shadow-md:0 6px 28px rgba(159,79,104,0.16);
+}
+[data-theme="dark"]{
+  --bg:#12060c;--bg2:#1a0d14;--surface:#1f1018;--surface2:#261520;
+  --blue:#d4899f;--blue2:#b96a82;--blue3:#9f4f68;
+  --text:#f5e8ee;--text2:#c9a0b2;--text3:#8a5a6a;
+  --border:rgba(212,137,159,0.15);--border2:rgba(212,137,159,0.28);
+  --ok:#3dbd82;--ok-bg:#0d2b1e;--ok-bd:rgba(61,189,130,0.25);
+  --warn:#e09040;--warn-bg:#2a1e0a;--warn-bd:rgba(224,144,64,0.25);
+  --prop:#9b8fe8;--prop-bg:#1a1830;--prop-bd:rgba(155,143,232,0.25);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;box-shadow:var(--shadow)}
+.back-btn{font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--border2);transition:.2s}
+.back-btn:hover{background:var(--bg2)}
+.breadcrumb{font-size:12px;color:var(--text3);flex:1}
+.breadcrumb strong{color:var(--blue);font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.mastery-mini-bar{width:80px;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.mastery-mini-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:3px;transition:.4s;width:0%}
+.pct-pill{font-size:11px;font-weight:700;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2px 8px}
+.th-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px}
+.layout{display:flex;flex:1;padding-top:52px}
+.rail{width:64px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;position:fixed;top:52px;bottom:0;left:0;z-index:90;overflow-y:auto}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;width:56px;border-radius:10px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:9.5px;font-weight:600;font-family:'Inter',sans-serif;transition:.18s;text-align:center;line-height:1.2}
+.tab:hover{background:var(--bg2);color:var(--blue2)}
+.tab.active{background:var(--bg2);color:var(--blue);box-shadow:inset 0 0 0 1.5px var(--border2)}
+.tab-icon{font-size:18px}
+.main{margin-left:64px;flex:1;overflow-y:auto}
+.hero{background:linear-gradient(135deg,var(--bg2) 0%,var(--surface) 100%);border-bottom:1px solid var(--border);padding:28px 32px 0;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap}
+.hero-text{flex:1;min-width:260px;padding-bottom:28px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
+.hero-title{font-size:clamp(22px,3.5vw,34px);font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px}
+.hero-title em{color:var(--blue);font-style:normal}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.mastery-row{display:flex;align-items:center;gap:10px}
+.mastery-bar{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+#masteryBar{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.4s;width:0%}
+#masteryTxt{font-size:12px;font-weight:700;color:var(--blue);min-width:34px}
+.hero-canvas-wrap{width:320px;height:180px;border-radius:14px;overflow:hidden;flex-shrink:0;border:1.5px solid var(--border2)}
+.panel{display:none;min-height:calc(100vh - 52px)}
 .panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+.panel-inner{max-width:920px;margin:0 auto;padding:32px 24px 48px}
+.sec-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.box{border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;border-left:4px solid transparent;font-size:14px;line-height:1.65}
+.box-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.box.def{background:var(--prop-bg);border-left-color:var(--prop);}.box.def .box-label{color:var(--prop)}
+.box.ok{background:var(--ok-bg);border-left-color:var(--ok);}.box.ok .box-label{color:var(--ok)}
+.box.warn{background:var(--warn-bg);border-left-color:var(--warn);}.box.warn .box-label{color:var(--warn)}
+.box.prop{background:var(--prop-bg);border-left-color:var(--prop);}.box.prop .box-label{color:var(--prop)}
+.formula-block{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px 18px;margin:12px 0;font-family:'IBM Plex Mono',monospace;font-size:15px;text-align:center;overflow-x:auto;color:var(--blue)}
+.tbl-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px 14px;border:1px solid var(--border);text-align:left}
+thead th{background:var(--bg2);font-weight:700;color:var(--blue2)}
+tbody tr:nth-child(even){background:var(--surface2)}
+.exbox{background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--radius);padding:16px 18px;margin:14px 0}
+.exbox-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;margin-bottom:8px}
+/* FC */
+.fc-mode-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.fc-mode-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:.18s;font-family:'Inter',sans-serif}
+.fc-mode-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.fc-section{display:none}.fc-section.active{display:block}
+.fc-count{font-size:12px;color:var(--text3);margin-bottom:10px;font-weight:600}
+.card-scene{width:100%;max-width:480px;margin:0 auto 18px;height:220px;perspective:1000px;cursor:pointer}
+.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:.6s}
+.card-3d.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;box-shadow:var(--shadow-md)}
+.card-front{background:linear-gradient(135deg,var(--blue2),var(--blue3));color:#fff}
+.card-back{background:var(--surface);border:2px solid var(--border2);transform:rotateY(180deg);color:var(--text)}
+.card-q-icon{font-size:28px;margin-bottom:8px}
+.card-q-text{font-size:17px;font-weight:700;line-height:1.4}
+.card-hint{font-size:11px;margin-top:10px;opacity:.7}
+.card-a-text{font-size:15px;line-height:1.6;color:var(--text2)}
+.fc-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.fc-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.18s}
+.fc-btn:hover{background:var(--bg2)}.fc-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.comp-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:12px;font-size:14px}
+.comp-item input{border:none;border-bottom:2px solid var(--blue3);background:transparent;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);width:100px;padding:2px 4px;outline:none}
+.comp-check{margin-top:8px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--blue);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.comp-fb{font-size:12px;margin-top:6px;font-weight:600}
+.chrono-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.chrono-display{font-size:22px;font-weight:800;color:var(--blue);font-family:'IBM Plex Mono',monospace;min-width:52px}
+.chrono-prog{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.chrono-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.5s linear}
+.chrono-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:22px;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;font-weight:600;margin-bottom:14px}
+.chrono-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-knew{padding:9px 20px;border-radius:8px;background:var(--ok);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-didnt{padding:9px 20px;border-radius:8px;background:var(--warn);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.chrono-result{display:none;text-align:center}
+.result-big{font-size:42px;font-weight:900;color:var(--blue)}
+.quiz-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.quiz-prog-bar{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--blue3));border-radius:4px;transition:.3s}
+.quiz-prog-lbl{font-size:12px;color:var(--text3);font-weight:600;min-width:48px}
+.score-pill{font-size:13px;font-weight:800;color:var(--blue);background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:3px 12px}
+.q-block{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.q-text{font-size:15px;font-weight:700;margin-bottom:14px;line-height:1.5}
+.q-opts{display:grid;gap:8px}
+.q-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-size:13.5px;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;color:var(--text);transition:.18s}
+.q-opt:hover{border-color:var(--blue3);background:var(--bg2)}
+.q-opt.good{background:var(--ok-bg)!important;border-color:var(--ok)!important;color:var(--ok)!important;font-weight:700}
+.q-opt.bad{background:#ffeaea!important;border-color:#e05a5a!important;color:#c02020!important}
+[data-theme="dark"] .q-opt.bad{background:#2a0a0a!important;border-color:#e05a5a!important;color:#ff8080!important}
+.q-corr{font-size:13px;color:var(--ok);font-weight:600;margin-top:8px;display:none;line-height:1.5}
+.quiz-final{display:none;text-align:center;padding:28px 16px}
+.final-big{font-size:52px;font-weight:900;color:var(--blue)}
+.final-msg{font-size:15px;color:var(--text2);margin:8px 0 22px}
+.restart-btn{padding:10px 24px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.exo-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.exo-header{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.exo-title{font-size:15px;font-weight:700;flex:1}
+.exo-badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;border:1px solid transparent}
+.badge-diff{background:var(--bg2);color:var(--text2);border-color:var(--border)}
+.badge-comp{background:var(--prop-bg);color:var(--prop);border-color:var(--prop-bd)}
+.exo-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.exo-body.open{display:block}
+.corr-toggle{margin-top:12px;padding:7px 16px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.corr-body{display:none;margin-top:10px;padding:12px;background:var(--ok-bg);border-radius:8px;border:1px solid var(--ok-bd);font-size:13.5px;line-height:1.65}
+.corr-body.open{display:block}
+.sim-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:18px;margin-bottom:18px}
+.sim-title{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--blue)}
+.sim-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.sim-row label{font-size:13px;font-weight:600;min-width:100px;color:var(--text2)}
+.sim-row input{width:100px;padding:6px 10px;border-radius:6px;border:1.5px solid var(--border2);background:var(--bg2);font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--text);outline:none}
+.sim-row input:focus{border-color:var(--blue2)}
+.sim-row span{font-size:12px;color:var(--text3)}
+.sim-btn{padding:8px 18px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px}
+.sim-result{margin-top:10px;font-size:13.5px;line-height:1.8;background:var(--bg2);border-radius:8px;padding:10px 14px;min-height:44px;border:1px solid var(--border)}
+.sim-canvas{width:100%;height:100px;border-radius:10px;background:var(--bg);margin-top:10px;display:block}
+#mmCanvas{width:100%;border-radius:14px;background:var(--bg);display:block}
+.ece-proto{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;font-size:14px;line-height:1.7}
+.ece-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.ece-step-num{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+#eceCanvas{width:100%;height:200px;border-radius:10px;background:var(--bg);display:block;margin:12px 0}
+.terminal-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:580px){.terminal-grid{grid-template-columns:1fr}}
+.term-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:18px}
+.term-card h4{font-size:14px;font-weight:800;color:var(--blue);margin-bottom:10px}
+.mini-challenge{background:var(--prop-bg);border:1.5px solid var(--prop-bd);border-radius:var(--radius);padding:18px;margin:20px 0}
+.mini-challenge h3{font-size:16px;font-weight:800;color:var(--prop);margin-bottom:10px}
+.rel-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+.rel-table th{background:var(--bg2);color:var(--blue2);font-weight:700;padding:9px 14px;border:1px solid var(--border);text-align:center}
+.rel-table td{padding:9px 14px;border:1px solid var(--border);text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px}
 </style>
 </head>
 <body>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">1ʳᵉ Spé</span>
-      <span class="micro">Chap. 18</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
+<div class="topbar">
+  <a href="index.html" class="back-btn">← Retour</a>
+  <div class="breadcrumb">Première Spé › Ondes et signaux › <strong>Chapitre 18</strong></div>
+  <div class="topbar-right">
+    <div class="mastery-mini-bar"><div class="mastery-mini-fill" id="mmFill"></div></div>
+    <span class="pct-pill" id="pctPill">0 %</span>
+    <button class="th-btn" id="thBtn" onclick="toggleTheme()">🌙</button>
   </div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<div class="layout">
+<nav class="rail">
+  <button class="tab active" onclick="go('cours',this)"><span class="tab-icon">📚</span>cours</button>
+  <button class="tab" onclick="go('reldim',this)"><span class="tab-icon">📐</span>reldim</button>
+  <button class="tab" onclick="go('exo',this)"><span class="tab-icon">✏️</span>exo</button>
+  <button class="tab" onclick="go('fc',this)"><span class="tab-icon">🃏</span>fc</button>
+  <button class="tab" onclick="go('quiz',this)"><span class="tab-icon">🧠</span>quiz</button>
+  <button class="tab" onclick="go('mm',this)"><span class="tab-icon">🗺</span>mm</button>
+  <button class="tab" onclick="go('sim',this)"><span class="tab-icon">🎬</span>sim</button>
+  <button class="tab" onclick="go('ece',this)"><span class="tab-icon">🔬</span>ece</button>
+  <button class="tab" onclick="go('terminal',this)"><span class="tab-icon">🚀</span>tle</button>
+</nav>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">1ʳᵉ Spé · Chap. 18</div>
-    <h1 class="hero-title">Optique ondulat<span>oire | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+<div class="main">
+<div class="hero">
+  <div class="hero-text">
+    <div class="hero-badge">🌊 Ondes et signaux · Chap. 18</div>
+    <h1 class="hero-title">Optique <em>ondulatoire</em></h1>
+    <p class="hero-sub">Onde électromagnétique · \(c=\lambda\nu\) · Photon \(E=h\nu\) · Spectres d'émission et d'absorption · Transitions énergétiques</p>
+    <div class="mastery-row">
+      <span style="font-size:12px;color:var(--text3);font-weight:600">Maîtrise</span>
+      <div class="mastery-bar"><div id="masteryBar"></div></div>
+      <span id="masteryTxt">0 %</span>
+    </div>
+  </div>
+  <div class="hero-canvas-wrap">
+    <canvas id="heroCanvas" width="320" height="180"></canvas>
+  </div>
+</div>
+
+<!-- ═══ COURS ═══ -->
+<div class="panel active" id="p-cours">
+<div class="panel-inner">
+
+  <h2 class="sec-title">🎯 Pourquoi ce chapitre ?</h2>
+  <div class="box prop"><div class="box-label">Idée directrice</div>
+    <p>La lumière se décrit à la fois comme une <strong>onde électromagnétique</strong> (longueur d'onde \(\lambda\), fréquence \(\nu\)) et comme un flux de <strong>photons</strong> (énergie \(E=h\nu\)). Ce double regard explique la couleur, les spectres atomiques, l'identification d'espèces à distance et les technologies photovoltaïques.</p>
+  </div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 I. Onde électromagnétique</h2>
+  <div class="box def"><div class="box-label">Définition</div>
+    <p>Une <strong>onde électromagnétique</strong> est constituée d'un champ électrique et d'un champ magnétique oscillants couplés, se propageant dans le vide à la vitesse \(c\). Elle ne nécessite pas de milieu matériel pour se propager.</p>
+  </div>
+  <p style="margin:10px 0">La lumière visible n'est qu'une petite partie du spectre électromagnétique :</p>
+  <div class="tbl-wrap"><table><thead><tr><th>Domaine</th><th>Longueur d'onde</th><th>Fréquence approx.</th></tr></thead><tbody>
+    <tr><td>Rayons γ</td><td>&lt; 0,01 nm</td><td>&gt; 3×10¹⁹ Hz</td></tr>
+    <tr><td>Rayons X</td><td>0,01 – 10 nm</td><td>—</td></tr>
+    <tr><td>Ultraviolets (UV)</td><td>10 – 400 nm</td><td>—</td></tr>
+    <tr><td><strong>Visible</strong></td><td><strong>400 – 800 nm</strong></td><td>—</td></tr>
+    <tr><td>Infrarouges (IR)</td><td>800 nm – 1 mm</td><td>—</td></tr>
+    <tr><td>Micro-ondes, radio</td><td>&gt; 1 mm</td><td>&lt; 3×10¹¹ Hz</td></tr>
+  </tbody></table></div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 II. Relation \(c = \lambda\nu\)</h2>
+  <div class="formula-block">\[c = \lambda\,\nu\]</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité SI</th><th>Valeur remarquable</th></tr></thead><tbody>
+    <tr><td>Célérité de la lumière dans le vide</td><td>\(c\)</td><td>\(\mathrm{m\,s^{-1}}\)</td><td>\(c\simeq 3{,}00\times10^8\,\mathrm{m\,s^{-1}}\)</td></tr>
+    <tr><td>Longueur d'onde</td><td>\(\lambda\)</td><td>\(\mathrm{m}\)</td><td>Visible : 400–800 nm</td></tr>
+    <tr><td>Fréquence</td><td>\(\nu\)</td><td>\(\mathrm{Hz}\)</td><td>Visible : ~4–7,5×10¹⁴ Hz</td></tr>
+  </tbody></table></div>
+  <div class="box warn"><div class="box-label">À retenir</div>
+    <p>Quand \(\lambda\) diminue, \(\nu\) augmente (à \(c\) constant). Le violet a la plus petite longueur d'onde et la plus grande fréquence dans le visible.</p>
+  </div>
+  <div class="exbox"><div class="exbox-label">Exemple</div>
+    <p>\(\lambda = 600\,\mathrm{nm} = 6{,}00\times10^{-7}\,\mathrm{m}\)</p>
+    <div class="formula-block">\[\nu = \frac{c}{\lambda} = \frac{3{,}00\times10^8}{6{,}00\times10^{-7}} = 5{,}00\times10^{14}\,\mathrm{Hz}\]</div>
+  </div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 III. Le photon — \(E = h\nu\)</h2>
+  <div class="box def"><div class="box-label">Photon</div>
+    <p>Un <strong>photon</strong> est un quantum d'énergie (paquet élémentaire) associé à une radiation électromagnétique de fréquence \(\nu\). Il n'a pas de masse au repos et se déplace à la vitesse \(c\).</p>
+  </div>
+  <div class="formula-block">\[E = h\nu = \frac{hc}{\lambda}\]</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Valeur</th></tr></thead><tbody>
+    <tr><td>Constante de Planck</td><td>\(h\)</td><td>\(6{,}63\times10^{-34}\,\mathrm{J\cdot s}\)</td></tr>
+    <tr><td>Énergie du photon</td><td>\(E\)</td><td>En J ou en eV</td></tr>
+    <tr><td>Électronvolt</td><td>\(\mathrm{eV}\)</td><td>\(1\,\mathrm{eV}=1{,}60\times10^{-19}\,\mathrm{J}\)</td></tr>
+  </tbody></table></div>
+  <div class="exbox"><div class="exbox-label">Application numérique</div>
+    <p>Pour \(\lambda = 600\,\mathrm{nm}\), \(\nu = 5{,}00\times10^{14}\,\mathrm{Hz}\) :</p>
+    <div class="formula-block">\[E = h\nu = 6{,}63\times10^{-34}\times5{,}00\times10^{14} = 3{,}32\times10^{-19}\,\mathrm{J}\]</div>
+    <div class="formula-block">\[E = \frac{3{,}32\times10^{-19}}{1{,}60\times10^{-19}} \approx 2{,}07\,\mathrm{eV}\]</div>
+  </div>
+  <div class="box ok"><div class="box-label">Sens physique</div>
+    <p>Plus la fréquence est grande (rayon UV &gt; visible &gt; IR), plus l'énergie du photon est grande. C'est pourquoi les UV sont plus dangereux biologiquement que la lumière visible.</p>
+  </div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 IV. Interaction onde-matière — \(\Delta E = h\nu\)</h2>
+  <p style="margin-bottom:10px">Un atome ou une molécule possède des <strong>niveaux d'énergie discrets</strong> \(E_1 < E_2 < E_3 \ldots\). Une transition entre deux niveaux est possible uniquement si l'énergie du photon correspond exactement à l'écart entre ces niveaux :</p>
+  <div class="formula-block">\[\Delta E = E_2 - E_1 = h\nu = \frac{hc}{\lambda}\]</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Processus</th><th>Direction</th><th>Résultat</th></tr></thead><tbody>
+    <tr><td><strong>Absorption</strong></td><td>Bas niveau → haut niveau</td><td>Le photon est capté ; la radiation disparaît du spectre</td></tr>
+    <tr><td><strong>Émission spontanée</strong></td><td>Haut niveau → bas niveau</td><td>Un photon est émis à la fréquence \(\nu=\Delta E/h\)</td></tr>
+  </tbody></table></div>
+  <div class="box prop"><div class="box-label">Sélectivité</div>
+    <p>Seules les radiations dont l'énergie correspond à un écart entre deux niveaux sont absorbées. Toutes les autres traversent la matière sans être absorbées. C'est cette sélectivité qui produit les <strong>raies</strong> dans les spectres.</p>
+  </div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 V. Spectres et transitions</h2>
+  <div class="tbl-wrap"><table><thead><tr><th>Type de spectre</th><th>Apparence</th><th>Source</th><th>Interprétation</th></tr></thead><tbody>
+    <tr><td><strong>Continu</strong></td><td>Arc-en-ciel sans trous</td><td>Source chaude dense (filament, étoile)</td><td>Toutes les λ présentes</td></tr>
+    <tr><td><strong>Émission de raies</strong></td><td>Raies brillantes sur fond sombre</td><td>Gaz chaud raréfié (lampe à vapeur)</td><td>Atomes qui émettent des photons lors de transitions</td></tr>
+    <tr><td><strong>Absorption de raies</strong></td><td>Raies sombres sur fond continu</td><td>Lumière blanche traversant un gaz froid</td><td>Raies absorbées = raies d'émission du même élément</td></tr>
+  </tbody></table></div>
+  <div class="exbox"><div class="exbox-label">Identification d'une étoile</div>
+    <p>Le spectre d'une étoile est un spectre continu (surface chaude) avec des raies sombres (atmosphère froide qui absorbe). Les longueurs d'onde absorbées révèlent les éléments présents : raies du sodium à 589 nm, du calcium à 393 et 397 nm, de l'hydrogène (série de Balmer), etc.</p>
+  </div>
+
+  <h2 class="sec-title" style="margin-top:28px">🔹 VI. Méthode de calcul</h2>
+  <div class="box ok"><div class="box-label">Protocole</div>
+    <ol style="padding-left:18px;line-height:2">
+      <li>Convertir \(\lambda\) en mètres si donné en nm : \(\lambda(\mathrm{m}) = \lambda(\mathrm{nm})\times10^{-9}\).</li>
+      <li>Calculer \(\nu\) : \(\nu = c/\lambda\) (si \(\lambda\) est donné).</li>
+      <li>Calculer \(E = h\nu\) ou directement \(E = hc/\lambda\).</li>
+      <li>Convertir en eV si demandé : diviser par \(1{,}60\times10^{-19}\).</li>
+    </ol>
+  </div>
+  <div class="box warn"><div class="box-label">Piège classique</div>
+    <p>Ne pas convertir \(\lambda\) en mètres avant le calcul est l'erreur la plus fréquente. Vérifier les puissances de 10 : \(E\) doit être de l'ordre de \(10^{-19}\,\mathrm{J}\) pour une radiation visible.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ RELDIM ═══ -->
+<div class="panel" id="p-reldim">
+<div class="panel-inner">
+  <h2 class="sec-title">📐 Relations et dimensions</h2>
+  <table class="rel-table"><thead><tr><th>Relation</th><th>Expression</th><th>Unités SI</th></tr></thead><tbody>
+    <tr><td>Relation onde</td><td>\(c = \lambda\,\nu\)</td><td>\(\mathrm{m\,s^{-1}} = \mathrm{m}\times\mathrm{Hz}\)</td></tr>
+    <tr><td>Fréquence depuis λ</td><td>\(\nu = c/\lambda\)</td><td>\(\mathrm{Hz}\)</td></tr>
+    <tr><td>λ depuis ν</td><td>\(\lambda = c/\nu\)</td><td>\(\mathrm{m}\)</td></tr>
+    <tr><td>Énergie photon</td><td>\(E = h\nu = hc/\lambda\)</td><td>\(\mathrm{J}\)</td></tr>
+    <tr><td>Transition</td><td>\(\Delta E = h\nu = hc/\lambda\)</td><td>\(\mathrm{J}\)</td></tr>
+    <tr><td>Conversion eV ↔ J</td><td>\(E(\mathrm{J}) = E(\mathrm{eV})\times1{,}60\times10^{-19}\)</td><td>—</td></tr>
+  </tbody></table>
+
+  <h3 style="font-size:15px;font-weight:700;margin:22px 0 8px;color:var(--blue2)">Constantes fondamentales</h3>
+  <div class="formula-block">\[c = 3{,}00\times10^8\,\mathrm{m\,s^{-1}}\qquad h = 6{,}63\times10^{-34}\,\mathrm{J\cdot s}\qquad 1\,\mathrm{eV}=1{,}60\times10^{-19}\,\mathrm{J}\]</div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:22px 0 8px;color:var(--blue2)">Conversions de λ</h3>
+  <div class="formula-block">\[\lambda(\mathrm{m}) = \lambda(\mathrm{nm})\times10^{-9}\qquad \lambda(\mathrm{nm}) = \lambda(\mathrm{m})\times10^{9}\]</div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:22px 0 8px;color:var(--blue2)">Ordre de grandeur des énergies de photons visibles</h3>
+  <table class="rel-table"><thead><tr><th>Couleur</th><th>λ (nm)</th><th>E (J)</th><th>E (eV)</th></tr></thead><tbody>
+    <tr><td>Violet</td><td>400</td><td>4,97×10⁻¹⁹</td><td>3,10</td></tr>
+    <tr><td>Bleu</td><td>450</td><td>4,42×10⁻¹⁹</td><td>2,76</td></tr>
+    <tr><td>Vert</td><td>550</td><td>3,61×10⁻¹⁹</td><td>2,25</td></tr>
+    <tr><td>Rouge</td><td>700</td><td>2,84×10⁻¹⁹</td><td>1,77</td></tr>
+  </tbody></table>
+</div>
+</div>
+
+<!-- ═══ EXO ═══ -->
+<div class="panel" id="p-exo">
+<div class="panel-inner">
+  <h2 class="sec-title">✏️ Exercices progressifs</h2>
+
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 1 — Fréquence d'une radiation visible</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐</span><span class="badge badge-comp">APP · REA</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Une radiation a une longueur d'onde \(\lambda = 600\,\mathrm{nm}\).</p>
+      <p>1. Convertir \(\lambda\) en mètres.</p>
+      <p>2. Calculer la fréquence \(\nu\).</p>
+      <p>3. De quelle couleur s'agit-il ?</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p><strong>1.</strong> \(\lambda = 600\times10^{-9} = 6{,}00\times10^{-7}\,\mathrm{m}\).</p>
+        <p><strong>2.</strong> \(\nu = c/\lambda = (3{,}00\times10^8)/(6{,}00\times10^{-7}) = 5{,}00\times10^{14}\,\mathrm{Hz}\).</p>
+        <p><strong>3.</strong> 600 nm correspond à l'orangé-rouge.</p>
+        <p><em>Méthode :</em> Toujours commencer par convertir λ en mètres.</p>
+      </div>
     </div>
   </div>
 
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 2 — Énergie d'un photon</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐</span><span class="badge badge-comp">APP · REA</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Calculer l'énergie d'un photon de fréquence \(\nu = 4{,}8\times10^{14}\,\mathrm{Hz}\), puis l'exprimer en eV.</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p>\(E = h\nu = 6{,}63\times10^{-34}\times4{,}8\times10^{14} = 3{,}18\times10^{-19}\,\mathrm{J}\).</p>
+        <p>\(E = 3{,}18\times10^{-19}/1{,}60\times10^{-19} \approx 1{,}99\,\mathrm{eV}\).</p>
+        <p><em>Méthode :</em> Pour convertir de J en eV, diviser par \(1{,}60\times10^{-19}\).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 3 — Bleu vs rouge : comparaison d'énergies</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">ANA · VAL</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Calculer et comparer les énergies de photons bleu (\(\lambda_1 = 450\,\mathrm{nm}\)) et rouge (\(\lambda_2 = 700\,\mathrm{nm}\)).</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p>\(E_1 = hc/\lambda_1 = (6{,}63\times10^{-34}\times3{,}00\times10^8)/(4{,}50\times10^{-7}) = 4{,}42\times10^{-19}\,\mathrm{J}\).</p>
+        <p>\(E_2 = hc/\lambda_2 = (6{,}63\times10^{-34}\times3{,}00\times10^8)/(7{,}00\times10^{-7}) = 2{,}84\times10^{-19}\,\mathrm{J}\).</p>
+        <p><strong>Conclusion :</strong> \(E_1 > E_2\). Le photon bleu est plus énergétique que le rouge. En général : plus λ est courte, plus E est grande.</p>
+        <p><em>Méthode :</em> \(E = hc/\lambda\) : E et λ sont inversement proportionnels.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 4 — Transition énergétique et λ émise</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">ANA · REA</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Un atome subit une transition avec \(\Delta E = 3{,}0\times10^{-19}\,\mathrm{J}\). Calculer la fréquence et la longueur d'onde du photon émis. S'agit-il d'une radiation visible ?</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p>\(\nu = \Delta E / h = 3{,}0\times10^{-19}/6{,}63\times10^{-34} \approx 4{,}52\times10^{14}\,\mathrm{Hz}\).</p>
+        <p>\(\lambda = c/\nu = 3{,}00\times10^8/4{,}52\times10^{14} \approx 6{,}64\times10^{-7}\,\mathrm{m} = 664\,\mathrm{nm}\).</p>
+        <p><strong>Conclusion :</strong> 664 nm correspond au rouge du visible (400–800 nm). Oui, c'est une radiation visible.</p>
+        <p><em>Méthode :</em> Utiliser \(\Delta E = h\nu\) pour trouver ν, puis \(\lambda = c/\nu\).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 5 — Spectre d'absorption du sodium</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐⭐</span><span class="badge badge-comp">APP · ANA</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Le sodium présente une raie d'émission à \(\lambda = 589\,\mathrm{nm}\) (doublet jaune).</p>
+      <p>1. Calculer l'énergie de la transition correspondante en J puis en eV.</p>
+      <p>2. Cette raie peut-elle aussi apparaître en absorption ? Expliquer.</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p><strong>1.</strong> \(\lambda = 5{,}89\times10^{-7}\,\mathrm{m}\).</p>
+        <p>\(E = hc/\lambda = (6{,}63\times10^{-34}\times3{,}00\times10^8)/(5{,}89\times10^{-7}) = 3{,}38\times10^{-19}\,\mathrm{J} \approx 2{,}11\,\mathrm{eV}\).</p>
+        <p><strong>2.</strong> Oui. Un atome de sodium peut absorber un photon de 589 nm pour passer au niveau d'énergie supérieur. C'est pourquoi les raies sombres observées dans les spectres stellaires aux mêmes longueurs d'onde signalent la présence de sodium atmosphérique.</p>
+        <p><em>Méthode :</em> Les raies d'émission et d'absorption d'un même élément correspondent aux mêmes transitions, donc aux mêmes longueurs d'onde.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-header" onclick="toggleExo(this)">
+      <span class="exo-title">Exo 6 — Cellule photovoltaïque</span>
+      <div class="exo-badges"><span class="badge badge-diff">⭐⭐⭐</span><span class="badge badge-comp">ANA · VAL · COM</span></div>
+      <span style="font-size:18px;color:var(--text3)">▾</span>
+    </div>
+    <div class="exo-body">
+      <p><strong>Énoncé :</strong> Une cellule photovoltaïque en silicium ne peut convertir un photon que si son énergie dépasse l'énergie de gap \(E_g = 1{,}12\,\mathrm{eV}\).</p>
+      <p>1. Calculer \(E_g\) en joules.</p>
+      <p>2. Calculer la longueur d'onde limite \(\lambda_{\max}\) au-delà de laquelle la cellule ne réagit plus.</p>
+      <p>3. Ce \(\lambda_{\max}\) se trouve-t-il dans le visible ou l'infrarouge ?</p>
+      <button class="corr-toggle" onclick="toggleCorr(this)">Voir la correction</button>
+      <div class="corr-body">
+        <p><strong>1.</strong> \(E_g = 1{,}12\times1{,}60\times10^{-19} = 1{,}79\times10^{-19}\,\mathrm{J}\).</p>
+        <p><strong>2.</strong> \(\lambda_{\max} = hc/E_g = (6{,}63\times10^{-34}\times3{,}00\times10^8)/(1{,}79\times10^{-19}) = 1{,}11\times10^{-6}\,\mathrm{m} = 1110\,\mathrm{nm}\).</p>
+        <p><strong>3.</strong> 1110 nm &gt; 800 nm : c'est dans l'<strong>infrarouge</strong>. La cellule peut donc absorber toute la lumière visible et une partie de l'IR.</p>
+        <p><em>Méthode :</em> \(\lambda_{\max} = hc/E_g\). Au-delà, les photons ne sont pas assez énergétiques pour libérer des électrons.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ FC ═══ -->
+<div class="panel" id="p-fc">
+<div class="panel-inner">
+  <h2 class="sec-title">🃏 Flashcards — Optique ondulatoire</h2>
+  <div class="fc-mode-row">
+    <button class="fc-mode-btn on" onclick="switchFC('libre',this)">📖 Révision libre</button>
+    <button class="fc-mode-btn" onclick="switchFC('completion',this)">✍️ Complétion</button>
+    <button class="fc-mode-btn" onclick="switchFC('chrono',this)">⏱ Chrono 2 min</button>
+  </div>
+  <div class="fc-section active" id="fc-libre">
+    <div class="fc-count" id="fc-count">Carte 1 / 15</div>
+    <div class="card-scene" onclick="flipCard()">
+      <div class="card-3d" id="fc-card">
+        <div class="card-face card-front">
+          <div class="card-q-icon" id="fc-icon">❓</div>
+          <div class="card-q-text" id="fc-q">Chargement…</div>
+          <div class="card-hint">Cliquez pour retourner</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-a-text" id="fc-a">Réponse…</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="fc-btn" onclick="prevCard()">← Préc.</button>
+      <button class="fc-btn primary" onclick="flipCard()">↻ Retourner</button>
+      <button class="fc-btn" onclick="nextCard()">Suiv. →</button>
+      <button class="fc-btn" onclick="shuffleCards()">🔀 Mélanger</button>
+    </div>
+  </div>
+  <div class="fc-section" id="fc-completion">
+    <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Score : <strong id="comp-score">0</strong></p>
+    <div id="comp-container"></div>
+  </div>
+  <div class="fc-section" id="fc-chrono">
+    <div class="chrono-bar">
+      <div class="chrono-display" id="chrono-time">2:00</div>
+      <div class="chrono-prog"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
+      <span style="font-size:12px;color:var(--text3);font-weight:600" id="chrono-counter">0/15</span>
+    </div>
+    <div class="chrono-card" id="chrono-card"><div id="chrono-q">Appuyez sur Démarrer</div></div>
+    <div class="chrono-acts" id="chrono-acts"><button class="btn-knew" onclick="startChrono()">▶ Démarrer</button></div>
+    <div class="chrono-result" id="chrono-result">
+      <div class="result-big" id="result-big">0/15</div>
+      <div style="font-size:14px;color:var(--text2);margin:8px 0 20px" id="result-sub">—</div>
+      <button class="fc-btn primary" onclick="startChrono()">🔄 Recommencer</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div class="panel" id="p-quiz">
+<div class="panel-inner">
+  <h2 class="sec-title">🧠 Quiz — 12 questions</h2>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <span class="score-pill" id="scorePill">0 / 0</span>
+  </div>
+  <div class="quiz-prog-row">
+    <div class="quiz-prog-bar"><div class="quiz-prog-fill" id="qProgFill" style="width:0%"></div></div>
+    <span class="quiz-prog-lbl" id="qProgLbl">Q 1/12</span>
+  </div>
+  <div id="qContainer"></div>
+  <div class="quiz-final" id="qFinal">
+    <div class="final-big" id="finalBig">—</div>
+    <div class="final-msg" id="finalMsg">—</div>
+    <button class="restart-btn" onclick="startQuiz()">🔄 Recommencer</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ CARTE MENTALE ═══ -->
+<div class="panel" id="p-mm">
+<div class="panel-inner">
+  <h2 class="sec-title">🗺 Carte mentale — Optique ondulatoire</h2>
+  <canvas id="mmCanvas" height="500"></canvas>
+</div>
+</div>
+
+<!-- ═══ SIMULATEURS ═══ -->
+<div class="panel" id="p-sim">
+<div class="panel-inner">
+  <h2 class="sec-title">🎬 Simulateurs</h2>
+
+  <div class="sim-card">
+    <div class="sim-title">⚡ Calculateur photon : λ → ν → E</div>
+    <div class="sim-row"><label>λ (nm)</label><input id="s1lam" type="number" value="600" step="10"><span>nm</span></div>
+    <button class="sim-btn" onclick="calcSim1()">Calculer</button>
+    <div class="sim-result" id="sim1-result"></div>
+    <canvas id="sim1Canvas" class="sim-canvas"></canvas>
+  </div>
+
+  <div class="sim-card">
+    <div class="sim-title">🔁 Calculateur transition : ΔE → λ</div>
+    <div class="sim-row"><label>ΔE (J)</label><input id="s2dE" type="number" value="3.0e-19" step="1e-20"><span>J</span></div>
+    <button class="sim-btn" onclick="calcSim2()">Calculer λ</button>
+    <div class="sim-result" id="sim2-result"></div>
+    <canvas id="sim2Canvas" class="sim-canvas"></canvas>
+  </div>
+
+  <h3 style="font-size:15px;font-weight:700;margin:20px 0 10px;color:var(--blue2)">Simulation PhET — Molécules et lumière</h3>
+  <div style="border-radius:12px;overflow:hidden;border:1.5px solid var(--border2)">
+    <iframe src="https://phet.colorado.edu/sims/html/molecules-and-light/latest/molecules-and-light_fr.html" style="width:100%;height:420px;border:none" allowfullscreen loading="lazy"></iframe>
+  </div>
+  <p style="font-size:12px;color:var(--text3);margin-top:8px">Mission : choisir différentes radiations (IR, visible, UV) et observer quelles molécules absorbent. Vérifier que l'absorption est sélective.</p>
+</div>
+</div>
+
+<!-- ═══ ECE ═══ -->
+<div class="panel" id="p-ece">
+<div class="panel-inner">
+  <h2 class="sec-title">🔬 ECE — Spectres d'émission et absorption</h2>
+  <div class="ece-proto">
+    <div class="box-label" style="color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.08em;margin-bottom:10px">PROTOCOLE</div>
+    <div class="ece-step"><div class="ece-step-num">1</div><p>Brancher la lampe à vapeur de sodium (ou mercure). Observer le spectre à travers le spectroscope.</p></div>
+    <div class="ece-step"><div class="ece-step-num">2</div><p>Identifier les raies brillantes et mesurer leur position angulaire (ou leurs longueurs d'onde directement).</p></div>
+    <div class="ece-step"><div class="ece-step-num">3</div><p>Calculer l'énergie de la transition correspondant à chaque raie avec \(\Delta E = hc/\lambda\).</p></div>
+    <div class="ece-step"><div class="ece-step-num">4</div><p>Comparer aux valeurs tabulées pour valider la relation.</p></div>
+    <div class="ece-step"><div class="ece-step-num">5</div><p>Observer ensuite un spectre d'absorption (lampe blanche + gaz) et retrouver les mêmes longueurs d'onde.</p></div>
+  </div>
+  <canvas id="eceCanvas"></canvas>
+  <h3 style="font-size:15px;font-weight:700;margin:16px 0 10px;color:var(--blue2)">Calculateur ECE : λ → ΔE</h3>
+  <div class="sim-card" style="max-width:420px">
+    <div class="sim-row"><label>λ (nm)</label><input id="eLam" type="number" value="589" step="1"></div>
+    <button class="sim-btn" onclick="calcECE()">Calculer ΔE</button>
+    <div class="sim-result" id="ece-result"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ TERMINAL ═══ -->
+<div class="panel" id="p-terminal">
+<div class="panel-inner">
+  <h2 class="sec-title">🚀 Vers la Terminale</h2>
+  <div class="terminal-grid">
+    <div class="term-card">
+      <h4>Ce qui est réutilisé en Terminale</h4>
+      <ul style="font-size:13.5px;line-height:2;padding-left:16px">
+        <li>Relation \(c = \lambda\nu\) et \(E = h\nu\)</li>
+        <li>Spectres d'émission et d'absorption</li>
+        <li>Identification d'espèces par spectroscopie</li>
+        <li>Transitions énergétiques et niveaux d'énergie</li>
+      </ul>
+    </div>
+    <div class="term-card">
+      <h4>Ce qui devient plus difficile</h4>
+      <ul style="font-size:13.5px;line-height:2;padding-left:16px">
+        <li>Modèle de Bohr de l'atome d'hydrogène</li>
+        <li>Énergie d'ionisation</li>
+        <li>Spectrophotométrie (Beer-Lambert)</li>
+        <li>Dosage par étalonnage et par comparaison</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mini-challenge">
+    <h3>🎯 Mini-défi Terminale : énergie d'ionisation de l'hydrogène</h3>
+    <p style="font-size:14px;line-height:1.7;margin-bottom:12px">Le niveau fondamental de l'atome d'hydrogène a une énergie \(E_1 = -13{,}6\,\mathrm{eV}\). L'ionisation correspond à amener l'électron de \(E_1\) à \(E_\infty = 0\,\mathrm{eV}\).</p>
+    <p style="font-size:14px;margin-bottom:8px"><strong>Question :</strong> Calculer la longueur d'onde du photon capable d'ioniser l'atome d'hydrogène depuis son état fondamental.</p>
+    <button class="corr-toggle" onclick="toggleCorr(this)" style="margin-bottom:10px">Voir la réponse</button>
+    <div class="corr-body">
+      <p>L'énergie nécessaire pour ioniser : \(\Delta E = E_\infty - E_1 = 0 - (-13{,}6) = 13{,}6\,\mathrm{eV}\).</p>
+      <p>En joules : \(\Delta E = 13{,}6\times1{,}60\times10^{-19} = 2{,}18\times10^{-18}\,\mathrm{J}\).</p>
+      <p>La longueur d'onde correspondante :</p>
+      <div class="formula-block">\[\lambda = \frac{hc}{\Delta E} = \frac{6{,}63\times10^{-34}\times3{,}00\times10^8}{2{,}18\times10^{-18}} \approx 9{,}12\times10^{-8}\,\mathrm{m} = 91{,}2\,\mathrm{nm}\]</div>
+      <p>91 nm est dans le domaine <strong>UV lointain</strong>. Il faut donc une radiation UV pour ioniser l'hydrogène depuis son état fondamental.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},startup:{ready(){MathJax.startup.defaultReady();}}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+<script>
+/* ═══ THEME ═══ */
+function toggleTheme(){
+  var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',n);
+  document.getElementById('thBtn').textContent=n==='dark'?'☀️':'🌙';
+  localStorage.setItem('pco_theme',n);
+  drawHero();drawMM();drawECECanvas();
+}
+
+/* ═══ TABS ═══ */
+var visited=new Set();
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('p-'+id).classList.add('active');
+  btn.classList.add('active');
+  visited.add(id);updateMastery();
+  if(id==='mm')setTimeout(drawMM,60);
+  if(id==='ece')setTimeout(drawECECanvas,60);
+  if(id==='sim')setTimeout(function(){calcSim1();calcSim2();},60);
+  if(id==='quiz')setTimeout(function(){if(!quizStarted)startQuiz();},60);
+  if(id==='fc')setTimeout(function(){renderFC();if(window.MathJax)MathJax.typesetPromise();},60);
+}
+function updateMastery(){
+  var tot=9,n=visited.size,pct=Math.round(n/tot*100);
+  document.getElementById('masteryBar').style.width=pct+'%';
+  document.getElementById('masteryTxt').textContent=pct+' %';
+  document.getElementById('mmFill').style.width=pct+'%';
+  document.getElementById('pctPill').textContent=pct+' %';
+}
+visited.add('cours');updateMastery();
+
+/* ═══ HERO CANVAS — ondes EM animées + raies spectrales ═══ */
+var heroRaf;
+function drawHero(){
+  if(heroRaf)cancelAnimationFrame(heroRaf);
+  var c=document.getElementById('heroCanvas');if(!c)return;
+  var ctx=c.getContext('2d'),W=c.width,H=c.height;
+  function frame(){
+    ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
+    var t=Date.now()/1000;
+    // onde sinusoïdale animée
+    var colors=['#ff4466','#ffaa00','#44ff88','#44aaff','#aa44ff'];
+    colors.forEach(function(col,i){
+      var amp=14-i*2,fy=H*0.35+i*6,k=2.5+i*0.3;
+      ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.globalAlpha=0.8;
+      ctx.beginPath();
+      for(var x=0;x<W;x++){
+        var y=fy+amp*Math.sin(k*x/W*Math.PI*2-t*(3+i*0.5));
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.stroke();ctx.globalAlpha=1;
+    });
+    // raies spectrales (spectre d'émission sodium-like)
+    var raies=[
+      {x:W*0.12,col:'#7000ff',label:'410'},
+      {x:W*0.22,col:'#0044ff',label:'434'},
+      {x:W*0.38,col:'#00bb44',label:'486'},
+      {x:W*0.58,col:'#ffaa00',label:'589'},
+      {x:W*0.78,col:'#ff2200',label:'656'},
+      {x:W*0.92,col:'#cc0000',label:'700'}
+    ];
+    var by=H*0.62;
+    ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,by,W,H-by);
+    raies.forEach(function(r){
+      ctx.strokeStyle=r.col;ctx.lineWidth=2.5;ctx.globalAlpha=0.9;
+      ctx.beginPath();ctx.moveTo(r.x,by+2);ctx.lineTo(r.x,H-18);ctx.stroke();
+      ctx.globalAlpha=1;
+      ctx.fillStyle=r.col;ctx.font='9px IBM Plex Mono';ctx.textAlign='center';
+      ctx.fillText(r.label,r.x,H-6);
+    });
+    ctx.fillStyle='rgba(212,137,159,0.5)';ctx.font='bold 10px Inter';ctx.textAlign='right';
+    ctx.fillText('Spectre H',W-6,H-6);
+    heroRaf=requestAnimationFrame(frame);
+  }
+  frame();
+}
+drawHero();
+
+/* ═══ FC ═══ */
+var FC=[
+  {icon:'🌊',q:'Relation onde électromagnétique',a:'\\(c = \\lambda\\nu\\). La célérité, la longueur d\'onde et la fréquence sont liées.',formula:'c = λ × [___]',blanks:['ν'],answers:['ν','nu','f']},
+  {icon:'c',q:'Valeur de la célérité c dans le vide',a:'\\(c \\simeq 3{,}00\\times10^8\\,\\mathrm{m\\,s^{-1}}\\).',formula:'c ≈ [___] × 10^8 m/s',blanks:['3,00'],answers:['3,00','3']},
+  {icon:'λ',q:'Domaine du spectre visible',a:'Environ 400 nm (violet) à 800 nm (rouge).',formula:'Visible : 400 à [___] nm',blanks:['800'],answers:['800']},
+  {icon:'⚡',q:'Énergie d\'un photon',a:'\\(E = h\\nu = hc/\\lambda\\). Plus la fréquence est grande, plus l\'énergie est grande.',formula:'E = h × [___]',blanks:['ν'],answers:['ν','nu','f']},
+  {icon:'h',q:'Constante de Planck h',a:'\\(h = 6{,}63\\times10^{-34}\\,\\mathrm{J\\cdot s}\\).',formula:'h = 6,63 × 10^[___] J·s',blanks:['-34'],answers:['-34']},
+  {icon:'eV',q:'Définir l\'électronvolt',a:'\\(1\\,\\mathrm{eV} = 1{,}60\\times10^{-19}\\,\\mathrm{J}\\). Unité d\'énergie adaptée à l\'échelle atomique.',formula:'1 eV = 1,60 × 10^[___] J',blanks:['-19'],answers:['-19']},
+  {icon:'ΔE',q:'Lien entre transition et photon',a:'\\(\\Delta E = h\\nu = hc/\\lambda\\). Un photon est absorbé ou émis si son énergie correspond exactement à l\'écart de niveaux.',formula:'ΔE = [___] × ν',blanks:['h'],answers:['h']},
+  {icon:'🌈',q:'Raie d\'émission : définition',a:'Raie brillante sur fond sombre. Produite quand un atome émet un photon lors d\'une transition vers un niveau inférieur.',formula:'Raie brillante = [___]',blanks:['émission'],answers:['émission','emission']},
+  {icon:'⚫',q:'Raie d\'absorption : définition',a:'Raie sombre sur fond continu. La radiation est absorbée par une espèce sur le trajet de la lumière.',formula:'Raie sombre = [___]',blanks:['absorption'],answers:['absorption']},
+  {icon:'⭐',q:'À quoi sert le spectre stellaire ?',a:'Les raies d\'absorption révèlent les éléments présents dans l\'atmosphère de l\'étoile (identification par les longueurs d\'onde absorbées).',formula:'Raies sombres → [___] présents',blanks:['éléments'],answers:['éléments','elements']},
+  {icon:'📐',q:'Quand λ diminue, l\'énergie du photon…',a:'Augmente. \\(E = hc/\\lambda\\) : E et λ sont inversement proportionnels.',formula:'λ↓ → E [___]',blanks:['↑'],answers:['↑','augmente']},
+  {icon:'☀️',q:'Spectre continu : source',a:'Source chaude et dense (filament incandescent, surface d\'étoile). Toutes les λ sont présentes.',formula:'Spectre continu = source [___]',blanks:['continue'],answers:['continue','chaude']},
+  {icon:'🔵',q:'Ordre de grandeur de l\'énergie d\'un photon visible',a:'De l\'ordre de \\(3\\times10^{-19}\\,\\mathrm{J}\\) soit environ 2 eV.',formula:'E photon visible ≈ [___] × 10^-19 J',blanks:['3'],answers:['3','3,0']},
+  {icon:'⚠️',q:'Erreur classique en optique ondulatoire',a:'Oublier de convertir λ en mètres avant le calcul. 600 nm = 6,00×10⁻⁷ m, pas 600.',formula:'600 nm = 6,00 × 10^[___] m',blanks:['-7'],answers:['-7']},
+  {icon:'🔬',q:'Lien émission et absorption d\'un même élément',a:'Les raies d\'émission et d\'absorption correspondent aux mêmes λ. C\'est cette propriété qui permet d\'identifier une espèce.',formula:'λ émission = λ [___]',blanks:['absorption'],answers:['absorption']}
+];
+var fcIdx=0,fcOrder=FC.map(function(_,i){return i;}),fcFlipped=false;
+function renderFC(){
+  var d=FC[fcOrder[fcIdx]];
+  document.getElementById('fc-icon').textContent=d.icon;
+  document.getElementById('fc-q').innerHTML=d.q;
+  document.getElementById('fc-a').innerHTML=d.a;
+  document.getElementById('fc-count').textContent='Carte '+(fcIdx+1)+' / '+FC.length;
+  document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;
+  if(window.MathJax)MathJax.typesetPromise([document.getElementById('p-fc')]);
+}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;}
+function nextCard(){fcIdx=(fcIdx+1)%FC.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.length)%FC.length;renderFC();}
+function shuffleCards(){fcOrder.sort(function(){return Math.random()-.5;});fcIdx=0;renderFC();}
+function switchFC(mode,btn){
+  document.querySelectorAll('.fc-mode-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');
+  document.querySelectorAll('.fc-section').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('fc-'+mode).classList.add('active');
+  if(mode==='completion')buildCompletion();if(mode==='chrono')resetChrono();
+}
+function buildCompletion(){
+  var c=document.getElementById('comp-container');c.innerHTML='';var score=0;
+  FC.forEach(function(d,i){
+    var div=document.createElement('div');div.className='comp-item';
+    var ftext=d.formula.replace('[___]','<input type="text" id="cinp'+i+'" placeholder="…">');
+    div.innerHTML='<p style="font-weight:700;margin-bottom:8px">'+d.q+'</p><p>'+ftext+'</p>';
+    var btn=document.createElement('button');btn.className='comp-check';btn.textContent='Vérifier';
+    var fb=document.createElement('div');fb.className='comp-fb';
+    btn.onclick=function(){
+      var v=document.getElementById('cinp'+i).value.trim().toLowerCase();
+      var ok=d.answers.some(function(a){return v===a.toLowerCase();});
+      if(ok){fb.textContent='✅ Correct !';fb.style.color='var(--ok)';score++;document.getElementById('comp-score').textContent=score;}
+      else{fb.textContent='❌ Réponse : '+d.blanks[0];fb.style.color='var(--warn)';}
+    };
+    div.appendChild(btn);div.appendChild(fb);c.appendChild(div);
   });
-});
+  if(window.MathJax)MathJax.typesetPromise([c]);
+}
+var chronoTimer=null,chronoIdx=0,chronoScore=0,chronoOrder=[];
+function resetChrono(){
+  clearInterval(chronoTimer);
+  document.getElementById('chrono-time').textContent='2:00';
+  document.getElementById('chrono-fill').style.width='100%';
+  document.getElementById('chrono-counter').textContent='0/'+FC.length;
+  document.getElementById('chrono-card').style.display='flex';
+  document.getElementById('chrono-acts').style.display='flex';
+  document.getElementById('chrono-result').style.display='none';
+  document.getElementById('chrono-q').textContent='Appuyez sur Démarrer';
+  document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';
+}
+function startChrono(){
+  clearInterval(chronoTimer);chronoScore=0;chronoIdx=0;
+  chronoOrder=FC.map(function(_,i){return i;}).sort(function(){return Math.random()-.5;});
+  document.getElementById('chrono-result').style.display='none';
+  document.getElementById('chrono-card').style.display='flex';
+  document.getElementById('chrono-acts').style.display='flex';
+  showChronoQ();
+  var total=120,elapsed=0;
+  chronoTimer=setInterval(function(){
+    elapsed++;var rem=total-elapsed;
+    var m=Math.floor(rem/60),s=rem%60;
+    document.getElementById('chrono-time').textContent=m+':'+(s<10?'0':'')+s;
+    document.getElementById('chrono-fill').style.width=(rem/total*100)+'%';
+    if(rem<=0){clearInterval(chronoTimer);showChronoResult();}
+  },1000);
+}
+function showChronoQ(){
+  if(chronoIdx>=FC.length){clearInterval(chronoTimer);showChronoResult();return;}
+  var d=FC[chronoOrder[chronoIdx]];
+  document.getElementById('chrono-q').innerHTML=d.q;
+  document.getElementById('chrono-counter').textContent=chronoIdx+'/'+FC.length;
+  document.getElementById('chrono-acts').innerHTML='<button class="btn-knew" onclick="chronoKnew()">✅ Je savais</button><button class="btn-didnt" onclick="chronoDidnt()">❌ Je ne savais pas</button>';
+  if(window.MathJax)MathJax.typesetPromise([document.getElementById('chrono-card')]);
+}
+function chronoKnew(){chronoScore++;chronoIdx++;showChronoQ();}
+function chronoDidnt(){chronoIdx++;showChronoQ();}
+function showChronoResult(){
+  document.getElementById('chrono-card').style.display='none';
+  document.getElementById('chrono-acts').style.display='none';
+  document.getElementById('chrono-result').style.display='block';
+  document.getElementById('result-big').textContent=chronoScore+'/'+FC.length;
+  var pct=Math.round(chronoScore/FC.length*100);
+  document.getElementById('result-sub').textContent=pct>=80?'Excellent !':pct>=50?'Bien, continue !':'À retravailler.';
+}
+
+/* ═══ QUIZ ═══ */
+var QS=[
+  {q:'La relation entre \\(c\\), \\(\\lambda\\) et \\(\\nu\\) est :',opts:['\\(c=\\lambda\\nu\\)','\\(c=\\lambda/\\nu\\)','\\(E=\\lambda\\nu\\)','\\(h=c\\lambda\\)'],ans:0,corr:'Dans le vide, la célérité vaut \\(c=\\lambda\\nu\\).'},
+  {q:'L\'unité SI de \\(\\lambda\\) est :',opts:['\\(\\mathrm m\\)','\\(\\mathrm{Hz}\\)','\\(\\mathrm J\\)','\\(\\mathrm{mol}\\)'],ans:0,corr:'\\(\\lambda\\) est une longueur.'},
+  {q:'L\'énergie d\'un photon vaut :',opts:['\\(E=h\\nu\\)','\\(E=h/\\nu\\)','\\(E=\\lambda/h\\)','\\(E=c+h\\)'],ans:0,corr:'L\'énergie est proportionnelle à la fréquence.'},
+  {q:'Quand \\(\\lambda\\) diminue (à \\(c\\) constant), \\(\\nu\\) :',opts:['Augmente','Diminue','Reste nulle','Devient une longueur'],ans:0,corr:'\\(c=\\lambda\\nu\\) : fréquence et longueur d\'onde sont inversement proportionnelles.'},
+  {q:'Une raie sombre dans un spectre est une raie d\' :',opts:['Absorption','Émission','Combustion','Diffusion'],ans:0,corr:'Une radiation a été absorbée par une espèce sur le trajet de la lumière.'},
+  {q:'La constante \\(h\\) de Planck vaut environ :',opts:['\\(6{,}63\\times10^{-34}\\,\\mathrm{J\\cdot s}\\)','\\(3{,}00\\times10^8\\,\\mathrm{m\\,s^{-1}}\\)','\\(6{,}02\\times10^{23}\\,\\mathrm{mol^{-1}}\\)','\\(1{,}60\\times10^{-19}\\,\\mathrm{J}\\)'],ans:0,corr:'\\(h\\) relie énergie et fréquence du photon.'},
+  {q:'\\(1\\,\\mathrm{eV}\\) vaut :',opts:['\\(1{,}60\\times10^{-19}\\,\\mathrm J\\)','\\(3{,}00\\times10^8\\,\\mathrm J\\)','\\(6{,}02\\times10^{23}\\,\\mathrm J\\)','\\(1\\,\\mathrm{mol}\\)'],ans:0,corr:'C\'est une unité d\'énergie adaptée à l\'échelle microscopique.'},
+  {q:'Pour calculer \\(E=hc/\\lambda\\) avec \\(\\lambda\\) en nm, il faut d\'abord :',opts:['Convertir en mètres','Convertir en moles','Multiplier par \\(N_A\\)','Changer la masse'],ans:0,corr:'La formule demande \\(\\lambda\\) en mètres en SI.'},
+  {q:'Un spectre continu est émis par :',opts:['Une source chaude et dense','Un gaz raréfié','Un laser','Un filtre'],ans:0,corr:'Le filament incandescent ou la surface d\'une étoile émettent un spectre continu.'},
+  {q:'Les raies d\'émission et d\'absorption d\'un même élément ont :',opts:['Les mêmes longueurs d\'onde','Des longueurs d\'onde différentes','Aucun lien','Des fréquences opposées'],ans:0,corr:'Mêmes transitions, mêmes \\(\\lambda\\).'},
+  {q:'Un photon violet (\\(\\lambda=400\\,\\mathrm{nm}\\)) est-il plus ou moins énergétique qu\'un photon rouge (\\(\\lambda=700\\,\\mathrm{nm}\\)) ?',opts:['Plus énergétique','Moins énergétique','Même énergie','Impossible à dire'],ans:0,corr:'\\(E=hc/\\lambda\\) : plus \\(\\lambda\\) est petite, plus \\(E\\) est grande.'},
+  {q:'L\'identification d\'une espèce chimique à distance (étoile, gaz) repose sur :',opts:['La position de ses raies spectrales','Sa masse volumique','Sa température de fusion','Sa solubilité'],ans:0,corr:'Chaque élément a une signature spectrale unique (longueurs d\'onde de ses raies).'}
+];
+var quizStarted=false,qIdx=0,qScore=0;
+function startQuiz(){
+  quizStarted=true;qIdx=0;qScore=0;
+  document.getElementById('scorePill').textContent='0 / '+QS.length;
+  document.getElementById('qFinal').style.display='none';showQ();
+}
+function showQ(){
+  var c=document.getElementById('qContainer');c.innerHTML='';
+  if(qIdx>=QS.length){showFinal();return;}
+  var d=QS[qIdx];
+  document.getElementById('qProgFill').style.width=Math.round(qIdx/QS.length*100)+'%';
+  document.getElementById('qProgLbl').textContent='Q '+(qIdx+1)+'/'+QS.length;
+  var qb=document.createElement('div');qb.className='q-block';
+  var qt=document.createElement('div');qt.className='q-text';qt.innerHTML=d.q;
+  var qo=document.createElement('div');qo.className='q-opts';
+  d.opts.forEach(function(opt,i){
+    var b=document.createElement('button');b.className='q-opt';b.innerHTML=opt;
+    b.onclick=function(){
+      document.querySelectorAll('.q-opt').forEach(function(x){x.style.pointerEvents='none';});
+      if(i===d.ans){b.classList.add('good');qScore++;}
+      else{b.classList.add('bad');qo.children[d.ans].classList.add('good');}
+      document.getElementById('scorePill').textContent=qScore+' / '+QS.length;
+      var corr=document.createElement('div');corr.className='q-corr';corr.style.display='block';corr.innerHTML='💡 '+d.corr;
+      qb.appendChild(corr);setTimeout(function(){qIdx++;showQ();},1800);
+    };
+    qo.appendChild(b);
+  });
+  qb.appendChild(qt);qb.appendChild(qo);c.appendChild(qb);
+  if(window.MathJax)MathJax.typesetPromise([c]);
+}
+function showFinal(){
+  document.getElementById('qContainer').innerHTML='';
+  document.getElementById('qProgFill').style.width='100%';
+  document.getElementById('qProgLbl').textContent='Terminé';
+  var f=document.getElementById('qFinal');f.style.display='block';
+  var pct=Math.round(qScore/QS.length*100);
+  document.getElementById('finalBig').textContent=qScore+'/'+QS.length;
+  document.getElementById('finalMsg').textContent=pct>=80?'Excellent !':pct>=50?'Bien ! Quelques notions à revoir.':'À retravailler. Revois le cours.';
+}
+
+/* ═══ CARTE MENTALE ═══ */
+function drawMM(){
+  var c=document.getElementById('mmCanvas');if(!c)return;
+  var W=c.parentElement.clientWidth||800;c.width=W;c.height=500;
+  var ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,500);
+  var cx=W/2,cy=250;
+  ctx.fillStyle='#9f4f68';
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(cx-72,cy-28,144,56,14);else ctx.rect(cx-72,cy-28,144,56);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 13px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('OPTIQUE',cx,cy-8);ctx.fillText('ONDULATOIRE',cx,cy+10);
+  var branches=[
+    {label:'Onde EM',nodes:['c = λν','Spectre EM','Visible : 400-800 nm'],col:'#4a90e2',angle:-100},
+    {label:'Photon',nodes:['E = hν','E = hc/λ','h = 6,63×10⁻³⁴ J·s'],col:'#ffb800',angle:-40},
+    {label:'Spectres',nodes:['Continu','Émission (raies)','Absorption (raies)'],col:'#3daf82',angle:20},
+    {label:'Transitions',nodes:['ΔE = hν','Niveaux discrets','Sélectivité'],col:'#e85a5a',angle:80},
+    {label:'Applications',nodes:['Étoiles','Photovoltaïque','Capteurs'],col:'#9b8fe8',angle:140},
+    {label:'Terminale',nodes:['Bohr','Beer-Lambert','Spectrophoto'],col:'#e87b3a',angle:200}
+  ];
+  branches.forEach(function(br){
+    var rad=br.angle*Math.PI/180,bx=cx+Math.cos(rad)*140,by=cy+Math.sin(rad)*110;
+    ctx.strokeStyle=br.col;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(bx,by);ctx.stroke();
+    ctx.fillStyle=br.col+'33';ctx.strokeStyle=br.col;ctx.lineWidth=1.5;
+    ctx.beginPath();if(ctx.roundRect)ctx.roundRect(bx-52,by-14,104,28,8);else ctx.rect(bx-52,by-14,104,28);ctx.fill();ctx.stroke();
+    ctx.fillStyle=br.col;ctx.font='bold 11px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(br.label,bx,by);
+    br.nodes.forEach(function(nd,j){
+      var nrad=rad+(j-1)*0.32,nx=bx+Math.cos(nrad)*95,ny=by+Math.sin(nrad)*70;
+      ctx.strokeStyle=br.col+'88';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(nx,ny);ctx.stroke();
+      ctx.fillStyle='#1a0d14';ctx.strokeStyle=br.col+'66';ctx.lineWidth=1;
+      var tw=ctx.measureText(nd).width+16;
+      ctx.beginPath();if(ctx.roundRect)ctx.roundRect(nx-tw/2,ny-10,tw,20,5);else ctx.rect(nx-tw/2,ny-10,tw,20);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#d4899f';ctx.font='10px Inter,sans-serif';ctx.textAlign='center';
+      ctx.fillText(nd,nx,ny);
+    });
+  });
+}
+
+/* ═══ SIMULATEURS ═══ */
+var h=6.63e-34,c_light=3.00e8,eV=1.60e-19;
+function wavelengthToColor(lnm){
+  if(lnm<380)return'#9400d3';
+  if(lnm<440)return'#7000ff';
+  if(lnm<490)return'#0044ff';
+  if(lnm<510)return'#00aaff';
+  if(lnm<580)return'#44cc44';
+  if(lnm<620)return'#ffcc00';
+  if(lnm<680)return'#ff6600';
+  if(lnm<=800)return'#cc0000';
+  return'#800000';
+}
+function calcSim1(){
+  var lnm=parseFloat(document.getElementById('s1lam').value);
+  if(isNaN(lnm)||lnm<=0){document.getElementById('sim1-result').textContent='Valeur invalide';return;}
+  var lm=lnm*1e-9;
+  var nu=c_light/lm;
+  var E=h*nu;
+  var EeV=E/eV;
+  document.getElementById('sim1-result').innerHTML=
+    '<b>ν = '+nu.toExponential(2)+' Hz</b><br>E = '+E.toExponential(2)+' J ≈ '+EeV.toFixed(2)+' eV';
+  var cv=document.getElementById('sim1Canvas'),ctxv=cv.getContext('2d');
+  cv.width=cv.parentElement.clientWidth||400;
+  ctxv.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctxv.fillRect(0,0,cv.width,cv.height);
+  // barre spectre
+  var grad=ctxv.createLinearGradient(10,0,cv.width-10,0);
+  grad.addColorStop(0,'#7000ff');grad.addColorStop(0.15,'#0044ff');
+  grad.addColorStop(0.3,'#00bb44');grad.addColorStop(0.55,'#ffff00');
+  grad.addColorStop(0.75,'#ff8800');grad.addColorStop(1,'#ff0000');
+  ctxv.fillStyle=grad;ctxv.fillRect(10,20,cv.width-20,30);
+  // curseur
+  var pct=(lnm-380)/(800-380);pct=Math.max(0,Math.min(1,pct));
+  var xc=10+pct*(cv.width-20);
+  ctxv.fillStyle='#fff';ctxv.fillRect(xc-2,16,4,38);
+  ctxv.fillStyle=wavelengthToColor(lnm);ctxv.font='bold 11px IBM Plex Mono';ctxv.textAlign='center';
+  ctxv.fillText(lnm+' nm',xc,66);
+}
+function calcSim2(){
+  var dE=parseFloat(document.getElementById('s2dE').value);
+  if(isNaN(dE)||dE<=0){document.getElementById('sim2-result').textContent='Valeur invalide';return;}
+  var nu=dE/h;
+  var lm=c_light/nu;
+  var lnm=lm*1e9;
+  var visible=(lnm>=380&&lnm<=800)?'radiation visible':'hors du visible ('+lnm.toFixed(0)+' nm)';
+  document.getElementById('sim2-result').innerHTML=
+    '<b>ν = '+nu.toExponential(2)+' Hz</b><br>λ = '+lnm.toFixed(0)+' nm — '+visible;
+  var cv=document.getElementById('sim2Canvas'),ctxv=cv.getContext('2d');
+  cv.width=cv.parentElement.clientWidth||400;
+  ctxv.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctxv.fillRect(0,0,cv.width,cv.height);
+  var col=wavelengthToColor(lnm);
+  var gr=ctxv.createRadialGradient(cv.width/2,cv.height/2,0,cv.width/2,cv.height/2,40);
+  gr.addColorStop(0,col);gr.addColorStop(1,'transparent');
+  ctxv.fillStyle=gr;ctxv.beginPath();ctxv.arc(cv.width/2,cv.height/2,40,0,Math.PI*2);ctxv.fill();
+  ctxv.fillStyle=col;ctxv.font='bold 12px IBM Plex Mono';ctxv.textAlign='center';ctxv.textBaseline='middle';
+  ctxv.fillText(lnm.toFixed(0)+' nm',cv.width/2,cv.height/2);
+}
+
+/* ═══ ECE CANVAS ═══ */
+function drawECECanvas(){
+  var c=document.getElementById('eceCanvas');if(!c)return;
+  c.width=c.parentElement.clientWidth||600;c.height=200;
+  var ctx=c.getContext('2d'),W=c.width,H=c.height;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
+  // source blanche
+  ctx.fillStyle='rgba(255,255,200,0.7)';ctx.font='bold 10px Inter';ctx.textAlign='center';
+  var g=ctx.createRadialGradient(W*0.08,H/2,0,W*0.08,H/2,28);
+  g.addColorStop(0,'rgba(255,255,200,0.9)');g.addColorStop(1,'transparent');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(W*0.08,H/2,28,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,200,0.7)';ctx.fillText('Source',W*0.08,H/2+38);ctx.fillText('blanche',W*0.08,H/2+50);
+  // rayon blanc
+  ctx.strokeStyle='rgba(255,255,200,0.3)';ctx.lineWidth=10;
+  ctx.beginPath();ctx.moveTo(W*0.13,H/2);ctx.lineTo(W*0.35,H/2);ctx.stroke();
+  // prisme / réseau
+  ctx.fillStyle='rgba(100,150,255,0.2)';ctx.strokeStyle='#4488ff';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(W*0.36,H/2-40);ctx.lineTo(W*0.44,H/2-40);ctx.lineTo(W*0.44,H/2+40);ctx.lineTo(W*0.36,H/2+40);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle='#88aaff';ctx.font='bold 10px Inter';ctx.textAlign='center';ctx.fillText('Réseau',W*0.40,H/2+52);
+  // raies dispersées
+  var raies2=[
+    {y:H/2-28,col:'#7700cc',lbl:'410 nm'},{y:H/2-16,col:'#0066ff',lbl:'434 nm'},
+    {y:H/2-4,col:'#00cc88',lbl:'486 nm'},{y:H/2+8,col:'#ffcc00',lbl:'589 nm'},
+    {y:H/2+20,col:'#ff4400',lbl:'656 nm'}
+  ];
+  raies2.forEach(function(r){
+    ctx.strokeStyle=r.col;ctx.lineWidth=2;ctx.globalAlpha=0.85;
+    ctx.beginPath();ctx.moveTo(W*0.44,H/2);ctx.lineTo(W*0.80,r.y);ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=r.col;ctx.font='bold 10px IBM Plex Mono';ctx.textAlign='left';
+    ctx.fillText(r.lbl,W*0.82,r.y+4);
+  });
+  ctx.fillStyle='rgba(212,137,159,0.6)';ctx.font='bold 10px Inter';ctx.textAlign='center';
+  ctx.fillText('Spectre d\'émission',W*0.65,H-8);
+}
+function calcECE(){
+  var lnm=parseFloat(document.getElementById('eLam').value);
+  if(isNaN(lnm)||lnm<=0){document.getElementById('ece-result').textContent='Valeur invalide';return;}
+  var lm=lnm*1e-9;
+  var E=h*c_light/lm;
+  var EeV=E/eV;
+  document.getElementById('ece-result').innerHTML=
+    '<b>ΔE = '+E.toExponential(2)+' J ≈ '+EeV.toFixed(2)+' eV</b><br>ν = '+(c_light/lm).toExponential(2)+' Hz';
+}
+
+/* ═══ EXO / CORR ═══ */
+function toggleExo(h2){var b=h2.nextElementSibling;b.classList.toggle('open');}
+function toggleCorr(btn){var d=btn.nextElementSibling;d.classList.toggle('open');}
+
+/* ═══ INIT ═══ */
+window.onload=function(){
+  var th=localStorage.getItem('pco_theme')||'light';
+  document.getElementById('thBtn').textContent=th==='dark'?'☀️':'🌙';
+  renderFC();
+};
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>

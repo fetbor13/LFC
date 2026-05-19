@@ -1,181 +1,1053 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terminale Spé · Chapitre 7 — Piles et électrolyse | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<meta name="description" content="Cours Terminale spécialité physique-chimie : piles, oxydoréduction, électrolyse, loi de Faraday, tension, charge électrique, ECE et ouverture PCSI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)'], ['$', '$']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
 :root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
+  --bg:#f6f8fb;--bg2:#edf2f7;--panel:#fff;--panel2:#fbfcfe;--line:#d8e0ea;--line2:#c7d2df;
+  --text:#111827;--muted:#607084;--faint:#8a98aa;--blue:#0f766e;--blue2:#0369a1;--blue3:#e6f6f3;
+  --green:#15803d;--green2:#ecfdf3;--amber:#c2410c;--amber2:#fff0e8;--red:#b42318;--red2:#fff0ef;
+  --mauve:#4f46e5;--mauve2:#eeedff;--cyan:#0369a1;--cyan2:#e8f5ff;
+  --shadow:0 18px 38px rgba(17,24,39,.08);--shadow2:0 10px 24px rgba(17,24,39,.065);
+  --side:286px;--content:1280px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+[data-theme="dark"]{
+  --bg:#0b1018;--bg2:#111827;--panel:#151c28;--panel2:#182233;--line:#2a3444;--line2:#39475c;
+  --text:#f3f7fb;--muted:#a9b6c7;--faint:#7f8da1;--blue:#5eead4;--blue2:#7dd3fc;--blue3:rgba(20,184,166,.12);
+  --green:#86efac;--green2:rgba(34,197,94,.12);--amber:#fb923c;--amber2:rgba(251,146,60,.12);
+  --red:#fca5a5;--red2:rgba(248,113,113,.12);--mauve:#a5b4fc;--mauve2:rgba(99,102,241,.16);
+  --cyan:#7dd3fc;--cyan2:rgba(14,165,233,.13);--shadow:0 18px 44px rgba(0,0,0,.28);--shadow2:0 10px 30px rgba(0,0,0,.24);
+}
+*{box-sizing:border-box;letter-spacing:0}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.62;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--blue);color:white;padding:10px 16px;border-radius:0 0 8px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-right:1px solid var(--line);padding:18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(15,23,42,.78)}.brand{display:flex;align-items:center;gap:10px;margin:2px 0 18px}.brand-mark{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;color:white;box-shadow:var(--shadow);font-weight:800}.brand h1{font-size:17px;line-height:1.1;margin:0;font-weight:800}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow);margin-bottom:14px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);color:var(--blue);background:var(--blue3);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800}.micro{color:var(--faint);font-size:11px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:0;color:var(--faint);font-weight:800;margin:18px 0 8px}.tablist{display:grid;gap:7px}.tab{width:100%;display:grid;grid-template-columns:30px 1fr;align-items:center;gap:9px;border-radius:8px;padding:10px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-weight:780;font-size:13px;text-align:left;transition:.18s}.tab-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);font-size:14px;line-height:1}.tab:hover{border-color:var(--line);background:var(--panel);color:var(--text)}.tab.active{border-color:rgba(15,118,110,.35);background:var(--blue3);color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.tools{display:flex;gap:8px;margin-top:14px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:8px;display:grid;place-items:center;cursor:pointer}.icon-btn:hover{border-color:var(--blue);color:var(--blue)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(246,248,251,.84);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}[data-theme="dark"] .topbar{background:rgba(11,16,24,.84)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--blue);font-weight:760}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn,.primary,.secondary{border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:800}.pill-btn,.secondary{border:1px solid var(--line);background:var(--panel);color:var(--text)}.primary{background:var(--text);color:var(--panel);border:1px solid var(--text)}.pill-btn:hover,.secondary:hover{border-color:var(--blue);color:var(--blue)}.page{max-width:var(--content);margin:0 auto;padding:22px}.hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(340px,.96fr);gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden;min-height:214px}.hero-card:before{content:"";position:absolute;right:-120px;top:-120px;width:310px;height:310px;background:radial-gradient(circle,rgba(15,118,110,.09),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:0}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--blue)}.hero h2{font-size:clamp(31px,4.2vw,42px);line-height:1.02;letter-spacing:0;margin:10px 0 12px;font-weight:800}.hero h2 span{color:var(--blue)}.hero-copy{font-size:15px;color:var(--muted);max-width:72ch;margin:0}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.metric{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px}.metric b{display:block;font-size:20px;color:var(--text);line-height:1}.metric span{font-size:12px;color:var(--muted)}.real-hero-img{height:100%;max-height:214px;min-height:214px;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--line);background:var(--bg2);box-shadow:var(--shadow)}.real-hero-img img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.96) contrast(1.04)}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);box-shadow:var(--shadow)}.useful-card small{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;margin-bottom:8px;background:var(--bg);color:var(--muted)}.useful-card b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}.useful-card span{display:block;color:var(--muted);font-size:13px}.mission-1{background:linear-gradient(180deg,var(--blue3),var(--panel))}.mission-2{background:linear-gradient(180deg,var(--amber2),var(--panel))}.mission-3{background:linear-gradient(180deg,var(--mauve2),var(--panel))}.panel{display:none;scroll-margin-top:78px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}.content-card h3{margin:0 0 12px;font-size:25px;letter-spacing:0;font-weight:800}.content-card p{color:var(--muted)}.course-grid{display:grid;grid-template-columns:158px minmax(0,1fr);gap:24px}.toc{position:sticky;top:78px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:0;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:flex;align-items:center;gap:8px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 9px;font-weight:760;font-size:12px;color:var(--muted)}.toc a:nth-of-type(1){background:var(--blue3);color:var(--blue)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--mauve2);color:var(--mauve)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.toc a:nth-of-type(6){background:var(--red2);color:var(--red)}.toc a.active{box-shadow:inset 4px 0 0 currentColor;border-color:currentColor}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--blue);letter-spacing:0;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:800;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.box{border-radius:0 8px 8px 0;padding:16px 18px;margin:18px 0;border-left:4px solid;background:var(--panel);box-shadow:var(--shadow2);border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.box-label{font-size:10px;font-weight:800;letter-spacing:0;text-transform:uppercase;margin-bottom:7px}.box.def{border-left-color:var(--blue)}.box.def .box-label{color:var(--blue)}.box.prop{border-left-color:var(--mauve)}.box.prop .box-label{color:var(--mauve)}.box.warn{border-left-color:var(--amber)}.box.warn .box-label{color:var(--amber)}.box.ok{border-left-color:var(--green)}.box.ok .box-label{color:var(--green)}.formula{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin:14px 0;text-align:center;overflow-x:auto;font-size:17px}.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--line);margin:18px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:780}.card p,.card li{font-size:13px;color:var(--muted)}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.chip.blue{background:var(--blue3);color:var(--blue)}.chip.green{background:var(--green2);color:var(--green)}.chip.amber{background:var(--amber2);color:var(--amber)}.chip.mauve{background:var(--mauve2);color:var(--mauve)}details{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px 14px;margin:10px 0}summary{cursor:pointer;font-weight:800;color:var(--text)}details p{margin-bottom:0}.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:13px}.step b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue);color:white;font-size:12px;margin-bottom:8px}.step span{display:block;font-weight:800;font-size:13px}.step small{display:block;color:var(--muted);font-size:11.5px;line-height:1.45;margin-top:4px}.exercise-list{display:grid;gap:12px}.exercise-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}.exercise-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.exercise-title h4{margin:0;font-size:15px;font-weight:780}.exercise-title small{color:var(--muted);white-space:nowrap}.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.flash-layout{display:grid;grid-template-columns:1fr 290px;gap:16px}.flash-card{height:270px;border-radius:8px;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel),var(--panel2));box-shadow:var(--shadow);display:grid;place-items:center;text-align:center;padding:28px;cursor:pointer;position:relative}.flash-card h3{font-size:23px;letter-spacing:0;margin:0}.flash-card p{color:var(--muted)}.flash-card .hint{position:absolute;bottom:14px;color:var(--faint);font-size:12px}.answers{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.quiz-ai-grid{display:grid;grid-template-columns:minmax(300px,.95fr) minmax(340px,1.05fr);gap:16px;align-items:start}.quiz-card,.ai-helper-card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;padding:18px;box-shadow:var(--shadow2)}.quiz-card h4,.ai-helper-card h4{margin:0 0 6px;font-size:18px;letter-spacing:0}.options{display:grid;gap:9px;margin-top:14px}.option{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:11px 13px;cursor:pointer;text-align:left}.option:hover{border-color:var(--blue)}.option.correct{border-color:var(--green);background:var(--green2);color:var(--green)}.option.wrong{border-color:var(--red);background:var(--red2);color:var(--red)}.ai-choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.ai-choice{border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:9px 8px;cursor:pointer;font-weight:800;font-size:12px;color:var(--text)}.ai-choice:hover{border-color:var(--mauve);color:var(--mauve);background:var(--mauve2)}.ai-label{display:block;margin:10px 0 6px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0}.ai-textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);padding:12px 14px;min-height:128px;outline:none}.prompt-box{white-space:pre-wrap;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;line-height:1.6}.mindmap{width:100%;min-height:430px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.mindmap svg{width:100%;height:auto;display:block}.footer-nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.note{font-size:12px;color:var(--faint);margin-top:8px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.sim-block-title{margin:20px 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0;color:var(--faint);font-weight:800}.phet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}.sim-card-large{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:8px;overflow:hidden;box-shadow:var(--shadow2)}.sim-card-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.sim-card-head>span{font-size:22px}.sim-card-head h4{margin:0;font-size:15px;font-weight:780;color:var(--text)}.sim-card-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}.iframe-wrap{position:relative;width:100%;padding-bottom:62%;background:var(--bg2)}.iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.future-sim-suite{display:grid;gap:18px;margin:18px 0 24px}.future-sim-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:16px 18px;box-shadow:var(--shadow2)}.future-sim-title h4{margin:0;font-size:18px;color:var(--text);font-weight:820}.future-sim-title p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:78ch}.future-badge{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:800;color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 30%,transparent);background:var(--cyan2);border-radius:999px;padding:6px 9px;white-space:nowrap}.future-lab-grid{display:grid;grid-template-columns:1fr;gap:18px}.future-lab{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);overflow:hidden}.future-lab-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px 9px;border-bottom:1px solid var(--line)}.future-lab-head h4{margin:0;font-size:15px;color:var(--text);font-weight:820}.future-lab-head p{margin:4px 0 0;font-size:11.5px;color:var(--muted)}.future-lab-body{display:grid;grid-template-columns:minmax(230px,300px) minmax(0,1fr);gap:16px;padding:14px 16px 16px}.future-controls{display:grid;gap:10px;align-content:start}.future-control{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:9px 10px}.future-control label{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;font-weight:780;color:var(--text)}.future-control output{font-family:"IBM Plex Mono",monospace;color:var(--blue);white-space:nowrap;font-size:11px}.future-control input{width:100%;margin-top:9px;appearance:none;height:22px;background:transparent;cursor:pointer}.future-control input::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}.future-control input::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);margin-top:-7px;box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-control input::-moz-range-track{height:4px;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan))}.future-control input::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);box-shadow:0 4px 14px rgba(47,98,136,.24)}.future-canvas-wrap{border:1px solid rgba(47,98,136,.16);border-radius:8px;overflow:hidden;background:var(--bg);min-width:0}.future-canvas{display:block;width:100%;height:380px}.future-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.future-metric{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 10px;min-height:56px}.future-metric span{display:block;font-size:9.5px;font-weight:800;letter-spacing:0;text-transform:uppercase;color:var(--faint);margin-bottom:4px}.future-metric b{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--text)}.future-equation{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:10px 12px;margin-top:8px;color:var(--muted);font-size:12px}
+@media(max-width:1100px){.future-lab-body{grid-template-columns:1fr}.future-canvas{height:320px}.app{display:block}.rail{position:relative;height:auto}.tablist{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.course-grid,.cards,.quiz-ai-grid,.useful-strip{grid-template-columns:1fr}.real-hero-img{min-height:230px;max-height:230px}.toc{position:relative;top:auto}.topbar{position:relative}.phet-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.page{padding:14px}.hero h2{font-size:32px}.tablist,.hero-grid,.method-grid,.future-metrics,.ai-choice-row{grid-template-columns:1fr}.top-actions{display:none}.real-hero-img{min-height:200px;max-height:200px}.content-card{padding:16px}.future-sim-title{display:block}.future-badge{display:inline-flex;margin-top:10px}.flash-layout{grid-template-columns:1fr}.iframe-wrap{padding-bottom:76%}}
+.key-formula{position:relative}.key-formula::before{content:"★ À retenir";position:absolute;top:-10px;right:10px;background:linear-gradient(135deg,var(--mauve),var(--blue2));color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:0;animation:kfPulse 2.8s ease-in-out infinite;pointer-events:none}
+@keyframes kfPulse{0%,100%{box-shadow:0 0 0 0 rgba(79,70,229,.45)}55%{box-shadow:0 0 0 7px rgba(79,70,229,0)}}
+#readProgress{position:fixed;top:0;left:0;z-index:9999;height:3px;background:linear-gradient(90deg,var(--blue),var(--mauve));width:0%;transition:width .12s linear;pointer-events:none}
+.calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}.calc-card{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:16px;box-shadow:var(--shadow2)}.calc-card h4{margin:0 0 10px;font-size:14px;font-weight:800;color:var(--text)}.calc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}.calc-row label{font-size:12px;color:var(--muted);min-width:56px}.calc-row input[type=number]{flex:1;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--text);padding:6px 8px;font-size:13px;font-family:"IBM Plex Mono",monospace;outline:none}.calc-result{margin-top:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:8px;min-height:38px;font-size:13px;color:var(--text);text-align:center}
+@media print{.rail,.topbar,.top-actions,.tools,.useful-strip,.footer-nav,.future-controls{display:none!important}.app{display:block}.page{max-width:100%;padding:0}.panel{display:block!important}.content-card{box-shadow:none;break-inside:avoid}.hero{grid-template-columns:1fr}.real-hero-img{display:none}}
+</style>
+<style>
+.formula,
+.formula-block{
+  overflow-x:auto;
+  overflow-y:visible;
+}
+.formula mjx-container,
+.formula-block mjx-container{
+  overflow:visible!important;
+  padding:.18em 0;
+}
+.formula,
+.formula-block,
+.formula mjx-container,
+.formula-block mjx-container{
+  scrollbar-width:none;
+}
+.formula::-webkit-scrollbar,
+.formula-block::-webkit-scrollbar,
+.formula mjx-container::-webkit-scrollbar,
+.formula-block mjx-container::-webkit-scrollbar{
+  width:0;
+  height:0;
+  display:none;
+}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail" aria-label="Navigation du chapitre">
+  <div class="brand"><div class="brand-mark" aria-hidden="true">PC</div><div><h1>PhysiChem</h1><p>M Borsali · PC · LFC</p></div></div>
+  <div class="level-card"><div class="level-row"><span class="badge">Terminale Spé</span><span class="micro">Chap. 07</span></div><div class="progress"><span id="masteryBar"></span></div><div class="micro" style="margin-top:8px"><span id="progressText">0%</span> du chapitre exploré</div></div>
+  <div class="nav-label">Sommaire</div>
+  <nav class="tablist" role="tablist" aria-label="Onglets du chapitre">
+    <button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+    <button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+    <button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+    <button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">▣</span><span class="tab-text">Flashcards</span></button>
+    <button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">◎</span><span class="tab-text">Carte mentale</span></button>
+    <button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">⚙</span><span class="tab-text">Simulations</span></button>
+    <button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✓</span><span class="tab-text">Quiz § Chatbot</span></button>
+    <button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+    <button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+  </nav>
+  <div class="tools"><button class="icon-btn" id="themeBtn" title="Thème">◐</button><button class="icon-btn" onclick="window.print()" title="Imprimer">⎙</button><button class="icon-btn" onclick="copyCurrentPrompt()" title="Copier prompt IA">⌘</button></div>
+</aside>
+<main class="main" id="main">
+<div class="topbar"><div class="crumb">Terminale Spé › Chimie › <b>Piles et électrolyse</b></div><div class="top-actions"><button class="pill-btn" onclick="switchTab('outils')">Faraday</button><button class="pill-btn" onclick="switchTab('simulations')">Simuler</button></div></div>
+<div class="page">
+<section class="hero">
+<div class="hero-card">
+    <div class="eyebrow">Terminale Spé · Chapitre 07</div>
+    <div class="instructor">M Borsali · Chimie</div>
+    <h2>Piles et <span>électrolyse</span></h2>
+    <p class="hero-copy">Une pile laisse une réaction d’oxydoréduction spontanée produire un courant. Une électrolyse fait l’inverse : on impose un courant pour forcer une transformation chimique. Le fil conducteur du chapitre, c’est la circulation des électrons.</p>
+    <div class="hero-grid"><div class="metric"><b>\(Q=I\Delta t\)</b><span>charge</span></div><div class="metric"><b>\(F\)</b><span>Faraday</span></div><div class="metric"><b>PCSI</b><span>\(\Delta_rG=-nFE\)</span></div></div>
+</div>
+<figure class="real-hero-img">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Daniell_cell.svg" alt="Schéma d'une pile Daniell">
+</figure>
+</section>
+<section class="useful-strip">
+  <article class="useful-card mission-1"><small>Comprendre</small><b>Qui donne les électrons ?</b><span>L’oxydation fournit les électrons à l’anode ; la réduction les consomme à la cathode.</span></article>
+  <article class="useful-card mission-2"><small>Calculer</small><b>Charge et matière</b><span>La loi de Faraday relie courant, durée, quantité d’électrons et masse déposée.</span></article>
+  <article class="useful-card mission-3"><small>Distinguer</small><b>Pile ou électrolyse</b><span>Pile : spontané. Électrolyse : forcé par un générateur extérieur.</span></article>
+</section>
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · PC · LFC</p>
+<section class="panel active" id="tab-cours">
+<div class="content-card">
+<h3>Cours complet</h3>
+<div class="course-grid">
+  <aside class="toc" aria-label="Plan du cours">
+    <div class="toc-title">Plan rapide</div>
+    <a href="#c1">1. Oxydoréduction</a>
+    <a href="#c2">2. Pile</a>
+    <a href="#c3">3. Pile Daniell</a>
+    <a href="#c4">4. Charge et Faraday</a>
+    <a href="#c5">5. Électrolyse</a>
+    <a href="#c6">6. Usure et énergie</a>
+    <a href="#c7">7. Applications industrielles</a>
+  </aside>
+  <article class="course-body">
+    <h2 id="c1">1. Oxydoréduction : suivre les électrons</h2>
+    <p>Une réaction d’oxydoréduction met en jeu un transfert d’électrons. Une espèce oxydante capte des électrons ; une espèce réductrice cède des électrons. Le couple s’écrit \(\mathrm{Ox}/\mathrm{Red}\).</p>
+    <div class="formula">\[
+      \mathrm{Ox}+n\,e^- \rightleftharpoons \mathrm{Red}.
+    \]</div>
+    <div class="box def"><div class="box-label">Vocabulaire</div><p>Une oxydation est une perte d’électrons : \(\mathrm{Red}\rightarrow\mathrm{Ox}+n\,e^-\). Une réduction est un gain d’électrons : \(\mathrm{Ox}+n\,e^-\rightarrow\mathrm{Red}\).</p></div>
+    <p>Le chapitre devient beaucoup plus clair si on se pose toujours la même question : où sont produits les électrons et où sont-ils consommés ?</p>
+
+    <h3>Potentiels standard de référence</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Couple \(\mathrm{Ox/Red}\)</th><th>\(E^\circ\) (V)</th></tr></thead>
+      <tbody>
+        <tr><td>\(\mathrm{Zn^{2+}/Zn}\)</td><td>\(-0{,}76\)</td></tr>
+        <tr><td>\(\mathrm{H^+/H_2}\) (référence)</td><td>\(0{,}00\)</td></tr>
+        <tr><td>\(\mathrm{Cu^{2+}/Cu}\)</td><td>\(+0{,}34\)</td></tr>
+        <tr><td>\(\mathrm{Ag^+/Ag}\)</td><td>\(+0{,}80\)</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="box warn"><div class="box-label">Règle gamma — sens de la réaction spontanée</div><p>L’oxydant du couple de plus grand potentiel réagit avec le réducteur du couple de plus petit potentiel. Exemple : \(\mathrm{Cu^{2+}}\) (fort oxydant) réagit spontanément avec \(\mathrm{Zn}\) (fort réducteur).</p></div>
+    <details><summary>Pourquoi l’oxydant du couple à \(E^\circ\) le plus élevé réagit-il spontanément avec le réducteur du couple à \(E^\circ\) le plus bas ?</summary><p>La tension standard de la pile vaut \(E^\circ_{\text{pile}}=E^\circ_{\text{cathode}}-E^\circ_{\text{anode}}\). Pour que la réaction soit spontanée, il faut \(\Delta_rG^\circ=-nFE^\circ<0\), donc \(E^\circ_{\text{pile}}>0\). Cela impose \(E^\circ_{\text{cathode}}>E^\circ_{\text{anode}}\). L’oxydant qui se réduit à la cathode doit donc appartenir au couple de plus grand potentiel, et le réducteur qui s’oxyde à l’anode au couple de plus petit potentiel. C’est l’origine de la règle du gamma : en traçant le diagramme des couples redox, la flèche "spontanée" va de l’oxydant en haut vers le réducteur en bas.</p></details>
+
+    <h3>Méthode : équilibrer une demi-équation redox en milieu acide</h3>
+    <div class="box def"><div class="box-label">Méthode en 6 étapes</div>
+    <p><strong>1.</strong> Identifier l’oxydant et le réducteur du couple.</p>
+    <p><strong>2.</strong> Écrire l’oxydant à gauche et le réducteur à droite.</p>
+    <p><strong>3.</strong> Équilibrer les atomes autres que O et H.</p>
+    <p><strong>4.</strong> Équilibrer l’oxygène en ajoutant \(\mathrm{H_2O}\) du côté déficitaire.</p>
+    <p><strong>5.</strong> Équilibrer l’hydrogène en ajoutant \(\mathrm{H^+}\) du côté déficitaire.</p>
+    <p><strong>6.</strong> Équilibrer les charges en ajoutant \(n\,e^-\) du côté le plus positif.</p>
     </div>
-  </div>
 
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Terminale Spé</span>
-      <span class="micro">Chap. 7</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
+    <details><summary>Exemple : équilibrage de \(\mathrm{MnO_4^-/Mn^{2+}}\) en milieu acide</summary>
+    <p>Étapes 1-2 : \(\mathrm{MnO_4^-}\rightarrow\mathrm{Mn^{2+}}\). Étape 3 : Mn déjà équilibré. Étape 4 : 4 O à gauche, on ajoute \(4\,\mathrm{H_2O}\) à droite. Étape 5 : 8 H à droite, on ajoute \(8\,\mathrm{H^+}\) à gauche. Étape 6 : charges gauche \(=-1+8=+7\), droite \(=+2\), on ajoute \(5\,e^-\) à gauche.</p>
+    <div class="formula">\[\mathrm{MnO_4^- + 8\,H^+ + 5\,e^- \longrightarrow Mn^{2+} + 4\,H_2O}\]</div>
+    <p>Vérification : Mn 1=1, O 4=4, H 8=8, charges \(-1+8-5=+2=+2\).</p>
+    </details>
 
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
+    <h2 id="c2">2. Fonctionnement d’une pile électrochimique</h2>
+    <p>Une pile sépare spatialement une oxydation et une réduction. Les électrons produits à une électrode passent dans le circuit extérieur, traversent un dipôle, puis sont consommés à l’autre électrode.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Lieu</th><th>Dans une pile</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td>Anode</td><td>Électrode où a lieu l’oxydation</td><td>Elle fournit les électrons au circuit extérieur.</td></tr>
+        <tr><td>Cathode</td><td>Électrode où a lieu la réduction</td><td>Elle consomme les électrons arrivant par le circuit extérieur.</td></tr>
+        <tr><td>Pont salin</td><td>Migration d’ions</td><td>Il ferme le circuit et maintient l’électroneutralité des solutions.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Dans une pile qui débite, le courant conventionnel circule dans le sens opposé au déplacement des électrons dans le circuit extérieur.</p>
+    <details><summary>Pourquoi les électrons circulent-ils dans le fil et non dans la solution ?</summary><p>Dans une solution aqueuse, les porteurs de charge sont les ions, pas des électrons libres. Les électrons ne peuvent circuler que dans un conducteur métallique. La réaction d'oxydation à l'anode libère des électrons dans le métal ; ils traversent le fil pour atteindre la cathode. Dans la solution, la neutralité électrique est maintenue par la migration des ions : les cations migrent vers la cathode, les anions vers l'anode. Le pont salin assure cette migration entre les deux demi-piles sans mélanger les solutions. Sans pont salin, les charges s'accumulent des deux côtés et le courant s'arrête.</p></details>
 
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
+    <h2 id="c3">3. Exemple fondamental : pile Daniell</h2>
+    <p>La pile Daniell associe les couples \(\mathrm{Zn^{2+}}/\mathrm{Zn}\) et \(\mathrm{Cu^{2+}}/\mathrm{Cu}\). La réaction globale de fonctionnement est :</p>
+    <div class="formula">\[
+      \mathrm{Zn(s)}+\mathrm{Cu^{2+}(aq)}
+      \longrightarrow
+      \mathrm{Zn^{2+}(aq)}+\mathrm{Cu(s)}.
+    \]</div>
+    <p>Les demi-équations sont :</p>
+    <div class="formula">\[
+      \text{anode : }\mathrm{Zn(s)}\rightarrow \mathrm{Zn^{2+}(aq)}+2e^-,
+      \qquad
+      \text{cathode : }\mathrm{Cu^{2+}(aq)}+2e^-\rightarrow\mathrm{Cu(s)}.
+    \]</div>
+    <div class="box ok"><div class="box-label">Lecture physique</div><p>Le zinc se consomme, la solution en ions zinc s’enrichit, les ions cuivre sont consommés et du cuivre métallique se dépose.</p></div>
+
+    <div class="box def"><div class="box-label">Convention de notation des piles</div><p>\(\mathrm{Zn\,|\,Zn^{2+}(aq,\,c_1)\,||\,Cu^{2+}(aq,\,c_2)\,|\,Cu}\). Anode à gauche, trait simple = interface solide/solution, double trait = pont salin, cathode à droite.</p></div>
+
+    <h3>Force électromotrice (f.é.m.)</h3>
+    <p>La f.é.m. est la différence de potentiel entre les deux électrodes à vide (sans courant). Elle est positive pour une pile qui débite spontanément :</p>
+    <div class="formula">\[
+      E_{\mathrm{pile}}=E^\circ_{\mathrm{cathode}}-E^\circ_{\mathrm{anode}}=0{,}34-(-0{,}76)=+1{,}10\,\mathrm{V}.
+    \]</div>
+
+    <details><summary>Exemple numérique : calcul de \(E\) via Nernst</summary>
+    <p>Pile Daniell avec \([\mathrm{Zn^{2+}}]=0{,}1\,\mathrm{mol\cdot L^{-1}}\) et \([\mathrm{Cu^{2+}}]=0{,}5\,\mathrm{mol\cdot L^{-1}}\). Avec \(n=2\) et \(E^\circ=1{,}10\,\mathrm V\) :</p>
+    <div class="formula">\[E=1{,}10-\frac{0{,}0592}{2}\log\frac{0{,}1}{0{,}5}=1{,}10-0{,}0296\times(-0{,}699)=1{,}10+0{,}021\approx 1{,}12\,\mathrm V.\]</div>
+    <p>La f.é.m. augmente quand \([\mathrm{Zn^{2+}}]\) diminue ou \([\mathrm{Cu^{2+}}]\) augmente, cohérent avec le principe de Le Chatelier.</p>
+    </details>
+
+    <h3>Usure de la pile</h3>
+    <p>Au cours du fonctionnement : \([\mathrm{Zn^{2+}}]\) augmente, \([\mathrm{Cu^{2+}}]\) diminue, la masse de l’électrode de zinc diminue, celle de cuivre augmente. Quand \(Q_r=K\), la f.é.m. est nulle et la pile est usée.</p>
+    <details><summary>Exemple : variation de masse</summary><p>Si \(2\,\mathrm{mol}\) d’électrons sont échangés, \(1\,\mathrm{mol}\) de Zn disparaît (\(\Delta m=-65\,\mathrm g\)) et \(1\,\mathrm{mol}\) de Cu se dépose (\(\Delta m=+63{,}5\,\mathrm g\)).</p></details>
+
+    <h2 id="c4">4. Charge électrique et loi de Faraday</h2>
+    <p>Le courant électrique mesure un débit de charge. Si l’intensité est constante pendant une durée \(\Delta t\), la charge transférée vaut :</p>
+    <div class="formula key-formula">\[
+      Q=I\,\Delta t.
+    \]</div>
+    <p>Avec \(Q\) en coulomb \(\mathrm C\), \(I\) en ampère \(\mathrm A=\mathrm{C\,s^{-1}}\), et \(\Delta t\) en seconde \(\mathrm s\). La quantité de matière d’électrons transférés est :</p>
+    <div class="formula key-formula">\[
+      n(e^-)=\frac{Q}{F}=\frac{I\,\Delta t}{F},
+      \qquad F=N_Ae\simeq 96485\,\mathrm{C\,mol^{-1}}.
+    \]</div>
+    <p>Si un ion \(\mathrm{M^{z+}}\) reçoit \(z\) électrons pour donner \(\mathrm M(s)\), alors :</p>
+    <div class="formula key-formula">\[
+      n(\mathrm M)=\frac{n(e^-)}{z}=\frac{I\,\Delta t}{zF},
+      \qquad
+      m(\mathrm M)=M\,\frac{I\,\Delta t}{zF}.
+    \]</div>
+
+    <details><summary>Lire la loi de Faraday comme une chaîne de proportionnalités</summary><p>La loi \(m=M\,\frac{I\,\Delta t}{zF}\) peut se lire étape par étape : (1) \(Q=I\Delta t\) donne la charge en coulombs ; (2) \(n(e^-)=Q/F\) convertit la charge en moles d'électrons (1 Faraday = 1 mole d'électrons) ; (3) \(n(\mathrm M)=n(e^-)/z\) tient compte de la stœchiométrie : il faut \(z\) électrons pour réduire un ion \(\mathrm{M^{z+}}\) ; (4) \(m=M\times n(\mathrm M)\) convertit en grammes. Chaque étape est une simple règle de trois. L'erreur la plus fréquente est d'oublier de diviser par \(z\), ou de confondre \(n(e^-)\) et \(n(\mathrm M)\).</p></details>
+
+    <h2 id="c5">5. Électrolyse : transformation forcée</h2>
+    <p>Dans une électrolyse, un générateur impose le passage du courant et force une transformation chimique qui ne se ferait pas spontanément dans le sens choisi. Les électrons ne sont plus fournis par la réaction : ils sont imposés par le circuit extérieur.</p>
+    <div class="box warn"><div class="box-label">Point délicat</div><p>Les mots anode et cathode gardent leur définition chimique : oxydation à l’anode, réduction à la cathode. En revanche, les signes électriques des électrodes ne sont pas les mêmes dans une pile et dans une électrolyse.</p></div>
+    <p>Les électrolyses servent à produire des métaux, protéger des surfaces, recharger certains accumulateurs ou réaliser des dépôts métalliques contrôlés.</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Critère</th><th>Pile</th><th>Électrolyse</th></tr></thead>
+      <tbody>
+        <tr><td>Spontanéité</td><td>Réaction spontanée (\(\Delta_rG<0\))</td><td>Réaction forcée (\(\Delta_rG>0\)), nécessite un générateur</td></tr>
+        <tr><td>Signe de l'anode</td><td>Négative (\(-\))</td><td>Positive (\(+\))</td></tr>
+        <tr><td>Signe de la cathode</td><td>Positive (\(+\))</td><td>Négative (\(-\))</td></tr>
+        <tr><td>Sens des \(e^-\) (circuit ext.)</td><td>Anode \(\rightarrow\) Cathode</td><td>Imposé par le générateur</td></tr>
+        <tr><td>Application</td><td>Fournir de l'énergie électrique</td><td>Produire des espèces chimiques</td></tr>
+      </tbody>
+    </table></div>
+    <div class="box ok"><div class="box-label">Retenir</div><p><strong>Anode = oxydation</strong>, <strong>cathode = réduction</strong> : toujours. Seuls les signes (\(+\)/\(-\)) changent entre pile et électrolyse.</p></div>
+
+    <h3>Applications industrielles de l'électrolyse</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Application</th><th>Procédé</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>Galvanoplastie</td><td>Dépôt électrolytique d'un métal</td><td>Chromage, nickelage, dorure</td></tr>
+        <tr><td>Raffinage des métaux</td><td>Purification par électrolyse</td><td>Cuivre électrolytique 99,99 %</td></tr>
+        <tr><td>Production de chlore</td><td>Électrolyse de NaCl saturé</td><td>\(\mathrm{Cl_2}\) (anode) + NaOH + \(\mathrm{H_2}\)</td></tr>
+        <tr><td>Aluminium</td><td>Électrolyse ignée de \(\mathrm{Al_2O_3}\)</td><td>Procédé Hall-Héroult</td></tr>
+        <tr><td>Piles rechargeables</td><td>Réversibilité de l'électrolyse</td><td>Li-ion, NiMH, Pb-acide</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 id="c6">6. Usure, capacité et énergie</h2>
+    <p>Une pile s’use parce que les réactifs sont consommés. Sa capacité dépend de la quantité de matière maximale pouvant réagir et du nombre d’électrons échangés.</p>
+    <div class="formula">\[
+      Q_{\max}=n(e^-)_\max F,\qquad
+      E_{\mathrm{élec}}\simeq U\,Q.
+    \]</div>
+    <p>Au Bac, on relie souvent capacité, autonomie, masse de matière active, courant de fonctionnement et énergie électrique disponible. En PCSI, on relie aussi la tension au quotient réactionnel via la relation de Nernst.</p>
+
+    <h2 id="c7">7. Applications industrielles</h2>
+    <p>L'électrochimie est au cœur de nombreuses industries et technologies énergétiques modernes.</p>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Application</th><th>Procédé</th><th>Exemple concret</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Galvanoplastie</strong></td><td>Dépôt électrolytique de métal</td><td>Chromage, nickelage, dorure de bijoux et pièces automobiles</td></tr>
+    <tr><td><strong>Raffinage des métaux</strong></td><td>Purification par électrolyse</td><td>Cuivre électrolytique de pureté 99,99 %</td></tr>
+    <tr><td><strong>Production de chlore</strong></td><td>Électrolyse de solution saturée de NaCl</td><td>\(\mathrm{Cl_2}\) à l'anode, \(\mathrm{NaOH + H_2}\) à la cathode (procédé chlore-alcali)</td></tr>
+    <tr><td><strong>Aluminium</strong></td><td>Électrolyse ignée de \(\mathrm{Al_2O_3}\)</td><td>Procédé Hall-Héroult : \(\mathrm{Al_2O_3}\) fondu à 960 °C</td></tr>
+    <tr><td><strong>Batteries rechargeables</strong></td><td>Réversibilité électrochimique</td><td>Li-ion (téléphones, véhicules électriques), NiMH, Pb-acide</td></tr>
+    <tr><td><strong>Anticorrosion</strong></td><td>Protection cathodique</td><td>Anode sacrificielle en zinc sur coques de navires</td></tr>
+    </tbody></table></div>
+    <div class="box prop"><div class="box-label">Comparaison : pile vs électrolyse</div>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Critère</th><th>Pile</th><th>Électrolyse</th></tr></thead>
+    <tbody>
+    <tr><td>Spontanéité</td><td>Réaction spontanée (\(\Delta_rG < 0\))</td><td>Réaction forcée (\(\Delta_rG > 0\))</td></tr>
+    <tr><td>Signe anode</td><td>Négative (−)</td><td>Positive (+)</td></tr>
+    <tr><td>Signe cathode</td><td>Positive (+)</td><td>Négative (−)</td></tr>
+    <tr><td>Source d'énergie</td><td>Fournit de l'énergie électrique</td><td>Consomme de l'énergie électrique</td></tr>
+    </tbody></table></div>
+    <p><strong>Règle immuable :</strong> anode = oxydation, cathode = réduction — que ce soit une pile ou une électrolyse.</p></div>
+  </article>
+</div>
+<div class="footer-nav"><a class="secondary" href="Term_chapitre6.html">Chapitre précédent</a><a class="primary" href="Term_chapitre8.html">Chapitre suivant</a></div>
+</div>
+</section>
+
+<section class="panel" id="tab-outils">
+<div class="content-card">
+<h3>Relations mathématiques, grandeurs et unités</h3>
+<p>Les relations de ce chapitre imposent une attention sévère aux unités : ampère, seconde, coulomb, mole, faraday, volt et joule.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Écriture rigoureuse</th><th>Grandeurs, unités et domaine</th></tr></thead>
+<tbody>
+<tr><td>Demi-équation redox</td><td>\(\displaystyle \mathrm{Ox}+n\,e^-\rightleftharpoons\mathrm{Red}\)</td><td>\(n\) est le nombre d’électrons échangés, sans unité.</td></tr>
+<tr><td>Charge transférée</td><td>\(\displaystyle Q=I\,\Delta t\)</td><td>\(Q\) en \(\mathrm C\), \(I\) en \(\mathrm A\), \(\Delta t\) en \(\mathrm s\).</td></tr>
+<tr><td>Constante de Faraday</td><td>\(\displaystyle F=N_Ae\simeq 96485\,\mathrm{C\,mol^{-1}}\)</td><td>\(F\) est la charge d’une mole d’électrons.</td></tr>
+<tr><td>Quantité d’électrons</td><td>\(\displaystyle n(e^-)=\frac{Q}{F}=\frac{I\,\Delta t}{F}\)</td><td>\(n(e^-)\) en \(\mathrm{mol}\).</td></tr>
+<tr><td>Dépôt métallique</td><td>\(\displaystyle n(\mathrm M)=\frac{I\,\Delta t}{zF}\)</td><td>\(z\) électrons nécessaires pour réduire un ion \(\mathrm{M^{z+}}\).</td></tr>
+<tr><td>Masse déposée</td><td>\(\displaystyle m=M\,\frac{I\,\Delta t}{zF}\)</td><td>Si \(M\) est en \(\mathrm{kg\,mol^{-1}}\), \(m\) est en \(\mathrm{kg}\).</td></tr>
+<tr><td>Énergie électrique</td><td>\(\displaystyle E_{\mathrm{élec}}=U\,I\,\Delta t=UQ\)</td><td>\(E_{\mathrm{élec}}\) en \(\mathrm J\), \(U\) en \(\mathrm V\).</td></tr>
+<tr><td>Relation de Nernst</td><td>\(\displaystyle E=E^\circ-\frac{0{,}0592}{n}\log(Q_r)\)</td><td>À \(25^\circ\mathrm C\), \(E\) en \(\mathrm V\), \(Q_r\) sans unité.</td></tr>
+<tr><td>Pont PCSI</td><td>\(\displaystyle \Delta_rG=-nFE\)</td><td>\(\Delta_rG\) en \(\mathrm{J\,mol^{-1}}\). Si \(E>0\), alors \(\Delta_rG<0\).</td></tr>
+</tbody></table></div>
+<h4>Méthode de résolution</h4>
+<div class="method-grid">
+  <div class="step"><b>1</b><span>Identifier pile ou électrolyse</span><small>Spontané ou forcé ? Cette distinction oriente tout le raisonnement.</small></div>
+  <div class="step"><b>2</b><span>Écrire les demi-équations</span><small>Équilibrer atomes, charges et électrons.</small></div>
+  <div class="step"><b>3</b><span>Relier charge et électrons</span><small>Utiliser \(Q=I\Delta t\) puis \(n(e^-)=Q/F\).</small></div>
+  <div class="step"><b>4</b><span>Conclure avec unités</span><small>Masse, durée, courant, énergie ou tension doivent être contextualisés.</small></div>
+</div>
+<h4 style="margin-top:28px">Calculatrices interactives</h4>
+<div class="calc-grid">
+  <div class="calc-card">
+    <h5>Nernst — tension de pile</h5>
+    <label>E° (V) <input id="n7E0" type="number" value="1.10" step="0.01" min="-3" max="3"></label>
+    <label>n (nb e⁻) <input id="n7n" type="number" value="2" step="1" min="1" max="6"></label>
+    <label>Qr <input id="n7Qr" type="number" value="1" step="0.1" min="0.0001"></label>
+    <button class="primary" onclick="calcNernst7()">Calculer E</button>
+    <div id="res7Nernst" class="calc-result"></div>
+  </div>
+  <div class="calc-card">
+    <h5>Faraday — masse déposée</h5>
+    <label>I (A) <input id="f7I" type="number" value="1.2" step="0.1" min="0.01"></label>
+    <label>Δt (min) <input id="f7t" type="number" value="30" step="1" min="1"></label>
+    <label>z <input id="f7z" type="number" value="2" step="1" min="1" max="6"></label>
+    <label>M (g·mol⁻¹) <input id="f7M" type="number" value="63.5" step="0.1" min="1"></label>
+    <button class="primary" onclick="calcFaraday7()">Calculer m</button>
+    <div id="res7Faraday" class="calc-result"></div>
+  </div>
+  <div class="calc-card">
+    <h5>Autonomie de pile</h5>
+    <label>Q<sub>max</sub> (C) <input id="a7Q" type="number" value="4800" step="100" min="1"></label>
+    <label>I (A) <input id="a7I" type="number" value="0.20" step="0.01" min="0.001"></label>
+    <button class="primary" onclick="calcAuto7()">Calculer Δt</button>
+    <div id="res7Auto" class="calc-result"></div>
   </div>
 </div>
+</div>
+</section>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<section class="panel" id="tab-exercices">
+<div class="content-card">
+<h3>Exercices d’entraînement</h3>
+<p>Les exercices travaillent l’écriture des demi-équations, la loi de Faraday, la masse déposée, la capacité et l’interprétation du sens spontané.</p>
+<div class="exercise-list">
+  <article class="exercise-card"><div class="exercise-title"><h4>1. Demi-équations d’une pile Daniell</h4><small>Redox</small></div><p>On considère les couples \(\mathrm{Zn^{2+}}/\mathrm{Zn}\) et \(\mathrm{Cu^{2+}}/\mathrm{Cu}\).</p><ol><li>Écrire l’oxydation du zinc.</li><li>Écrire la réduction des ions cuivre.</li><li>En déduire l’équation globale.</li><li>Indiquer le sens de déplacement des électrons dans le circuit extérieur.</li></ol><details><summary>Correction détaillée</summary><p>\(\mathrm{Zn(s)}\rightarrow\mathrm{Zn^{2+}(aq)}+2e^-\). \(\mathrm{Cu^{2+}(aq)}+2e^-\rightarrow\mathrm{Cu(s)}\). Bilan : \(\mathrm{Zn(s)}+\mathrm{Cu^{2+}(aq)}\rightarrow\mathrm{Zn^{2+}(aq)}+\mathrm{Cu(s)}\). Les électrons vont de l’électrode de zinc vers l’électrode de cuivre.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>2. Charge transférée pendant une électrolyse</h4><small>\(Q=I\Delta t\)</small></div><p>Une électrolyse est réalisée avec un courant constant \(I=0{,}80\,\mathrm A\) pendant \(\Delta t=25\,\mathrm{min}\).</p><ol><li>Convertir la durée en secondes.</li><li>Calculer la charge \(Q\).</li><li>Calculer \(n(e^-)\).</li></ol><details><summary>Correction détaillée</summary><p>\(\Delta t=25\times60=1500\,\mathrm s\). \(Q=I\Delta t=0{,}80\times1500=1{,}20\times10^3\,\mathrm C\). \(\displaystyle n(e^-)=\frac{Q}{F}=\frac{1{,}20\times10^3}{96485}=1{,}24\times10^{-2}\,\mathrm{mol}\).</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>3. Dépôt de cuivre</h4><small>Faraday</small></div><p>On réalise le dépôt de cuivre selon \(\mathrm{Cu^{2+}}+2e^-\rightarrow\mathrm{Cu(s)}\). On donne \(M(\mathrm{Cu})=63{,}5\,\mathrm{g\,mol^{-1}}\). Le courant est \(I=1{,}20\,\mathrm A\) pendant \(30\,\mathrm{min}\).</p><ol><li>Calculer \(Q\).</li><li>Calculer \(n(\mathrm{Cu})\).</li><li>Calculer la masse déposée.</li></ol><details><summary>Correction détaillée</summary><p>\(Q=1{,}20\times1800=2160\,\mathrm C\). \(\displaystyle n(e^-)=\frac{2160}{96485}=2{,}24\times10^{-2}\,\mathrm{mol}\). Comme \(z=2\), \(n(\mathrm{Cu})=1{,}12\times10^{-2}\,\mathrm{mol}\). Donc \(m=63{,}5\times1{,}12\times10^{-2}=0{,}711\,\mathrm g\).</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>4. Autonomie d’une pile</h4><small>Capacité</small></div><p>Une pile peut fournir une charge maximale \(Q_{\max}=4{,}8\times10^3\,\mathrm C\). Elle alimente un appareil qui consomme un courant \(I=0{,}20\,\mathrm A\).</p><ol><li>Exprimer la durée de fonctionnement \(\Delta t\).</li><li>Calculer \(\Delta t\) en secondes puis en heures.</li><li>Interpréter le résultat.</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle \Delta t=\frac{Q_{\max}}{I}=\frac{4{,}8\times10^3}{0{,}20}=2{,}4\times10^4\,\mathrm s\). Cela vaut \(6{,}7\,\mathrm h\). L’autonomie diminue si le courant demandé augmente.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>5. Énergie électrique fournie</h4><small>\(E=UQ\)</small></div><p>Une batterie fournit une tension moyenne \(U=3{,}7\,\mathrm V\) et une charge \(Q=7{,}2\times10^3\,\mathrm C\).</p><ol><li>Calculer l’énergie fournie en joule.</li><li>Convertir en watt-heure avec \(1\,\mathrm{Wh}=3600\,\mathrm J\).</li><li>Commenter l’intérêt d’une tension élevée.</li></ol><details><summary>Correction détaillée</summary><p>\(E=UQ=3{,}7\times7{,}2\times10^3=2{,}66\times10^4\,\mathrm J\). Cela vaut \(\frac{2{,}66\times10^4}{3600}=7{,}4\,\mathrm{Wh}\). À charge identique, une tension plus grande augmente l’énergie disponible.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>6. Tension et spontanéité</h4><small>Nernst</small></div><p>À \(25^\circ\mathrm C\), une pile vérifie \(E^\circ=1{,}10\,\mathrm V\), \(n=2\) et \(Q_r=10^4\).</p><ol><li>Calculer \(E\).</li><li>Dire si la pile peut débiter dans le sens écrit.</li><li>Calculer \(\Delta_rG=-nFE\).</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle E=1{,}10-\frac{0{,}0592}{2}\log(10^4)=1{,}10-0{,}118=0{,}982\,\mathrm V\). Comme \(E>0\), la pile peut débiter dans le sens écrit. \(\Delta_rG\simeq-2\times96485\times0{,}982=-1{,}90\times10^5\,\mathrm{J\,mol^{-1}}\).</p></details></article>
+</div>
+  <article class="exercise-card"><div class="exercise-title"><h4>7. Pile cadmium-argent</h4><small>Redox · Méthode</small></div><p>On mesure une tension positive entre une lame de cadmium et une lame d'argent. Couples : \(\mathrm{Cd^{2+}/Cd}\) et \(\mathrm{Ag^+/Ag}\).</p><ol><li>Identifier l'anode et la cathode.</li><li>Écrire les demi-équations.</li><li>En déduire l'équation de fonctionnement.</li></ol><details><summary>Correction détaillée</summary><p>Les électrons circulent du métal qui s'oxyde (Cd) vers l'électrode où les ions se réduisent (Ag). Bilan : \(\mathrm{Cd(s)+2Ag^+(aq)\rightarrow Cd^{2+}(aq)+2Ag(s)}\).</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>8. Pile nickel-argent : capacité</h4><small>Faraday · Calcul</small></div><p>Une pile nickel-argent débite un courant \(I=0{,}50\,\mathrm A\) pendant \(45\,\mathrm{min}\). On donne \(M(\mathrm{Ni})=58{,}7\,\mathrm{g\,mol^{-1}}\).</p><ol><li>Calculer \(Q\) et \(n(e^-)\).</li><li>En déduire \(n(\mathrm{Ni})\) consommé sachant \(\mathrm{Ni(s)\rightarrow Ni^{2+}+2e^-}\).</li><li>Calculer la variation de masse de l'électrode de nickel.</li></ol><details><summary>Correction détaillée</summary><p>\(Q=0{,}50\times2700=1350\,\mathrm C\). \(\displaystyle n(e^-)=\frac{1350}{96485}=1{,}40\times10^{-2}\,\mathrm{mol}\). \(\displaystyle n(\mathrm{Ni})=\frac{n(e^-)}{2}=7{,}0\times10^{-3}\,\mathrm{mol}\). \(\Delta m=58{,}7\times7{,}0\times10^{-3}=0{,}41\,\mathrm g\) perdu par l'anode.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>9. Pile à combustible \(\mathrm{H_2/O_2}\)</h4><small>Bac guidé</small></div><p>Une pile à combustible fonctionne avec du dihydrogène et du dioxygène.</p><ol><li>Écrire la demi-équation d'oxydation de \(\mathrm{H_2}\).</li><li>Écrire la demi-équation de réduction de \(\mathrm{O_2}\) en milieu acide.</li><li>En déduire l'équation bilan.</li><li>Pour un courant \(I=2{,}0\,\mathrm A\) pendant \(1\,\mathrm h\), calculer la charge et la quantité d'électrons transférés.</li></ol><details><summary>Correction détaillée</summary><p>Oxydation : \(\mathrm{H_2\rightarrow 2H^++2e^-}\). Réduction : \(\mathrm{O_2+4H^++4e^-\rightarrow 2H_2O}\). Bilan : \(\mathrm{2H_2+O_2\rightarrow 2H_2O}\). \(Q=2{,}0\times3600=7200\,\mathrm C\). \(\displaystyle n(e^-)=\frac{7200}{96485}=7{,}46\times10^{-2}\,\mathrm{mol}\).</p></details></article>
+</div>
+<h3 style="margin-top:24px">Exercices Bac vérifiés</h3>
+<div class="cards">
+  <article class="card"><h4>Traitement de surface d’une pièce de jeu d’échecs</h4><p>Exercice 3, \(5\) points, Métropole septembre 2025 sujet 1 : électrolyse, dépôt métallique, loi de Faraday.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/traitement-de-surface-dune-piece-de-jeu-dechecs/">Page VecteurBac</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/terminale-specialite-chimie-electrolyse/">Thème électrolyse</a></div></article>
+  <article class="card"><h4>Batteries au lithium</h4><p>Exercice 1, \(9\) points, Asie 2025 sujet 2 : piles, batterie, capacité et fonctionnement électrochimique.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/batteries-au-lithium/">Page VecteurBac</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/terminale-specialite-chimie-piles/">Thème piles</a></div></article>
+  <article class="card"><h4>Recharge des voitures électriques</h4><p>Exercice 2, \(5\) points, Amérique du Sud 2025 sujet 1 : charge, courant, énergie et recharge.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/recharge-des-voitures-electriques/">Page VecteurBac</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/terminale-specialite-physique-chimie-2025-amerique-du-sud-sujet-1/">Sujet complet</a></div></article>
+  <article class="card"><h4>Batterie Lithium – Soufre</h4><p>Exercice 3, \(5\) points, Métropole 2024 sujet 2 : couples redox, batterie et données énergétiques.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/batterie-lithium-soufre/">Page VecteurBac</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/terminale-specialite-physique-chimie-2024-metropole-sujet-2/">Sujet complet</a></div></article>
+  <article class="card"><h4>Des batteries à flux redox organiques</h4><p>Exercice 2, \(5\) points, Amérique du Nord 2024 sujet 1 : pile, redox et stockage électrochimique.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/des-batteries-a-flux-redox-organiques/">Page VecteurBac</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/terminale-specialite-chimie-piles/">Thème piles</a></div></article>
+</div>
+</div>
+</section>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Terminale Spé · Chap. 7</div>
-    <h1 class="hero-title">Piles et électro<span>lyse | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
+<section class="panel" id="tab-flashcards">
+<div class="content-card">
+<h3>Flashcards</h3>
+<div class="flash-layout">
+  <div><div class="flash-card" id="flashCard" tabindex="0" role="button" aria-label="Carte mémoire"><div><h3 id="flashQuestion">Question</h3><p id="flashAnswer" style="display:none"></p></div><span class="hint">Cliquer pour retourner</span></div><div class="answers"><button class="secondary" onclick="prevFlash()">Précédente</button><button class="primary" onclick="flipFlash()">Retourner</button><button class="secondary" onclick="nextFlash()">Suivante</button></div></div>
+  <div class="card"><h4>Mode d’emploi</h4><p>Réponds oralement avant de retourner la carte. Les formules sont rendues avec MathJax après chaque changement.</p><p class="note"><span id="flashIndex">1</span>/<span id="flashTotal">10</span></p></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-mindmap">
+<div class="content-card">
+<h3>Carte mentale</h3>
+<div class="mindmap">
+<style>
+@keyframes m7Draw{from{stroke-dashoffset:420}to{stroke-dashoffset:0}}
+@keyframes m7Fade{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes m7Pulse{0%,100%{filter:drop-shadow(0 0 6px currentColor)}50%{filter:drop-shadow(0 0 18px currentColor)}}
+.m7branch{stroke-dasharray:420;stroke-dashoffset:420;animation:m7Draw .9s cubic-bezier(.4,0,.2,1) forwards}
+.m7node{opacity:0;transform-origin:center;animation:m7Fade .55s ease forwards}
+.m7center{animation:m7Pulse 2.6s ease-in-out infinite}
+.m7b1{animation-delay:.05s}.m7b2{animation-delay:.15s}.m7b3{animation-delay:.25s}.m7b4{animation-delay:.35s}.m7b5{animation-delay:.45s}
+.m7n1{animation-delay:.5s}.m7n2{animation-delay:.65s}.m7n3{animation-delay:.8s}.m7n4{animation-delay:.95s}.m7n5{animation-delay:1.1s}
+</style>
+<svg viewBox="0 0 1100 520" role="img" aria-label="Carte mentale piles et électrolyse – animée">
+<rect width="1100" height="520" rx="18" fill="#050e1a"/>
+<!-- branches -->
+<path class="m7branch m7b1" d="M550 260 C420 185 345 145 235 112" fill="none" stroke="#22d3ee" stroke-width="3.5" opacity=".85"/>
+<path class="m7branch m7b2" d="M550 260 C710 180 805 145 915 115" fill="none" stroke="#4ade80" stroke-width="3.5" opacity=".85"/>
+<path class="m7branch m7b3" d="M550 260 C390 305 300 350 210 414" fill="none" stroke="#fb923c" stroke-width="3.5" opacity=".85"/>
+<path class="m7branch m7b4" d="M550 260 C715 308 810 350 920 410" fill="none" stroke="#a78bfa" stroke-width="3.5" opacity=".85"/>
+<path class="m7branch m7b5" d="M550 260 C550 150 550 115 550 70" fill="none" stroke="#60a5fa" stroke-width="3.5" opacity=".85"/>
+<!-- centre -->
+<g class="m7center" color="#5eead4">
+  <rect x="405" y="214" width="290" height="92" rx="14" fill="#0f2744" stroke="#22d3ee" stroke-width="2"/>
+  <text x="550" y="251" text-anchor="middle" fill="#e0f7fa" font-size="20" font-weight="800" font-family="Inter,sans-serif">Piles &amp; électrolyse</text>
+  <text x="550" y="275" text-anchor="middle" fill="#94e4f7" font-size="12" font-family="Inter,sans-serif">électrons · charge · Faraday</text>
+</g>
+<!-- Redox cyan -->
+<g class="m7node m7n1">
+  <rect x="65" y="60" width="320" height="100" rx="12" fill="#083344" stroke="#22d3ee" stroke-width="1.8"/>
+  <text x="225" y="96" text-anchor="middle" fill="#67e8f9" font-size="17" font-weight="800" font-family="Inter,sans-serif">Redox</text>
+  <text x="225" y="120" text-anchor="middle" fill="#a5f3fc" font-size="12" font-family="Inter,sans-serif">Ox + ne⁻ ⇌ Red</text>
+  <text x="225" y="146" text-anchor="middle" fill="#7dd3fc" font-size="11" font-family="Inter,sans-serif">règle du gamma · E°(Ox/Red)</text>
+</g>
+<!-- Pile green -->
+<g class="m7node m7n2">
+  <rect x="755" y="62" width="300" height="100" rx="12" fill="#052e16" stroke="#4ade80" stroke-width="1.8"/>
+  <text x="905" y="98" text-anchor="middle" fill="#86efac" font-size="17" font-weight="800" font-family="Inter,sans-serif">Pile</text>
+  <text x="905" y="122" text-anchor="middle" fill="#bbf7d0" font-size="12" font-family="Inter,sans-serif">E = E° − (0,059/n)·log Qr</text>
+  <text x="905" y="146" text-anchor="middle" fill="#6ee7b7" font-size="11" font-family="Inter,sans-serif">réaction spontanée → courant</text>
+</g>
+<!-- Faraday orange -->
+<g class="m7node m7n3">
+  <rect x="55" y="360" width="310" height="100" rx="12" fill="#431407" stroke="#fb923c" stroke-width="1.8"/>
+  <text x="210" y="396" text-anchor="middle" fill="#fdba74" font-size="17" font-weight="800" font-family="Inter,sans-serif">Loi de Faraday</text>
+  <text x="210" y="420" text-anchor="middle" fill="#fed7aa" font-size="12" font-family="Inter,sans-serif">n(e⁻) = IΔt / F</text>
+  <text x="210" y="444" text-anchor="middle" fill="#fca85e" font-size="11" font-family="Inter,sans-serif">m = M·IΔt/(zF)</text>
+</g>
+<!-- Électrolyse purple -->
+<g class="m7node m7n4">
+  <rect x="740" y="358" width="320" height="100" rx="12" fill="#1e1b4b" stroke="#a78bfa" stroke-width="1.8"/>
+  <text x="900" y="394" text-anchor="middle" fill="#c4b5fd" font-size="17" font-weight="800" font-family="Inter,sans-serif">Électrolyse</text>
+  <text x="900" y="418" text-anchor="middle" fill="#ddd6fe" font-size="12" font-family="Inter,sans-serif">transformation forcée</text>
+  <text x="900" y="442" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="Inter,sans-serif">générateur → dépôt cathodique</text>
+</g>
+<!-- PCSI blue -->
+<g class="m7node m7n5">
+  <rect x="405" y="28" width="290" height="78" rx="12" fill="#0c1a3a" stroke="#60a5fa" stroke-width="1.8"/>
+  <text x="550" y="60" text-anchor="middle" fill="#93c5fd" font-size="17" font-weight="800" font-family="Inter,sans-serif">PCSI</text>
+  <text x="550" y="84" text-anchor="middle" fill="#bfdbfe" font-size="12" font-family="Inter,sans-serif">ΔrG = −nFE</text>
+  <text x="550" y="98" text-anchor="middle" fill="#7dd3fc" font-size="10.5" font-family="Inter,sans-serif">E &gt; 0 ↔ ΔrG &lt; 0 · spontané</text>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-simulations">
+<div class="content-card">
+<h3>Simulations modernes</h3>
+<p>Deux simulations maison pleine largeur : pile Daniell avec électrons/ions/f.é.m., puis électrolyse avec dépôt métallique et loi de Faraday.</p>
+<div class="future-sim-suite">
+  <div class="future-sim-title"><div><h4>Électrochimie : une réaction peut faire circuler des électrons</h4><p>Les curseurs modifient les concentrations, la tension ou les paramètres de l’électrolyse. Les relations sont calculées en direct.</p></div><span class="future-badge">Canvas · redox</span></div>
+  <div class="future-lab-grid">
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Pile Daniell : électrons, ions et tension</h4><p>Observe l’anode, la cathode, le pont salin, le sens des électrons et l’évolution de \(E\) avec \(Q_r\).</p></div><span class="chip blue">pile</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>\([\mathrm{Zn^{2+}}]\) <output id="cellZnOut">0.10 mol·L⁻¹</output></label><input id="cellZn" type="range" min="1" max="100" step="1" value="10"></div>
+          <div class="future-control"><label>\([\mathrm{Cu^{2+}}]\) <output id="cellCuOut">1.00 mol·L⁻¹</output></label><input id="cellCu" type="range" min="1" max="100" step="1" value="100"></div>
+          <div class="future-control"><label>Résistance externe <output id="cellROut">20 Ω</output></label><input id="cellR" type="range" min="5" max="80" step="1" value="20"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(Q_r\)</span><b id="cellM1">0.10</b></div><div class="future-metric"><span>\(E\)</span><b id="cellM2">1.13 V</b></div><div class="future-metric"><span>\(I\)</span><b id="cellM3">56 mA</b></div></div>
+          <div class="future-equation">\(\displaystyle E=E^\circ-\frac{0{,}0592}{2}\log\!\left(\frac{[\mathrm{Zn^{2+}}]}{[\mathrm{Cu^{2+}}]}\right)\)</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="pileCanvas" aria-label="Simulation d'une pile Daniell"></canvas></div>
+      </div>
+    </article>
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Électrolyse : dépôt métallique et loi de Faraday</h4><p>La masse déposée dépend du courant, de la durée, de la masse molaire et du nombre d’électrons nécessaires.</p></div><span class="chip green">Faraday</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>Intensité \(I\) <output id="elyIOut">1.20 A</output></label><input id="elyI" type="range" min="0.1" max="5" step="0.05" value="1.20"></div>
+          <div class="future-control"><label>Durée \(\Delta t\) <output id="elyTOut">30 min</output></label><input id="elyT" type="range" min="1" max="120" step="1" value="30"></div>
+          <div class="future-control"><label>Nombre \(z\) <output id="elyZOut">2</output></label><input id="elyZ" type="range" min="1" max="3" step="1" value="2"></div>
+          <div class="future-control"><label>Masse molaire \(M\) <output id="elyMOut">63.5 g·mol⁻¹</output></label><input id="elyM" type="range" min="20" max="220" step="0.5" value="63.5"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(Q\)</span><b id="elyM1">2160 C</b></div><div class="future-metric"><span>\(n(e^-)\)</span><b id="elyM2">0.022 mol</b></div><div class="future-metric"><span>\(m\)</span><b id="elyM3">0.711 g</b></div></div>
+          <div class="future-equation">\(\displaystyle m=M\,\frac{I\,\Delta t}{zF}\)</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="electrolysisCanvas" aria-label="Simulation d'une électrolyse"></canvas></div>
+      </div>
+    </article>
   </div>
+</div>
+<h3>Anciennes simulations conservées</h3>
+<p class="note">Les simulations PhET restent sous les animations maison pour manipuler des circuits électriques simples.</p>
+<div class="phet-grid">
+  <article class="sim-card-large"><div class="sim-card-head"><span>🔋</span><div><h4>Kits de circuits électriques</h4><p>Circuit avec pile, fils, ampèremètre et résistances.</p></div></div><div class="iframe-wrap"><iframe title="PhET Circuit Construction Kit DC" loading="lazy" src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_fr.html"></iframe></div></article>
+  <article class="sim-card-large"><div class="sim-card-head"><span>⚡</span><div><h4>Kit de circuit virtuel</h4><p>Complément PhET pour visualiser tension, courant et résistance.</p></div></div><div class="iframe-wrap"><iframe title="PhET Circuit Construction Kit Virtual Lab" loading="lazy" src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc-virtual-lab/latest/circuit-construction-kit-dc-virtual-lab_fr.html"></iframe></div></article>
+</div>
+</div>
+</section>
 
+<section class="panel" id="tab-quiz">
+<div class="content-card">
+<h3>Quiz et chatbot externe</h3>
+<div class="quiz-ai-grid">
+  <div class="quiz-card"><h4>Quiz interactif</h4><p id="quizProgress" class="note"></p><div id="quizQuestion"></div><div id="quizOptions" class="options"></div><div class="answers"><button class="secondary" onclick="prevQuiz()">Précédent</button><button class="primary" onclick="nextQuiz()">Suivant</button><button class="secondary" onclick="resetQuiz()">Recommencer</button></div><p id="quizFeedback" class="note"></p></div>
+  <div class="ai-helper-card"><h4>Assistant externe</h4><p>Le site statique prépare une question complète ; la réponse est donnée par l’assistant externe choisi.</p><div class="ai-choice-row"><button class="ai-choice" onclick="setAIIntent('simple')">Cours simple</button><button class="ai-choice" onclick="setAIIntent('indice')">Indice</button><button class="ai-choice" onclick="setAIIntent('correction')">Correction</button><button class="ai-choice" onclick="setAIIntent('prepa')">Prépa PCSI</button></div><label class="ai-label" for="aiQuestion">Question de l’élève</label><textarea class="ai-textarea" id="aiQuestion">Explique-moi comment utiliser la loi de Activité pour déterminer une concentration inconnue.</textarea><div class="btn-row"><button class="primary" onclick="openAI('chatgpt')">ChatGPT</button><button class="secondary" onclick="openAI('claude')">Claude</button><button class="secondary" onclick="openAI('perplexity')">Perplexity</button><button class="secondary" onclick="copyCurrentPrompt()">Copier</button></div><details class="ai-preview"><summary>Voir le prompt envoyé</summary><div class="prompt-box" id="promptPreview"></div></details></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-ece">
+<div class="content-card">
+<h3>ECE : pile, électrolyse et loi de Faraday</h3>
+<div class="cards">
+  <div class="card"><h4>Situation type</h4><p>Mesurer une tension de pile ou réaliser un dépôt électrolytique, puis relier les observations aux demi-équations et à la quantité d’électricité transférée.</p><div class="chips"><span class="chip blue">tension</span><span class="chip green">Faraday</span><span class="chip amber">dépôt</span></div></div>
+  <div class="card"><h4>Gestes évalués</h4><ul><li>Brancher correctement un voltmètre ou un ampèremètre.</li><li>Identifier anode, cathode, oxydation et réduction.</li><li>Mesurer une durée et une intensité.</li><li>Comparer une masse théorique à une masse expérimentale.</li></ul></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Étape</th><th>Action attendue</th><th>Justification</th></tr></thead>
+<tbody>
+<tr><td>Observer</td><td>Repérer dépôt, dégagement gazeux ou variation de couleur.</td><td>Ces indices signalent une transformation redox.</td></tr>
+<tr><td>Mesurer</td><td>Relever \(I\), \(\Delta t\), \(U\) ou la masse.</td><td>Les grandeurs doivent être converties en unités SI.</td></tr>
+<tr><td>Modéliser</td><td>Écrire la demi-équation et utiliser \(n(e^-)=I\Delta t/F\).</td><td>La stœchiométrie électronique relie charge et matière.</td></tr>
+<tr><td>Valider</td><td>Comparer théorie et expérience.</td><td>Un écart peut venir des pertes, du rendement ou des incertitudes.</td></tr>
+</tbody>
+</table></div>
+<h3 style="margin-top:20px">Situations expérimentales détaillées</h3>
+<div class="cards">
+  <div class="card"><h4>ECE 1 — Mesure de la f.é.m. d’une pile</h4>
+  <p><strong>Contexte :</strong> Deux béchers (\(\mathrm{CuSO_4}\) et \(\mathrm{ZnSO_4}\)), une lame de zinc, une lame de cuivre, un pont salin et un voltmètre.</p>
+  <p><strong>Protocole :</strong> Brancher le voltmètre aux bornes de la pile (borne V sur Cu, borne COM sur Zn). La pile ne doit pas débiter : le voltmètre a une impédance très élevée.</p>
+  <div class="formula">\[\text{f.é.m.}=E_{\mathrm{cathode}}-E_{\mathrm{anode}}\]</div>
+  <p><strong>Résultat attendu :</strong> \(E\approx 1{,}10\,\mathrm V\) si les solutions sont à \(1{,}0\,\mathrm{mol\cdot L^{-1}}\). Le signe positif confirme que Cu est la cathode.</p>
+  <div class="chips"><span class="chip blue">APP</span><span class="chip green">REA</span><span class="chip amber">VAL</span></div></div>
+
+  <div class="card"><h4>ECE 2 — Influence de la concentration sur la f.é.m.</h4>
+  <p><strong>Contexte :</strong> On modifie \([\mathrm{Cu^{2+}}]\) et \([\mathrm{Zn^{2+}}]\) dans les demi-piles et on mesure \(E\) pour chaque configuration.</p>
+  <p><strong>Question :</strong> Comment varie \(E\) si on dilue \(\mathrm{CuSO_4}\) ?</p>
+  <div class="formula">\[E=E^\circ-\frac{RT}{nF}\ln\frac{[\mathrm{Zn^{2+}}]}{[\mathrm{Cu^{2+}}]}\]</div>
+  <p><strong>Réponse :</strong> Si \([\mathrm{Cu^{2+}}]\) diminue, \(Q_r\) augmente, donc \(E\) diminue. La pile est moins forte — cohérent avec Le Chatelier.</p>
+  <div class="chips"><span class="chip blue">APP</span><span class="chip mauve">ANA</span><span class="chip amber">VAL</span></div></div>
+
+  <div class="card"><h4>ECE 3 — Électrolyse et dépôt métallique</h4>
+  <p><strong>Contexte :</strong> On électrolyse \(\mathrm{CuSO_4}\) avec des électrodes inertes sous courant constant \(I\).</p>
+  <p><strong>Question :</strong> Comment vérifier que le dépôt est bien du cuivre métallique ?</p>
+  <div class="formula">\[\Delta m=\frac{M\times I\times\Delta t}{z\times F}\]</div>
+  <p><strong>Réponse :</strong> Peser l’électrode avant et après, puis comparer la masse déposée à la valeur prédite par Faraday. Écart relatif : \(\displaystyle\varepsilon_r=\frac{|m_{\mathrm{exp}}-m_{\mathrm{théo}}|}{m_{\mathrm{théo}}}\times100\).</p>
+  <div class="chips"><span class="chip green">REA</span><span class="chip mauve">ANA</span><span class="chip amber">VAL</span></div></div>
+
+  <div class="card"><h4>ECE 4 — Suivi cinétique d’une pile</h4>
+  <p><strong>Contexte :</strong> On mesure \(E(t)\) pendant que la pile Daniell débite dans un circuit résistif.</p>
+  <p><strong>Question :</strong> Comment déterminer le moment où la pile est usée ?</p>
+  <div class="formula">\[E(t)=E^\circ-\frac{RT}{nF}\ln Q_r(t)\qquad Q_r(t)\rightarrow K\text{ quand }t\rightarrow+\infty\]</div>
+  <p><strong>Réponse :</strong> Quand \(E\rightarrow 0\) (soit \(Q_r\rightarrow K\)), la pile ne débite plus : l’équilibre est atteint et \(\Delta_rG=0\). On repère ce moment sur la courbe \(E(t)\) quand la tension se stabilise à une valeur proche de zéro.</p>
+  <div class="chips"><span class="chip blue">APP</span><span class="chip mauve">ANA</span><span class="chip amber">VAL</span></div></div>
+</div>
+
+<div class="box ok" style="margin-top:16px"><div class="box-label">Méthode ECE à automatiser</div>
+<p>Lire toute la situation avant de manipuler, identifier la grandeur mesurée, écrire la relation exploitée avec les unités, puis conclure en comparant la valeur expérimentale à la valeur attendue.</p>
+<div class="formula">\[u_c=\sqrt{u_A^2+u_B^2}\qquad;\qquad\varepsilon_r=\frac{|x_{\mathrm{exp}}-x_{\mathrm{ref}}|}{x_{\mathrm{ref}}}\times100\]</div>
+<p>\(u_c\) est l’incertitude-type composée, \(\varepsilon_r\) l’écart relatif. Les grandeurs doivent être dans la même unité.</p>
+</div>
+<div class="box warn"><div class="box-label">Réflexe ECE</div><p>Une valeur sans unité ou une relation non nommée coûte cher. Toujours écrire la relation, les grandeurs, les unités, puis la conclusion expérimentale.</p></div>
+</div>
+</section>
+
+<section class="panel" id="tab-prepa">
+<div class="content-card">
+<h3>Vers la prépa PCSI</h3>
+<p>En PCSI, l’électrochimie devient un langage thermodynamique : tension, quotient réactionnel, enthalpie libre et potentiel de Nernst décrivent la capacité d’une réaction à fournir du travail électrique.</p>
+<div class="cards">
+  <div class="card"><h4>1. Travail électrique</h4><p>Pour une réaction échangeant \(n\) électrons, on relie l’enthalpie libre de réaction à la tension : \[
+    \Delta_rG=-nFE.
+  \] Si \(E>0\), alors \(\Delta_rG<0\), le sens écrit est spontané.</p></div>
+  <div class="card"><h4>2. Nernst</h4><p>La tension dépend de la composition : \[
+    E=E^\circ-\frac{RT}{nF}\ln Q_r.
+  \] À \(25^\circ\mathrm C\), cela devient \(\displaystyle E=E^\circ-\frac{0{,}0592}{n}\log Q_r\).</p></div>
+  <div class="card"><h4>3. Équilibre</h4><p>À l’équilibre, \(E=0\) et \(Q_r=K\). On obtient : \[
+    E^\circ=\frac{RT}{nF}\ln K.
+  \]</p></div>
+  <div class="card"><h4>4. Constante d’équilibre</h4><p>\[\displaystyle K=\exp\!\left(\frac{nFE^\circ}{RT}\right).\] Si \(E^\circ>0\), alors \(K>1\) : la réaction est thermodynamiquement favorisée.</p></div>
+</div>
+
+<h3 style="margin-top:20px">Relations thermodynamiques complètes</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Objet</th><th>Relation</th><th>Lecture prépa</th></tr></thead>
+  <tbody>
+    <tr><td>Nernst (forme \(RT/F\))</td><td>\(\displaystyle E=E^\circ-\frac{RT}{nF}\ln Q_r\)</td><td>Forme universelle, valable à toute température.</td></tr>
+    <tr><td>Énergie de Gibbs</td><td>\(\Delta_rG=-nFE\)</td><td>\(\Delta_rG\) en \(\mathrm{J\,mol^{-1}}\), \(E\) en \(\mathrm V\).</td></tr>
+    <tr><td>Gibbs standard</td><td>\(\Delta_rG^\circ=-nFE^\circ=-RT\ln K\)</td><td>Relie potentiel standard et constante d’équilibre.</td></tr>
+    <tr><td>Constante d’équilibre</td><td>\(\displaystyle K=\exp\!\left(\frac{nFE^\circ}{RT}\right)\)</td><td>Si \(E^\circ>0\), alors \(K>1\).</td></tr>
+  </tbody>
+</table></div>
+
+<details><summary>Mini-démonstration : retrouver la forme simplifiée de Nernst à 25 °C</summary>
+<p>Partons de \(\displaystyle E=E^\circ-\frac{RT}{nF}\ln Q_r\). À \(T=298\,\mathrm K\) : \(\displaystyle\frac{RT}{F}=\frac{8{,}314\times298}{96485}\approx0{,}0257\,\mathrm V\). On utilise \(\ln x=\ln 10\times\log x\) avec \(\ln 10\approx2{,}303\) :</p>
+<div class="formula">\[\frac{RT}{F}\ln Q_r=0{,}0257\times2{,}303\times\log Q_r\approx0{,}0592\,\log Q_r.\]</div>
+<p>Donc \(\displaystyle E=E^\circ-\frac{0{,}0592}{n}\log Q_r\). Cette forme simplifiée n’est valable qu’à 25 °C ; en prépa, on privilégie la forme \(\frac{RT}{nF}\ln Q_r\).</p>
+</details>
+
+<div class="box ok"><div class="box-label">Application guidée — Pile Daniell non standard</div>
+<p><strong>Données :</strong> \([\mathrm{Zn^{2+}}]=0{,}01\,\mathrm{mol\cdot L^{-1}}\), \([\mathrm{Cu^{2+}}]=0{,}1\,\mathrm{mol\cdot L^{-1}}\), \(E^\circ=1{,}10\,\mathrm V\), \(n=2\).</p>
+<p><strong>1. Calcul de la f.é.m. :</strong></p>
+<div class="formula">\[E=1{,}10-\frac{0{,}0592}{2}\log\frac{0{,}01}{0{,}1}=1{,}10-0{,}0296\times(-1)=1{,}13\,\mathrm V.\]</div>
+<p><strong>2. Calcul de \(\Delta_rG\) :</strong></p>
+<div class="formula">\[\Delta_rG=-2\times96500\times1{,}13=-2{,}18\times10^5\,\mathrm{J\,mol^{-1}}=-218\,\mathrm{kJ\,mol^{-1}}.\]</div>
+<p><strong>3. Interprétation :</strong> \(\Delta_rG\ll0\), la réaction est très spontanée. La dilution de l’ion zinc augmente la f.é.m. — cohérent avec Le Chatelier.</p>
+</div>
+
+<div class="box prop"><div class="box-label">Application prépa courte</div><p>Pour une pile avec \(E^\circ=1{,}10\,\mathrm V\), \(n=2\) et \(Q_r=10^3\), \[
+  E=1{,}10-\frac{0{,}0592}{2}\times3=1{,}01\,\mathrm V.
+\] Alors \(\Delta_rG=-2F E\simeq -1{,}95\times10^5\,\mathrm{J\,mol^{-1}}\). Le signe négatif confirme le sens spontané.</p></div>
+
+<h3 style="margin-top:20px">Mini-colle type oral</h3>
+<div class="box warn"><div class="box-label">Questions courtes</div>
+<p><strong>(a)</strong> Calculer \(E^\circ\) d’une pile \(\mathrm{Fe\,|\,Fe^{2+}\,||\,Ag^+\,|\,Ag}\) sachant \(E^\circ(\mathrm{Ag^+/Ag})=0{,}80\,\mathrm V\) et \(E^\circ(\mathrm{Fe^{2+}/Fe})=-0{,}44\,\mathrm V\).</p>
+<p><em>Réponse :</em> \(E^\circ=0{,}80-(-0{,}44)=1{,}24\,\mathrm V\).</p>
+<p><strong>(b)</strong> Montrer que \(\displaystyle K=10^{nE^\circ/0{,}0592}\) à 25 °C.</p>
+<p><em>Réponse :</em> De \(\Delta_rG^\circ=-nFE^\circ=-RT\ln K\), on tire \(\displaystyle\ln K=\frac{nFE^\circ}{RT}\). En passant en \(\log\) : \(\displaystyle\log K=\frac{nE^\circ}{0{,}0592}\), donc \(K=10^{nE^\circ/0{,}0592}\).</p>
+<p><strong>(c)</strong> Une pile a \(E^\circ=1{,}50\,\mathrm V\) et \(n=2\). Calculer \(K\).</p>
+<p><em>Réponse :</em> \(\displaystyle\log K=\frac{2\times1{,}50}{0{,}0592}\approx50{,}7\), donc \(K\approx5\times10^{50}\). La réaction est quasi-totale.</p>
+</div>
+</div>
+</section>
+
+<div class="footer-nav"><button class="secondary" onclick="prevPanel()">← Onglet précédent</button><button class="primary" onclick="nextPanel()">Onglet suivant →</button></div>
+</div>
+</main>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
-  });
+const tabs = Array.from(document.querySelectorAll('.tab'));
+const panels = Array.from(document.querySelectorAll('.panel'));
+const visited = new Set(['cours']);
+function typeset(){ if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise().catch(function(){}); } }
+function switchTab(name, shouldScroll){
+  if(shouldScroll === undefined) shouldScroll = true;
+  tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+  panels.forEach(function(p){ p.classList.toggle('active', p.id === 'tab-' + name); });
+  visited.add(name);
+  updateProgress();
+  if(name === 'simulations'){ setTimeout(drawAllSims, 60); }
+  if(name === 'quiz'){ updatePromptPreview(); renderQuiz(); }
+  typeset();
+  if(shouldScroll){
+    const panel = document.getElementById('tab-' + name);
+    if(panel){
+      requestAnimationFrame(function(){
+        const topbar = document.querySelector('.topbar');
+        const offset = topbar ? topbar.getBoundingClientRect().height + 14 : 72;
+        const y = panel.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
+      });
+    }
+  }
+}
+tabs.forEach(function(t){ t.addEventListener('click', function(){ switchTab(t.dataset.tab, true); }); });
+function updateProgress(){
+  const pct = Math.round(visited.size / tabs.length * 100);
+  document.getElementById('masteryBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+function currentTabIndex(){ return tabs.findIndex(function(t){ return t.classList.contains('active'); }); }
+function nextPanel(){ const i=currentTabIndex(); switchTab(tabs[(i+1)%tabs.length].dataset.tab); }
+function prevPanel(){ const i=currentTabIndex(); switchTab(tabs[(i-1+tabs.length)%tabs.length].dataset.tab); }
+document.getElementById('themeBtn').addEventListener('click', function(){
+  const root = document.documentElement;
+  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  drawAllSims();
 });
+updateProgress();
+
+const flashcards = [
+  {q:"Qu’est-ce qu’une oxydation ?", a:"Une perte d’électrons : \\(\\mathrm{Red}\\rightarrow\\mathrm{Ox}+n e^-\\)."},
+  {q:"Qu’est-ce qu’une réduction ?", a:"Un gain d’électrons : \\(\\mathrm{Ox}+n e^-\\rightarrow\\mathrm{Red}\\)."},
+  {q:"Où a lieu l’oxydation ?", a:"À l’anode, aussi bien dans une pile que dans une électrolyse."},
+  {q:"Où a lieu la réduction ?", a:"À la cathode, aussi bien dans une pile que dans une électrolyse."},
+  {q:"Charge transférée ?", a:"\\(\\displaystyle Q=I\\Delta t\\), avec \\(Q\\) en \\(\\mathrm C\\), \\(I\\) en \\(\\mathrm A\\), \\(\\Delta t\\) en \\(\\mathrm s\\)."},
+  {q:"Quantité d’électrons ?", a:"\\(\\displaystyle n(e^-)=\\frac{Q}{F}=\\frac{I\\Delta t}{F}\\)."},
+  {q:"Masse déposée par électrolyse ?", a:"\\(\\displaystyle m=M\\frac{I\\Delta t}{zF}\\)."},
+  {q:"Pile ou électrolyse ?", a:"Pile : transformation spontanée qui fournit un courant. Électrolyse : transformation forcée par un générateur."},
+  {q:"Tension et énergie libre ?", a:"\\(\\displaystyle \\Delta_rG=-nFE\\). Si \\(E>0\\), le sens écrit est spontané."},
+  {q:"Relation de Nernst ?", a:"\\(\\displaystyle E=E^\\circ-\\frac{RT}{nF}\\ln Q_r\\), ou à \\(25^\\circ\\mathrm C\\), \\(E=E^\\circ-\\frac{0{,}0592}{n}\\log Q_r\\)."},
+  {q:"Qu'est-ce que la règle gamma ?", a:"L'oxydant du couple de plus grand \\(E^\\circ\\) réagit spontanément avec le réducteur du couple de plus petit \\(E^\\circ\\)."},
+  {q:"Comment calculer la f.é.m. standard ?", a:"\\(\\displaystyle E^\\circ_{\\text{pile}}=E^\\circ_{\\text{cathode}}-E^\\circ_{\\text{anode}}\\). Exemple Daniell : \\(0{,}34-(-0{,}76)=+1{,}10\\,\\mathrm V\\)."},
+  {q:"Signes des électrodes : pile vs électrolyse ?", a:"Pile : anode (−), cathode (+). Électrolyse : anode (+), cathode (−). Dans les deux cas : anode = oxydation, cathode = réduction."},
+  {q:"Quand une pile est-elle usée ?", a:"Quand \\(Q_r=K\\) (constante d'équilibre) : la f.é.m. est nulle, \\(\\Delta_rG=0\\), plus aucune réaction nette."},
+  {q:"Qu'est-ce que la constante de Faraday ?", a:"La charge d'une mole d'électrons : \\(F=N_Ae\\simeq 96485\\,\\mathrm{C\\,mol^{-1}}\\)."}
+];
+let flashIndex = 0, flashBack = false;
+function renderFlash(){
+  const f=flashcards[flashIndex];
+  document.getElementById('flashQuestion').innerHTML = flashBack ? 'Réponse' : f.q;
+  const ans=document.getElementById('flashAnswer');
+  ans.style.display = flashBack ? 'block' : 'none';
+  ans.innerHTML = f.a;
+  document.getElementById('flashIndex').textContent = flashIndex + 1;
+  document.getElementById('flashTotal').textContent = flashcards.length;
+  typeset();
+}
+function flipFlash(){ flashBack=!flashBack; renderFlash(); }
+function nextFlash(){ flashIndex=(flashIndex+1)%flashcards.length; flashBack=false; renderFlash(); }
+function prevFlash(){ flashIndex=(flashIndex-1+flashcards.length)%flashcards.length; flashBack=false; renderFlash(); }
+document.getElementById('flashCard').addEventListener('click', flipFlash);
+document.getElementById('flashCard').addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); flipFlash(); } });
+renderFlash();
+
+const quiz = [
+  {q:"Une oxydation est :", o:["une perte d’électrons","un gain d’électrons","une disparition de charge","une dissolution obligatoire"], a:0, exp:"Oxydation = perte d’électrons."},
+  {q:"Une réduction est :", o:["un gain d’électrons","une perte d’électrons","une augmentation de température","un changement d’état"], a:0, exp:"Réduction = gain d’électrons."},
+  {q:"Dans une pile, l’anode est le siège :", o:["de l’oxydation","de la réduction","du dépôt forcé uniquement","de la neutralité du pont salin"], a:0, exp:"Anode = oxydation."},
+  {q:"La charge transférée par un courant constant est :", o:["\\(Q=I\\Delta t\\)","\\(Q=I/\\Delta t\\)","\\(Q=F/I\\)","\\(Q=U/I\\)"], a:0, exp:"Un ampère est un coulomb par seconde."},
+  {q:"La constante de Faraday représente :", o:["la charge d’une mole d’électrons","la masse d’une mole d’électrons","une tension de pile","un quotient de réaction"], a:0, exp:"\\(F=N_Ae\\simeq96485\\,\\mathrm{C\\,mol^{-1}}\\)."},
+  {q:"Pour \\(\\mathrm{Cu^{2+}}+2e^-\\to\\mathrm{Cu}\\), on a :", o:["\\(n(\\mathrm{Cu})=n(e^-)/2\\)","\\(n(\\mathrm{Cu})=2n(e^-)\\)","\\(n(\\mathrm{Cu})=FQ\\)","\\(n(\\mathrm{Cu})=I/Ft\\)"], a:0, exp:"Deux électrons sont nécessaires pour former un atome de cuivre."},
+  {q:"Une électrolyse est une transformation :", o:["forcée par un générateur","toujours spontanée","sans transfert d’électrons","sans courant"], a:0, exp:"Le générateur impose le courant et force le sens."},
+  {q:"La masse déposée dépend directement :", o:["de \\(I\\Delta t\\)","de \\(F/I\\)","seulement de la tension","de la couleur de la solution"], a:0, exp:"\\(m=M I\\Delta t/(zF)\\)."},
+  {q:"Si \\(E>0\\) pour une pile, alors :", o:["\\(\\Delta_rG<0\\)","\\(\\Delta_rG>0\\)","\\(Q=0\\)","la pile ne peut pas débiter"], a:0, exp:"\\(\\Delta_rG=-nFE\\)."},
+  {q:"La relation de Nernst relie :", o:["tension et quotient réactionnel","masse et volume uniquement","pH et couleur uniquement","vitesse et distance"], a:0, exp:"\\(E=E^\\circ-\\frac{RT}{nF}\\ln Q_r\\)."},
+  {q:"La f.é.m. standard de la pile Daniell vaut :", o:["\\(+1{,}10\\,\\mathrm V\\)","\\(-1{,}10\\,\\mathrm V\\)","\\(+0{,}34\\,\\mathrm V\\)","\\(+0{,}76\\,\\mathrm V\\)"], a:0, exp:"\\(E^\\circ=E^\\circ(\\mathrm{Cu^{2+}/Cu})-E^\\circ(\\mathrm{Zn^{2+}/Zn})=0{,}34-(-0{,}76)=+1{,}10\\,\\mathrm V\\)."},
+  {q:"La règle gamma prédit que réagissent spontanément :", o:["l'oxydant fort et le réducteur fort","deux oxydants","deux réducteurs","l'oxydant faible et le réducteur faible"], a:0, exp:"L'oxydant du couple de plus grand \\(E^\\circ\\) réagit avec le réducteur du couple de plus petit \\(E^\\circ\\)."},
+  {q:"La galvanoplastie est un exemple de :", o:["électrolyse","pile","combustion","distillation"], a:0, exp:"La galvanoplastie est un dépôt électrolytique d'un métal par électrolyse (chromage, dorure, nickelage)."},
+  {q:"Une pile usée vérifie :", o:["\\(Q_r=K\\) et \\(E=0\\)","\\(Q_r=0\\)","\\(E=E^\\circ\\)","\\(\\Delta_rG<0\\)"], a:0, exp:"À l'équilibre, \\(Q_r\\to K\\), la f.é.m. s'annule et \\(\\Delta_rG=0\\)."},
+  {q:"En électrolyse, l'anode est reliée :", o:["au pôle \\(+\\) du générateur","au pôle \\(-\\) du générateur","à rien","au voltmètre"], a:0, exp:"En électrolyse, l'anode est au \\(+\\) du générateur (signes inversés par rapport à la pile), mais elle reste le siège de l'oxydation."}
+];
+let quizIndex = 0, quizScore = 0, answered = {};
+function renderQuiz(){
+  const q=quiz[quizIndex];
+  document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex+1) + '/' + quiz.length + ' · score ' + quizScore;
+  document.getElementById('quizQuestion').innerHTML = '<h4>' + q.q + '</h4>';
+  const box=document.getElementById('quizOptions');
+  box.innerHTML='';
+  q.o.forEach(function(opt,i){
+    const btn=document.createElement('button');
+    btn.className='option';
+    btn.innerHTML=opt;
+    btn.onclick=function(){ answerQuiz(i, btn); };
+    if(answered[quizIndex] !== undefined){
+      btn.disabled=true;
+      if(i === q.a) btn.classList.add('correct');
+      if(i === answered[quizIndex] && i !== q.a) btn.classList.add('wrong');
+    }
+    box.appendChild(btn);
+  });
+  document.getElementById('quizFeedback').innerHTML = answered[quizIndex] !== undefined ? q.exp : 'Choisis une réponse.';
+  typeset();
+}
+function answerQuiz(i){
+  if(answered[quizIndex] !== undefined) return;
+  answered[quizIndex]=i;
+  if(i===quiz[quizIndex].a) quizScore++;
+  renderQuiz();
+}
+function nextQuiz(){ quizIndex=(quizIndex+1)%quiz.length; renderQuiz(); }
+function prevQuiz(){ quizIndex=(quizIndex-1+quiz.length)%quiz.length; renderQuiz(); }
+function resetQuiz(){ quizIndex=0; quizScore=0; answered={}; renderQuiz(); }
+renderQuiz();
+
+let aiIntent = 'simple';
+function setAIIntent(intent){ aiIntent=intent; updatePromptPreview(); }
+function buildAIPrompt(){
+  const question = document.getElementById('aiQuestion').value.trim() || 'Explique-moi comment utiliser la loi de Faraday dans une électrolyse.';
+  const intents = {
+    simple:"Explique le cours simplement, avec intuition avant calcul.",
+    indice:"Aide-moi par indices progressifs sans donner immédiatement toute la réponse.",
+    correction:"Donne une correction détaillée, étape par étape, avec unités et vérifications.",
+    prepa:"Prolonge au niveau prépa PCSI : Nernst, enthalpie libre, potentiel, électrolyse et rendement faradique."
+  };
+  return "Tu es un tuteur expert de physique-chimie. Niveau : Terminale spécialité, avec ouverture PCSI. Chapitre : Piles et électrolyse, oxydoréduction, loi de Faraday, tension, énergie, Nernst.\\n"
+    + "Consigne : " + intents[aiIntent] + "\\n"
+    + "Réponds en français, de manière structurée, avec formules en LaTeX, grandeurs définies, unités, raisonnement détaillé et erreurs fréquentes.\\n"
+    + "Question de l’élève : " + question;
+}
+function updatePromptPreview(){ const p=document.getElementById('promptPreview'); if(p) p.textContent=buildAIPrompt(); }
+const aiQuestion = document.getElementById('aiQuestion');
+if(aiQuestion) aiQuestion.addEventListener('input', updatePromptPreview);
+function openAI(provider){
+  const prompt = encodeURIComponent(buildAIPrompt());
+  const urls = {
+    chatgpt:'https://chat.openai.com/?q=' + prompt,
+    claude:'https://claude.ai/new?q=' + prompt,
+    perplexity:'https://www.perplexity.ai/search?q=' + prompt
+  };
+  window.open(urls[provider] || urls.chatgpt, '_blank', 'noopener,noreferrer');
+}
+async function copyCurrentPrompt(){
+  const text=buildAIPrompt();
+  try{ await navigator.clipboard.writeText(text); }catch(e){}
+  updatePromptPreview();
+}
+updatePromptPreview();
+
+(function(){
+  const bar=document.createElement('div');
+  bar.id='readProgress';
+  bar.style.cssText='position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#22d3ee,#a78bfa);z-index:9999;transition:width .1s linear;pointer-events:none;';
+  document.body.appendChild(bar);
+  window.addEventListener('scroll',function(){
+    const body=document.querySelector('.course-body')||document.body;
+    const r=body.getBoundingClientRect();
+    const pct=Math.min(100,Math.max(0,(-r.top/(r.height-window.innerHeight))*100));
+    bar.style.width=pct+'%';
+  },{passive:true});
+})();
+function calcNernst7(){
+  const E0=Number(document.getElementById('n7E0').value);
+  const n=Number(document.getElementById('n7n').value)||2;
+  const Qr=Number(document.getElementById('n7Qr').value)||1;
+  const E=E0-(0.0592/n)*Math.log10(Qr);
+  const dG=-(n*96485*E);
+  const res=document.getElementById('res7Nernst');
+  res.innerHTML='\\(E='+E0+'\\!-\\!\\dfrac{0{,}0592}{'+n+'}\\log('+Qr+')=\\mathbf{'+E.toFixed(4)+'\\,\\mathrm V}\\)<br>'
+    +'\\(\\Delta_rG=\\mathbf{'+( dG/1000).toFixed(2)+'\\,\\mathrm{kJ\\cdot mol^{-1}}}\\) '+(dG<0?'✔ spontané':'✘ non spontané');
+  if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([res]);
+}
+function calcFaraday7(){
+  const I=Number(document.getElementById('f7I').value)||1;
+  const tMin=Number(document.getElementById('f7t').value)||30;
+  const z=Number(document.getElementById('f7z').value)||2;
+  const M=Number(document.getElementById('f7M').value)||63.5;
+  const Q=I*tMin*60;
+  const ne=Q/96485;
+  const nM=ne/z;
+  const m=M*nM;
+  const res=document.getElementById('res7Faraday');
+  res.innerHTML='\\(Q='+I+'\\times'+tMin+'\\times60=\\mathbf{'+Q.toFixed(0)+'\\,\\mathrm C}\\)<br>'
+    +'\\(n(e^-)=\\mathbf{'+ne.toFixed(4)+'\\,\\mathrm{mol}}\\)<br>'
+    +'\\(n(\\mathrm M)=\\mathbf{'+nM.toFixed(5)+'\\,\\mathrm{mol}}\\)<br>'
+    +'\\(m=\\mathbf{'+m.toFixed(4)+'\\,\\mathrm g}\\)';
+  if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([res]);
+}
+function calcAuto7(){
+  const Q=Number(document.getElementById('a7Q').value)||4800;
+  const I=Number(document.getElementById('a7I').value)||0.2;
+  const dt=Q/I;
+  const h=dt/3600;
+  const res=document.getElementById('res7Auto');
+  res.innerHTML='\\(\\Delta t=\\dfrac{Q_{\\max}}{I}=\\dfrac{'+Q+'}{'+I+'}=\\mathbf{'+dt.toFixed(0)+'\\,\\mathrm s}\\)<br>'
+    +'Soit \\(\\mathbf{'+h.toFixed(2)+'\\,\\mathrm h}\\)';
+  if(window.MathJax&&MathJax.typesetPromise) MathJax.typesetPromise([res]);
+}
+function dprCanvas(canvas){
+  const rect=canvas.getBoundingClientRect();
+  const w=Math.max(620, Math.floor(rect.width || 980));
+  const h=Math.max(300, Math.floor(rect.height || 380));
+  const dpr=window.devicePixelRatio || 1;
+  canvas.width=Math.floor(w*dpr); canvas.height=Math.floor(h*dpr);
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function gridBg(ctx,w,h,accent){
+  const bg=ctx.createLinearGradient(0,0,w,h); bg.addColorStop(0,'#06111f'); bg.addColorStop(1,'#08233a'); ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(180,220,255,.10)'; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=42){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=42){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.fillStyle=accent; ctx.globalAlpha=.06; ctx.fillRect(0,0,w,h); ctx.globalAlpha=1;
+}
+function arrow(ctx,x1,y1,x2,y2,color){
+  const a=Math.atan2(y2-y1,x2-x1), head=10;
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-head*Math.cos(a-.45),y2-head*Math.sin(a-.45));ctx.lineTo(x2-head*Math.cos(a+.45),y2-head*Math.sin(a+.45));ctx.closePath();ctx.fill();
+}
+function drawPile(){
+  const canvas=document.getElementById('pileCanvas'); if(!canvas) return;
+  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
+  const zn=Number(document.getElementById('cellZn').value)/100;
+  const cu=Number(document.getElementById('cellCu').value)/100;
+  const R=Number(document.getElementById('cellR').value);
+  const Qr=zn/cu;
+  const E=1.10-(0.0592/2)*Math.log10(Qr);
+  const I=Math.max(0,E/R);
+  document.getElementById('cellZnOut').textContent=zn.toFixed(2)+' mol·L⁻¹';
+  document.getElementById('cellCuOut').textContent=cu.toFixed(2)+' mol·L⁻¹';
+  document.getElementById('cellROut').textContent=R.toFixed(0)+' Ω';
+  document.getElementById('cellM1').textContent=Qr.toFixed(Qr<1?2:1);
+  document.getElementById('cellM2').textContent=E.toFixed(3)+' V';
+  document.getElementById('cellM3').textContent=(I*1000).toFixed(0)+' mA';
+  gridBg(ctx,w,h,'#0a1628');
+  const y=h*.62, left=w*.27, right=w*.73;
+  /* solutions colorées : Zn²⁺ cyan, Cu²⁺ indigo */
+  const solL=ctx.createLinearGradient(0,y-35,0,y+36);
+  solL.addColorStop(0,'rgba(34,211,238,.38)');solL.addColorStop(1,'rgba(6,182,212,.55)');
+  const solR=ctx.createLinearGradient(0,y-35,0,y+36);
+  solR.addColorStop(0,'rgba(99,102,241,.38)');solR.addColorStop(1,'rgba(67,56,202,.55)');
+  /* béchers */
+  ctx.save();ctx.shadowBlur=14;ctx.shadowColor='rgba(34,211,238,.45)';
+  ctx.strokeStyle='rgba(34,211,238,.7)';ctx.lineWidth=2;
+  ctx.strokeRect(left-95,y-92,190,128);ctx.restore();
+  ctx.save();ctx.shadowBlur=14;ctx.shadowColor='rgba(99,102,241,.45)';
+  ctx.strokeStyle='rgba(99,102,241,.7)';ctx.lineWidth=2;
+  ctx.strokeRect(right-95,y-92,190,128);ctx.restore();
+  ctx.fillStyle=solL;ctx.fillRect(left-93,y-35,186,70);
+  ctx.fillStyle=solR;ctx.fillRect(right-93,y-35,186,70);
+  /* labels solution */
+  ctx.fillStyle='rgba(103,232,249,.9)';ctx.font='700 11px Inter';ctx.fillText('[Zn²⁺]',left-30,y+22);
+  ctx.fillStyle='rgba(165,180,252,.9)';ctx.fillText('[Cu²⁺]',right-20,y+22);
+  /* électrode Zn — double-pass neon orange */
+  ctx.beginPath();ctx.moveTo(left-26,y-130);ctx.lineTo(left-26,y+20);
+  ctx.save();ctx.shadowBlur=28;ctx.shadowColor='rgba(251,146,60,.9)';ctx.globalAlpha=.42;ctx.strokeStyle='#fb923c';ctx.lineWidth=18;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='#fb923c';ctx.lineWidth=7;ctx.stroke();
+  /* électrode Cu — double-pass neon cyan */
+  ctx.beginPath();ctx.moveTo(right+26,y-130);ctx.lineTo(right+26,y+20);
+  ctx.save();ctx.shadowBlur=28;ctx.shadowColor='rgba(94,234,212,.9)';ctx.globalAlpha=.42;ctx.strokeStyle='#5eead4';ctx.lineWidth=18;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='#5eead4';ctx.lineWidth=7;ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.92)';ctx.font='700 14px Inter';
+  ctx.fillText('Zn(s)',left-48,y+58);ctx.fillText('Cu(s)',right+4,y+58);
+  /* fil extérieur — neon coloré selon E>0 */
+  const wireCol=E>0?'#5eead4':'#fb923c';
+  ctx.beginPath();ctx.moveTo(left-26,y-130);ctx.lineTo(w*.5-80,y-130);ctx.quadraticCurveTo(w*.5,y-180,w*.5+80,y-130);ctx.lineTo(right+26,y-130);
+  ctx.save();ctx.shadowBlur=22;ctx.shadowColor=wireCol;ctx.globalAlpha=.38;ctx.strokeStyle=wireCol;ctx.lineWidth=12;ctx.stroke();ctx.restore();
+  ctx.strokeStyle=wireCol;ctx.lineWidth=3;ctx.stroke();
+  /* électrons — particules lumineuses avec halo */
+  const speed=Math.max(1,Math.min(8,Math.round(I*120)));
+  for(let k=0;k<10;k++){
+    const t=((Date.now()/480)+(k/10))%1;
+    const bx2=left-26, bx3=right+26;
+    const px=bx2+(bx3-bx2+52)*t;
+    const r2=2.8+speed*.15;
+    ctx.save();ctx.shadowBlur=16;ctx.shadowColor='rgba(94,234,212,.95)';
+    ctx.fillStyle='#a5f3fc';ctx.beginPath();ctx.arc(px,y-130,r2,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  ctx.fillStyle='rgba(255,255,255,.82)';ctx.font='11px Inter';ctx.fillText('e⁻ →',w*.5-16,y-138);
+  /* pont salin — neon d'abord, puis label par-dessus */
+  ctx.save();ctx.shadowBlur=20;ctx.shadowColor='rgba(251,146,60,.75)';ctx.globalAlpha=.38;
+  ctx.strokeStyle='#fb923c';ctx.lineWidth=14;
+  ctx.beginPath();ctx.moveTo(left+65,y-25);ctx.lineTo(right-65,y-25);ctx.stroke();ctx.restore();
+  arrow(ctx,left+65,y-25,right-65,y-25,'rgba(251,146,60,.75)');
+  ctx.fillStyle='rgba(251,146,60,.85)';ctx.fillRect(w*.5-46,y-6,92,18);
+  ctx.fillStyle='#fff';ctx.font='700 11px Inter';ctx.fillText('pont salin',w*.5-30,y+7);
+  ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='12px Inter';
+  ctx.fillText('oxydation : Zn → Zn²⁺ + 2e⁻',left-116,y-112);
+  ctx.fillText('réduction : Cu²⁺ + 2e⁻ → Cu',right-112,y-112);
+  /* barre f.é.m. — dégradé neon */
+  const bx=w*.5-150, by=46, bw=300, filled=Math.min(bw,E/1.25*bw);
+  const barG=ctx.createLinearGradient(bx,0,bx+filled,0);
+  barG.addColorStop(0,'#22d3ee');barG.addColorStop(1,'#4ade80');
+  ctx.save();ctx.shadowBlur=14;ctx.shadowColor='rgba(34,211,238,.7)';
+  ctx.fillStyle=barG;ctx.fillRect(bx,by,filled,16);ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=1.5;ctx.strokeRect(bx,by,bw,16);
+  ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='700 12px Inter';
+  ctx.fillText('f.é.m. E = '+E.toFixed(3)+' V',bx,by-10);
+  ctx.fillText('Qr = [Zn²⁺]/[Cu²⁺] = '+Qr.toFixed(Qr<1?2:1),bx+156,by+40);
+}
+function drawElectrolysis(){
+  const canvas=document.getElementById('electrolysisCanvas'); if(!canvas) return;
+  const o=dprCanvas(canvas), ctx=o.ctx, w=o.w, h=o.h;
+  const I=Number(document.getElementById('elyI').value);
+  const tMin=Number(document.getElementById('elyT').value);
+  const z=Number(document.getElementById('elyZ').value);
+  const M=Number(document.getElementById('elyM').value);
+  const Q=I*tMin*60, ne=Q/96485, nM=ne/z, mass=M*nM;
+  document.getElementById('elyIOut').textContent=I.toFixed(2)+' A';
+  document.getElementById('elyTOut').textContent=tMin.toFixed(0)+' min';
+  document.getElementById('elyZOut').textContent=String(z);
+  document.getElementById('elyMOut').textContent=M.toFixed(1)+' g·mol⁻¹';
+  document.getElementById('elyM1').textContent=Q.toFixed(0)+' C';
+  document.getElementById('elyM2').textContent=ne.toFixed(3)+' mol';
+  document.getElementById('elyM3').textContent=mass.toFixed(3)+' g';
+  gridBg(ctx,w,h,'#030d1a');
+  const cx=w*.52, top=80, beakerW=Math.min(520,w*.62), beakerH=230, left=cx-beakerW/2;
+  /* bécher neon */
+  ctx.save();ctx.shadowBlur=18;ctx.shadowColor='rgba(34,211,238,.5)';
+  ctx.strokeStyle='rgba(34,211,238,.75)';ctx.lineWidth=2.5;ctx.strokeRect(left,top,beakerW,beakerH);ctx.restore();
+  /* solution dégradé lumineux */
+  const sol=ctx.createLinearGradient(0,top,0,top+beakerH);
+  sol.addColorStop(0,'rgba(34,211,238,.28)');sol.addColorStop(.5,'rgba(56,189,248,.22)');sol.addColorStop(1,'rgba(16,185,129,.38)');
+  ctx.fillStyle=sol;ctx.fillRect(left+2,top+58,beakerW-4,beakerH-60);
+  const cathX=cx+beakerW*.22, anX=cx-beakerW*.22, base=top+beakerH-18;
+  /* cathode neon cyan double-pass */
+  ctx.beginPath();ctx.moveTo(cathX,top+20);ctx.lineTo(cathX,base);
+  ctx.save();ctx.shadowBlur=30;ctx.shadowColor='rgba(94,234,212,.95)';ctx.globalAlpha=.4;ctx.strokeStyle='#5eead4';ctx.lineWidth=22;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='#5eead4';ctx.lineWidth=8;ctx.stroke();
+  /* anode neon orange double-pass */
+  ctx.beginPath();ctx.moveTo(anX,top+20);ctx.lineTo(anX,base);
+  ctx.save();ctx.shadowBlur=30;ctx.shadowColor='rgba(251,146,60,.95)';ctx.globalAlpha=.4;ctx.strokeStyle='#fb923c';ctx.lineWidth=22;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='#fb923c';ctx.lineWidth=8;ctx.stroke();
+  /* dépôt cathodique avec halo croissant */
+  const depositH=Math.min(120,8+mass*60);
+  const depG=ctx.createLinearGradient(cathX-22,base-depositH,cathX+22,base);
+  depG.addColorStop(0,'rgba(94,234,212,.9)');depG.addColorStop(1,'rgba(20,184,166,.6)');
+  ctx.save();ctx.shadowBlur=22;ctx.shadowColor='rgba(94,234,212,.7)';
+  ctx.fillStyle=depG;ctx.fillRect(cathX-22,base-depositH,44,depositH);ctx.restore();
+  /* ions — particules lumineuses migrant vers cathode */
+  for(let i=0;i<50;i++){
+    const t=(Date.now()/650+i/50)%1;
+    const px=left+30+(cathX-left-30)*t;
+    const py=top+72+(i%14)*11;
+    ctx.save();ctx.shadowBlur=12;ctx.shadowColor='rgba(125,211,252,.85)';
+    ctx.fillStyle='rgba(147,221,255,.85)';ctx.beginPath();ctx.arc(px,py,2.6,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  /* circuit extérieur neon */
+  ctx.beginPath();ctx.moveTo(anX,top+20);ctx.lineTo(w*.18,top+20);ctx.lineTo(w*.18,42);ctx.lineTo(w*.82,42);ctx.lineTo(w*.82,top+20);ctx.lineTo(cathX,top+20);
+  ctx.save();ctx.shadowBlur=20;ctx.shadowColor='rgba(251,146,60,.6)';ctx.globalAlpha=.35;ctx.strokeStyle='#fb923c';ctx.lineWidth=12;ctx.stroke();ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=3;ctx.stroke();
+  arrow(ctx,w*.18,top+20,anX,top+20,'#fb923c');
+  arrow(ctx,cathX,top+20,w*.82,top+20,'#5eead4');
+  /* générateur */
+  ctx.save();ctx.shadowBlur=16;ctx.shadowColor='rgba(250,204,21,.6)';
+  ctx.fillStyle='rgba(250,204,21,.18)';ctx.fillRect(w*.5-46,28,92,24);ctx.restore();
+  ctx.strokeStyle='rgba(250,204,21,.7)';ctx.lineWidth=1.5;ctx.strokeRect(w*.5-46,28,92,24);
+  ctx.fillStyle='rgba(255,255,255,.95)';ctx.font='700 13px Inter';ctx.fillText('Générateur',w*.5-38,44);
+  ctx.font='12px Inter';ctx.fillStyle='rgba(255,255,255,.85)';
+  ctx.fillText('anode : oxydation',anX-55,base+32);
+  ctx.fillText('cathode : dépôt',cathX-52,base+32);
+  ctx.save();ctx.shadowBlur=10;ctx.shadowColor='rgba(94,234,212,.8)';
+  ctx.fillStyle='#a5f3fc';ctx.fillText('m = '+mass.toFixed(3)+' g',cathX-30,base-depositH-12);ctx.restore();
+  /* barre masse — dégradé neon */
+  const bw=300,bx=w*.5-bw/2,by=h-50,filled2=Math.min(bw,mass/3*bw);
+  const mG=ctx.createLinearGradient(bx,0,bx+filled2,0);
+  mG.addColorStop(0,'#22d3ee');mG.addColorStop(1,'#4ade80');
+  ctx.save();ctx.shadowBlur=14;ctx.shadowColor='rgba(34,211,238,.65)';
+  ctx.fillStyle=mG;ctx.fillRect(bx,by,filled2,16);ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;ctx.strokeRect(bx,by,bw,16);
+  ctx.fillStyle='rgba(255,255,255,.88)';ctx.font='12px Inter';ctx.fillText('masse déposée selon Faraday',bx,by-10);
+}
+function drawAllSims(){ drawPile(); drawElectrolysis(); }
+['cellZn','cellCu','cellR','elyI','elyT','elyZ','elyM'].forEach(function(id){
+  const el=document.getElementById(id); if(el) el.addEventListener('input', drawAllSims);
+});
+window.addEventListener('resize', function(){ clearTimeout(window.__simTO); window.__simTO=setTimeout(drawAllSims,120); });
+setTimeout(drawAllSims,150);
 </script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

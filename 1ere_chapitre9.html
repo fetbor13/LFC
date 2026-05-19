@@ -1,181 +1,1010 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>1ʳᵉ Spé · Chapitre 9 — Réactions de combustion | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#fbf5f7;--bg2:#f6e9ee;--panel:#ffffff;--panel2:#fff8fa;--line:#ead3dc;--text:#251421;--muted:#6f5361;--faint:#a98b99;--blue:#9f4f68;--blue2:#b96a82;--blue3:#f7e6ec;--amber:#c1804a;--amber2:#fff2e7;--green:#4f8a6b;--green2:#eaf6ef;--mauve:#7859b5;--mauve2:#f1ecff;--cyan:#4f8fa4;--cyan2:#e9f6fb;--red:#b75f75;--red2:#fdecef;--shadow:0 16px 40px rgba(15,23,42,.08);--shadow2:0 8px 22px rgba(15,23,42,.055);--side:292px;--content:1460px}
+[data-theme="dark"]{--bg:#161019;--bg2:#211722;--panel:#241a26;--panel2:#2b202d;--line:#4a3440;--text:#f7edf2;--muted:#d6bdc8;--faint:#a98b99;--blue:#f0a3ba;--blue2:#d988a2;--blue3:rgba(240,163,186,.13);--amber:#f1b375;--amber2:rgba(241,179,117,.13);--green:#8bd9aa;--green2:rgba(139,217,170,.13);--mauve:#b6a3f1;--mauve2:rgba(182,163,241,.13);--cyan:#8bd6e4;--cyan2:rgba(139,214,228,.13);--red:#f09aaa;--red2:rgba(240,154,170,.13);--shadow:0 18px 50px rgba(0,0,0,.35);--shadow2:0 10px 25px rgba(0,0,0,.22)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at top left,rgba(159,79,104,.07),transparent 34rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.68;font-size:15px;min-height:100vh}
+a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}
+.skip{position:absolute;left:-999px;top:0;background:var(--blue);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.76);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:18px 14px;overflow:auto}
+[data-theme="dark"] .rail{background:rgba(17,24,39,.76)}
+.brand{display:flex;align-items:center;gap:10px;margin:2px 6px 18px}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;color:white;box-shadow:0 12px 24px rgba(159,79,104,.20);font-weight:800}
+.brand h1{font-size:15px;line-height:1.1;margin:0;font-weight:780;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.level-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:14px}
+.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(159,79,104,.18);color:var(--blue);background:var(--blue3);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700}
+.micro{color:var(--faint);font-size:11px}
+.progress{height:7px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:999px;transition:.35s}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--faint);font-weight:800;margin:18px 8px 9px}
+.tablist{display:grid;gap:6px}
+.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:13px;padding:9px 10px;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;font-size:12.5px;text-align:left;transition:.18s}
+.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}
+.tab.active{background:var(--tabBg,var(--blue3));color:var(--tabAccent,var(--blue));border-color:color-mix(in srgb,var(--tabAccent,var(--blue)) 48%,transparent);box-shadow:inset 4px 0 0 var(--tabAccent,var(--blue)),0 8px 18px rgba(15,23,42,.035)}
+.tab:nth-child(1){--tabBg:var(--blue3);--tabAccent:#9f4f68}.tab:nth-child(2){--tabBg:var(--amber2);--tabAccent:#c6722a}.tab:nth-child(3){--tabBg:var(--green2);--tabAccent:#357f5a}.tab:nth-child(4){--tabBg:var(--mauve2);--tabAccent:#6258b9}.tab:nth-child(5){--tabBg:var(--cyan2);--tabAccent:#3a91a3}.tab:nth-child(6){--tabBg:var(--red2);--tabAccent:#b75f75}.tab:nth-child(7){--tabBg:var(--mauve2);--tabAccent:#6258b9}.tab:nth-child(8){--tabBg:var(--green2);--tabAccent:#357f5a}.tab:nth-child(9){--tabBg:var(--amber2);--tabAccent:#c6722a}
+.tools{display:flex;gap:7px;margin-top:14px}
+.icon-btn{height:36px;min-width:36px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue)}
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(247,248,251,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+[data-theme="dark"] .topbar{background:rgba(12,17,28,.78)}
+.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--blue);font-weight:760}
+.top-actions{display:flex;gap:8px;align-items:center}
+.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:700}
+.page{max-width:var(--content);margin:0 auto;padding:26px}
+.hero{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(250px,.58fr);gap:14px;margin-bottom:14px;align-items:stretch}
+.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow2);position:relative;overflow:hidden;min-height:190px}
+.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:280px;height:280px;background:radial-gradient(circle,rgba(159,79,104,.09),transparent 68%)}
+.eyebrow{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}
+.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:var(--muted);font-size:12px;font-weight:650}
+.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--blue)}
+.hero h2{font-size:clamp(24px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:700}
+.hero h2 span{color:var(--blue)}
+.hero-copy{font-size:14px;color:var(--muted);max-width:78ch;margin:0}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.metric{border:1px solid var(--line);background:rgba(255,255,255,.65);border-radius:12px;padding:8px 10px}
+[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}
+.metric b{display:block;font-size:16px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}
+.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid rgba(240,163,186,.18);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}
+.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}
+.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}
+.mission-1 small{background:var(--blue3);color:var(--blue)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--mauve2);color:var(--mauve)}
+.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}
+.panel{display:none;scroll-margin-top:80px}.panel.active{display:block}
+.content-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow2);margin-bottom:16px}
+.content-card h3{margin:0 0 12px;font-size:20px;letter-spacing:-.03em;font-weight:700}
+.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}
+.toc{position:sticky;top:82px;height:fit-content}
+.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}
+.toc a:nth-of-type(1){background:var(--blue3);color:var(--blue)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--mauve2);color:var(--mauve)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.toc a:nth-of-type(6){background:var(--red2);color:var(--red)}
+.course-body{min-width:0;max-width:920px}
+.course-body h2{font-size:22px;font-weight:800;color:var(--blue);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.course-body h2:first-child{margin-top:0}
+.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}
+.course-body p,.course-body li{color:var(--muted)}
+.box{border-radius:0 16px 16px 0;padding:16px 18px;margin:18px 0;border-left:4px solid;background:var(--panel2);box-shadow:var(--shadow2)}
+.box-label{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+.box.def{border-color:var(--blue)}.box.def .box-label{color:var(--blue)}
+.box.prop{border-color:var(--mauve)}.box.prop .box-label{color:var(--mauve)}
+.box.warn{border-color:var(--amber)}.box.warn .box-label{color:var(--amber)}
+.box.ok{border-color:var(--green)}.box.ok .box-label{color:var(--green)}
+.formula{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:18px 0;text-align:center;overflow-x:auto;font-size:17px}
+[data-theme="dark"] .formula{background:var(--panel2)}
+.table-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--line);margin:18px 0;box-shadow:var(--shadow2)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}
+td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}
+.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}
+.card p,.card li{font-size:13px;color:var(--muted)}
+.method-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.step{border:1px solid var(--line);border-radius:16px;background:var(--panel2);padding:14px}
+.step b{display:block;color:var(--text);margin-bottom:6px}
+.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}
+.exercise h4{margin:0 0 10px}
+.exercise details{margin-top:12px}
+.exercise summary{cursor:pointer;font-weight:800;color:var(--blue);background:var(--blue3);border:1px solid rgba(159,79,104,.20);padding:9px 12px;border-radius:12px}
+.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}
+.sim-card iframe{width:100%;height:460px;border:0}
+.sim-card .sim-body{padding:14px}
+.neon-sim{border:1px solid rgba(240,163,186,.18);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:var(--shadow)}
+.neon-sim canvas{width:100%;display:block}
+.neon-sim .sim-body{padding:14px;background:var(--bg2);border-top:1px solid rgba(240,163,186,.12)}
+.neon-sim h4{color:#f0a3ba;margin:0 0 6px}
+.neon-sim p{color:#a98b99;font-size:13px;margin:0}
+.neon-input{border:1px solid rgba(240,163,186,.3);background:var(--panel2);color:#f0a3ba;border-radius:10px;padding:7px 10px;width:100%}
+.neon-label{font-size:12px;color:#a98b99;font-weight:800;display:block;margin-bottom:4px}
+.neon-result{background:rgba(240,163,186,.07);border:1px solid rgba(240,163,186,.18);border-radius:14px;padding:12px;color:#f0a3ba;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7}
+.sim-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.flashcard{min-height:145px;perspective:1000px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}
+.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}
+.quiz-box{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}
+.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer}
+.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}
+.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}
+.mindmap{display:grid;gap:12px}
+.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;padding:18px;font-weight:800;font-size:18px}
+.map-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}
+.map-branch h4{margin:0 0 8px}
+.map-branch ul{margin:0;padding-left:18px}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}
+.chip.blue{background:var(--blue3);border-color:rgba(159,79,104,.20);color:var(--blue)}.chip.amber{background:var(--amber2);border-color:rgba(198,114,42,.18);color:var(--amber)}.chip.green{background:var(--green2);border-color:rgba(53,127,90,.18);color:var(--green)}
+.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}
+.ece-step b{display:block;margin-bottom:6px}
+@media(max-width:1080px){.app{display:block}.rail{position:relative;height:auto}.tablist{grid-template-columns:repeat(2,minmax(0,1fr))}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.method-grid,.ece-steps,.sim-inputs{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}
+@media(max-width:720px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem Omnis</h1><p>1ère Spécialité</p></div></div>
+<div class="level-card"><div class="level-row"><span class="badge">🔥 Chapitre 9</span><span class="micro">Thème 1</span></div><div class="progress"><span id="masterBar"></span></div></div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" role="tablist">
+<button class="tab active" onclick="switchTab('cours')" data-t="cours">📚 Cours</button>
+<button class="tab" onclick="switchTab('relations')" data-t="relations">📐 Relations &amp; Dimensions</button>
+<button class="tab" onclick="switchTab('exercices')" data-t="exercices">✏️ Exercices</button>
+<button class="tab" onclick="switchTab('flashcards')" data-t="flashcards">🃏 Flashcards</button>
+<button class="tab" onclick="switchTab('quiz')" data-t="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" onclick="switchTab('mindmap')" data-t="mindmap">🗺️ Carte mentale</button>
+<button class="tab" onclick="switchTab('simulations')" data-t="simulations">🔬 Simulations</button>
+<button class="tab" onclick="switchTab('ece')" data-t="ece">🧪 ECE</button>
+<button class="tab" onclick="switchTab('terminale')" data-t="terminale">🚀 Vers Terminale</button>
+</div>
+<div class="tools"><button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Mode sombre">🌙</button><a href="index.html" class="icon-btn" title="Accueil">🏠</a></div>
+</aside>
+<div class="main" id="main">
+<div class="topbar"><span class="crumb">1ère Spé › Thème 1 › <b>Chap. 9 — Réactions de combustion</b></span><div class="top-actions"><span class="pill-btn" id="pctLabel">0 %</span></div></div>
+<div class="page">
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">1ʳᵉ Spé</span>
-      <span class="micro">Chap. 9</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<!-- HERO -->
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">🔥 Chapitre 9</div>
+<h2>Réactions de <span>combustion</span></h2>
+<p class="hero-copy">Maîtriser l'équation générale de combustion complète, identifier les produits d'une combustion incomplète (CO, suie), et analyser les enjeux énergétiques et environnementaux.</p>
+<div class="instructor">Programme officiel — 1ère Spécialité Physique-Chimie</div>
+<div class="hero-grid">
+<div class="metric"><b>5</b><span>sections de cours</span></div>
+<div class="metric"><b>15</b><span>flashcards</span></div>
+<div class="metric"><b>12</b><span>questions quiz</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap"><canvas id="heroCanvas" width="500" height="230"></canvas></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<!-- MISSIONS -->
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Combustion complète</b><span>CO₂ + H₂O — équation générale CₙHₘ</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Combustion incomplète</b><span>CO toxique, suie C — O₂ insuffisant</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Enjeux énergétiques</b><span>Pouvoir calorifique, CO₂, H₂ vert</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">1ʳᵉ Spé · Chap. 9</div>
-    <h1 class="hero-title">Réactions de comb<span>ustion | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<!-- ═══════ COURS ═══════ -->
+<div class="panel active" id="p-cours">
+<div class="content-card">
+<div class="course-grid">
+<nav class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#s1">I. La combustion</a>
+<a href="#s2">II. Combustion complète</a>
+<a href="#s3">III. Combustion incomplète</a>
+<a href="#s4">IV. Pouvoir calorifique</a>
+<a href="#s5">V. Enjeux environnementaux</a>
+</nav>
+<div class="course-body">
+
+<h2 id="s1">I. La combustion — généralités</h2>
+<div class="box def"><div class="box-label">Définition</div>
+<p>Une <strong>combustion</strong> est une réaction chimique <strong>exothermique</strong> entre un <strong>combustible</strong> (espèce organique riche en C, H, parfois O, N ou S) et un <strong>comburant</strong> (le dioxygène O₂). C'est une réaction d'oxydoréduction.</p>
+<ul>
+<li><strong>Combustible</strong> : méthane (gaz naturel), éthanol, propane, octane, bois, charbon…</li>
+<li><strong>Comburant</strong> : dioxygène \(\mathrm{O_2}\) (21 % de l'air)</li>
+<li><strong>Exothermique</strong> : libère de l'énergie thermique vers le milieu extérieur</li>
+</ul>
+</div>
+<div class="box warn"><div class="box-label">Condition d'inflammation</div>
+<p>La combustion nécessite un <strong>apport d'énergie initial</strong> (étincelle, flamme) pour démarrer. Une fois amorcée, elle se sustente elle-même si le comburant est en quantité suffisante.</p>
+</div>
+
+<h2 id="s2">II. Combustion complète</h2>
+<div class="box def"><div class="box-label">Conditions et produits</div>
+<p>La combustion est <strong>complète</strong> quand le dioxygène est en quantité <strong>suffisante</strong> (excès). Le carbone est entièrement oxydé en \(\mathrm{CO_2}\) et l'hydrogène en \(\mathrm{H_2O}\). Aucun CO ni carbone solide ne se forme.</p>
+</div>
+<div class="formula">
+\[\boxed{\mathrm{C_xH_yO_z} + \left(x + \frac{y}{4} - \frac{z}{2}\right)\mathrm{O_2} \to x\,\mathrm{CO_2} + \frac{y}{2}\,\mathrm{H_2O}}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">Équation générale de combustion complète d'un composé \(\mathrm{C_xH_yO_z}\)</p>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Méthode d'ajustement</h4>
+<ol style="color:var(--muted);font-size:13px">
+<li>Écrire C → CO₂ (ajuster C)</li>
+<li>Écrire H → H₂O (ajuster H)</li>
+<li>Ajuster O₂ pour équilibrer O</li>
+<li>Éliminer les fractions × 2 si nécessaire</li>
+</ol>
+</div>
+<div class="card">
+<h4>Vérification</h4>
+<p style="font-size:13px;color:var(--muted)">Compter les atomes de chaque élément (C, H, O) dans les réactifs et dans les produits. Ils doivent être égaux des deux côtés.</p>
+<p style="font-size:13px;color:var(--muted)">L'oxygène est souvent le plus délicat à équilibrer en dernier.</p>
+</div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Combustible</th><th>Formule</th><th>Équation de combustion complète</th><th>Vérification O</th></tr></thead>
+<tbody>
+<tr><td>Méthane</td><td>\(\mathrm{CH_4}\)</td><td>\(\mathrm{CH_4 + 2\,O_2 \to CO_2 + 2\,H_2O}\)</td><td>x=1, y=4 : 1+4/4=2 ✓</td></tr>
+<tr><td>Éthanol</td><td>\(\mathrm{C_2H_5OH}\)</td><td>\(\mathrm{C_2H_5OH + 3\,O_2 \to 2\,CO_2 + 3\,H_2O}\)</td><td>x=2, y=6, z=1 : 2+6/4−1/2=3 ✓</td></tr>
+<tr><td>Propane</td><td>\(\mathrm{C_3H_8}\)</td><td>\(\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}\)</td><td>x=3, y=8 : 3+8/4=5 ✓</td></tr>
+<tr><td>Octane</td><td>\(\mathrm{C_8H_{18}}\)</td><td>\(\mathrm{2\,C_8H_{18} + 25\,O_2 \to 16\,CO_2 + 18\,H_2O}\)</td><td>x=8, y=18 : 8+18/4=12,5 → ×2 ✓</td></tr>
+<tr><td>Hydrogène</td><td>\(\mathrm{H_2}\)</td><td>\(\mathrm{2\,H_2 + O_2 \to 2\,H_2O}\)</td><td>Pas de CO₂ produit ✓</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="s3">III. Combustion incomplète</h2>
+<div class="box prop"><div class="box-label">Conditions et produits</div>
+<p>La combustion est <strong>incomplète</strong> quand le dioxygène est en quantité <strong>insuffisante</strong>. Le carbone n'est pas entièrement oxydé et il se forme :</p>
+<ul>
+<li><strong>Monoxyde de carbone CO</strong> : gaz incolore, inodore, extrêmement toxique</li>
+<li><strong>Carbone solide C</strong> (suie) : particules noires visibles dans la flamme jaune/orange</li>
+</ul>
+</div>
+<div class="box warn"><div class="box-label">⚠️ Danger mortel du CO — 1ère cause d'intoxication accidentelle</div>
+<ul style="color:var(--muted)">
+<li>CO est <strong>incolore et inodore</strong> : impossible à détecter par les sens</li>
+<li>Se fixe sur l'<strong>hémoglobine</strong> à la place de O₂ (affinité 250× supérieure) → asphyxie interne</li>
+<li>Sources : chaudières, chauffe-eau, poêles, groupes électrogènes en intérieur</li>
+<li>Prévention : aérer, entretenir annuellement, installer un <strong>détecteur de CO</strong></li>
+</ul>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Signes d'une combustion incomplète</h4>
+<ul>
+<li>Flamme <strong>jaune-orangée</strong> (complète = bleue)</li>
+<li>Dépôt de <strong>suie noire</strong> sur les parois</li>
+<li>Odeur de brûlé (composés imbrûlés)</li>
+<li>Rendement énergétique réduit</li>
+</ul>
+</div>
+<div class="card">
+<h4>Combustion incomplète du méthane</h4>
+<p style="font-size:13px;color:var(--muted)">Si O₂ très insuffisant :</p>
+<p style="font-size:13px;color:var(--muted)">\(\mathrm{2\,CH_4 + 3\,O_2 \to 2\,CO + 4\,H_2O}\)</p>
+<p style="font-size:13px;color:var(--muted)">Si O₂ encore plus rare :</p>
+<p style="font-size:13px;color:var(--muted)">\(\mathrm{CH_4 + O_2 \to C + 2\,H_2O}\)</p>
+</div>
+</div>
+
+<h2 id="s4">IV. Pouvoir calorifique</h2>
+<div class="box def"><div class="box-label">Définition</div>
+<p>Le <strong>pouvoir calorifique</strong> (PC) est l'énergie thermique libérée par la combustion complète de 1 kg de combustible. Il s'exprime en \(\mathrm{MJ\cdot kg^{-1}}\).</p>
+</div>
+<div class="formula">
+\[\boxed{E = \frac{m}{M} \times |\Delta_c H|}\]
+<p style="font-size:13px;color:var(--muted);margin-top:8px">\(E\) en J · \(m\) en g · \(M\) en g·mol⁻¹ · \(\Delta_c H\) en J·mol⁻¹ (enthalpie de combustion, toujours négative)</p>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Combustible</th><th>Pouvoir calorifique (MJ·kg⁻¹)</th><th>Produit CO₂ ?</th><th>Usage principal</th></tr></thead>
+<tbody>
+<tr><td>Hydrogène H₂</td><td>120</td><td>Non (→ H₂O seulement)</td><td>Pile à combustible, aviation future</td></tr>
+<tr><td>Méthane CH₄</td><td>55</td><td>Oui</td><td>Gaz naturel, chauffage</td></tr>
+<tr><td>Essence (octane)</td><td>47</td><td>Oui</td><td>Moteurs thermiques</td></tr>
+<tr><td>Charbon</td><td>28–33</td><td>Oui (+ SO₂)</td><td>Centrales électriques</td></tr>
+<tr><td>Éthanol</td><td>27</td><td>Oui (bilan quasi-neutre si bio)</td><td>Biocarburant E85</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="s5">V. Enjeux énergétiques et environnementaux</h2>
+<div class="box prop"><div class="box-label">CO₂ et effet de serre</div>
+<p>La combustion des <strong>combustibles fossiles</strong> (pétrole, gaz naturel, charbon) libère du \(\mathrm{CO_2}\) accumulé depuis des millions d'années → concentration atmosphérique qui augmente → <strong>absorption du rayonnement infrarouge terrestre</strong> → réchauffement climatique (effet de serre renforcé).</p>
+</div>
+<div class="box ok"><div class="box-label">Alternatives moins carbonées</div>
+<ul style="color:var(--muted)">
+<li><strong>Hydrogène vert</strong> : \(\mathrm{2\,H_2 + O_2 \to 2\,H_2O}\) — zéro CO₂ si H₂ produit par électrolyse renouvelable</li>
+<li><strong>Biocarburants</strong> : éthanol de betterave, biodiesel — CO₂ biogénique (cycle court)</li>
+<li><strong>Gaz naturel</strong> : moins de CO₂/kWh que charbon ou pétrole (→ transition)</li>
+<li><strong>Pile à combustible</strong> : H₂ + O₂ → électricité + H₂O, sans combustion directe</li>
+</ul>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Calcul d'émissions de CO₂</h4>
+<p style="font-size:13px;color:var(--muted)">Pour 1 kg de méthane brûlé :\(n(\mathrm{CH_4}) = 1000/16 = 62{,}5\,\mathrm{mol}\)</p>
+<p style="font-size:13px;color:var(--muted)">\(n(\mathrm{CO_2}) = 62{,}5\,\mathrm{mol}\)</p>
+<p style="font-size:13px;color:var(--muted)">\(m(\mathrm{CO_2}) = 62{,}5 \times 44 = \mathbf{2{,}75\,\mathrm{kg}}\) de CO₂ par kg de méthane</p>
+</div>
+<div class="card">
+<h4>Piège — combustion de l'éthanol</h4>
+<p style="font-size:13px;color:var(--muted)">L'éthanol émet du CO₂ lors de sa combustion, mais si issu de canne à sucre ou betterave (bioéthanol), les plantes ont <em>absorbé</em> ce même CO₂ lors de leur croissance. Bilan CO₂ quasi-neutre sur le cycle court (≠ combustibles fossiles).</p>
+</div>
+</div>
 
 </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ RELATIONS & DIMENSIONS ═══════ -->
+<div class="panel" id="p-relations">
+<div class="content-card">
+<h3>📐 Relations & Grandeurs — Combustion</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Variables &amp; Unités</th><th>Sens physique</th></tr></thead>
+<tbody>
+<tr><td>\(\mathrm{C_xH_yO_z} + (x+\frac{y}{4}-\frac{z}{2})\mathrm{O_2} \to x\mathrm{CO_2} + \frac{y}{2}\mathrm{H_2O}\)</td><td>coefficients sans unité</td><td>Équation générale combustion complète</td></tr>
+<tr><td>\(\displaystyle n(\mathrm{O_2}) = x + \frac{y}{4} - \frac{z}{2}\) pour 1 mol de C_xH_yO_z</td><td>n en mol</td><td>Dioxygène nécessaire pour combustion complète</td></tr>
+<tr><td>\(\displaystyle E = \frac{m}{M} \times |\Delta_c H|\)</td><td>E en J ; m en g ; M en g·mol⁻¹ ; Δ_cH en J·mol⁻¹</td><td>Énergie libérée par masse m de combustible</td></tr>
+<tr><td>\(\displaystyle m(\mathrm{CO_2}) = n_\mathrm{CO_2} \times 44\)</td><td>m en g ; 44 = M(CO₂)</td><td>Masse de CO₂ produite</td></tr>
+<tr><td>PC = énergie / masse</td><td>PC en MJ·kg⁻¹</td><td>Pouvoir calorifique, énergie par unité de masse</td></tr>
+</tbody>
+</table></div>
+
+<div class="content-card" style="margin-top:16px">
+<h3>🔬 Simulateur — Combustion complète</h3>
+<div class="neon-sim">
+<canvas id="combCanvas" height="220"></canvas>
+<div class="sim-body">
+<h4>Calcul stœchiométrique interactif</h4>
+<div class="sim-inputs">
+<div><label class="neon-label">Carbone x</label><input class="neon-input" id="s-x" value="3" type="number" min="1" max="12" oninput="calcComb()"/></div>
+<div><label class="neon-label">Hydrogène y</label><input class="neon-input" id="s-y" value="8" type="number" min="0" max="30" oninput="calcComb()"/></div>
+<div><label class="neon-label">Oxygène z</label><input class="neon-input" id="s-z" value="0" type="number" min="0" max="6" oninput="calcComb()"/></div>
+<div><label class="neon-label">Masse (g)</label><input class="neon-input" id="s-m" value="4.4" type="number" step="0.1" oninput="calcComb()"/></div>
+<div><label class="neon-label">M (g/mol)</label><input class="neon-input" id="s-M" value="44" type="number" oninput="calcComb()"/></div>
+</div>
+<div class="neon-result" id="s-result">—</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ EXERCICES ═══════ -->
+<div class="panel" id="p-exercices">
+<div class="content-card">
+<h3>✏️ Exercices progressifs</h3>
+
+<div style="margin-bottom:10px"><span class="chip blue">S'entraîner</span></div>
+<div class="exercise">
+<h4>Exercice 1 — Équilibrer une équation de combustion <span class="chip">APP · REA</span></h4>
+<p>Écrire et équilibrer les équations de combustion complète des composés suivants :<br>
+<strong>a.</strong> Butane \(\mathrm{C_4H_{10}}\)<br>
+<strong>b.</strong> Acide éthanoïque \(\mathrm{C_2H_4O_2}\)<br>
+<strong>c.</strong> Glucose \(\mathrm{C_6H_{12}O_6}\)</p>
+<details><summary>Correction</summary>
+<p><strong>a.</strong> \(x=4, y=10, z=0\) → O₂ : \(4+10/4=6{,}5\) → multiplier par 2 :<br>
+\(\mathrm{2\,C_4H_{10} + 13\,O_2 \to 8\,CO_2 + 10\,H_2O}\)</p>
+<p><strong>b.</strong> \(x=2, y=4, z=2\) → O₂ : \(2+4/4-2/2=2\) :<br>
+\(\mathrm{C_2H_4O_2 + 2\,O_2 \to 2\,CO_2 + 2\,H_2O}\)</p>
+<p><strong>c.</strong> \(x=6, y=12, z=6\) → O₂ : \(6+12/4-6/2=6\) :<br>
+\(\mathrm{C_6H_{12}O_6 + 6\,O_2 \to 6\,CO_2 + 6\,H_2O}\)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Combustion complète du propane <span class="chip">REA · VAL</span></h4>
+<p>On dispose d'un réchaud à gaz contenant 200 g de propane \(\mathrm{C_3H_8}\) (\(M = 44\,\mathrm{g\cdot mol^{-1}}\)).<br>
+<strong>1.</strong> Écrire l'équation de combustion complète.<br>
+<strong>2.</strong> Calculer \(n(\mathrm{C_3H_8})\).<br>
+<strong>3.</strong> Calculer la quantité de CO₂ produite et sa masse.<br>
+<strong>4.</strong> Calculer le volume de dioxygène nécessaire à CNTP (\(V_\mathrm{m} = 24\,\mathrm{L\cdot mol^{-1}}\)).</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}\)</p>
+<p><strong>2.</strong> \(n(\mathrm{C_3H_8}) = 200/44 = 4{,}55\,\mathrm{mol}\)</p>
+<p><strong>3.</strong> \(n(\mathrm{CO_2}) = 3 \times 4{,}55 = 13{,}6\,\mathrm{mol}\) · \(m(\mathrm{CO_2}) = 13{,}6 \times 44 = \mathbf{600\,\mathrm{g}} = 0{,}60\,\mathrm{kg}\)</p>
+<p><strong>4.</strong> \(n(\mathrm{O_2}) = 5 \times 4{,}55 = 22{,}7\,\mathrm{mol}\) · \(V(\mathrm{O_2}) = 22{,}7 \times 24 = \mathbf{545\,\mathrm{L}}\)</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip amber">Appliquer</span></div>
+<div class="exercise">
+<h4>Exercice 3 — Combustion incomplète et danger du CO <span class="chip">ANA · VAL</span></h4>
+<p>Un chauffe-eau à gaz (méthane) fonctionne dans une pièce mal ventilée. L'analyse des fumées révèle la présence de CO.<br>
+<strong>1.</strong> Écrire l'équation de combustion incomplète du méthane produisant CO (et H₂O).<br>
+<strong>2.</strong> Expliquer physio-chimiquement pourquoi CO est plus dangereux que CO₂.<br>
+<strong>3.</strong> Si la pièce (volume 20 m³) atteint une concentration en CO de 500 ppm (mol/mol) à 20 °C, calculer la masse de CO dans la pièce. (R = 8,314 J·mol⁻¹·K⁻¹)</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\mathrm{2\,CH_4 + 3\,O_2 \to 2\,CO + 4\,H_2O}\)</p>
+<p><strong>2.</strong> CO se fixe sur l'hémoglobine avec une affinité ~250 fois supérieure à celle de O₂ (formation de carboxyhémoglobine HbCO). Les globules rouges ne peuvent plus transporter O₂ → hypoxie tissulaire même si l'air contient suffisamment de O₂. CO₂ est inoffensif à faible concentration.</p>
+<p><strong>3.</strong> Pression totale ≈ 101 325 Pa. \(n_\mathrm{tot} = PV/(RT) = 101325 \times 20 / (8{,}314 \times 293) = 832\,\mathrm{mol}\)<br>
+\(n(\mathrm{CO}) = 500 \times 10^{-6} \times 832 = 0{,}416\,\mathrm{mol}\)<br>
+\(m(\mathrm{CO}) = 0{,}416 \times 28 = \mathbf{11{,}6\,\mathrm{g}}\)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Pouvoir calorifique et bilan carbone <span class="chip">APP · REA · COM</span></h4>
+<p>Une voiture consomme 7 L d'essence par 100 km. Masse volumique de l'essence : 0,73 g/mL. Assimiler l'essence à l'octane \(\mathrm{C_8H_{18}}\) (\(M = 114\,\mathrm{g\cdot mol^{-1}}\)).<br>
+<strong>1.</strong> Calculer la masse d'essence consommée pour 100 km.<br>
+<strong>2.</strong> Écrire l'équation de combustion complète de l'octane.<br>
+<strong>3.</strong> Calculer la masse de CO₂ émise pour 100 km.<br>
+<strong>4.</strong> Un véhicule électrique émet 0 g CO₂/km à l'usage. Calculer l'économie de CO₂ sur 15 000 km/an.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(m = 7 \times 1000 \times 0{,}73 = 5110\,\mathrm{g} = 5{,}11\,\mathrm{kg}\)</p>
+<p><strong>2.</strong> \(\mathrm{2\,C_8H_{18} + 25\,O_2 \to 16\,CO_2 + 18\,H_2O}\)</p>
+<p><strong>3.</strong> \(n(\mathrm{C_8H_{18}}) = 5110/114 = 44{,}8\,\mathrm{mol}\)<br>
+\(n(\mathrm{CO_2}) = 8 \times 44{,}8 = 358\,\mathrm{mol}\)<br>
+\(m(\mathrm{CO_2}) = 358 \times 44 = \mathbf{15\,800\,\mathrm{g} \approx 15{,}8\,\mathrm{kg\,CO_2/100\,km}}\)<br>
+soit environ 158 g CO₂/km.</p>
+<p><strong>4.</strong> Économie : \(158 \times 15\,000 / 1000 = \mathbf{2370\,\mathrm{kg\,CO_2/an}}\)</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip" style="background:var(--mauve2);color:var(--mauve);border-color:rgba(120,89,181,.2)">Approfondir</span></div>
+<div class="exercise">
+<h4>Exercice 5 — Identification d'un combustible inconnu <span class="chip">ANA · VAL</span></h4>
+<p>La combustion complète de 4,60 g d'un composé de formule \(\mathrm{C_xH_yO_z}\) produit 8,80 g de CO₂ et 5,40 g de H₂O. La masse molaire du composé est 46,0 g·mol⁻¹.</p>
+<p><strong>1.</strong> Calculer \(n(\mathrm{CO_2})\), \(n(\mathrm{H_2O})\), \(n(\mathrm{composé})\).<br>
+<strong>2.</strong> En déduire x, y, z.<br>
+<strong>3.</strong> Identifier le composé (indice : c'est un alcool simple).</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(n(\mathrm{CO_2}) = 8{,}80/44 = 0{,}200\,\mathrm{mol}\) · \(n(\mathrm{H_2O}) = 5{,}40/18 = 0{,}300\,\mathrm{mol}\) · \(n(\text{composé}) = 4{,}60/46{,}0 = 0{,}100\,\mathrm{mol}\)</p>
+<p><strong>2.</strong> Par conservation des atomes :<br>
+\(x = n(\mathrm{CO_2})/n(\text{composé}) = 0{,}200/0{,}100 = 2\)<br>
+\(y/2 = n(\mathrm{H_2O})/n(\text{composé}) \to y = 2 \times 0{,}300/0{,}100 = 6\)<br>
+\(z\) : masse composé = \(12x + y + 16z = 24 + 6 + 16z = 46 \to 16z = 16 \to z = 1\)<br>
+Formule : \(\mathrm{C_2H_6O}\)</p>
+<p><strong>3.</strong> \(\mathrm{C_2H_6O}\) avec \(M = 46\,\mathrm{g\cdot mol^{-1}}\) et fonction alcool → c'est l'<strong>éthanol \(\mathrm{C_2H_5OH}\)</strong>.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 6 — Combustion et réactif limitant <span class="chip">REA · ANA · VAL</span></h4>
+<p>On mélange 2,00 mol de méthane \(\mathrm{CH_4}\) avec 5,00 mol de dioxygène \(\mathrm{O_2}\).<br>
+\(\mathrm{CH_4 + 2\,O_2 \to CO_2 + 2\,H_2O}\)<br>
+<strong>1.</strong> Identifier le réactif limitant.<br>
+<strong>2.</strong> La combustion est-elle complète ou incomplète ? Pourquoi ?<br>
+<strong>3.</strong> Calculer les quantités de CO₂ et H₂O formées et les quantités résiduelles.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> Quotients : \(n(\mathrm{CH_4})/1 = 2{,}00\) · \(n(\mathrm{O_2})/2 = 5{,}00/2 = 2{,}50\). Le plus petit : CH₄ → <strong>réactif limitant</strong>.</p>
+<p><strong>2.</strong> CH₄ est limitant mais O₂ est en excès relatif (2,50 > 2,00). Néanmoins, avec CH₄ limitant et O₂ consommé = \(2 \times 2{,}00 = 4{,}00\,\mathrm{mol}\) sur 5,00 disponibles → O₂ est en excès. La combustion peut être <strong>complète</strong> car O₂ ne manque pas.</p>
+<p><strong>3.</strong> \(n(\mathrm{CO_2}) = 2{,}00\,\mathrm{mol}\) · \(n(\mathrm{H_2O}) = 2 \times 2{,}00 = 4{,}00\,\mathrm{mol}\)<br>
+Résidu : \(n(\mathrm{CH_4}) = 0\,\mathrm{mol}\) · \(n(\mathrm{O_2}) = 5{,}00 - 4{,}00 = 1{,}00\,\mathrm{mol}\)</p>
+</details>
+</div>
+</div>
+</div>
+
+<!-- ═══════ FLASHCARDS ═══════ -->
+<div class="panel" id="p-flashcards">
+<div class="content-card">
+<h3>🃏 Flashcards — Réactions de combustion</h3>
+<p style="color:var(--muted);margin-bottom:18px">Cliquez sur une carte pour la retourner.</p>
+<div class="flashcard-grid" id="fcGrid"></div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+<button class="btn" onclick="renderFC()">↺ Réinitialiser</button>
+</div>
+</div>
+</div>
+
+<!-- ═══════ QUIZ & CHATBOT ═══════ -->
+<div class="panel" id="p-quiz">
+<div class="content-card">
+<h3>🧠 Quiz — Réactions de combustion</h3>
+<div id="quizArea"></div>
+</div>
+<div class="content-card" style="margin-top:16px">
+<h3>🤖 Chatbot IA — Aide personnalisée</h3>
+<div class="ai-grid">
+<div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:10px">Copiez ce prompt contextualisé dans l'IA de votre choix :</p>
+<textarea class="prompt-box" id="promptBox" readonly>Tu es professeur de physique-chimie niveau 1ère Spé. Explique le chapitre "Réactions de combustion" : combustion exothermique, équation générale CₙHₘOz + O₂ → CO₂ + H₂O, exemples CH₄, C₂H₅OH, C₃H₈, combustion incomplète (CO toxique, suie), danger CO, pouvoir calorifique, CO₂ et effet de serre, H₂ vert. Donne des exemples numériques avec formules LaTeX et unités.</textarea>
+<div class="btn-row">
+<button class="btn primary" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value)">📋 Copier</button>
+<a href="https://claude.ai" target="_blank" class="btn">Claude ↗</a>
+<a href="https://chat.openai.com" target="_blank" class="btn">ChatGPT ↗</a>
+<a href="https://gemini.google.com" target="_blank" class="btn">Gemini ↗</a>
+</div>
+</div>
+<div>
+<h4 style="margin:0 0 10px">Questions suggérées</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" onclick="setPrompt('Comment équilibrer une équation de combustion de C₄H₁₀ ? Montre toutes les étapes.')">Équilibrer C₄H₁₀</button>
+<button class="btn" onclick="setPrompt('Pourquoi le CO est-il si dangereux comparé au CO₂ ? Explique le mécanisme moléculaire.')">Danger CO vs CO₂</button>
+<button class="btn" onclick="setPrompt('Calcule la masse de CO₂ émise en brûlant 1 kg d\'éthanol C₂H₅OH.')">Bilan CO₂ éthanol</button>
+<button class="btn" onclick="setPrompt('Qu\'est-ce que l\'hydrogène vert et pourquoi est-il une alternative aux hydrocarbures ?')">H₂ vert</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ CARTE MENTALE ═══════ -->
+<div class="panel" id="p-mindmap">
+<div class="content-card">
+<h3>🗺️ Carte mentale — Réactions de combustion</h3>
+<div class="mindmap">
+<div class="map-center">🔥 Réactions de combustion</div>
+<div class="map-branches">
+<div class="map-branch" style="border-color:rgba(159,79,104,.3)">
+<h4 style="color:var(--blue)">✅ Combustion complète</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>O₂ en excès</li>
+<li>Produits : CO₂ + H₂O</li>
+<li>CₙHₘ + (n+m/4)O₂ →</li>
+<li>Flamme bleue (gaz)</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(193,128,74,.3)">
+<h4 style="color:var(--amber)">❌ Combustion incomplète</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>O₂ insuffisant</li>
+<li>CO incolore + inodore</li>
+<li>C (suie noire)</li>
+<li>Flamme jaune-orangée</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(183,95,117,.3)">
+<h4 style="color:var(--red)">⚠️ Danger CO</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Indétectable par les sens</li>
+<li>Fixation hémoglobine</li>
+<li>Affinité ×250 vs O₂</li>
+<li>Asphyxie interne</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(79,138,107,.3)">
+<h4 style="color:var(--green)">⚡ Pouvoir calorifique</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>H₂ : 120 MJ/kg</li>
+<li>CH₄ : 55 MJ/kg</li>
+<li>Essence : 47 MJ/kg</li>
+<li>E = (m/M)·|ΔcH|</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(79,143,164,.3)">
+<h4 style="color:var(--cyan)">🌍 Enjeux environnementaux</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>CO₂ → effet de serre</li>
+<li>H₂ vert → H₂O seulement</li>
+<li>Fossiles vs renouvelables</li>
+<li>Biocarburants (cycle court)</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(120,89,181,.3)">
+<h4 style="color:var(--mauve)">🔢 Méthode équilibrage</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>1. Équilibrer C → CO₂</li>
+<li>2. Équilibrer H → H₂O</li>
+<li>3. Ajuster O₂ en dernier</li>
+<li>4. Éliminer fractions ×2</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ SIMULATIONS ═══════ -->
+<div class="panel" id="p-simulations">
+<div class="content-card">
+<h3>🔬 Simulations interactives</h3>
+<div class="neon-sim" style="margin-bottom:18px">
+<canvas id="flameCanvas" height="280"></canvas>
+<div class="sim-body">
+<h4>Simulation — Flamme et produits de combustion</h4>
+<p>Observez l'émission de CO₂ (rose) et H₂O (cyan) lors de la combustion du méthane.</p>
+<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+<button class="btn primary" onclick="startFlame()">▶ Démarrer</button>
+<button class="btn" onclick="stopFlame()">⏹ Arrêter</button>
+<button class="btn" onclick="toggleIncomplete()">⚠️ Simuler combustion incomplète</button>
+</div>
+</div>
+</div>
+<div class="sim-grid-2">
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Réactifs et produits (PhET)</h4><p style="color:var(--muted);font-size:13px">Stœchiométrie des combustions, réactif limitant.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/reactants-products-and-leftovers/latest/reactants-products-and-leftovers_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Équilibrer les équations (PhET)</h4><p style="color:var(--muted);font-size:13px">Coefficients stœchiométriques des équations de combustion.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ ECE ═══════ -->
+<div class="panel" id="p-ece">
+<div class="content-card">
+<h3>🧪 ECE — Étude des produits de combustion</h3>
+<p style="color:var(--muted);margin-bottom:16px">Protocole expérimental pour identifier les produits d'une combustion et distinguer combustion complète/incomplète.</p>
+<div class="ece-steps">
+<div class="ece-step">
+<b>① Montage de combustion</b>
+<p style="color:var(--muted);font-size:13px">Brûler une bougie ou une bougie d'alcool sous une cloche en verre. Récupérer les fumées dans un circuit fermé avec barboteur. Observer la flamme : bleue (complète) ou jaune (incomplète).</p>
+</div>
+<div class="ece-step">
+<b>② Test de l'eau de chaux</b>
+<p style="color:var(--muted);font-size:13px">Faire barboter les fumées dans de l'eau de chaux (Ca(OH)₂). Observation attendue : <strong>trouble blanc lacté</strong> si CO₂ présent. Équation : \(\mathrm{Ca(OH)_2 + CO_2 \to CaCO_3 \downarrow + H_2O}\).</p>
+</div>
+<div class="ece-step">
+<b>③ Test de la vapeur d'eau</b>
+<p style="color:var(--muted);font-size:13px">Placer du sulfate de cuivre anhydre (blanc) sur la paroi froide. Si H₂O présent → bleuit (\(\mathrm{CuSO_4 + 5\,H_2O \to CuSO_4\cdot5H_2O}\)). Confirme la présence d'eau.</p>
+</div>
+<div class="ece-step">
+<b>④ Détection du CO (incomplète)</b>
+<p style="color:var(--muted);font-size:13px">Réduire l'arrivée d'air (couvrir partiellement la flamme). Observation : flamme jaunit + suie. Utiliser un tube Dräger (détection colorimétrique) ou un détecteur électrochimique de CO.</p>
+</div>
+<div class="ece-step">
+<b>⑤ Mesure quantitative</b>
+<p style="color:var(--muted);font-size:13px">Peser la bougie avant/après combustion (masse perdue = combustible). Calculer n(combustible), n(CO₂) théorique. Comparer avec le trouble de l'eau de chaux pour une conclusion qualitative.</p>
+</div>
+<div class="ece-step">
+<b>⑥ Conclusion et bilan</b>
+<p style="color:var(--muted);font-size:13px">Rédiger un bilan : identifier le combustible (C, H), écrire l'équation équilibrée, conclure sur le type de combustion (complète/incomplète), proposer des mesures de sécurité (ventilation, détecteur CO).</p>
+</div>
+</div>
+<div class="neon-sim" style="margin-top:18px">
+<canvas id="eceCanvas" height="240"></canvas>
+<div class="sim-body">
+<h4>Visualisation — Identification des produits</h4>
+<p>Eau de chaux (blanc trouble = CO₂ présent) · CuSO₄ anhydre (bleu = H₂O présent)</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ VERS TERMINALE ═══════ -->
+<div class="panel" id="p-terminale">
+<div class="content-card">
+<h3>🚀 Vers la Terminale</h3>
+<div class="cards">
+<div class="card">
+<h4>Ce qui sera approfondi</h4>
+<ul>
+<li><strong>Thermochimie</strong> : enthalpie standard de combustion \(\Delta_c H°\), loi de Hess, liaison énergie ↔ quantité de matière</li>
+<li><strong>Cinétique chimique</strong> : vitesse de combustion, facteurs d'inflammation, temps de demi-réaction</li>
+<li><strong>Oxydoréduction avancée</strong> : degrés d'oxydation C, H dans les combustibles et produits</li>
+<li><strong>Piles à combustible</strong> : H₂ + O₂ → énergie électrique, rendement vs moteur thermique</li>
+</ul>
+</div>
+<div class="card">
+<h4>Liens avec d'autres notions</h4>
+<ul>
+<li><strong>Chap. 5 — Tableau d'avancement</strong> : réactif limitant dans la combustion</li>
+<li><strong>Chap. 7 — Groupes fonctionnels</strong> : identifier la famille du combustible (alcool, alcane…)</li>
+<li><strong>Physique — Transferts thermiques</strong> : énergie libérée par combustion → échauffement</li>
+<li><strong>SVT — Photosynthèse</strong> : CO₂ absorbé = inverse de la combustion du glucose</li>
+</ul>
+</div>
+</div>
+<div class="content-card" style="background:var(--blue3);border-color:rgba(159,79,104,.22);margin-top:16px">
+<h4 style="color:var(--blue)">🏆 Mini-défi Terminale</h4>
+<p style="color:var(--muted)">L'enthalpie standard de combustion du méthane est \(\Delta_c H° = -890\,\mathrm{kJ\cdot mol^{-1}}\). Calculer la masse de méthane à brûler pour chauffer 100 L d'eau de 20 °C à 100 °C, en supposant un rendement de 80 %. (\(c_\mathrm{eau} = 4185\,\mathrm{J\cdot kg^{-1}\cdot K^{-1}}\))</p>
+<details><summary style="cursor:pointer;color:var(--blue);font-weight:700">Réponse</summary>
+<p style="color:var(--muted)">Énergie nécessaire : \(Q = mc\Delta T = 100 \times 4185 \times 80 = 33{,}5\,\mathrm{MJ}\). Avec rendement 80 % : énergie à libérer \(= 33{,}5/0{,}8 = 41{,}9\,\mathrm{MJ}\). \(n(\mathrm{CH_4}) = 41\,900 / 890 = 47{,}1\,\mathrm{mol}\). \(m = 47{,}1 \times 16 = \mathbf{753\,\mathrm{g}}\) de méthane.</p>
+</details>
+</div>
+</div>
+</div>
+
+</div><!-- /page -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+/* ══ THEME ══ */
+(function(){const t=localStorage.getItem('pc_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pc_theme',n);drawHero();drawECE();}
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* ══ TABS ══ */
+const PANELS={cours:'p-cours',relations:'p-relations',exercices:'p-exercices',flashcards:'p-flashcards',quiz:'p-quiz',mindmap:'p-mindmap',simulations:'p-simulations',ece:'p-ece',terminale:'p-terminale'};
+const visited=new Set();
+function switchTab(t){
+  Object.values(PANELS).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const el=document.getElementById(PANELS[t]);if(el)el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  visited.add(t);updateMastery();
+  if(t==='flashcards'&&!fcBuilt)buildFC();
+  if(t==='quiz'&&!quizBuilt)buildQuiz();
+  if(t==='simulations')setTimeout(startFlame,200);
+  if(t==='ece')setTimeout(drawECE,100);
+  if(t==='relations')setTimeout(calcComb,100);
+}
+function updateMastery(){const pct=Math.round(visited.size/9*100);document.getElementById('masterBar').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+' %';}
+
+/* ══ HERO CANVAS — flamme animée ══ */
+const hC=document.getElementById('heroCanvas');
+const hCtx=hC.getContext('2d');
+let hParts=[],hFrame=0;
+function initHero(){
+  hParts=[];
+  for(let i=0;i<40;i++){hParts.push(newFlameParticle());}
+}
+function newFlameParticle(){
+  return{x:160+Math.random()*80-40,y:170,vx:(Math.random()-.5)*1.2,vy:-(Math.random()*2.5+1.5),life:1,maxLife:60+Math.random()*30,type:Math.random()<.7?'flame':'smoke'};
+}
+function drawHero(){
+  const W=hC.width=hC.offsetWidth||500,H=hC.height=hC.offsetHeight||230;
+  const ctx=hCtx;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
+  // burner
+  ctx.fillStyle='rgba(240,163,186,.3)';ctx.strokeStyle='rgba(240,163,186,.6)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.rect(W/2-60,H-30,120,20);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.rect(W/2-40,H-50,80,22);ctx.fill();ctx.stroke();
+  // flame particles
+  hParts.forEach((p,i)=>{
+    const t=1-p.life/p.maxLife;
+    let col;
+    if(p.type==='flame'){
+      const r=Math.round(255*(1-t*.3));
+      const g=Math.round(Math.max(0,180*(1-t)));
+      const b=Math.round(Math.max(0,80*(1-t*2)));
+      col=`rgba(${r},${g},${b},${(1-t)*.9})`;
+    } else {
+      col=`rgba(120,100,140,${(1-t)*.4})`;
+    }
+    ctx.beginPath();ctx.arc(p.x,p.y,p.type==='flame'?4+8*(1-t)*t*4:3+t*6,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;p.life--;p.vx*=.98;
+    if(p.life<=0)hParts[i]=newFlameParticle();
   });
-});
+  // product labels
+  const t2=Date.now()/1200;
+  ctx.font='bold 12px Inter';
+  ctx.fillStyle=`rgba(240,163,186,${.5+.3*Math.sin(t2)})`;ctx.fillText('CO₂',W/2+80,100+10*Math.sin(t2));
+  ctx.fillStyle=`rgba(139,214,228,${.5+.3*Math.sin(t2+1)})`;ctx.fillText('H₂O',W/2+110,130+8*Math.sin(t2+1));
+  ctx.fillStyle='rgba(240,163,186,.4)';ctx.font='10px Inter';ctx.fillText('CH₄ + 2O₂ →',W/2-200,H/2);
+  hFrame++;
+}
+initHero();
+(function hloop(){drawHero();requestAnimationFrame(hloop);})();
+
+/* ══ FLAME SIMULATION ══ */
+let flameRunning=false,flameAnim=null,incompleteMode=false;
+let fParts=[];
+function startFlame(){if(flameRunning)return;flameRunning=true;fParts=[];for(let i=0;i<50;i++)fParts.push(newFP());(function fl(){if(!flameRunning)return;drawFlame();flameAnim=requestAnimationFrame(fl);})();}
+function stopFlame(){flameRunning=false;if(flameAnim)cancelAnimationFrame(flameAnim);}
+function toggleIncomplete(){incompleteMode=!incompleteMode;}
+function newFP(){return{x:250+Math.random()*60-30,y:260,vx:(Math.random()-.5)*1.4,vy:-(Math.random()*3+1.5),life:1,max:50+Math.random()*40,type:incompleteMode&&Math.random()<.3?'smoke':'flame'};}
+function drawFlame(){
+  const c=document.getElementById('flameCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=280;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
+  // burner ring
+  ctx.strokeStyle='rgba(240,163,186,.5)';ctx.lineWidth=3;
+  ctx.beginPath();ctx.ellipse(W/2,H-20,50,10,0,0,Math.PI*2);ctx.stroke();
+  // particles
+  fParts.forEach((p,i)=>{
+    const t=1-p.life/p.max;
+    if(p.type==='flame'){
+      const r=Math.round(255*(1-t*.2));const g=Math.round(Math.max(0,150-t*150));
+      ctx.beginPath();ctx.arc(p.x,p.y,3+8*t*(1-t)*3,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},20,${1-t})`;ctx.fill();
+    } else {
+      ctx.beginPath();ctx.arc(p.x,p.y,2+t*6,0,Math.PI*2);
+      ctx.fillStyle=`rgba(60,40,60,${.6-t*.5})`;ctx.fill();
+    }
+    p.x+=p.vx;p.y+=p.vy;p.life--;
+    if(p.life<=0){p=newFP();fParts[i]=newFP();}
+  });
+  // labels
+  const ts=Date.now()/800;
+  if(!incompleteMode){
+    ctx.fillStyle=`rgba(240,163,186,${.6+.2*Math.sin(ts)})`;ctx.font='bold 13px Inter';ctx.fillText('CO₂ ↑',W/2+80,120);
+    ctx.fillStyle=`rgba(139,214,228,${.6+.2*Math.sin(ts+1)})`;ctx.fillText('H₂O ↑',W/2+80,145);
+    ctx.fillStyle='rgba(139,217,170,.7)';ctx.fillText('✅ Combustion complète',20,30);
+  } else {
+    ctx.fillStyle=`rgba(240,163,186,${.6+.2*Math.sin(ts)})`;ctx.font='bold 13px Inter';ctx.fillText('CO ↑ ⚠️',W/2+80,120);
+    ctx.fillStyle='rgba(80,70,80,.8)';ctx.fillText('Suie (C) ↑',W/2+80,145);
+    ctx.fillStyle='rgba(240,154,170,.7)';ctx.fillText('❌ Combustion incomplète',20,30);
+    ctx.fillStyle='rgba(241,179,117,.7)';ctx.font='11px Inter';ctx.fillText('O₂ insuffisant → CO toxique !',20,50);
+  }
+}
+
+/* ══ ECE CANVAS ══ */
+function drawECE(){
+  const c=document.getElementById('eceCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=240;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,H);
+  // tube eau de chaux (gauche)
+  const t1x=80,t1y=40,tw=60,th=140;
+  ctx.fillStyle='rgba(245,245,235,.4)';ctx.strokeStyle='rgba(240,163,186,.5)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.rect(t1x,t1y,tw,th);ctx.fill();ctx.stroke();
+  // trouble blanc (CaCO3)
+  ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillRect(t1x+3,t1y+th/2,tw-6,th/2-5);
+  ctx.fillStyle='rgba(240,163,186,.9)';ctx.font='bold 11px Inter';
+  ctx.fillText('Eau de chaux',t1x-10,t1y-10);
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='10px Inter';
+  ctx.fillText('Trouble blanc',t1x+2,t1y+th-10);
+  ctx.fillStyle='rgba(240,163,186,.7)';ctx.fillText('→ CO₂ détecté',t1x+2,t1y+th+14);
+  // tube CuSO4 (droite)
+  const t2x=220;
+  ctx.fillStyle='rgba(220,235,250,.3)';ctx.strokeStyle='rgba(139,214,228,.5)';
+  ctx.beginPath();ctx.rect(t2x,t1y,tw,th);ctx.fill();ctx.stroke();
+  // CuSO4 bleu
+  ctx.fillStyle='rgba(30,100,200,.5)';ctx.fillRect(t2x+3,t1y+th/2,tw-6,th/2-5);
+  ctx.fillStyle='rgba(139,214,228,.9)';ctx.font='bold 11px Inter';
+  ctx.fillText('CuSO₄ anhydre',t2x-14,t1y-10);
+  ctx.fillStyle='rgba(30,100,220,.9)';ctx.fillText('Devient bleu',t2x+4,t1y+th-10);
+  ctx.fillStyle='rgba(139,214,228,.7)';ctx.font='10px Inter';
+  ctx.fillText('→ H₂O détectée',t2x+2,t1y+th+14);
+  // arrows from flame
+  ctx.strokeStyle='rgba(240,163,186,.4)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(380,120);ctx.lineTo(tw+t1x,t1y+th/3);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(380,130);ctx.lineTo(tw+t2x,t1y+th/3);ctx.stroke();
+  ctx.setLineDash([]);
+  // mini flame
+  const fx=380,fy=180;
+  for(let i=0;i<6;i++){
+    const r=255-i*20,g=Math.max(0,150-i*25);
+    ctx.beginPath();ctx.arc(fx,fy-i*12,8-i,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${r},${g},0,.${8-i})`;ctx.fill();
+  }
+  ctx.fillStyle='rgba(240,163,186,.7)';ctx.font='bold 10px Inter';ctx.fillText('Bougie',fx-12,fy+20);
+  // labels
+  ctx.fillStyle='rgba(240,163,186,.6)';ctx.font='bold 12px Inter';
+  ctx.fillText('Fumées →',340,110);
+}
+
+/* ══ COMBUSTION CALCULATOR ══ */
+function calcComb(){
+  const x=parseInt(document.getElementById('s-x').value)||3;
+  const y=parseInt(document.getElementById('s-y').value)||8;
+  const z=parseInt(document.getElementById('s-z').value)||0;
+  const m=parseFloat(document.getElementById('s-m').value)||4.4;
+  const M=parseFloat(document.getElementById('s-M').value)||44;
+  const coefO2=x+y/4-z/2;
+  const n=m/M;
+  const nCO2=n*x,nH2O=n*y/2,nO2=n*coefO2;
+  document.getElementById('s-result').innerHTML=
+    `Équation : C${x}H${y}O${z>0?z:''} + ${coefO2.toFixed(2)} O₂ → ${x} CO₂ + ${y/2} H₂O\n`+
+    `n(combustible) = ${n.toFixed(4)} mol\n`+
+    `n(CO₂) = ${nCO2.toFixed(4)} mol → m(CO₂) = ${(nCO2*44).toFixed(2)} g\n`+
+    `n(H₂O) = ${nH2O.toFixed(4)} mol → m(H₂O) = ${(nH2O*18).toFixed(2)} g\n`+
+    `n(O₂) = ${nO2.toFixed(4)} mol nécessaires`;
+  // draw bar
+  const c=document.getElementById('combCanvas');if(!c)return;
+  c.width=c.offsetWidth||500;const W=c.width;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();ctx.fillRect(0,0,W,220);
+  const bars=[{label:'Combustible',n:n,col:'rgba(240,163,186,.7)'},{label:'O₂ consommé',n:nO2,col:'rgba(241,179,117,.7)'},{label:'CO₂',n:nCO2,col:'rgba(139,214,228,.7)'},{label:'H₂O',n:nH2O,col:'rgba(182,163,241,.7)'}];
+  const maxN=Math.max(...bars.map(b=>b.n));
+  const bw=40,gap=30,startX=50,maxH=150;
+  bars.forEach((b,i)=>{
+    const bh=maxH*b.n/maxN;
+    const bx=startX+i*(bw+gap);const by=maxH+20-bh;
+    ctx.fillStyle=b.col;ctx.fillRect(bx,by,bw,bh);
+    ctx.strokeStyle=b.col.replace('.7','.9');ctx.lineWidth=1;ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='rgba(240,163,186,.8)';ctx.font='9px IBM Plex Mono';
+    ctx.fillText(b.n.toFixed(3),bx,by-4);
+    ctx.fillStyle='rgba(200,170,185,.7)';ctx.font='9px Inter';
+    ctx.save();ctx.translate(bx+bw/2,maxH+35);ctx.rotate(-Math.PI/6);ctx.fillText(b.label,0,0);ctx.restore();
+  });
+}
+
+/* ══ FLASHCARDS ══ */
+const FC_DATA=[
+  {q:'Définition d\'une combustion',a:'Réaction exothermique entre un combustible (organique, riche en C/H) et le dioxygène O₂ (comburant). C\'est une oxydoréduction.'},
+  {q:'Produits d\'une combustion complète',a:'Uniquement CO₂ et H₂O. Le carbone est entièrement oxydé. Conditions : dioxygène en excès.'},
+  {q:'Équation générale — combustion complète de CₓHᵧOᵤ',a:'CₓHᵧOᵤ + (x + y/4 − z/2) O₂ → x CO₂ + y/2 H₂O. Mémoriser la formule du coefficient de O₂.'},
+  {q:'Combustion complète du méthane CH₄',a:'CH₄ + 2 O₂ → CO₂ + 2 H₂O. (x=1, y=4 : 1+4/4=2 mol O₂)'},
+  {q:'Combustion complète du propane C₃H₈',a:'C₃H₈ + 5 O₂ → 3 CO₂ + 4 H₂O. (x=3, y=8 : 3+8/4=5 mol O₂)'},
+  {q:'Combustion complète de l\'éthanol C₂H₅OH',a:'C₂H₅OH + 3 O₂ → 2 CO₂ + 3 H₂O. (x=2, y=6, z=1 : 2+6/4−1/2=3 mol O₂)'},
+  {q:'Produits d\'une combustion incomplète',a:'Monoxyde de carbone CO (incolore, inodore, toxique) et/ou carbone solide C (suie noire). Produits quand O₂ est insuffisant.'},
+  {q:'Pourquoi CO est-il mortel ?',a:'CO est incolore et inodore (indétectable). Se fixe sur l\'hémoglobine avec une affinité 250× supérieure à O₂ → asphyxie interne. 1ère cause d\'intox. accidentelle.'},
+  {q:'Signe visuel d\'une combustion incomplète',a:'Flamme jaune-orangée + dépôt de suie noire. Une flamme bleue (gaz) = combustion quasi-complète.'},
+  {q:'Combustion de H₂ — équation et intérêt',a:'2 H₂ + O₂ → 2 H₂O. Seule de l\'eau est produite. Si H₂ vert (électrolyse renouvelable) → zéro émission de CO₂.'},
+  {q:'Pouvoir calorifique — ordre de grandeur',a:'H₂ : 120 MJ/kg · Méthane : 55 MJ/kg · Essence : 47 MJ/kg · Charbon : 28–33 MJ/kg. Plus élevé = plus d\'énergie par kg.'},
+  {q:'CO₂ et réchauffement climatique',a:'CO₂ est un gaz à effet de serre : il absorbe le rayonnement infrarouge terrestre → réchauffe l\'atmosphère. La combustion de fossiles augmente sa concentration.'},
+  {q:'Comment détecter CO₂ expérimentalement ?',a:'Faire barboter les fumées dans l\'eau de chaux Ca(OH)₂. Trouble blanc lacté = CaCO₃ précipité → CO₂ confirmé.'},
+  {q:'Comment détecter H₂O expérimentalement ?',a:'Sulfate de cuivre anhydre CuSO₄ (blanc) → bleu si H₂O présente. Ou papier de chlorure de cobalt (bleu → rose).'},
+  {q:'Méthode d\'ajustement de l\'équation de combustion',a:'1. Équilibrer C → CO₂ · 2. Équilibrer H → H₂O · 3. Ajuster O₂ en dernier · 4. Multiplier par 2 pour éliminer les fractions.'},
+];
+let fcBuilt=false,fcOrder=[];
+function buildFC(){fcBuilt=true;fcOrder=[...Array(FC_DATA.length).keys()];renderFC();}
+function renderFC(){
+  const g=document.getElementById('fcGrid');if(!g)return;
+  g.innerHTML=fcOrder.map(i=>{
+    const c=FC_DATA[i];
+    return`<div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flash-front"><b>${c.q}</b><p style="font-size:11px;color:var(--faint);margin-top:8px">Cliquez pour voir la réponse</p></div>
+        <div class="flash-back">${c.a}</div>
+      </div></div>`;
+  }).join('');
+}
+function shuffleFC(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}renderFC();}
+
+/* ══ QUIZ ══ */
+const QUIZ=[
+  {q:'Quels sont les produits d\'une combustion complète d\'un hydrocarbure CₙHₘ ?',opts:['CO₂ et H₂O uniquement','CO et H₂O','CO₂ et H₂','C et CO₂'],c:0,e:'Combustion complète (O₂ suffisant) → CO₂ et H₂O. Le carbone est entièrement oxydé en CO₂.'},
+  {q:'CH₄ + ? O₂ → CO₂ + 2 H₂O. Quel est le coefficient de O₂ ?',opts:['2','3','1','4'],c:0,e:'x=1, y=4 : coefficient O₂ = 1 + 4/4 = 2. CH₄ + 2 O₂ → CO₂ + 2 H₂O. Vérification : O : 4=4 ✓'},
+  {q:'La combustion est incomplète quand :',opts:['O₂ est insuffisant → produit CO et/ou suie','O₂ est en excès','La température est trop haute','Il y a trop de combustible'],c:0,e:'O₂ insuffisant → carbone non entièrement oxydé → CO (monoxyde) et/ou C (suie). O₂ en excès → combustion complète.'},
+  {q:'Pourquoi CO est-il particulièrement dangereux ?',opts:['Incolore, inodore → indétectable + se fixe sur l\'hémoglobine','Il est très irritant pour les voies respiratoires','Il provoque des incendies','Sa densité est très élevée'],c:0,e:'CO est indétectable par les sens et bloque le transport d\'O₂ par l\'hémoglobine (affinité ×250 vs O₂) → asphyxie.'},
+  {q:'C₃H₈ + ? O₂ → 3 CO₂ + 4 H₂O. Coeff. de O₂ ?',opts:['5','3','4','7'],c:0,e:'x=3, y=8, z=0 : 3 + 8/4 = 5. C₃H₈ + 5 O₂ → 3 CO₂ + 4 H₂O.'},
+  {q:'La combustion de H₂ produit :',opts:['Uniquement H₂O (pas de CO₂)','CO₂ + H₂O','CO + H₂O','N₂ + H₂O'],c:0,e:'2 H₂ + O₂ → 2 H₂O. Pas de carbone → pas de CO₂. Si H₂ vert → bilan carbone nul.'},
+  {q:'Quel combustible a le pouvoir calorifique le plus élevé ?',opts:['H₂ (120 MJ/kg)','Méthane (55 MJ/kg)','Essence (47 MJ/kg)','Charbon (30 MJ/kg)'],c:0,e:'H₂ : 120 MJ/kg est le plus énergétique par kg, devant CH₄ (55) et l\'essence (47).'},
+  {q:'CO₂ contribue au réchauffement climatique car :',opts:['C\'est un gaz à effet de serre (absorbe rayonnement IR terrestre)','Il est toxique pour les plantes','Il refroidit la stratosphère','Il réagit avec O₃'],c:0,e:'CO₂ absorbe le rayonnement infrarouge émis par la Terre → réchauffe l\'atmosphère. La combustion de fossiles en augmente la concentration.'},
+  {q:'L\'eau de chaux trouble → ?',opts:['CO₂ présent dans les fumées (CaCO₃ précipite)','H₂O présente','CO présent','O₂ insuffisant'],c:0,e:'Ca(OH)₂ + CO₂ → CaCO₃↓ + H₂O. Le précipité blanc de CaCO₃ trouble l\'eau de chaux → CO₂ détecté.'},
+  {q:'La flamme jaune-orangée d\'un brûleur à gaz indique :',opts:['Combustion incomplète (défaut d\'O₂, suie produite)','Combustion complète','Haute température','H₂O condensée'],c:0,e:'Flamme jaune = particules de carbone (suie) incandescentes = O₂ insuffisant = combustion incomplète. Flamme bleue = complète.'},
+  {q:'C₂H₅OH (éthanol) + ? O₂ → 2 CO₂ + 3 H₂O. Coeff. ?',opts:['3','2','4','5'],c:0,e:'x=2, y=6, z=1 : 2 + 6/4 − 1/2 = 2 + 1,5 − 0,5 = 3. C₂H₅OH + 3 O₂ → 2 CO₂ + 3 H₂O.'},
+  {q:'Pour éliminer les fractions dans une équation de combustion (ex: coeff 2,5), on :',opts:['Multiplie tous les coefficients par 2','Divise par 2','Arrondit à l\'entier','Échange réactifs et produits'],c:0,e:'Si le coefficient de O₂ est demi-entier (ex: 2,5), on multiplie TOUTE l\'équation par 2 pour n\'avoir que des entiers.'},
+];
+let quizBuilt=false,qi=0,qscore=0;
+function buildQuiz(){quizBuilt=true;qi=0;qscore=0;showQ();}
+function showQ(){
+  const a=document.getElementById('quizArea');if(!a)return;
+  if(qi>=QUIZ.length){a.innerHTML=`<div class="quiz-box" style="text-align:center"><div style="font-size:52px;font-weight:800;color:var(--blue)">${qscore}/${QUIZ.length}</div><p style="color:var(--muted)">${Math.round(qscore/QUIZ.length*100)} % — ${qscore>=10?'🏆 Excellent !':qscore>=7?'👍 Bien !':'📚 Relis le cours'}</p><button class="btn primary" onclick="qi=0;qscore=0;showQ()">🔄 Recommencer</button></div>`;return;}
+  const q=QUIZ[qi];
+  a.innerHTML=`<div class="quiz-box"><div style="font-size:11px;font-weight:800;color:var(--faint);letter-spacing:.1em;margin-bottom:8px">Q ${qi+1} / ${QUIZ.length}</div>
+  <p style="font-weight:700;margin-bottom:12px">${q.q}</p>
+  ${q.opts.map((o,i)=>`<button class="option" id="opt${i}" onclick="answerQ(${i})">${o}</button>`).join('')}
+  <div id="qexp" style="display:none;margin-top:12px;padding:12px;background:var(--green2);border-radius:12px;font-size:13px;color:var(--green)"></div>
+  <button id="qnext" style="display:none;margin-top:10px" class="btn primary" onclick="qi++;showQ()">Suivante →</button>
+  </div>`;
+}
+function answerQ(i){
+  const q=QUIZ[qi];
+  document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+  document.getElementById('opt'+q.c).classList.add('correct');
+  if(i!==q.c)document.getElementById('opt'+i).classList.add('wrong');
+  else qscore++;
+  const ex=document.getElementById('qexp');ex.textContent='💡 '+q.e;ex.style.display='block';
+  document.getElementById('qnext').style.display='inline-flex';
+}
+function setPrompt(t){document.getElementById('promptBox').value=t;}
+
+/* ══ INIT ══ */
+setTimeout(()=>{calcComb();drawECE();},300);
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>

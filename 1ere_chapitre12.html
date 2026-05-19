@@ -1,181 +1,835 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>1ʳᵉ Spé · Chapitre 12 — Mouvement d'un système | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#fbf5f7;--bg2:#f6e9ee;--panel:#ffffff;--panel2:#fff8fa;--line:#ead3dc;--text:#251421;--muted:#6f5361;--faint:#a98b99;--blue:#9f4f68;--blue2:#b96a82;--blue3:#f7e6ec;--amber:#c1804a;--amber2:#fff2e7;--green:#4f8a6b;--green2:#eaf6ef;--mauve:#7859b5;--mauve2:#f1ecff;--cyan:#4f8fa4;--cyan2:#e9f6fb;--red:#b75f75;--red2:#fdecef;--shadow:0 16px 40px rgba(15,23,42,.08);--shadow2:0 8px 22px rgba(15,23,42,.055);--side:292px;--content:1460px}
+[data-theme="dark"]{--bg:#161019;--bg2:#211722;--panel:#241a26;--panel2:#2b202d;--line:#4a3440;--text:#f7edf2;--muted:#d6bdc8;--faint:#a98b99;--blue:#f0a3ba;--blue2:#d988a2;--blue3:rgba(240,163,186,.13);--amber:#f1b375;--amber2:rgba(241,179,117,.13);--green:#8bd9aa;--green2:rgba(139,217,170,.13);--mauve:#b6a3f1;--mauve2:rgba(182,163,241,.13);--cyan:#8bd6e4;--cyan2:rgba(139,214,228,.13);--red:#f09aaa;--red2:rgba(240,154,170,.13);--shadow:0 18px 50px rgba(0,0,0,.35);--shadow2:0 10px 25px rgba(0,0,0,.22)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at top left,rgba(159,79,104,.07),transparent 34rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.68;font-size:15px;min-height:100vh}
+a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}
+.skip{position:absolute;left:-999px;top:0;background:var(--blue);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.76);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:18px 14px;overflow:auto}
+[data-theme="dark"] .rail{background:rgba(17,24,39,.76)}
+.brand{display:flex;align-items:center;gap:10px;margin:2px 6px 18px}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:grid;place-items:center;color:white;box-shadow:0 12px 24px rgba(159,79,104,.20);font-weight:800}
+.brand h1{font-size:15px;line-height:1.1;margin:0;font-weight:780;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.level-card{border:1px solid var(--line);border-radius:18px;padding:14px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:14px}
+.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(159,79,104,.18);color:var(--blue);background:var(--blue3);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700}
+.micro{color:var(--faint);font-size:11px}
+.progress{height:7px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:12px}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));border-radius:999px;transition:.35s}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--faint);font-weight:800;margin:18px 8px 9px}
+.tablist{display:grid;gap:6px}
+.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:13px;padding:9px 10px;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;font-size:12.5px;text-align:left;transition:.18s;width:100%}
+.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}
+.tab.active{background:var(--tabBg,var(--blue3));color:var(--tabAccent,var(--blue));border-color:color-mix(in srgb,var(--tabAccent,var(--blue)) 48%,transparent);box-shadow:inset 4px 0 0 var(--tabAccent,var(--blue)),0 8px 18px rgba(15,23,42,.035)}
+.tab:nth-child(1){--tabBg:var(--blue3);--tabAccent:#9f4f68}.tab:nth-child(2){--tabBg:var(--amber2);--tabAccent:#c6722a}.tab:nth-child(3){--tabBg:var(--green2);--tabAccent:#357f5a}.tab:nth-child(4){--tabBg:var(--mauve2);--tabAccent:#6258b9}.tab:nth-child(5){--tabBg:var(--cyan2);--tabAccent:#3a91a3}.tab:nth-child(6){--tabBg:var(--red2);--tabAccent:#b75f75}.tab:nth-child(7){--tabBg:var(--mauve2);--tabAccent:#6258b9}.tab:nth-child(8){--tabBg:var(--green2);--tabAccent:#357f5a}.tab:nth-child(9){--tabBg:var(--amber2);--tabAccent:#c6722a}
+.tools{display:flex;gap:7px;margin-top:14px}
+.icon-btn{height:36px;min-width:36px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue)}
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(247,248,251,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+[data-theme="dark"] .topbar{background:rgba(12,17,28,.78)}
+.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--blue);font-weight:760}
+.top-actions{display:flex;gap:8px;align-items:center}
+.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 12px;cursor:pointer;font-size:12.5px;font-weight:700}
+.pill-btn:hover{border-color:var(--blue);color:var(--blue)}
+.page{max-width:var(--content);margin:0 auto;padding:26px}
+.hero{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(250px,.58fr);gap:14px;margin-bottom:14px;align-items:stretch}
+.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow2);position:relative;overflow:hidden;min-height:190px}
+.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:280px;height:280px;background:radial-gradient(circle,rgba(159,79,104,.09),transparent 68%)}
+.eyebrow{display:flex;align-items:center;gap:8px;color:var(--blue);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}
+.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:7px;color:var(--muted);font-size:12px;font-weight:650}
+.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--blue)}
+.hero h2{font-size:clamp(24px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:700}
+.hero h2 span{color:var(--blue)}
+.hero-copy{font-size:14px;color:var(--muted);max-width:78ch;margin:0}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.metric{border:1px solid var(--line);background:rgba(255,255,255,.65);border-radius:12px;padding:8px 10px}
+[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}
+.metric b{display:block;font-size:16px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}
+.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid rgba(240,163,186,.18);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}
+.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}
+.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}
+.mission-1 small{background:var(--blue3);color:var(--blue)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--mauve2);color:var(--mauve)}
+.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}
+.panel{display:none;scroll-margin-top:80px}.panel.active{display:block}
+.content-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow2);margin-bottom:16px}
+.content-card h3{margin:0 0 12px;font-size:20px;letter-spacing:-.03em;font-weight:700}
+.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}
+.toc{position:sticky;top:82px;height:fit-content}
+.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}
+.toc a:nth-of-type(1){background:var(--blue3);color:var(--blue)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--mauve2);color:var(--mauve)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.toc a:nth-of-type(6){background:var(--red2);color:var(--red)}.toc a:nth-of-type(7){background:var(--blue3);color:var(--blue)}
+.course-body{min-width:0;max-width:920px}
+.course-body h2{font-size:22px;font-weight:800;color:var(--blue);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.course-body h2:first-child{margin-top:0}
+.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}
+.course-body p{color:var(--muted);margin:10px 0}
+.course-body strong{color:var(--text)}
+.def-box{border:1px solid var(--line);border-left:4px solid var(--blue);background:var(--blue3);border-radius:0 14px 14px 0;padding:14px 18px;margin:16px 0}
+.def-box .lab{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+.prop-box{border:1px solid var(--line);border-left:4px solid var(--mauve);background:var(--mauve2);border-radius:0 14px 14px 0;padding:14px 18px;margin:16px 0}
+.prop-box .lab{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve);margin-bottom:6px}
+.warn-box{border:1px solid var(--line);border-left:4px solid var(--amber);background:var(--amber2);border-radius:0 14px 14px 0;padding:14px 18px;margin:16px 0}
+.warn-box .lab{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.ok-box{border:1px solid var(--line);border-left:4px solid var(--green);background:var(--green2);border-radius:0 14px 14px 0;padding:14px 18px;margin:16px 0}
+.ok-box .lab{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.formula{background:var(--panel2);border:1px dashed var(--line);border-radius:14px;padding:14px 18px;margin:16px 0;text-align:center;overflow-x:auto}
+.example{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:16px 0}
+.example .ex-lab{display:flex;align-items:center;gap:8px;color:var(--amber);font-weight:760;font-size:13px;margin-bottom:8px}
+table.data{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table.data th{background:var(--bg2);color:var(--muted);padding:10px 13px;text-align:left;font-weight:760;font-size:12px}
+table.data td{padding:10px 13px;border-top:1px solid var(--line);color:var(--muted)}
+table.data tr:hover td{background:var(--panel2);color:var(--text)}
+.sim-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow2);margin-bottom:16px}
+.sim-card h4{margin:0 0 14px;font-size:15px;font-weight:760}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.sim-field label{display:block;font-size:11px;color:var(--faint);font-weight:700;margin-bottom:4px}
+.sim-field input,.sim-field select{width:100%;padding:8px 11px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px}
+.sim-field input:focus,.sim-field select:focus{outline:none;border-color:var(--blue)}
+.sim-btn{background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;border:none;border-radius:10px;padding:9px 18px;font-weight:760;font-size:13px;cursor:pointer}
+.sim-out{background:var(--blue3);border:1px solid rgba(159,79,104,.2);border-radius:11px;padding:12px 16px;margin-top:13px;font-size:14px;color:var(--muted);line-height:1.85}
+.sim-out strong{color:var(--blue);font-family:'IBM Plex Mono',monospace}
+canvas.neon{width:100%;height:240px;border-radius:13px;background:var(--bg);border:1px solid rgba(240,163,186,.16);display:block;margin-top:12px}
+.fc-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fc-mode{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:8px 16px;font-weight:760;font-size:12.5px;cursor:pointer}
+.fc-mode.on{background:var(--blue3);color:var(--blue);border-color:rgba(159,79,104,.3)}
+.fc-stage{display:none}.fc-stage.on{display:block}
+.fc-scene{perspective:1400px;max-width:560px;margin:0 auto 18px;height:280px;cursor:pointer}
+.fc-3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:.55s}
+.fc-3d.flip{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.fc-front{background:linear-gradient(180deg,var(--panel),var(--panel2))}
+.fc-back{background:linear-gradient(180deg,var(--blue3),var(--panel));transform:rotateY(180deg)}
+.fc-ico{font-size:34px;margin-bottom:14px}
+.fc-q{font-size:18px;font-weight:760;color:var(--text)}
+.fc-a{font-size:15px;color:var(--muted);line-height:1.7}
+.fc-hint{position:absolute;bottom:14px;font-size:11px;color:var(--faint)}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.fc-nav button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 16px;font-weight:760;font-size:13px;cursor:pointer}
+.fc-nav button:hover{border-color:var(--blue);color:var(--blue)}
+.fc-count{font-size:13px;color:var(--faint);font-weight:700;text-align:center;margin-bottom:14px}
+.comp-card,.chrono-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow2);max-width:620px;margin:0 auto}
+.blank{display:inline-block;min-width:80px;border:none;border-bottom:2px solid var(--blue);background:transparent;color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:15px;text-align:center;padding:2px 6px}
+.blank:focus{outline:none;border-color:var(--blue2)}
+.res{margin-top:12px;padding:11px 15px;border-radius:10px;font-size:13px;font-weight:700;display:none}
+.res.ok{display:block;background:var(--green2);color:var(--green);border:1px solid rgba(79,138,107,.3)}
+.res.ko{display:block;background:var(--amber2);color:var(--amber);border:1px solid rgba(193,128,74,.3)}
+.chrono-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;max-width:620px;margin-left:auto;margin-right:auto}
+.chrono-time{font-size:30px;font-weight:800;color:var(--blue);font-family:'IBM Plex Mono',monospace}
+.chrono-time.urgent{color:var(--red);animation:bk .7s infinite}
+@keyframes bk{50%{opacity:.4}}
+.q-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow2);margin-bottom:14px}
+.q-num{font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.q-text{font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px}
+.opts{display:grid;gap:9px}
+.opt{display:flex;align-items:center;gap:11px;border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:11px 15px;cursor:pointer;font-size:14px;color:var(--muted);text-align:left;transition:.16s}
+.opt:hover:not(:disabled){border-color:var(--blue);color:var(--text)}
+.opt .lt{width:25px;height:25px;border-radius:7px;background:var(--bg2);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;flex-shrink:0}
+.opt.good{border-color:rgba(79,138,107,.45);background:var(--green2);color:var(--green)}
+.opt.good .lt{background:var(--green);color:white}
+.opt.bad{border-color:rgba(183,95,117,.45);background:var(--red2);color:var(--red)}
+.opt.bad .lt{background:var(--red);color:white}
+.q-corr{margin-top:13px;padding:13px 16px;border-radius:11px;background:var(--blue3);border:1px solid rgba(159,79,104,.2);font-size:13px;color:var(--muted);line-height:1.7;display:none}
+.q-corr.show{display:block}
+.q-next{margin-top:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 18px;font-weight:760;font-size:13px;cursor:pointer;display:none}
+.q-next.show{display:inline-block}
+.exo-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow2);margin-bottom:16px;overflow:hidden}
+.exo-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.exo-lvl{font-size:11px;font-weight:800;padding:4px 11px;border-radius:999px}
+.lvl-1{background:var(--green2);color:var(--green)}.lvl-2{background:var(--amber2);color:var(--amber)}.lvl-3{background:var(--red2);color:var(--red)}
+.exo-title{font-weight:760;font-size:15px;flex:1;min-width:200px}
+.exo-comp{font-size:11px;color:var(--faint);font-weight:700}
+.exo-body{padding:18px 20px}
+.exo-body p{margin:8px 0;color:var(--muted)}
+.exo-body details{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
+.exo-body summary{cursor:pointer;font-weight:760;color:var(--blue);font-size:13.5px}
+.exo-body details[open] summary{margin-bottom:10px}
+.mm-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line);background:var(--panel)}
+.terminale-card{background:linear-gradient(135deg,var(--mauve2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow2);margin-bottom:16px}
+.terminale-card h4{margin:0 0 10px;font-size:16px;color:var(--mauve);font-weight:780}
+.pheT-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.phet-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}
+.phet-top{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.phet-top b{font-size:14px}.phet-top span{font-size:11px;color:var(--faint);margin-left:auto;border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+.phet-frame{position:relative;padding-bottom:62%;background:var(--bg2)}
+.phet-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.phet-cap{padding:11px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
+.foot{text-align:center;color:var(--faint);font-size:12px;padding:30px 0 10px}
+@media(max-width:1080px){.app{grid-template-columns:1fr}.rail{position:fixed;left:-300px;z-index:90;transition:.3s;width:280px}.rail.open{left:0}.hero{grid-template-columns:1fr}.course-grid{grid-template-columns:1fr}.toc{position:static}.menu-btn{display:grid!important}}
+.menu-btn{display:none;height:36px;width:36px;border:1px solid var(--line);background:var(--panel);border-radius:10px;place-items:center;cursor:pointer}
+@media(min-width:1081px){.menu-btn{display:none}}
 </style>
 </head>
 <body>
-
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail" id="rail">
+  <div class="brand"><div class="brand-mark">Ω</div><div><h1>PhysiChem Omnis</h1><p>1ère Spé · Physique</p></div></div>
   <div class="level-card">
-    <div class="level-row">
-      <span class="badge">1ʳᵉ Spé</span>
-      <span class="micro">Chap. 12</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
+    <div class="level-row"><span class="badge">🏃 Chapitre 12</span><span class="micro">Thème 2</span></div>
+    <div style="font-weight:780;margin-top:10px;font-size:14px;letter-spacing:-.02em">Mouvement d'un système</div>
+    <div class="progress"><span id="masteryBar"></span></div>
+    <div class="micro" style="margin-top:7px">Maîtrise : <b id="masteryTxt">0%</b></div>
   </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
+  <div class="nav-label">Navigation</div>
+  <div class="tablist" role="tablist">
+    <button class="tab active" onclick="go('cours',this)">📚 Cours</button>
+    <button class="tab" onclick="go('relations',this)">🧮 Relations &amp; Dimensions</button>
+    <button class="tab" onclick="go('exos',this)">✏️ Exercices</button>
+    <button class="tab" onclick="go('fc',this)">🃏 Flashcards</button>
+    <button class="tab" onclick="go('quiz',this)">🤖 Quiz &amp; Chatbot</button>
+    <button class="tab" onclick="go('mm',this)">🧠 Carte mentale</button>
+    <button class="tab" onclick="go('sim',this)">🔬 Simulations</button>
+    <button class="tab" onclick="go('ece',this)">⚗️ ECE</button>
+    <button class="tab" onclick="go('term',this)">🚀 Vers Terminale</button>
   </div>
-
   <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
+    <button class="icon-btn" onclick="toggleTheme()" id="thBtn" title="Thème">🌙</button>
+    <a class="icon-btn" href="index.html" title="Accueil">🏠</a>
+    <button class="icon-btn" onclick="window.print()" title="Imprimer">🖨️</button>
   </div>
+</aside>
+
+<div class="main">
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px"><button class="menu-btn" onclick="document.getElementById('rail').classList.toggle('open')">☰</button><div class="crumb">1ère Spé › Mouvement et interactions › <b>Mouvement d'un système</b></div></div>
+  <div class="top-actions"><span class="pill-btn" id="pctPill">0 %</span><button class="pill-btn" onclick="toggleTheme()">Thème</button></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<main class="page" id="main">
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">1ʳᵉ Spé · Chap. 12</div>
-    <h1 class="hero-title">Mouvement d'un sy<span>stème | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
+<section class="hero">
+  <div class="hero-card">
+    <div class="eyebrow">🏃 Thème 2 — Mouvement et interactions</div>
+    <div class="instructor">Cours rédigé pour la Première Spécialité</div>
+    <h2>Mouvement <span>d'un système</span></h2>
+    <p class="hero-copy">Décrire un mouvement exige un <strong>référentiel</strong>, une <strong>trajectoire</strong> et le <strong>vecteur vitesse</strong>. Sa variation \(\Delta\vec v\) révèle l'action des forces : c'est le cœur des <strong>lois de Newton</strong>.</p>
+    <div class="hero-grid">
+      <div class="metric"><b>\(\vec v\)</b><span>tangent à la traj.</span></div>
+      <div class="metric"><b>\(\Delta\vec v\parallel\sum\vec F\)</b><span>lien clé</span></div>
+      <div class="metric"><b>\(\sum\vec F=m\vec a\)</b><span>2ᵉ loi</span></div>
+    </div>
+  </div>
+  <div class="hero-canvas-wrap"><canvas id="heroCv"></canvas></div>
+</section>
+
+<div class="useful-strip">
+  <div class="useful-card mission-1"><small>OBJECTIF 1</small><b>Choisir un référentiel</b><span>La trajectoire dépend du référentiel.</span></div>
+  <div class="useful-card mission-2"><small>OBJECTIF 2</small><b>Construire \(\vec v\) et \(\Delta\vec v\)</b><span>Méthode des milieux sur chronophoto.</span></div>
+  <div class="useful-card mission-3"><small>OBJECTIF 3</small><b>Appliquer Newton</b><span>Inertie, \(\sum\vec F=m\vec a\), action–réaction.</span></div>
+</div>
+
+<!-- ====================== COURS ====================== -->
+<section class="panel active" id="p-cours">
+<div class="course-grid">
+  <aside class="toc">
+    <div class="toc-title">Plan du cours</div>
+    <a href="#c1">I · Décrire un mouvement</a>
+    <a href="#c2">II · Vecteur vitesse</a>
+    <a href="#c3">III · Variation Δv⃗</a>
+    <a href="#c4">IV · Lois de Newton</a>
+    <a href="#c5">V · Méthodes</a>
+    <a href="#c6">Bilan &amp; pièges</a>
+  </aside>
+  <div class="course-body">
+
+    <h2 id="c1">I · Décrire un mouvement</h2>
+    <div class="def-box"><div class="lab">Système, référentiel, trajectoire</div>
+      <p>— <strong>Système</strong> : objet étudié, modélisé par un <strong>point matériel</strong> (son centre de masse) si ses dimensions sont négligeables devant le mouvement.<br>
+         — <strong>Référentiel</strong> : solide de référence muni d'une horloge, par rapport auquel on décrit le mouvement.<br>
+         — <strong>Trajectoire</strong> : ensemble des positions successives du point au cours du temps.</p>
+    </div>
+    <div class="warn-box"><div class="lab">⚠️ La trajectoire dépend du référentiel</div>
+      <p>Un point sur la roue d'un vélo décrit un cercle dans le référentiel du cycliste, mais une cycloïde dans le référentiel du sol. <strong>Toujours préciser le référentiel.</strong> Référentiels usuels : terrestre, géocentrique, héliocentrique.</p>
+    </div>
+    <table class="data">
+      <thead><tr><th>Trajectoire</th><th>Mouvement</th><th>Condition (forces)</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>Rectiligne</td><td>Uniforme (\(v\) constante)</td><td>\(\sum\vec F=\vec 0\)</td><td>Voiture en régulateur</td></tr>
+        <tr><td>Rectiligne</td><td>Accéléré / freiné</td><td>\(\sum\vec F\neq\vec 0\), colinéaire à \(\vec v\)</td><td>Freinage d'urgence</td></tr>
+        <tr><td>Parabolique</td><td>—</td><td>Champ de pesanteur uniforme</td><td>Lancer oblique, chute libre</td></tr>
+        <tr><td>Circulaire</td><td>Uniforme ou non</td><td>Force centripète</td><td>Satellite, manège</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="c2">II · Le vecteur vitesse</h2>
+    <p>Le vecteur vitesse \(\vec v\) est toujours <strong>tangent à la trajectoire</strong> et orienté dans le sens du mouvement.</p>
+    <div class="def-box"><div class="lab">Méthode des milieux (chronophotographie)</div>
+      <div class="formula">$$\vec v_i\approx\dfrac{\overrightarrow{M_{i-1}M_{i+1}}}{2\,\Delta t}\qquad v_i=\dfrac{M_{i-1}M_{i+1}}{2\,\Delta t}$$</div>
+      <p>\(\Delta t\) = durée entre deux positions successives (en \(\mathrm s\)). Le vecteur vitesse en \(M_i\) s'estime à partir des points qui l'<strong>encadrent</strong>.</p>
+    </div>
+    <table class="data">
+      <thead><tr><th>Grandeur</th><th>Signification</th><th>Unité</th></tr></thead>
+      <tbody>
+        <tr><td>\(\vec v_i\)</td><td>Vecteur vitesse au point \(M_i\)</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+        <tr><td>\(M_{i-1}M_{i+1}\)</td><td>Distance entre les points encadrants</td><td>\(\mathrm m\)</td></tr>
+        <tr><td>\(\Delta t\)</td><td>Durée entre deux positions</td><td>\(\mathrm s\)</td></tr>
+      </tbody>
+    </table>
+    <div class="example"><div class="ex-lab">💡 Exemple corrigé — lecture de chronophotographie</div>
+      <p>\(\Delta t=40\,\mathrm{ms}=0{,}040\,\mathrm s\), \(M_0M_2=8{,}0\,\mathrm{cm}=0{,}080\,\mathrm m\).</p>
+      <div class="formula">$$v_1=\dfrac{M_0M_2}{2\Delta t}=\dfrac{0{,}080}{2\times0{,}040}=1{,}0\ \mathrm{m\,s^{-1}}$$</div>
+      <p>Si les points sont équidistants, \(v\) est constante : mouvement uniforme. Conversion : \(1\ \mathrm{m\,s^{-1}}=3{,}6\ \mathrm{km\,h^{-1}}\).</p>
+    </div>
+
+    <h2 id="c3">III · Le vecteur variation de vitesse \(\Delta\vec v\)</h2>
+    <div class="def-box"><div class="lab">Définition</div>
+      <div class="formula">$$\Delta\vec v_i=\vec v_{i+1}-\vec v_i$$</div>
+      <p>— \(\Delta\vec v=\vec 0\) ⇒ \(\vec v\) constant ⇒ mouvement rectiligne uniforme.<br>
+         — \(\Delta\vec v\neq\vec 0\) ⇒ la vitesse change (norme et/ou direction) : le mouvement est modifié.</p>
+    </div>
+    <div class="prop-box"><div class="lab">Lien fondamental forces ↔ mouvement</div>
+      <p>Le vecteur \(\Delta\vec v\) a la <strong>même direction et le même sens</strong> que la résultante des forces \(\sum\vec F\). C'est ce qui permet, à partir d'une chronophotographie, de remonter à la direction des forces.</p>
+    </div>
+    <div class="ok-box"><div class="lab">Construction graphique de Δv⃗</div>
+      <p>① Reporter \(\vec v_i\) et \(\vec v_{i+1}\) à partir d'une même origine.<br>
+         ② \(\Delta\vec v\) joint l'extrémité de \(\vec v_i\) à celle de \(\vec v_{i+1}\).<br>
+         ③ Sa direction donne celle de \(\sum\vec F\).</p>
+    </div>
+
+    <h2 id="c4">IV · Les lois de Newton</h2>
+    <div class="def-box"><div class="lab">1ʳᵉ loi — Principe d'inertie</div>
+      <p>Dans un référentiel galiléen : \(\sum\vec F=\vec 0\ \Longleftrightarrow\ \vec v=\overrightarrow{\text{constante}}\). Le système est au repos ou en mouvement rectiligne uniforme. <strong>La réciproque est vraie.</strong></p>
+    </div>
+    <div class="def-box"><div class="lab">2ᵉ loi — Principe fondamental de la dynamique</div>
+      <div class="formula">$$\boxed{\;\sum\vec F=m\,\vec a=m\,\dfrac{\Delta\vec v}{\Delta t}\;}$$</div>
+      <p>\(\sum\vec F\) en \(\mathrm N\), \(m\) en \(\mathrm{kg}\), \(\vec a\) en \(\mathrm{m\,s^{-2}}\). La résultante est <strong>proportionnelle</strong> à l'accélération : si \(\sum\vec F\) double, \(\vec a\) double.</p>
+    </div>
+    <div class="prop-box"><div class="lab">3ᵉ loi — Action et réaction</div>
+      <p>Si \(A\) exerce \(\vec F_{A/B}\) sur \(B\), alors \(B\) exerce sur \(A\) : \(\vec F_{B/A}=-\vec F_{A/B}\). Même droite d'action, même norme, sens opposés. <strong>Les deux forces s'appliquent sur des objets différents</strong> (elles ne se compensent donc pas).</p>
+    </div>
+
+    <h2 id="c5">V · Méthode d'étude d'un mouvement</h2>
+    <div class="ok-box"><div class="lab">Démarche type</div>
+      <p>① Définir le <strong>système</strong>. ② Choisir le <strong>référentiel</strong> (supposé galiléen). ③ Faire le <strong>bilan des forces</strong>. ④ Construire \(\vec v\) puis \(\Delta\vec v\) (échelle imposée). ⑤ Conclure sur \(\sum\vec F\) (direction, sens) et la nature du mouvement.</p>
+    </div>
+
+    <h2 id="c6">Bilan &amp; pièges à éviter</h2>
+    <div class="ok-box"><div class="lab">L'essentiel</div>
+      <p>— \(\vec v\) tangent à la trajectoire ; méthode des milieux \(v_i=M_{i-1}M_{i+1}/(2\Delta t)\).<br>
+         — \(\Delta\vec v\) même direction/sens que \(\sum\vec F\).<br>
+         — Inertie : \(\sum\vec F=\vec 0\Leftrightarrow\vec v\) constant.<br>
+         — 2ᵉ loi : \(\sum\vec F=m\vec a\). 3ᵉ loi : \(\vec F_{A/B}=-\vec F_{B/A}\).</p>
+    </div>
+    <div class="warn-box"><div class="lab">⚠️ Erreurs classiques</div>
+      <p>— Croire que \(\vec v\) constant ⇒ \(v\) constante : faux si la <strong>direction</strong> change (mouvement circulaire uniforme : \(\vec v\) varie !).<br>
+         — Confondre vitesse (\(\mathrm{m\,s^{-1}}\)) et accélération (\(\mathrm{m\,s^{-2}}\)).<br>
+         — Oublier de préciser le référentiel.<br>
+         — Croire qu'action et réaction se compensent (elles agissent sur deux corps distincts).</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ====================== RELATIONS ====================== -->
+<section class="panel" id="p-relations">
+<div class="content-card">
+  <h3>🧮 Relations, grandeurs &amp; dimensions</h3>
+  <table class="data">
+    <thead><tr><th>Relation</th><th>Énoncé</th><th>Unités</th></tr></thead>
+    <tbody>
+      <tr><td>\(\vec v_i=\dfrac{\overrightarrow{M_{i-1}M_{i+1}}}{2\Delta t}\)</td><td>Vecteur vitesse (méthode des milieux)</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+      <tr><td>\(\Delta\vec v=\vec v_{i+1}-\vec v_i\)</td><td>Vecteur variation de vitesse</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+      <tr><td>\(\vec a=\dfrac{\Delta\vec v}{\Delta t}\)</td><td>Vecteur accélération</td><td>\(\mathrm{m\,s^{-2}}\)</td></tr>
+      <tr><td>\(\sum\vec F=m\,\vec a\)</td><td>2ᵉ loi de Newton</td><td>\(\mathrm N\) ; \(m\) en \(\mathrm{kg}\)</td></tr>
+      <tr><td>\(\vec F_{A/B}=-\vec F_{B/A}\)</td><td>3ᵉ loi (action–réaction)</td><td>\(\mathrm N\)</td></tr>
+    </tbody>
+  </table>
+  <div class="prop-box"><div class="lab">Méthode d'isolement</div>
+    <p>De \(\sum F=m\,a\) : \(a=\dfrac{\sum F}{m}\) ou \(m=\dfrac{\sum F}{a}\). De \(v=\dfrac{d}{2\Delta t}\) : \(\Delta t=\dfrac{d}{2v}\). Toujours convertir cm→m, ms→s avant le calcul.</p>
+  </div>
+  <div class="warn-box"><div class="lab">⚠️ Conversions vitesses</div>
+    <p>\(1\ \mathrm{m\,s^{-1}}=3{,}6\ \mathrm{km\,h^{-1}}\) · \(1\ \mathrm{km\,h^{-1}}=\dfrac{1}{3{,}6}\approx0{,}278\ \mathrm{m\,s^{-1}}\). Ex : \(72\ \mathrm{km\,h^{-1}}=20\ \mathrm{m\,s^{-1}}\).</p>
+  </div>
+</div>
+</section>
+
+<!-- ====================== EXERCICES ====================== -->
+<section class="panel" id="p-exos">
+<div class="content-card">
+  <h3>✏️ Exercices progressifs</h3>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-1">S'entraîner</span><span class="exo-title">1 · Référentiel et trajectoire</span><span class="exo-comp">APP</span></div>
+    <div class="exo-body">
+      <p>Un voyageur assis dans un train laisse tomber une bille. Décrire la trajectoire de la bille : (a) dans le référentiel du wagon ; (b) dans le référentiel du quai (train à vitesse constante).</p>
+      <details><summary>Voir la correction</summary>
+        <p>(a) Dans le wagon : trajectoire <strong>rectiligne verticale</strong> (chute droite). (b) Sur le quai : trajectoire <strong>parabolique</strong> (la bille garde la vitesse horizontale du train). <em>La trajectoire dépend du référentiel.</em></p>
+      </details>
     </div>
   </div>
 
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-1">S'entraîner</span><span class="exo-title">2 · Conversions de vitesse</span><span class="exo-comp">APP</span></div>
+    <div class="exo-body">
+      <p>Convertir : (a) \(90\ \mathrm{km\,h^{-1}}\) en \(\mathrm{m\,s^{-1}}\) ; (b) \(15\ \mathrm{m\,s^{-1}}\) en \(\mathrm{km\,h^{-1}}\).</p>
+      <details><summary>Voir la correction</summary>
+        <p>(a) \(90/3{,}6=25\ \mathrm{m\,s^{-1}}\). (b) \(15\times3{,}6=54\ \mathrm{km\,h^{-1}}\).</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-2">Appliquer</span><span class="exo-title">3 · Vitesse par méthode des milieux</span><span class="exo-comp">REA · VAL</span></div>
+    <div class="exo-body">
+      <p>Sur une chronophotographie, \(\Delta t=60\,\mathrm{ms}\). On mesure \(M_2M_4=9{,}0\,\mathrm{cm}\). Calculer \(v_3\).</p>
+      <details><summary>Voir la correction</summary>
+        <div class="formula">$$v_3=\dfrac{M_2M_4}{2\Delta t}=\dfrac{0{,}090}{2\times0{,}060}=0{,}75\ \mathrm{m\,s^{-1}}$$</div>
+        <p><em>Méthode : convertir cm→m (0,090 m) et ms→s (0,060 s) avant le calcul.</em></p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-2">Appliquer</span><span class="exo-title">4 · Deuxième loi de Newton</span><span class="exo-comp">APP · REA</span></div>
+    <div class="exo-body">
+      <p>Un chariot de masse \(m=3{,}0\,\mathrm{kg}\) est soumis à une résultante \(\sum F=12\,\mathrm N\). 1) Calculer l'accélération. 2) Si on double la force, que devient \(a\) ?</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) \(a=\dfrac{\sum F}{m}=\dfrac{12}{3{,}0}=4{,}0\ \mathrm{m\,s^{-2}}\).</p>
+        <p>2) \(\sum F\) doublée ⇒ \(a\) doublée \(=8{,}0\ \mathrm{m\,s^{-2}}\) (proportionnalité).</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-3">Approfondir</span><span class="exo-title">5 · Δv⃗ et direction des forces</span><span class="exo-comp">ANA · VAL</span></div>
+    <div class="exo-body">
+      <p>Une bille décrit une trajectoire courbe. En un point, \(\vec v_i\) (vers la droite, \(2{,}0\,\mathrm{m\,s^{-1}}\)) et \(\vec v_{i+1}\) (vers le haut-droite, \(2{,}0\,\mathrm{m\,s^{-1}}\)). 1) La norme change-t-elle ? 2) \(\Delta\vec v\) est-il nul ? 3) Que peut-on dire de \(\sum\vec F\) ?</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) Non, la norme reste \(2{,}0\,\mathrm{m\,s^{-1}}\). 2) \(\Delta\vec v=\vec v_{i+1}-\vec v_i\neq\vec 0\) car la <strong>direction</strong> change. 3) \(\sum\vec F\) est non nulle, dirigée selon \(\Delta\vec v\) (vers l'intérieur de la courbe). <em>Vitesse de norme constante ≠ mouvement sans force.</em></p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-3">Approfondir</span><span class="exo-title">6 · Chute libre — chronophotographie</span><span class="exo-comp">ANA · REA · VAL</span></div>
+    <div class="exo-body">
+      <p>Bille lâchée sans vitesse, \(\Delta t=40\,\mathrm{ms}\). Positions (cm) : \(M_0=0\), \(M_1=0{,}8\), \(M_2=3{,}1\), \(M_3=7{,}1\), \(M_4=12{,}5\). 1) Calculer \(v_1\) et \(v_3\). 2) Le mouvement est-il uniforme ? 3) Estimer l'accélération.</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) \(v_1=\dfrac{M_0M_2}{2\Delta t}=\dfrac{0{,}031}{0{,}080}\approx0{,}39\ \mathrm{m\,s^{-1}}\) ; \(v_3=\dfrac{M_2M_4}{2\Delta t}=\dfrac{0{,}125-0{,}031}{0{,}080}\approx1{,}18\ \mathrm{m\,s^{-1}}\).</p>
+        <p>2) Non : \(v\) augmente ⇒ mouvement <strong>rectiligne accéléré</strong>.</p>
+        <p>3) \(a\approx\dfrac{\Delta v}{\Delta t}=\dfrac{1{,}18-0{,}39}{2\times0{,}040}\approx 9{,}9\ \mathrm{m\,s^{-2}}\approx g\). Cohérent avec une chute libre.</p>
+      </details>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ====================== FLASHCARDS ====================== -->
+<section class="panel" id="p-fc">
+<div class="content-card">
+  <h3>🃏 Flashcards — 15 cartes · 3 modes</h3>
+  <div class="fc-toolbar">
+    <button class="fc-mode on" onclick="fcMode('libre',this)">📖 Révision libre</button>
+    <button class="fc-mode" onclick="fcMode('comp',this)">✍️ Complétion</button>
+    <button class="fc-mode" onclick="fcMode('chrono',this)">⏱️ Chrono 2 min</button>
+  </div>
+  <div class="fc-stage on" id="fc-libre">
+    <div class="fc-count" id="fcCount">Carte 1 / 15</div>
+    <div class="fc-scene" onclick="fcFlip()"><div class="fc-3d" id="fc3d">
+      <div class="fc-face fc-front"><div class="fc-ico" id="fcIco">🏃</div><div class="fc-q" id="fcQ">—</div><div class="fc-hint">Cliquez pour retourner</div></div>
+      <div class="fc-face fc-back"><div class="fc-a" id="fcA">—</div><div class="fc-hint">Cliquez pour revenir</div></div>
+    </div></div>
+    <div class="fc-nav"><button onclick="fcPrev()">← Préc.</button><button onclick="fcFlip()">↻ Retourner</button><button onclick="fcNext()">Suiv. →</button><button onclick="fcShuffle()">🔀 Mélanger</button></div>
+  </div>
+  <div class="fc-stage" id="fc-comp">
+    <div class="fc-count">Score : <b id="compScore">0</b></div>
+    <div class="comp-card" id="compCard"></div>
+  </div>
+  <div class="fc-stage" id="fc-chrono">
+    <div class="chrono-top"><div class="chrono-time" id="chTime">2:00</div><div style="font-weight:760;color:var(--faint)" id="chCount">0 / 10</div></div>
+    <div class="chrono-card" id="chCard"><div style="text-align:center"><div style="font-size:17px;font-weight:760;margin-bottom:18px">Prêt ?</div><div><button class="sim-btn" onclick="chStart()">▶ Démarrer</button></div></div></div>
+  </div>
+</div>
+</section>
+
+<!-- ====================== QUIZ ====================== -->
+<section class="panel" id="p-quiz">
+<div class="content-card">
+  <h3>🤖 Quiz — 12 questions</h3>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div style="flex:1;height:7px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden"><span id="qBar" style="display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--amber));transition:.3s"></span></div>
+    <span style="font-size:13px;font-weight:760;color:var(--faint)" id="qProg">Q 1 / 12</span>
+    <span class="pill-btn" id="qScore">Score 0</span>
+  </div>
+  <div id="qBox"></div>
+  <div id="qEnd" style="display:none;text-align:center;padding:30px">
+    <div style="font-size:46px;font-weight:800;color:var(--blue)" id="qFinal">—</div>
+    <p style="color:var(--muted)" id="qMsg">—</p>
+    <button class="sim-btn" onclick="quizStart()">🔄 Recommencer</button>
+  </div>
+</div>
+<div class="content-card">
+  <h3>💬 Chatbot — réviser avec une IA</h3>
+  <p style="color:var(--muted);font-size:13.5px">Copie ce prompt dans <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong> ou <strong>Copilot</strong>.</p>
+  <div class="formula" style="text-align:left;font-size:13px" id="botPrompt">Tu es professeur de physique-chimie en Première Spécialité. Aide-moi sur le chapitre « Mouvement d'un système » : système et point matériel, référentiel, trajectoire, vecteur vitesse (méthode des milieux \(v_i=M_{i-1}M_{i+1}/2\Delta t\)), vecteur variation de vitesse \(\Delta\vec v\), lois de Newton (inertie, \(\sum\vec F=m\vec a\), action–réaction). Donne définitions, méthode, formules en LaTeX, unités, un exemple corrigé et les pièges fréquents. Mon niveau : Première Spé.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="sim-btn" onclick="copyBot()">📋 Copier le prompt</button>
+    <a class="pill-btn" href="https://claude.ai/" target="_blank" rel="noopener">Claude ↗</a>
+    <a class="pill-btn" href="https://chat.openai.com/" target="_blank" rel="noopener">ChatGPT ↗</a>
+    <a class="pill-btn" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a>
+    <a class="pill-btn" href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Copilot ↗</a>
+  </div>
+</div>
+</section>
+
+<!-- ====================== CARTE MENTALE ====================== -->
+<section class="panel" id="p-mm">
+<div class="content-card">
+  <h3>🧠 Carte mentale</h3>
+  <div style="display:flex;gap:8px;margin-bottom:14px"><button class="sim-btn" onclick="drawMM()">🗺️ Afficher</button><button class="pill-btn" onclick="dlMM()">⬇️ PNG</button></div>
+  <div class="mm-wrap"><canvas id="mmCv" width="980" height="560" style="width:100%;display:block"></canvas></div>
+</div>
+</section>
+
+<!-- ====================== SIMULATIONS ====================== -->
+<section class="panel" id="p-sim">
+<div class="sim-card">
+  <h4>📐 Simulateur — Vitesse par méthode des milieux</h4>
+  <div class="sim-grid">
+    <div class="sim-field"><label>M(i-1)M(i+1) (cm)</label><input id="v-d" value="8.0"></div>
+    <div class="sim-field"><label>Δt (ms)</label><input id="v-dt" value="40"></div>
+  </div>
+  <button class="sim-btn" onclick="calcV()">Calculer v</button>
+  <div class="sim-out" id="vOut">Le vecteur vitesse est tangent à la trajectoire.</div>
+  <canvas class="neon" id="vCv"></canvas>
+</div>
+
+<div class="sim-card">
+  <h4>⚖️ Simulateur — 2ᵉ loi de Newton</h4>
+  <div class="sim-grid">
+    <div class="sim-field"><label>ΣF (N)</label><input id="n-f" value="12"></div>
+    <div class="sim-field"><label>m (kg)</label><input id="n-m" value="3"></div>
+  </div>
+  <button class="sim-btn" onclick="calcN()">Calculer a</button>
+  <div class="sim-out" id="nOut">ΣF = m·a : la résultante est proportionnelle à l'accélération.</div>
+  <canvas class="neon" id="nCv"></canvas>
+</div>
+
+<div class="content-card">
+  <h3>🔬 Simulations PhET</h3>
+  <div class="pheT-grid">
+    <div class="phet-card">
+      <div class="phet-top"><span style="font-size:20px">🏃</span><b>Forces et mouvement</b><span>PhET</span></div>
+      <div class="phet-frame"><iframe src="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_fr.html" allowfullscreen loading="lazy"></iframe></div>
+      <div class="phet-cap"><strong>Mission :</strong> appliquez une force et observez \(\sum\vec F=m\vec a\) ; force nulle ⇒ vitesse constante.</div>
+    </div>
+    <div class="phet-card">
+      <div class="phet-top"><span style="font-size:20px">🎯</span><b>Mouvement de projectile</b><span>PhET</span></div>
+      <div class="phet-frame"><iframe src="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_fr.html" allowfullscreen loading="lazy"></iframe></div>
+      <div class="phet-cap"><strong>Mission :</strong> repérez la trajectoire parabolique et le vecteur vitesse tangent.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ====================== ECE ====================== -->
+<section class="panel" id="p-ece">
+<div class="content-card">
+  <h3>⚗️ ECE — Étude chronophotographique d'un mouvement</h3>
+  <div class="def-box"><div class="lab">Objectif</div><p>Déterminer le vecteur vitesse et le vecteur variation de vitesse à partir d'un enregistrement vidéo, et en déduire la direction des forces.</p></div>
+  <h4 style="margin:18px 0 8px;font-weight:760">Protocole</h4>
+  <p style="color:var(--muted)">1. Filmer le mouvement avec une référence d'échelle visible.<br>
+     2. Pointer les positions successives image par image (logiciel de pointage).<br>
+     3. Relever \(\Delta t\) (= 1 / fréquence d'acquisition).<br>
+     4. Calculer \(v_i=\dfrac{M_{i-1}M_{i+1}}{2\Delta t}\) puis tracer les vecteurs \(\vec v\) à l'échelle.<br>
+     5. Construire \(\Delta\vec v\) et en déduire la direction de \(\sum\vec F\).</p>
+  <div class="prop-box"><div class="lab">Exploitation</div><p>Si les \(\vec v\) sont égaux ⇒ MRU ⇒ \(\sum\vec F=\vec 0\). Sinon, \(\Delta\vec v\) pointe dans la direction de la résultante des forces (ex : vers le bas en chute libre).</p></div>
+  <canvas class="neon" id="eceCv"></canvas>
+  <div class="warn-box"><div class="lab">⚠️ Précautions</div><p>Caméra fixe et perpendiculaire au plan du mouvement. Échelle bien mesurée. Incertitudes de pointage ⇒ ne pas surinterpréter de petites variations.</p></div>
+</div>
+</section>
+
+<!-- ====================== VERS TERMINALE ====================== -->
+<section class="panel" id="p-term">
+<div class="terminale-card">
+  <h4>🚀 Ce qui sera réutilisé en Terminale</h4>
+  <p style="color:var(--muted)">— Le <strong>vecteur accélération</strong> \(\vec a=\dfrac{d\vec v}{dt}\) et les équations horaires.<br>
+     — La <strong>2ᵉ loi de Newton</strong> appliquée aux chutes, projectiles et satellites.<br>
+     — Les <strong>mouvements dans un champ uniforme</strong> (pesanteur, électrique).<br>
+     — Les <strong>théorèmes énergétiques</strong> (énergie cinétique, mécanique).</p>
+</div>
+<div class="content-card">
+  <h3>🎯 Mini-défi anticipé</h3>
+  <p style="color:var(--muted)">Un palet sur une table à coussin d'air est lancé puis n'est soumis qu'à des forces qui se compensent. En anticipant la 1ʳᵉ loi de Newton, quelle est la nature de son mouvement ? Que vaut \(\Delta\vec v\) ?</p>
+  <details class="exo-body"><summary style="cursor:pointer;font-weight:760;color:var(--mauve)">Voir la piste</summary>
+    <p>\(\sum\vec F=\vec 0\) ⇒ principe d'inertie ⇒ mouvement <strong>rectiligne uniforme</strong>, \(\vec v\) constant donc \(\Delta\vec v=\vec 0\). En Terminale, on le confirmera par \(\sum\vec F=m\vec a\Rightarrow\vec a=\vec 0\).</p>
+  </details>
+</div>
+</section>
+
+<div class="foot">PhysiChem Omnis · 1ère Spé · Chapitre 12 — Mouvement d'un système</div>
+</main>
 </div>
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+(function(){var t=localStorage.getItem('pco_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('thBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){var h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('thBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pco_theme',n);drawHero();if(document.getElementById('p-mm').classList.contains('active'))drawMM();}
+var visited=new Set();
+function go(id,btn){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('p-'+id).classList.add('active');btn.classList.add('active');
+  document.getElementById('rail').classList.remove('open');window.scrollTo(0,0);
+  visited.add(id);updateMastery();
+  if(id==='mm')setTimeout(drawMM,60);
+  if(id==='ece')setTimeout(drawECE,60);
+  if(id==='sim'){setTimeout(function(){calcV();calcN();},60);}
+  if(id==='fc'&&!fcReady){fcRender();fcReady=true;}
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();
+}
+function updateMastery(){var tot=9,n=visited.size,pct=Math.round(n/tot*100);document.getElementById('masteryBar').style.width=pct+'%';document.getElementById('masteryTxt').textContent=pct+'%';document.getElementById('pctPill').textContent=pct+' %';}
+updateMastery();
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* HERO — chronophotographie parabolique + vecteurs vitesse */
+function drawHero(){
+  var c=document.getElementById('heroCv');if(!c)return;
+  var w=c.width=c.offsetWidth,h=c.height=c.offsetHeight||210,x=c.getContext('2d'),t=0;
+  function frame(){
+    x.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();x.fillRect(0,0,w,h);
+    var n=9;
+    for(var i=0;i<n;i++){
+      var px=20+i*(w-40)/(n-1);
+      var u=i/(n-1);
+      var py=h-26-(Math.sin(u*Math.PI))*(h-70);
+      // point néon
+      var g=x.createRadialGradient(px,py,0,px,py,8);
+      g.addColorStop(0,'rgba(240,163,186,.95)');g.addColorStop(1,'rgba(240,163,186,0)');
+      x.fillStyle=g;x.beginPath();x.arc(px,py,8,0,7);x.fill();
+      x.fillStyle='#ffd9e4';x.beginPath();x.arc(px,py,3,0,7);x.fill();
+      // vecteur vitesse tangent (entre points)
+      if(i>0&&i<n-1){
+        var ppx=20+(i+1)*(w-40)/(n-1),ppy=h-26-(Math.sin((i+1)/(n-1)*Math.PI))*(h-70);
+        var mpx=20+(i-1)*(w-40)/(n-1),mpy=h-26-(Math.sin((i-1)/(n-1)*Math.PI))*(h-70);
+        var dx=(ppx-mpx),dy=(ppy-mpy),L=Math.hypot(dx,dy);dx/=L;dy/=L;
+        var sc=26,blink=(Math.sin(t*0.06+i)*0.3+0.7);
+        x.strokeStyle='rgba(241,179,117,'+blink+')';x.lineWidth=2;
+        x.beginPath();x.moveTo(px,py);x.lineTo(px+dx*sc,py+dy*sc);x.stroke();
+        x.beginPath();x.moveTo(px+dx*sc,py+dy*sc);x.lineTo(px+dx*sc-dy*4-dx*5,py+dy*sc+dx*4-dy*5);x.lineTo(px+dx*sc+dy*4-dx*5,py+dy*sc-dx*4-dy*5);x.fillStyle='rgba(241,179,117,'+blink+')';x.fill();
+      }
+    }
+    x.fillStyle='rgba(240,163,186,.55)';x.font='12px Inter';x.fillText('v⃗ tangent à la trajectoire',16,18);
+    t++;requestAnimationFrame(frame);
+  }
+  frame();
+}
+drawHero();
+window.addEventListener('resize',function(){drawHero();});
+
+/* SIM VITESSE */
+function calcV(){
+  var d=parseFloat(document.getElementById('v-d').value)||0,dt=parseFloat(document.getElementById('v-dt').value)||1;
+  var dm=d/100,dts=dt/1000,v=dm/(2*dts);
+  document.getElementById('vOut').innerHTML='v = M(i-1)M(i+1) / (2Δt) = '+dm.toFixed(3)+' / (2×'+dts.toFixed(3)+')<br>Vitesse : <strong>v ≈ '+v.toFixed(2)+' m·s⁻¹</strong> ≈ <strong>'+(v*3.6).toFixed(1)+' km·h⁻¹</strong>';
+  var c=document.getElementById('vCv'),w=c.width=c.offsetWidth,hh=c.height=240,X=c.getContext('2d');
+  X.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();X.fillRect(0,0,w,hh);
+  var y=hh/2;
+  for(var i=0;i<5;i++){
+    var px=50+i*(w-100)/4;
+    var g=X.createRadialGradient(px,y,0,px,y,9);g.addColorStop(0,'rgba(240,163,186,.9)');g.addColorStop(1,'rgba(240,163,186,0)');
+    X.fillStyle=g;X.beginPath();X.arc(px,y,9,0,7);X.fill();
+    X.fillStyle='#ffd9e4';X.beginPath();X.arc(px,y,3,0,7);X.fill();
+    X.fillStyle='#a98b99';X.font='11px Inter';X.fillText('M'+i,px-7,y+24);
+  }
+  // vecteur vitesse en M2
+  var cx=50+2*(w-100)/4;
+  X.strokeStyle='#f1b375';X.lineWidth=2.6;
+  var vl=Math.min(120,30+v*30);
+  X.beginPath();X.moveTo(cx,y-14);X.lineTo(cx+vl,y-14);X.stroke();
+  X.beginPath();X.moveTo(cx+vl,y-14);X.lineTo(cx+vl-8,y-18);X.lineTo(cx+vl-8,y-10);X.fillStyle='#f1b375';X.fill();
+  X.fillStyle='#f1b375';X.font='13px Inter';X.fillText('v⃗ = '+v.toFixed(2)+' m/s',cx+10,y-22);
+}
+
+/* SIM NEWTON */
+function calcN(){
+  var F=parseFloat(document.getElementById('n-f').value)||0,m=parseFloat(document.getElementById('n-m').value)||1;
+  var a=F/m;
+  document.getElementById('nOut').innerHTML='a = ΣF / m = '+F+' / '+m+'<br>Accélération : <strong>a = '+a.toFixed(2)+' m·s⁻²</strong> · si ΣF double → a = '+(2*a).toFixed(2)+' m·s⁻²';
+  var c=document.getElementById('nCv'),w=c.width=c.offsetWidth,hh=c.height=240,X=c.getContext('2d');
+  X.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();X.fillRect(0,0,w,hh);
+  var y=hh/2;
+  // objet
+  X.fillStyle='rgba(240,163,186,.3)';X.strokeStyle='#f0a3ba';X.lineWidth=2;
+  X.fillRect(w*0.32-30,y-22,60,44);X.strokeRect(w*0.32-30,y-22,60,44);
+  X.fillStyle='#f0a3ba';X.font='12px Inter';X.fillText(m+' kg',w*0.32-16,y+5);
+  // flèche force
+  var fl=Math.min(180,40+F*8);
+  X.strokeStyle='#8bd9aa';X.lineWidth=3;
+  X.beginPath();X.moveTo(w*0.32+32,y);X.lineTo(w*0.32+32+fl,y);X.stroke();
+  X.beginPath();X.moveTo(w*0.32+32+fl,y);X.lineTo(w*0.32+32+fl-10,y-6);X.lineTo(w*0.32+32+fl-10,y+6);X.fillStyle='#8bd9aa';X.fill();
+  X.fillStyle='#8bd9aa';X.font='13px Inter';X.fillText('ΣF = '+F+' N',w*0.32+50,y-14);
+  X.fillStyle='#f1b375';X.fillText('a⃗ = '+a.toFixed(2)+' m·s⁻²',w*0.32+50,y+30);
+}
+
+/* ECE — vecteurs vitesse + Δv */
+function drawECE(){
+  var c=document.getElementById('eceCv');if(!c)return;
+  var w=c.width=c.offsetWidth,h=c.height=240,X=c.getContext('2d');
+  X.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#fbf5f7').trim();X.fillRect(0,0,w,h);
+  var pts=[];for(var i=0;i<7;i++){var px=40+i*(w-80)/6;var py=h-30-Math.pow(i/6,2)*(h-90);pts.push([px,py]);}
+  // trajectoire
+  X.strokeStyle='rgba(240,163,186,.25)';X.lineWidth=1.5;X.beginPath();
+  pts.forEach(function(p,i){i?X.lineTo(p[0],p[1]):X.moveTo(p[0],p[1]);});X.stroke();
+  pts.forEach(function(p,i){
+    var g=X.createRadialGradient(p[0],p[1],0,p[0],p[1],7);g.addColorStop(0,'rgba(240,163,186,.9)');g.addColorStop(1,'rgba(240,163,186,0)');
+    X.fillStyle=g;X.beginPath();X.arc(p[0],p[1],7,0,7);X.fill();
+    X.fillStyle='#ffd9e4';X.beginPath();X.arc(p[0],p[1],3,0,7);X.fill();
   });
-});
+  // vecteurs vitesse (milieux)
+  for(var i=1;i<pts.length-1;i++){
+    var dx=pts[i+1][0]-pts[i-1][0],dy=pts[i+1][1]-pts[i-1][1];
+    X.strokeStyle='#8bd6e4';X.lineWidth=2;
+    X.beginPath();X.moveTo(pts[i][0],pts[i][1]);X.lineTo(pts[i][0]+dx*.5,pts[i][1]+dy*.5);X.stroke();
+  }
+  X.fillStyle='rgba(139,214,228,.85)';X.font='12px Inter';X.fillText('v⃗ (méthode des milieux)',46,22);
+  X.fillStyle='rgba(241,179,117,.85)';X.fillText('Δv⃗ ∥ ΣF⃗ (vers le bas : chute)',46,40);
+}
+
+/* FLASHCARDS */
+var FC=[
+{i:"📐",q:"Formule du vecteur vitesse (méthode des milieux) ?",a:"v⃗ᵢ ≈ M(i-1)M(i+1) / (2Δt). Tangent à la trajectoire, sens du mouvement.",f:"v⃗ᵢ = M(i-1)M(i+1) / [?]",rep:["2Δt","2dt"]},
+{i:"🏃",q:"Le vecteur vitesse est tangent à quoi ?",a:"À la trajectoire, orienté dans le sens du mouvement.",f:"v⃗ tangent à la [?]",rep:["trajectoire"]},
+{i:"⬆️",q:"Formule du vecteur variation de vitesse ?",a:"Δv⃗ᵢ = v⃗(i+1) − v⃗ᵢ. Même direction et sens que ΣF⃗.",f:"Δv⃗ = v⃗(i+1) − [?]",rep:["v⃗ᵢ","vi"]},
+{i:"⚖️",q:"Énonce la 2ᵉ loi de Newton.",a:"ΣF⃗ = m·a⃗ = m·Δv⃗/Δt. Résultante des forces = masse × accélération.",f:"ΣF⃗ = m × [?]",rep:["a⃗","a","accélération"]},
+{i:"🔄",q:"Énonce le principe d'inertie (1ʳᵉ loi).",a:"ΣF⃗ = 0⃗ ⇔ v⃗ = constante (repos ou MRU). Réciproque vraie.",f:"ΣF⃗ = 0⃗ → Δv⃗ = [?]",rep:["0⃗","0","nul"]},
+{i:"🏃",q:"Convertir 1 m·s⁻¹ en km·h⁻¹ ?",a:"1 m·s⁻¹ = 3,6 km·h⁻¹. Et 1 km·h⁻¹ ≈ 0,278 m·s⁻¹.",f:"1 m/s = [?] km/h",rep:["3,6","3.6"]},
+{i:"📐",q:"Δt=40 ms, M₀M₂=8 cm → v₁ ?",a:"v₁ = 0,08/(2×0,04) = 1,0 m·s⁻¹.",f:"v = 0,08 / (2 × [?])",rep:["0,04","0.04"]},
+{i:"🔄",q:"Si ΣF⃗ ≠ 0⃗, le mouvement est ?",a:"Modifié : Δv⃗ ≠ 0⃗, la vitesse change (norme et/ou direction).",f:"ΣF⃗ ≠ 0⃗ → Δv⃗ [?] 0⃗",rep:["≠","différent"]},
+{i:"🏃",q:"Points équidistants en chronophoto → ?",a:"Mouvement uniforme : |v| constante.",f:"Points équidistants → |v| = [?]",rep:["constante","cst"]},
+{i:"⚖️",q:"m=3 kg, ΣF=12 N → a ?",a:"a = ΣF/m = 12/3 = 4 m·s⁻².",f:"a = 12 / [?] = 4 m/s²",rep:["3"]},
+{i:"📊",q:"Unité de l'accélération ?",a:"m·s⁻² (mètre par seconde au carré).",f:"Unité de a : [?]",rep:["m·s⁻²","m/s²","m s-2"]},
+{i:"⚖️",q:"3ᵉ loi de Newton (action–réaction) ?",a:"F⃗(A/B) = −F⃗(B/A). Même droite, même norme, sens opposés, sur deux corps différents.",f:"F⃗(A/B) + F⃗(B/A) = [?]",rep:["0⃗","0","nul"]},
+{i:"🏃",q:"Qu'est-ce qu'un référentiel ?",a:"Solide de référence + horloge par rapport auquel on décrit le mouvement. La trajectoire en dépend.",f:"Mouvement décrit par rapport à un [?]",rep:["référentiel","referentiel"]},
+{i:"⬆️",q:"Direction de Δv⃗ par rapport à ΣF⃗ ?",a:"Δv⃗ a la MÊME direction et le MÊME sens que ΣF⃗.",f:"Direction de Δv⃗ = direction de [?]",rep:["ΣF⃗","somme des forces","ΣF"]},
+{i:"📐",q:"Convertir 72 km·h⁻¹ en m·s⁻¹ ?",a:"72 / 3,6 = 20 m·s⁻¹.",f:"72 km/h = 72 / [?] = 20 m/s",rep:["3,6","3.6"]}
+];
+var fcI=0,fcReady=false;
+function fcRender(){var c=FC[fcI];document.getElementById('fcIco').textContent=c.i;document.getElementById('fcQ').textContent=c.q;document.getElementById('fcA').textContent=c.a;document.getElementById('fcCount').textContent='Carte '+(fcI+1)+' / '+FC.length;document.getElementById('fc3d').classList.remove('flip');}
+function fcFlip(){document.getElementById('fc3d').classList.toggle('flip');}
+function fcNext(){fcI=(fcI+1)%FC.length;fcRender();}
+function fcPrev(){fcI=(fcI-1+FC.length)%FC.length;fcRender();}
+function fcShuffle(){for(var i=FC.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=FC[i];FC[i]=FC[j];FC[j]=t;}fcI=0;fcRender();}
+function fcMode(m,btn){document.querySelectorAll('.fc-mode').forEach(function(b){b.classList.remove('on')});btn.classList.add('on');document.querySelectorAll('.fc-stage').forEach(function(s){s.classList.remove('on')});document.getElementById('fc-'+m).classList.add('on');if(m==='comp'){compI=0;compScore=0;compRender();}if(m==='chrono')chReset();}
+fcRender();fcReady=true;
+var compI=0,compScore=0;
+function compRender(){var c=FC[compI];document.getElementById('compScore').textContent=compScore;document.getElementById('compCard').innerHTML='<div style="font-size:16px;font-weight:600;margin-bottom:16px;line-height:1.8">'+c.f.replace('[?]','<input class="blank" id="cb" autocomplete="off" placeholder="?">')+'</div><button class="sim-btn" onclick="compChk()">Vérifier ✓</button><button class="pill-btn" style="margin-left:8px" onclick="compNext()">Suivante →</button><div class="res" id="cres"></div>';setTimeout(function(){var e=document.getElementById('cb');if(e)e.focus();},60);}
+function norm(s){return (s||'').trim().toLowerCase().replace(/\s+/g,'');}
+function compChk(){var c=FC[compI],v=norm(document.getElementById('cb').value),ok=c.rep.some(function(r){return norm(r)===v}),r=document.getElementById('cres');if(ok){r.className='res ok';r.textContent='✓ Correct ! '+c.rep[0];compScore++;document.getElementById('compScore').textContent=compScore;}else{r.className='res ko';r.textContent='✗ Réponse attendue : '+c.rep[0];}}
+function compNext(){compI=(compI+1)%FC.length;compRender();}
+var chT=null,chLeft=120,chCur=0,chKnew=0,chOrder=[];
+function chReset(){if(chT)clearInterval(chT);chLeft=120;chCur=0;chKnew=0;document.getElementById('chTime').textContent='2:00';document.getElementById('chTime').className='chrono-time';document.getElementById('chCount').textContent='0 / 10';document.getElementById('chCard').innerHTML='<div style="text-align:center"><div style="font-size:17px;font-weight:760;margin-bottom:18px">Prêt ?</div><div><button class="sim-btn" onclick="chStart()">▶ Démarrer</button></div></div>';}
+function chStart(){var p=[];for(var i=0;i<FC.length;i++)p.push(i);for(var i=p.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=p[i];p[i]=p[j];p[j]=t;}chOrder=p.slice(0,10);chCur=0;chKnew=0;chLeft=120;chShow();if(chT)clearInterval(chT);chT=setInterval(function(){chLeft--;var m=Math.floor(chLeft/60),s=chLeft%60;var d=document.getElementById('chTime');d.textContent=m+':'+(s<10?'0':'')+s;d.className='chrono-time'+(chLeft<=20?' urgent':'');if(chLeft<=0){clearInterval(chT);chEnd();}},1000);}
+function chShow(){if(chCur>=chOrder.length){chEnd();return;}var c=FC[chOrder[chCur]];document.getElementById('chCount').textContent=chCur+' / 10';document.getElementById('chCard').innerHTML='<div style="text-align:center"><div style="font-size:16px;font-weight:760;margin-bottom:18px">'+c.q+'</div><div style="font-size:14px;color:var(--muted);margin-bottom:18px">'+c.a+'</div><button class="sim-btn" onclick="chAns(true)">✓ Je savais</button><button class="pill-btn" style="margin-left:8px" onclick="chAns(false)">✗ À revoir</button></div>';}
+function chAns(k){if(k)chKnew++;chCur++;if(chCur>=chOrder.length)chEnd();else chShow();}
+function chEnd(){if(chT)clearInterval(chT);document.getElementById('chCard').innerHTML='<div style="text-align:center"><div style="font-size:40px;font-weight:800;color:var(--blue)">'+chKnew+' / 10</div><p style="color:var(--muted)">'+(chKnew>=8?'🏆 Excellent !':chKnew>=5?'👍 Bien, continue !':'📚 Relis le cours.')+'</p><button class="sim-btn" onclick="chReset()">🔄 Recommencer</button></div>';}
+
+/* QUIZ */
+var QS=[
+{q:"Le vecteur vitesse est :",o:["Tangent à la trajectoire, sens du mouvement","Toujours horizontal","Perpendiculaire à la trajectoire","Dirigé vers le centre"],c:0,e:"v⃗ est tangent à la trajectoire et orienté dans le sens du mouvement."},
+{q:"Méthode des milieux : v_i =",o:["M(i-1)M(i+1) / (2Δt)","M(i-1)M(i) / Δt","M(i)M(i+1) × Δt","Δt / M(i-1)M(i+1)"],c:0,e:"v_i ≈ M(i-1)M(i+1)/(2Δt) : on utilise les points qui encadrent M_i."},
+{q:"Principe d'inertie : ΣF⃗ = 0⃗ implique",o:["v⃗ = constante (repos ou MRU)","Une accélération constante","Une trajectoire circulaire","v = 0 obligatoirement"],c:0,e:"ΣF⃗ = 0⃗ ⇔ v⃗ constant : repos ou mouvement rectiligne uniforme."},
+{q:"2ᵉ loi de Newton :",o:["ΣF⃗ = m·a⃗","ΣF⃗ = m/a⃗","ΣF⃗ = a⃗/m","ΣF⃗ = m·v⃗"],c:0,e:"ΣF⃗ = m·a⃗ = m·Δv⃗/Δt : résultante proportionnelle à l'accélération."},
+{q:"m = 3 kg, ΣF = 12 N. L'accélération vaut :",o:["4 m·s⁻²","36 m·s⁻²","0,25 m·s⁻²","9 m·s⁻²"],c:0,e:"a = ΣF/m = 12/3 = 4 m·s⁻²."},
+{q:"La trajectoire d'un objet dépend :",o:["Du référentiel choisi","Uniquement de sa masse","De sa couleur","Jamais du référentiel"],c:0,e:"La trajectoire dépend du référentiel : il faut toujours le préciser."},
+{q:"Mouvement circulaire uniforme : le vecteur vitesse",o:["Change (la direction varie)","Est constant","Est nul","Est radial"],c:0,e:"La norme est constante mais la direction change : v⃗ varie, donc Δv⃗ ≠ 0⃗."},
+{q:"Δv⃗ a la même direction que :",o:["ΣF⃗ (résultante des forces)","La trajectoire","L'horizontale","Le poids uniquement"],c:0,e:"Conséquence de la 2ᵉ loi : Δv⃗ est colinéaire et de même sens que ΣF⃗."},
+{q:"72 km·h⁻¹ correspond à :",o:["20 m·s⁻¹","72 m·s⁻¹","259 m·s⁻¹","7,2 m·s⁻¹"],c:0,e:"72 / 3,6 = 20 m·s⁻¹."},
+{q:"3ᵉ loi de Newton : F⃗(A/B) et F⃗(B/A)",o:["Opposées, sur deux corps différents","Identiques, sur le même corps","Nulles","De normes différentes"],c:0,e:"F⃗(A/B) = −F⃗(B/A) : même norme, sens opposés, sur deux objets distincts."},
+{q:"Points de plus en plus espacés en chronophoto :",o:["Mouvement accéléré","Mouvement uniforme","Mouvement ralenti","Repos"],c:0,e:"Distances croissantes à Δt constant ⇒ vitesse augmente ⇒ mouvement accéléré."},
+{q:"Unité SI de l'accélération :",o:["m·s⁻²","m·s⁻¹","N","m"],c:0,e:"L'accélération s'exprime en m·s⁻² (mètre par seconde au carré)."}
+];
+var qi=0,qsc=0,qans=false;
+function quizStart(){qi=0;qsc=0;qans=false;document.getElementById('qEnd').style.display='none';document.getElementById('qBox').style.display='block';qRender();}
+function qRender(){if(qi>=QS.length){qShow();return;}var q=QS[qi];document.getElementById('qBar').style.width=(qi/QS.length*100)+'%';document.getElementById('qProg').textContent='Q '+(qi+1)+' / '+QS.length;document.getElementById('qScore').textContent='Score '+qsc;var html='<div class="q-card"><div class="q-num">Question '+(qi+1)+'</div><div class="q-text">'+q.q+'</div><div class="opts">';q.o.forEach(function(o,i){html+='<button class="opt" id="o'+i+'" onclick="qAns('+i+')"><span class="lt">'+'ABCD'[i]+'</span>'+o+'</button>';});html+='</div><div class="q-corr" id="qc">💡 '+q.e+'</div><button class="q-next" id="qn" onclick="qNext()">'+(qi<QS.length-1?'Suivante →':'Voir le résultat 🏆')+'</button></div>';document.getElementById('qBox').innerHTML=html;qans=false;if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();}
+function qAns(i){if(qans)return;qans=true;var q=QS[qi];document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});document.getElementById('o'+q.c).classList.add('good');if(i!==q.c)document.getElementById('o'+i).classList.add('bad');else qsc++;document.getElementById('qScore').textContent='Score '+qsc;document.getElementById('qc').classList.add('show');document.getElementById('qn').classList.add('show');}
+function qNext(){qi++;qRender();}
+function qShow(){document.getElementById('qBox').style.display='none';document.getElementById('qEnd').style.display='block';document.getElementById('qBar').style.width='100%';var p=Math.round(qsc/QS.length*100);document.getElementById('qFinal').textContent=qsc+' / '+QS.length;document.getElementById('qMsg').textContent=p+'% — '+(p>=85?'🏆 Maîtrise excellente !':p>=65?'👍 Bon niveau.':p>=50?'📚 À retravailler.':'🚀 Relis le cours.');}
+quizStart();
+
+function copyBot(){var t=document.getElementById('botPrompt').innerText;navigator.clipboard.writeText(t).then(function(){var b=event.target;var o=b.textContent;b.textContent='✓ Copié !';setTimeout(function(){b.textContent=o;},1600);});}
+
+/* CARTE MENTALE */
+var MM=[
+{l:"Décrire",c:"#9f4f68",n:["Système","Référentiel","Trajectoire","Point matériel"]},
+{l:"Vecteur v⃗",c:"#c1804a",n:["Tangent traj.","v=M(i-1)M(i+1)/2Δt","m·s⁻¹","1 m/s=3,6 km/h"]},
+{l:"Variation Δv⃗",c:"#4f8a6b",n:["Δv⃗=v⃗(i+1)−v⃗i","∥ ΣF⃗","Construction"]},
+{l:"1ʳᵉ loi",c:"#7859b5",n:["Inertie","ΣF⃗=0⃗ ⇔ v⃗ cst","Réciproque vraie"]},
+{l:"2ᵉ loi",c:"#4f8fa4",n:["ΣF⃗=m·a⃗","a en m·s⁻²","Proportionnalité"]},
+{l:"3ᵉ loi",c:"#b75f75",n:["Action–réaction","F(A/B)=−F(B/A)","2 corps distincts"]}
+];
+function drawMM(){
+  var c=document.getElementById('mmCv'),X=c.getContext('2d');
+  var dark=document.documentElement.getAttribute('data-theme')==='dark';
+  var W=c.width,H=c.height,cx=W/2,cy=H/2;
+  X.fillStyle=dark?'#241a26':'#ffffff';X.fillRect(0,0,W,H);
+  X.fillStyle=dark?'#f0a3ba':'#9f4f68';X.strokeStyle=dark?'#f0a3ba':'#9f4f68';
+  X.lineWidth=2;X.beginPath();X.roundRect(cx-115,cy-30,230,60,14);X.stroke();
+  X.globalAlpha=.12;X.fill();X.globalAlpha=1;
+  X.font='bold 15px Inter';X.textAlign='center';X.fillText('MOUVEMENT',cx,cy-4);X.fillText("D'UN SYSTÈME",cx,cy+16);
+  var A=[0,60,120,180,240,300];
+  MM.forEach(function(b,i){
+    var a=(A[i]-90)*Math.PI/180,r=185;var bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    X.strokeStyle=b.c;X.lineWidth=2.5;X.globalAlpha=.55;
+    X.beginPath();X.moveTo(cx+95*Math.cos(a),cy+55*Math.sin(a));X.lineTo(bx,by);X.stroke();X.globalAlpha=1;
+    X.fillStyle=b.c;X.strokeStyle=b.c;X.globalAlpha=.13;
+    X.beginPath();X.roundRect(bx-78,by-19,156,38,10);X.fill();X.globalAlpha=1;X.stroke();
+    X.fillStyle=b.c;X.font='bold 13px Inter';X.fillText(b.l,bx,by+4);
+    b.n.forEach(function(t,j){
+      var na=a+(j-(b.n.length-1)/2)*0.32,nr=300;var nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      X.strokeStyle=b.c;X.globalAlpha=.35;X.lineWidth=1.3;X.setLineDash([4,3]);
+      X.beginPath();X.moveTo(bx,by);X.lineTo(nx,ny);X.stroke();X.setLineDash([]);X.globalAlpha=1;
+      var tw=X.measureText(t).width+20;
+      X.fillStyle=dark?'#2b202d':'#fff8fa';X.strokeStyle=b.c;X.globalAlpha=.85;
+      X.beginPath();X.roundRect(nx-tw/2,ny-13,tw,26,7);X.fill();X.globalAlpha=1;X.stroke();
+      X.fillStyle=dark?'#f7edf2':'#251421';X.font='11px Inter';X.fillText(t,nx,ny+4);
+    });
+  });
+  X.textAlign='left';
+}
+function dlMM(){drawMM();var a=document.createElement('a');a.download='carte-mentale-ch12.png';a.href=document.getElementById('mmCv').toDataURL();a.click();}
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.beginPath();this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};}
 </script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
 </body>
 </html>

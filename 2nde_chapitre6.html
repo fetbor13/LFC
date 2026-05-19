@@ -1,181 +1,863 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Seconde · Chapitre 6 — La matière à l'échelle microscopique | PhysiChem</title>
-<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']}};</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-/* ── BLOCK 1 : base layout & components ── */
-:root{
-  --blue:#0f766e;--light:#f0fdfa;--dark:#134e4a;--accent:#0d9488;
-  --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
-  --side:286px;--content:1280px;--rad:8px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-h2{font-size:1.35rem;font-weight:700;margin-bottom:.75rem}
-h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--dark)}
-p{line-height:1.65;margin-bottom:.75rem}
-
-.rail{width:var(--side);min-width:var(--side);background:var(--dark);color:#e2e8f0;
-  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
-  padding:1.25rem 1rem;gap:.75rem;overflow-y:auto;flex-shrink:0;
-  border-right:3px solid var(--accent);}
-.brand{display:flex;align-items:center;gap:.65rem;margin-bottom:.25rem}
-.brand-mark{background:var(--accent);color:#fff;font-weight:800;font-size:1.05rem;
-  width:36px;height:36px;border-radius:var(--rad);display:grid;place-items:center;flex-shrink:0}
-.brand h1{font-size:.95rem;font-weight:700;color:#fff;line-height:1.1}
-.brand p{font-size:.7rem;color:#94a3b8;margin:0}
-.level-card{background:rgba(255,255,255,.07);border-radius:var(--rad);padding:.65rem .75rem}
-.level-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
-.badge{background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:.2rem .45rem;border-radius:4px;text-transform:uppercase}
-.micro{font-size:.68rem;color:#94a3b8}
-.progress{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin:.1rem 0}
-.progress span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
-.nav-label{font-size:.65rem;font-weight:700;text-transform:uppercase;color:#64748b;letter-spacing:.08em;padding:0 .25rem}
-.tablist{display:flex;flex-direction:column;gap:.25rem}
-.tab{display:flex;align-items:center;gap:.6rem;background:transparent;border:none;color:#cbd5e1;
-  padding:.5rem .65rem;border-radius:var(--rad);cursor:pointer;text-align:left;font-size:.82rem;
-  transition:background .18s,color .18s;width:100%}
-.tab:hover{background:rgba(255,255,255,.07);color:#fff}
-.tab.active{background:var(--accent);color:#fff;font-weight:600}
-.tab-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center}
-.tab-text{flex:1}
-.tools{display:flex;gap:.4rem;margin-top:auto;padding-top:.5rem}
-.icon-btn{background:rgba(255,255,255,.08);border:none;color:#94a3b8;width:34px;height:34px;
-  border-radius:var(--rad);cursor:pointer;display:grid;place-items:center;transition:all .2s}
-.icon-btn:hover{background:rgba(255,255,255,.15);color:#fff}
-
-.panels{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
-.hero{background:var(--dark);padding:2rem;color:#fff;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
-.hero-sub{font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.5rem;text-transform:uppercase}
-.hero-title{font-size:2rem;font-weight:800;margin-bottom:.5rem;line-height:1.2}
-.hero-title span{color:#5eead4}
-.hero-desc{color:#cbd5e1;font-size:.95rem;max-width:600px;margin-bottom:1.5rem}
-.hero-stats{display:flex;gap:1rem}
-.stat{background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:var(--rad);text-align:center;min-width:80px}
-.stat-val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
-.stat-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;margin-top:.25rem;text-transform:uppercase}
-
-.panel{display:none;padding:2rem;max-width:var(--content);margin:0 auto;width:100%;animation:fade .3s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-.pill-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem;background:var(--card);
-  padding:.75rem;border-radius:var(--rad);border:1px solid var(--border)}
-.pill{background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;
-  padding:.4rem .85rem;border-radius:20px;border:1px solid var(--border);transition:all .2s;display:flex;align-items:center;gap:.4rem}
-.pill:hover,.pill.active{background:var(--light);color:var(--dark);border-color:var(--accent)}
-.pill-num{background:var(--accent);color:#fff;width:18px;height:18px;border-radius:50%;
-  display:grid;place-items:center;font-size:.6rem;font-weight:800}
-
-.content-card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);
-  padding:2rem;margin-bottom:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.02)}
-.content-card h2{display:flex;align-items:center;gap:.75rem;padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
-.part-num{color:var(--accent);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:.5rem}
-.part-num::after{content:'';display:block;width:3px;height:24px;background:var(--accent);border-radius:2px}
-
-.box{border-radius:var(--rad);padding:1.25rem;margin:1rem 0;position:relative}
-.box-green{background:#ecfdf5;border:1px solid #10b981;border-left:4px solid #10b981}
-.box-yellow{background:#fefce8;border:1px solid #eab308;border-left:4px solid #eab308}
-.box-purple{background:#faf5ff;border:1px solid #a855f7;border-left:4px solid #a855f7}
-.box-label{position:absolute;top:-10px;left:15px;background:#10b981;color:#fff;
-  font-size:.65rem;font-weight:800;padding:.2rem .5rem;border-radius:4px;letter-spacing:.05em}
-
-.method-acc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad);margin:1rem 0;overflow:hidden}
-.method-acc summary{background:var(--card);padding:.85rem 1.25rem;font-weight:600;font-size:.9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.5rem;user-select:none}
-.method-acc summary::before{content:'▶';font-size:.7rem;color:var(--accent);transition:transform .2s}
-.method-acc[open] summary::before{transform:rotate(90deg)}
-.method-acc-content{padding:1.25rem;border-top:1px solid var(--border)}
-
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
-.data-table th{background:var(--dark);color:#fff;text-align:left;padding:.75rem;font-weight:600}
-.data-table td{padding:.75rem;border-bottom:1px solid var(--border);background:var(--card)}
-.data-table tr:nth-child(even) td{background:var(--bg)}
-
-.step-list{list-style:none;counter-reset:step}
-.step-list li{position:relative;padding-left:2.5rem;margin-bottom:1rem}
-.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-2px;
-  width:24px;height:24px;background:var(--accent);color:#fff;border-radius:50%;
-  display:grid;place-items:center;font-size:.75rem;font-weight:700}
-
-/* Utilitaires */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.center{text-align:center}
-.math-block{background:var(--bg);padding:1rem;border-radius:var(--rad);text-align:center;margin:1rem 0;overflow-x:auto}
-@media (max-width:1024px){.rail{width:240px;min-width:240px}}
-@media (max-width:768px){body{flex-direction:column}.rail{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}.grid-2{grid-template-columns:1fr}}
+:root{--bg:#FDF8F3;--bg2:#FAF0E8;--panel:#FFFFFF;--panel2:#FEFBF8;--line:#E8D5C4;--line2:#D4B89E;--text:#2C1810;--muted:#7A5C4A;--faint:#B08E78;--orange:#C87533;--orange2:#E09860;--orange3:#FDF2E9;--green:#2F855A;--green2:rgba(22,163,74,.12);--amber:#B7791F;--amber2:rgba(245,158,11,.12);--red:#B91C1C;--red2:rgba(239,68,68,.12);--purple:#5B4A9F;--purple2:rgba(91,74,159,.12);--cyan:#3A8A9F;--cyan2:rgba(58,138,159,.12);--shadow:0 14px 34px rgba(120,70,20,.055);--shadow2:0 8px 22px rgba(120,70,20,.045);--side:306px}
+[data-theme="dark"]{--bg:#1A0F08;--bg2:#221410;--panel:#2C1A10;--panel2:#3A2418;--line:#4A3020;--line2:#5E3E2C;--text:#F5E6D8;--muted:#C8A88E;--faint:#8A6A50;--orange:#E09860;--orange2:#F0B888;--orange3:rgba(224,152,96,.12);--shadow:0 18px 54px rgba(0,0,0,.32);--shadow2:0 10px 32px rgba(0,0,0,.24)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(200,117,51,.055),transparent 32rem),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);line-height:1.65;font-size:15px;min-height:100vh}a{text-decoration:none;color:inherit}button,input,textarea{font:inherit}.skip{position:absolute;left:-999px;top:0;background:var(--orange);color:white;padding:10px 16px;border-radius:0 0 12px 0;z-index:1000}.skip:focus{left:0}.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:rgba(255,255,255,.72);backdrop-filter:blur(24px);border-right:1px solid var(--line);padding:20px 18px;overflow:auto}[data-theme="dark"] .rail{background:rgba(17,24,39,.72)}.brand{display:flex;align-items:center;gap:12px;margin:2px 6px 22px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#C87533,#E09860);display:grid;place-items:center;color:white;font-weight:800;font-size:14px;box-shadow:0 14px 28px rgba(200,117,51,.16)}.brand h1{font-size:16px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.03em}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.level-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);margin-bottom:16px}.level-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(200,117,51,.16);color:var(--orange);background:var(--orange3);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.micro{color:var(--faint);font-size:12px}.progress{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-top:14px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:999px;transition:.35s}.nav-label{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);font-weight:800;margin:22px 10px 10px;padding:6px 10px;background:rgba(200,117,51,.06);border-radius:8px}[data-theme="dark"] .nav-label{background:rgba(224,152,96,.08)}.tablist{display:grid;gap:4px}.tab{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:700;font-size:13px;text-align:left;transition:all .2s}.tab:hover{background:var(--panel2);color:var(--text);border-color:var(--line)}.tab.active{background:var(--orange3);color:var(--orange);border-color:rgba(200,117,51,.26);box-shadow:inset 4px 0 0 var(--orange),0 8px 18px rgba(15,23,42,.035)}.tools{display:flex;gap:8px;margin-top:16px}.icon-btn{height:38px;min-width:38px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;display:grid;place-items:center;cursor:pointer;font-size:16px;transition:all .2s}.icon-btn:hover{border-color:var(--orange);color:var(--orange)}.main{min-width:0}.topbar{position:sticky;top:0;z-index:30;background:rgba(253,248,243,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 30px}[data-theme="dark"] .topbar{background:rgba(26,15,8,.78)}.crumb{color:var(--muted);font-size:13px}.crumb b{color:var(--orange)}.top-actions{display:flex;gap:8px;align-items:center}.pill-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 13px;cursor:pointer;font-size:13px;font-weight:700}.page{max-width:1160px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.28fr .72fr;gap:16px;margin-bottom:16px;align-items:stretch}.hero-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden}.hero-card:before{content:"";position:absolute;right:-100px;top:-120px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,117,51,.075),transparent 68%)}.eyebrow{display:flex;align-items:center;gap:9px;color:var(--orange);font-weight:760;font-size:12px;text-transform:uppercase;letter-spacing:.10em}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.04;letter-spacing:-.045em;margin:10px 0 8px;font-weight:760}.hero h2 span{color:var(--orange)}.instructor{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}.instructor:before{content:"";width:6px;height:6px;border-radius:999px;background:var(--orange)}.hero-copy{font-size:14px;color:var(--muted);max-width:68ch}.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.metric{border:1px solid var(--line);background:rgba(255,255,255,.64);border-radius:12px;padding:9px 10px}[data-theme="dark"] .metric{background:rgba(255,255,255,.03)}.metric b{display:block;font-size:17px;color:var(--text);line-height:1}.metric span{font-size:11px;color:var(--muted)}.hero-canvas-wrap{border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid rgba(200,117,51,.15);box-shadow:var(--shadow2);min-height:190px;max-height:230px;display:flex;align-items:center;justify-content:center}.useful-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.useful-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow2)}.useful-card small{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;margin-bottom:10px}.mission-1 small{background:var(--orange3);color:var(--orange)}.mission-2 small{background:var(--amber2);color:var(--amber)}.mission-3 small{background:var(--purple2);color:var(--purple)}.useful-card b{display:block;color:var(--text);font-size:14px}.useful-card span{display:block;color:var(--muted);font-size:12px}.panel{display:none;scroll-margin-top:82px}.panel.active{display:block}.content-card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow2);padding:24px;margin-bottom:18px}.content-card h3{font-size:22px;letter-spacing:-.03em;margin:0 0 13px;font-weight:740}.course-grid{display:grid;grid-template-columns:185px minmax(0,1fr);gap:24px}.toc{position:sticky;top:82px;height:fit-content}.toc-title{font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}.toc a{display:block;padding:7px 9px;border-radius:10px;color:var(--muted);font-size:12px;border-left:2px solid transparent;background:var(--panel);font-weight:760;margin-bottom:5px}.toc a:nth-of-type(1){background:var(--orange3);color:var(--orange)}.toc a:nth-of-type(2){background:var(--amber2);color:var(--amber)}.toc a:nth-of-type(3){background:var(--green2);color:var(--green)}.toc a:nth-of-type(4){background:var(--purple2);color:var(--purple)}.toc a:nth-of-type(5){background:var(--cyan2);color:var(--cyan)}.course-body{min-width:0;max-width:920px}.course-body h2{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}.course-body h2:first-child{margin-top:0}.course-body h3{font-size:16px;font-weight:760;margin:24px 0 10px}.course-body p,.course-body li{color:var(--muted)}.note{border-left:4px solid var(--orange);background:var(--orange3);border-radius:0 18px 18px 0;padding:16px 18px;margin:16px 0;color:var(--text)}.warn{border-left-color:var(--amber);background:var(--amber2)}.ok{border-left-color:var(--green);background:var(--green2)}.formula{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:15px 0;text-align:center;overflow-x:auto;font-size:1.05rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;margin:16px 0;box-shadow:var(--shadow2)}table{width:100%;border-collapse:collapse}th{background:var(--panel2);padding:11px 14px;text-align:left;font-size:12px;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.08em}td{padding:12px 14px;color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--panel2));border-radius:18px;padding:16px;box-shadow:var(--shadow2)}.card h4{margin:0 0 8px;font-size:15px;color:var(--text);font-weight:760}.card p,.card li{font-size:13px;color:var(--muted)}.exercise{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow2)}.exercise h4{margin:0 0 10px}.exercise details{margin-top:12px}.exercise summary{cursor:pointer;font-weight:800;color:var(--orange);background:var(--orange3);border:1px solid rgba(200,117,51,.20);padding:9px 12px;border-radius:12px}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}.chip.orange{background:var(--orange3);border-color:rgba(200,117,51,.20);color:var(--orange)}.chip.amber{background:var(--amber2);border-color:rgba(183,121,31,.18);color:var(--amber)}.chip.green{background:var(--green2);border-color:rgba(47,133,90,.18);color:var(--green)}.flashcard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.flashcard{min-height:145px;perspective:1000px;cursor:pointer}.flashcard-inner{position:relative;width:100%;height:100%;min-height:145px;transition:transform .55s;transform-style:preserve-3d}.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}.flash-front,.flash-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:var(--shadow2);display:grid;place-items:center;text-align:center}.flash-front b{font-size:14px}.flash-back{transform:rotateY(180deg);color:var(--muted);font-size:12.5px}.quiz-box{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:16px;box-shadow:var(--shadow2)}.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;margin:8px 0;cursor:pointer;transition:all .2s}.option:hover{border-color:var(--orange)}.option.correct{background:var(--green2);border-color:var(--green);color:var(--green)}.option.wrong{background:var(--red2);border-color:var(--red);color:var(--red)}.mindmap{display:grid;gap:12px}.map-center{text-align:center;border-radius:20px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:white;padding:18px;font-weight:800;font-size:18px}.map-branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.map-branch{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:14px}.map-branch h4{margin:0 0 8px}.map-branch ul{margin:0;padding-left:18px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.prompt-box{min-height:160px;width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;resize:none}.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.btn{border:1px solid var(--line);background:var(--panel2);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px;cursor:pointer;font-size:12px;text-decoration:none;display:inline-flex;align-items:center}.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.sim-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.sim-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow2)}.sim-card iframe{width:100%;height:460px;border:0}.sim-card .sim-body{padding:14px}.neon-sim{border:1px solid rgba(200,117,51,.18);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:var(--shadow)}.neon-sim canvas{width:100%;display:block}.neon-sim .sim-body{padding:14px;background:var(--bg2);border-top:1px solid rgba(200,117,51,.12)}.neon-sim h4{color:#E09860;margin:0 0 6px}.neon-sim p{color:#B08E78;font-size:13px;margin:0}.neon-input{border:1px solid rgba(200,117,51,.3);background:var(--panel2);color:#E09860;border-radius:10px;padding:7px 10px;width:100%}.neon-label{font-size:12px;color:#B08E78;font-weight:800;display:block;margin-bottom:4px}.neon-result{background:rgba(200,117,51,.07);border:1px solid rgba(200,117,51,.18);border-radius:14px;padding:12px;color:#E09860;margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.7}.sim-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.ece-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ece-step{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px}.ece-step b{display:block;margin-bottom:6px}@media(max-width:980px){.app{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.tablist{grid-template-columns:repeat(2,1fr)}.hero,.course-grid,.cards,.sim-grid-2,.ai-grid,.useful-strip,.map-branches,.ece-steps{grid-template-columns:1fr}.toc{position:relative;top:auto}.topbar{position:relative}}@media(max-width:620px){.page{padding:14px}.hero h2{font-size:26px}.tablist,.hero-grid,.flashcard-grid{grid-template-columns:1fr}.top-actions{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div class="app">
+<aside class="rail">
+<div class="brand"><div class="brand-mark">PC</div><div><h1>PhysiChem Omnis</h1><p>Seconde</p></div></div>
+<div class="level-card"><div class="level-row"><span class="badge">⚛️ Chapitre 6</span><span class="micro">Constitution de la matière</span></div><div class="progress"><span id="masterBar"></span></div></div>
+<div class="nav-label">Navigation</div>
+<div class="tablist" role="tablist">
+<button class="tab active" onclick="switchTab('cours')" data-t="cours">📚 Cours</button>
+<button class="tab" onclick="switchTab('relations')" data-t="relations">📐 Relations &amp; Dimensions</button>
+<button class="tab" onclick="switchTab('exercices')" data-t="exercices">✏️ Exercices</button>
+<button class="tab" onclick="switchTab('flashcards')" data-t="flashcards">🃏 Flashcards</button>
+<button class="tab" onclick="switchTab('quiz')" data-t="quiz">🧠 Quiz &amp; Chatbot</button>
+<button class="tab" onclick="switchTab('mindmap')" data-t="mindmap">🗺️ Carte mentale</button>
+<button class="tab" onclick="switchTab('simulations')" data-t="simulations">🔬 Simulations</button>
+<button class="tab" onclick="switchTab('ece')" data-t="ece">🧪 ECE</button>
+<button class="tab" onclick="switchTab('terminale')" data-t="terminale">🚀 Vers la 1ère Spé</button>
+</div>
+<div class="tools"><button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Mode sombre">🌙</button><a href="index.html" class="icon-btn" title="Accueil">🏠</a></div>
+</aside>
+<div class="main" id="main">
+<div class="topbar"><span class="crumb">Seconde › Constitution de la matière › <b>Chap. 6 — La matière à l'échelle microscopique</b></span><div class="top-actions"><span class="pill-btn" id="pctLabel">0 %</span></div></div>
+<div class="page">
 
-<!-- RAIL LATÉRAL -->
-<div class="rail">
-  <div class="brand">
-    <div class="brand-mark">P</div>
-    <div>
-      <h1>PhysiChem</h1>
-      <p>M Borsali · Enseignant SPC</p>
-    </div>
-  </div>
-
-  <div class="level-card">
-    <div class="level-row">
-      <span class="badge">Seconde</span>
-      <span class="micro">Chap. 6</span>
-    </div>
-    <div class="progress"><span style="width:100%"></span></div>
-    <div class="micro" style="margin-top:.2rem">100% du chapitre exploré</div>
-  </div>
-
-  <div class="nav-label" style="margin-top:1rem">SOMMAIRE</div>
-  <div class="tablist">
-  </div>
-
-  <div class="tools">
-    <button class="icon-btn" title="Mode sombre (démo)">🌙</button>
-    <button class="icon-btn" title="Imprimer">🖨️</button>
-    <button class="icon-btn" title="Plein écran">⛶</button>
-  </div>
+<!-- HERO -->
+<div class="hero">
+<div class="hero-card">
+<div class="eyebrow">⚛️ Chapitre 6</div>
+<h2>La matière à l'échelle <span>microscopique</span></h2>
+<p class="hero-copy">Découvrir la structure de l'atome, comprendre la charge électrique, la masse et les dimensions à l'échelle atomique, et identifier les ions monoatomiques.</p>
+<div class="instructor">Programme officiel — Seconde Physique-Chimie</div>
+<div class="hero-grid">
+<div class="metric"><b>5</b><span>sections de cours</span></div>
+<div class="metric"><b>15</b><span>flashcards</span></div>
+<div class="metric"><b>12</b><span>questions quiz</span></div>
+</div>
+</div>
+<div class="hero-canvas-wrap"><canvas id="heroCanvas" width="500" height="230"></canvas></div>
 </div>
 
-<!-- CONTENU PRINCIPAL -->
-<div class="panels">
+<!-- MISSIONS -->
+<div class="useful-strip">
+<div class="useful-card mission-1"><small>Mission 1</small><b>Structure de l'atome</b><span>Noyau, nuage électronique, notation A/Z X</span></div>
+<div class="useful-card mission-2"><small>Mission 2</small><b>Charge et masse</b><span>Charge élémentaire, électroneutralité, masse atomique</span></div>
+<div class="useful-card mission-3"><small>Mission 3</small><b>Ions monoatomiques</b><span>Cations, anions, gain/perte d'électrons</span></div>
+</div>
 
-  <!-- EN-TÊTE COMMUN -->
-  <div class="hero">
-    <div class="hero-sub">Seconde · Chap. 6</div>
-    <h1 class="hero-title">La matière à l'échelle m<span>icroscopique | PhysiChem</span></h1>
-    <p class="hero-desc">Explorez les concepts fondamentaux de ce chapitre.</p>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">NOTIONS</div></div>
-      <div class="stat"><div class="stat-val">?</div><div class="stat-lbl">EXERCICES</div></div>
-    </div>
-  </div>
+<!-- ═══════ COURS ═══════ -->
+<div class="panel active" id="p-cours">
+<div class="content-card">
+<div class="course-grid">
+<nav class="toc">
+<div class="toc-title">Sommaire</div>
+<a href="#s1">I. Un modèle de l'atome</a>
+<a href="#s2">II. La charge électrique</a>
+<a href="#s3">III. La masse dans l'atome</a>
+<a href="#s4">IV. Les dimensions</a>
+<a href="#s5">V. Les ions monoatomiques</a>
+</nav>
+<div class="course-body">
+
+<h2 id="s1">I. Un modèle de l'atome</h2>
+<div class="note"><strong>Définition — L'atome</strong>
+<p>L'atome est la plus petite entité chimique qui conserve les propriétés d'un élément. Il est constitué d'un <strong>noyau</strong> central (chargé positivement) et d'un <strong>nuage électronique</strong> (chargé négativement) qui l'entoure.</p>
+</div>
+<div class="cards">
+<div class="card">
+<h4>Le noyau atomique</h4>
+<ul>
+<li>Constitué de <strong>nucléons</strong> : protons (+) et neutrons (0)</li>
+<li>Nombre de masse \(A\) = nombre de nucléons</li>
+<li>Nombre de charge \(Z\) = nombre de protons</li>
+<li>Nombre de neutrons : \(N = A - Z\)</li>
+</ul>
+</div>
+<div class="card">
+<h4>Le nuage électronique</h4>
+<ul>
+<li>Constitué d'<strong>électrons</strong> (charge négative)</li>
+<li>Les électrons gravitent autour du noyau</li>
+<li>Dans un atome neutre : \(Z\) protons = \(Z\) électrons</li>
+<li>Volume de l'atome ≈ volume du nuage électronique</li>
+</ul>
+</div>
+</div>
+<div class="formula">
+\[\boxed{^{A}_{Z}\textrm{X} \quad \begin{cases} A = \text{nombre de nucléons (protons + neutrons)} \\ Z = \text{nombre de protons} \\ N = A - Z = \text{nombre de neutrons} \end{cases}}\]
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Atome</th><th>Z</th><th>A</th><th>N</th><th>Protons</th><th>Neutrons</th><th>Électrons</th></tr></thead>
+<tbody>
+<tr><td>\(^{1}_{1}\textrm{H}\)</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>\(^{12}_{6}\textrm{C}\)</td><td>6</td><td>12</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+<tr><td>\(^{16}_{8}\textrm{O}\)</td><td>8</td><td>16</td><td>8</td><td>8</td><td>8</td><td>8</td></tr>
+<tr><td>\(^{23}_{11}\textrm{Na}\)</td><td>11</td><td>23</td><td>12</td><td>11</td><td>12</td><td>11</td></tr>
+<tr><td>\(^{56}_{26}\textrm{Fe}\)</td><td>26</td><td>56</td><td>30</td><td>26</td><td>30</td><td>26</td></tr>
+</tbody>
+</table></div>
+<div class="note warn">⚠️ <strong>Piège classique</strong> : le nombre de neutrons n'est pas toujours égal à \(A - Z\)… en fait si, c'est toujours le cas ! Mais le nombre de neutrons n'est PAS toujours égal au nombre de protons. Ex : le sodium a 11 protons et 12 neutrons.</div>
+
+<h2 id="s2">II. La charge électrique dans l'atome</h2>
+<div class="note"><strong>Définition — Charge élémentaire</strong>
+<p>La <strong>charge élémentaire</strong> \(e\) est la plus petite charge électrique indivisible :</p></div>
+<div class="formula">
+\[\boxed{e = 1{,}6 \times 10^{-19}\;\mathrm{C}}\]
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Particule</th><th>Charge</th><th>Valeur absolue</th></tr></thead>
+<tbody>
+<tr><td>Proton</td><td>\(+e\)</td><td>\(1{,}6 \times 10^{-19}\;\mathrm{C}\)</td></tr>
+<tr><td>Neutron</td><td>\(0\)</td><td>0 C</td></tr>
+<tr><td>Électron</td><td>\(-e\)</td><td>\(1{,}6 \times 10^{-19}\;\mathrm{C}\)</td></tr>
+</tbody>
+</table></div>
+<div class="note ok"><strong>Électroneutralité de l'atome</strong>
+<p>Un atome est <strong>électriquement neutre</strong> : il possède exactement autant de protons (charge +) que d'électrons (charge −). La charge totale d'un atome est nulle :</p>
+\[\boxed{q_{\text{atome}} = Z \times e + Z \times (-e) = 0}\]</div>
+
+<h2 id="s3">III. La masse dans l'atome</h2>
+<div class="note"><strong>Masse des particules</strong>
+<p>Les masses des particules qui composent l'atome sont extrêmement petites :</p></div>
+<div class="formula">
+\[\boxed{m_{\text{proton}} \approx m_{\text{neutron}} \approx 1{,}7 \times 10^{-27}\;\mathrm{kg}}\]
+\[\boxed{m_{\text{électron}} \approx 9{,}1 \times 10^{-31}\;\mathrm{kg} \approx \frac{m_{\text{proton}}}{1\,836}}\]
+</div>
+<div class="cards">
+<div class="card">
+<h4>La masse est dans le noyau</h4>
+<ul>
+<li>La masse de l'électron est ≈ 2 000 fois plus petite que celle d'un nucléon</li>
+<li>La masse de l'atome est donc <strong>concentrée dans le noyau</strong></li>
+<li>On néglige la masse des électrons</li>
+</ul>
+</div>
+<div class="card">
+<h4>Calcul de la masse atomique</h4>
+<ul>
+<li>\(m_{\text{atome}} \approx A \times m_{\text{nucléon}}\)</li>
+<li>Exemple carbone 12 : \(m \approx 12 \times 1{,}7 \times 10^{-27} = 2{,}0 \times 10^{-26}\;\mathrm{kg}\)</li>
+<li>Cette approximation est excellente (erreur &lt; 0,1 %)</li>
+</ul>
+</div>
+</div>
+<div class="formula">
+\[\boxed{m_{\text{atome}} \approx A \times m_{\text{nucléon}} \approx A \times 1{,}7 \times 10^{-27}\;\mathrm{kg}}\]
+</div>
+
+<h2 id="s4">IV. Les dimensions dans l'atome</h2>
+<div class="note"><strong>Ordres de grandeur</strong>
+<p>L'atome est essentiellement constitué de <strong>vide</strong> : c'est la <strong>structure lacunaire</strong> de la matière.</p></div>
+<div class="formula">
+\[\boxed{d_{\text{atome}} \approx 10^{-10}\;\mathrm{m} \quad ; \quad d_{\text{noyau}} \approx 10^{-15}\;\mathrm{m}}\]
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Échelle</th><th>Dimension</th><th>Comparaison</th></tr></thead>
+<tbody>
+<tr><td>Atome</td><td>\(\approx 10^{-10}\) m (0,1 nm)</td><td>1 Å (angström)</td></tr>
+<tr><td>Noyau</td><td>\(\approx 10^{-15}\) m (1 fm)</td><td>100 000 fois plus petit</td></tr>
+<tr><td>Rapport noyau/atome</td><td>\(\approx 10^{-5}\)</td><td>Comme une balle dans un stade</td></tr>
+</tbody>
+</table></div>
+<div class="note warn">⚠️ <strong>Analogie</strong> : si le noyau était une balle de tennis (d ≈ 6 cm) au centre d'un stade, les électrons se trouveraient dans les gradins, à plusieurs dizaines de mètres. Entre les deux : du vide !</div>
+
+<h2 id="s5">V. Les ions monoatomiques</h2>
+<div class="note"><strong>Définition — Ion monoatomique</strong>
+<p>Un <strong>ion monoatomique</strong> est un atome qui a gagné ou perdu un ou plusieurs électrons. Sa charge électrique n'est plus nulle.</p></div>
+<div class="cards">
+<div class="card">
+<h4>Cation (ion positif)</h4>
+<ul>
+<li>L'atome <strong>perd</strong> des électrons</li>
+<li>Plus de protons que d'électrons → charge +</li>
+<li>Ex : Na → Na⁺ + e⁻</li>
+<li>Ex : Ca → Ca²⁺ + 2e⁻</li>
+<li>Ex : Al → Al³⁺ + 3e⁻</li>
+</ul>
+</div>
+<div class="card">
+<h4>Anion (ion négatif)</h4>
+<ul>
+<li>L'atome <strong>gagne</strong> des électrons</li>
+<li>Plus d'électrons que de protons → charge −</li>
+<li>Ex : Cl + e⁻ → Cl⁻</li>
+<li>Ex : O + 2e⁻ → O²⁻</li>
+<li>Ex : S + 2e⁻ → S²⁻</li>
+</ul>
+</div>
+</div>
+<div class="formula">
+\[\boxed{\text{Cation : perte d'électrons} \quad ; \quad \text{Anion : gain d'électrons} \quad ; \quad \text{Protons et neutrons : INVARIANTS}}\]
+</div>
+<div class="note warn">⚠️ <strong>Essentiel</strong> : lors de la formation d'un ion, seuls les électrons sont gagnés ou perdus. Le nombre de protons et de neutrons dans le noyau ne change <strong>JAMAIS</strong>.</div>
 
 </div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ RELATIONS & DIMENSIONS ═══════ -->
+<div class="panel" id="p-relations">
+<div class="content-card">
+<h3>📐 Relations & Grandeurs — La matière à l'échelle microscopique</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Variables &amp; Unités</th><th>Sens physique</th></tr></thead>
+<tbody>
+<tr><td>\(N = A - Z\)</td><td>\(N\), \(A\), \(Z\) sans unité</td><td>Nombre de neutrons dans le noyau</td></tr>
+<tr><td>\(^{A}_{Z}\textrm{X}\)</td><td>\(A\) = nucléons ; \(Z\) = protons</td><td>Notation symbolique de l'atome</td></tr>
+<tr><td>\(q = Z \times e\)</td><td>\(q\) en C ; \(e = 1{,}6 \times 10^{-19}\) C</td><td>Charge du noyau (positive)</td></tr>
+<tr><td>\(m_{\text{atome}} \approx A \times m_{\text{nucléon}}\)</td><td>\(m\) en kg ; \(m_n \approx 1{,}7 \times 10^{-27}\) kg</td><td>Masse approchée de l'atome</td></tr>
+<tr><td>\(d_{\text{atome}}/d_{\text{noyau}} \approx 10^{5}\)</td><td>Dimensions en m</td><td>Rapport entre atome et noyau</td></tr>
+</tbody>
+</table></div>
+
+<div class="content-card" style="margin-top:16px">
+<h3>🔬 Simulateur — Composition d'un atome</h3>
+<div class="neon-sim">
+<canvas id="atomCanvas" height="260"></canvas>
+<div class="sim-body">
+<h4>Calcul interactif — Composition atomique</h4>
+<div class="sim-inputs">
+<div><label class="neon-label">Symbole (ex: C, Na, Fe)</label><input class="neon-input" id="s-sym" value="Na" oninput="calcAtom()"/></div>
+<div><label class="neon-label">Z (numéro atomique)</label><input class="neon-input" id="s-Z" value="11" type="number" oninput="calcAtom()"/></div>
+<div><label class="neon-label">A (nombre de masse)</label><input class="neon-input" id="s-A" value="23" type="number" oninput="calcAtom()"/></div>
+</div>
+<div class="neon-result" id="s-result">—</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ EXERCICES ═══════ -->
+<div class="panel" id="p-exercices">
+<div class="content-card">
+<h3>✏️ Exercices progressifs</h3>
+
+<div style="margin-bottom:10px"><span class="chip orange">S'entraîner</span></div>
+<div class="exercise">
+<h4>Exercice 1 — Composition d'un atome <span class="chip">APP</span></h4>
+<p>L'atome d'azote est noté \(^{14}_{7}\textrm{N}\).<br>
+<strong>1.</strong> Donner le nombre de protons, de neutrons et d'électrons.<br>
+<strong>2.</strong> Calculer la charge totale du noyau.<br>
+<strong>3.</strong> Calculer la masse approchée de cet atome.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> Z = 7 protons, N = A − Z = 14 − 7 = <strong>7 neutrons</strong>, 7 électrons (atome neutre).</p>
+<p><strong>2.</strong> \(q = Z \times e = 7 \times 1{,}6 \times 10^{-19} = \mathbf{1{,}12 \times 10^{-18}\;\mathrm{C}}\)</p>
+<p><strong>3.</strong> \(m \approx A \times m_n = 14 \times 1{,}7 \times 10^{-27} = \mathbf{2{,}38 \times 10^{-26}\;\mathrm{kg}}\)</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 2 — Notation symbolique <span class="chip">APP · REA</span></h4>
+<p>Le chlore possède 17 protons et 18 neutrons dans son noyau.<br>
+<strong>1.</strong> Donner la notation symbolique de cet atome.<br>
+<strong>2.</strong> Combien d'électrons possède-t-il ?<br>
+<strong>3.</strong> Calculer sa masse approchée.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(Z = 17\), \(A = 17 + 18 = 35\) → notation : \(\mathbf{^{35}_{17}\textrm{Cl}}\)</p>
+<p><strong>2.</strong> L'atome est neutre → <strong>17 électrons</strong></p>
+<p><strong>3.</strong> \(m \approx 35 \times 1{,}7 \times 10^{-27} = \mathbf{5{,}95 \times 10^{-26}\;\mathrm{kg}}\)</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip amber">Appliquer</span></div>
+<div class="exercise">
+<h4>Exercice 3 — Les ions <span class="chip">REA · ANA</span></h4>
+<p>L'ion calcium Ca²⁺ est formé à partir de l'atome de calcium \(^{40}_{20}\textrm{Ca}\).<br>
+<strong>1.</strong> Combien d'électrons l'atome de calcium possède-t-il ?<br>
+<strong>2.</strong> Combien d'électrons sont perdus pour former Ca²⁺ ?<br>
+<strong>3.</strong> Donner le nombre de protons, neutrons et électrons de l'ion Ca²⁺.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> L'atome neutre a Z = 20 protons → <strong>20 électrons</strong>.</p>
+<p><strong>2.</strong> Ca²⁺ indique une perte de 2 électrons.</p>
+<p><strong>3.</strong> Protons : 20 (inchangé) · Neutrons : 40 − 20 = 20 (inchangé) · Électrons : 20 − 2 = <strong>18</strong>.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 4 — Comparaison de masses <span class="chip">ANA · VAL</span></h4>
+<p>On considère l'atome d'aluminium \(^{27}_{13}\textrm{Al}\).<br>
+<strong>1.</strong> Calculer la masse du noyau.<br>
+<strong>2.</strong> Calculer la masse totale des électrons.<br>
+<strong>3.</strong> Montrer que la masse des électrons est négligeable devant celle du noyau.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(m_{\text{noyau}} \approx A \times m_n = 27 \times 1{,}7 \times 10^{-27} = \mathbf{4{,}59 \times 10^{-26}\;\mathrm{kg}}\)</p>
+<p><strong>2.</strong> \(m_{\text{élec}} = 13 \times 9{,}1 \times 10^{-31} = \mathbf{1{,}18 \times 10^{-29}\;\mathrm{kg}}\)</p>
+<p><strong>3.</strong> \(\frac{m_{\text{élec}}}{m_{\text{noyau}}} = \frac{1{,}18 \times 10^{-29}}{4{,}59 \times 10^{-26}} \approx 2{,}6 \times 10^{-4} = \mathbf{0{,}026\%}\). La masse des électrons est bien négligeable.</p>
+</details>
+</div>
+
+<div style="margin:18px 0 10px"><span class="chip" style="background:var(--purple2);color:var(--purple);border-color:rgba(91,74,159,.2)">Approfondir</span></div>
+<div class="exercise">
+<h4>Exercice 5 — Structure lacunaire <span class="chip">ANA · VAL · COM</span></h4>
+<p>Le noyau de l'atome d'hydrogène a un diamètre d'environ \(1{,}2 \times 10^{-15}\) m et l'atome a un diamètre d'environ \(1{,}0 \times 10^{-10}\) m.<br>
+<strong>1.</strong> Calculer le rapport entre le diamètre de l'atome et celui du noyau.<br>
+<strong>2.</strong> Si le noyau était représenté par une balle de 1 cm de diamètre, à quelle distance se trouverait l'électron ?<br>
+<strong>3.</strong> En déduire que la matière est essentiellement constituée de vide.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\frac{d_{\text{atome}}}{d_{\text{noyau}}} = \frac{1{,}0 \times 10^{-10}}{1{,}2 \times 10^{-15}} \approx \mathbf{83\,000}\)</p>
+<p><strong>2.</strong> Si le noyau = 1 cm, l'électron est à \(83\,000 \times 1\;\mathrm{cm} = 830\;\mathrm{m}\) du centre !</p>
+<p><strong>3.</strong> Le volume occupé par le noyau est \((1/83\,000)^3 \approx 1{,}8 \times 10^{-15}\) du volume total → <strong>99,9999999999998 % de vide</strong>.</p>
+</details>
+</div>
+
+<div class="exercise">
+<h4>Exercice 6 — Ion chlorure et identification <span class="chip">ANA · COM</span></h4>
+<p>L'ion chlorure Cl⁻ est formé à partir de l'atome de chlore \(^{35}_{17}\textrm{Cl}\).<br>
+<strong>1.</strong> Écrire l'équation de formation de l'ion chlorure.<br>
+<strong>2.</strong> Donner la composition de l'ion Cl⁻ (protons, neutrons, électrons).<br>
+<strong>3.</strong> Calculer la charge totale de l'ion Cl⁻.</p>
+<details><summary>Correction</summary>
+<p><strong>1.</strong> \(\textrm{Cl} + e^- \rightarrow \textrm{Cl}^-\)</p>
+<p><strong>2.</strong> Protons : 17 · Neutrons : 35 − 17 = 18 · Électrons : 17 + 1 = <strong>18</strong></p>
+<p><strong>3.</strong> \(q = 17 \times e + 18 \times (-e) = 17e - 18e = -e = \mathbf{-1{,}6 \times 10^{-19}\;\mathrm{C}}\)</p>
+</details>
+</div>
+</div>
+</div>
+
+<!-- ═══════ FLASHCARDS ═══════ -->
+<div class="panel" id="p-flashcards">
+<div class="content-card">
+<h3>🃏 Flashcards — La matière à l'échelle microscopique</h3>
+<p style="color:var(--muted);margin-bottom:18px">Cliquez sur une carte pour la retourner.</p>
+<div class="flashcard-grid" id="fcGrid"></div>
+<div style="display:flex;gap:10px;margin-top:18px">
+<button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+<button class="btn" onclick="renderFC()">↺ Réinitialiser</button>
+</div>
+</div>
+</div>
+
+<!-- ═══════ QUIZ & CHATBOT ═══════ -->
+<div class="panel" id="p-quiz">
+<div class="content-card">
+<h3>🧠 Quiz — La matière à l'échelle microscopique</h3>
+<div id="quizArea"></div>
+</div>
+<div class="content-card" style="margin-top:16px">
+<h3>🤖 Chatbot IA — Aide personnalisée</h3>
+<div class="ai-grid">
+<div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:10px">Copiez ce prompt contextualisé dans l'IA de votre choix :</p>
+<textarea class="prompt-box" id="promptBox" readonly>Tu es professeur de physique-chimie niveau Seconde. Explique le chapitre "La matière à l'échelle microscopique" : structure de l'atome (noyau = protons + neutrons = nucléons, nuage électronique), notation A/Z X, nombre de neutrons N = A − Z, charge élémentaire e = 1,6×10⁻¹⁹ C, électroneutralité (Z protons = Z électrons), masse (m_proton ≈ m_neutron ≈ 1,7×10⁻²⁷ kg, m_électron 2000× plus petite, m_atome ≈ A × m_nucléon), dimensions (d_atome ≈ 10⁻¹⁰ m, d_noyau ≈ 10⁻¹⁵ m, structure lacunaire), ions monoatomiques (cations perdent e⁻, anions gagnent e⁻). Donne des exemples numériques avec formules LaTeX et unités.</textarea>
+<div class="btn-row">
+<button class="btn primary" onclick="navigator.clipboard.writeText(document.getElementById('promptBox').value)">📋 Copier</button>
+<a href="https://claude.ai" target="_blank" class="btn">Claude ↗</a>
+<a href="https://chat.openai.com" target="_blank" class="btn">ChatGPT ↗</a>
+<a href="https://gemini.google.com" target="_blank" class="btn">Gemini ↗</a>
+<a href="https://copilot.microsoft.com" target="_blank" class="btn">Copilot ↗</a>
+</div>
+</div>
+<div>
+<h4 style="margin:0 0 10px">Questions suggérées</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+<button class="btn" onclick="setPrompt('Donne la composition complète de l\'atome d\'uranium 238 (Z=92) : protons, neutrons, électrons, charge du noyau, masse approchée.')">Composition atomique</button>
+<button class="btn" onclick="setPrompt('Pourquoi dit-on que la matière est essentiellement constituée de vide ? Explique avec des ordres de grandeur et une analogie.')">Structure lacunaire</button>
+<button class="btn" onclick="setPrompt('Quelle est la différence entre un atome et un ion ? Comment passe-t-on de l\'un à l\'autre ? Donner 3 exemples de chaque.')">Atome vs ion</button>
+<button class="btn" onclick="setPrompt('Calcule la masse approchée de l\'ion Fe³⁺ (Z=26, A=56). Pourquoi peut-on dire que la masse d\'un ion est pratiquement égale à celle de l\'atome ?')">Masse d'un ion</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ CARTE MENTALE ═══════ -->
+<div class="panel" id="p-mindmap">
+<div class="content-card">
+<h3>🗺️ Carte mentale — La matière à l'échelle microscopique</h3>
+<div class="mindmap">
+<div class="map-center">⚛️ L'atome et l'ion</div>
+<div class="map-branches">
+<div class="map-branch" style="border-color:rgba(200,117,51,.3)">
+<h4 style="color:var(--orange)">🔬 Structure de l'atome</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Noyau : protons + neutrons</li>
+<li>Nuage électronique : électrons</li>
+<li>Notation : \(^{A}_{Z}\textrm{X}\)</li>
+<li>N = A − Z</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(183,121,31,.3)">
+<h4 style="color:var(--amber)">⚡ Charge électrique</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>e = 1,6 × 10⁻¹⁹ C</li>
+<li>Proton : +e, Neutron : 0</li>
+<li>Électron : −e</li>
+<li>Électroneutralité : Z⁺ = Z⁻</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(47,133,90,.3)">
+<h4 style="color:var(--green)">⚖️ Masse</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>m_nucléon ≈ 1,7 × 10⁻²⁷ kg</li>
+<li>m_électron ≈ 2 000 × plus petite</li>
+<li>m_atome ≈ A × m_nucléon</li>
+<li>Masse dans le noyau</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(91,74,159,.3)">
+<h4 style="color:var(--purple)">📏 Dimensions</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>d_atome ≈ 10⁻¹⁰ m</li>
+<li>d_noyau ≈ 10⁻¹⁵ m</li>
+<li>Rapport : 10⁵</li>
+<li>Structure lacunaire</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(185,28,28,.3)">
+<h4 style="color:var(--red)">➕ Cations</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Perte d'électrons</li>
+<li>Charge positive</li>
+<li>Na⁺, Ca²⁺, Al³⁺</li>
+<li>Protons/neutrons inchangés</li>
+</ul>
+</div>
+<div class="map-branch" style="border-color:rgba(58,138,159,.3)">
+<h4 style="color:var(--cyan)">➖ Anions</h4>
+<ul style="color:var(--muted);font-size:13px">
+<li>Gain d'électrons</li>
+<li>Charge négative</li>
+<li>Cl⁻, O²⁻, S²⁻</li>
+<li>Protons/neutrons inchangés</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ SIMULATIONS ═══════ -->
+<div class="panel" id="p-simulations">
+<div class="content-card">
+<h3>🔬 Simulations interactives</h3>
+<div class="neon-sim" style="margin-bottom:18px">
+<canvas id="atomSimCanvas" height="300"></canvas>
+<div class="sim-body">
+<h4>Simulation — Modèle de l'atome animé</h4>
+<p>Visualisez le noyau (centre) et les électrons en orbite. Modifiez Z pour changer l'élément.</p>
+<div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+<button class="btn primary" onclick="startAtomSim()">▶ Démarrer</button>
+<button class="btn" onclick="stopAtomSim()">⏹ Arrêter</button>
+</div>
+<div class="sim-inputs" style="margin-top:10px">
+<div><label class="neon-label">Z (protons)</label><input class="neon-input" id="sim-Z" value="11" type="number" step="1" min="1" max="20" oninput="updateAtomSim()"/></div>
+<div><label class="neon-label">A (nucléons)</label><input class="neon-input" id="sim-A2" value="23" type="number" step="1" oninput="updateAtomSim()"/></div>
+<div><label class="neon-label">Ion (électrons perdus)</label><input class="neon-input" id="sim-ion" value="0" type="number" step="1" min="0" max="3" oninput="updateAtomSim()"/></div>
+</div>
+</div>
+</div>
+<div class="sim-grid-2">
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Modèle atomique (PhET)</h4><p style="color:var(--muted);font-size:13px">Construisez des atomes en ajoutant des protons, neutrons et électrons.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+<div class="sim-card">
+<div class="sim-body"><h4 style="margin:0 0 6px">Isotopes et masse atomique (PhET)</h4><p style="color:var(--muted);font-size:13px">Explorez les isotopes et leur abondance relative.</p></div>
+<iframe src="https://phet.colorado.edu/sims/html/isotopes-and-atomic-mass/latest/isotopes-and-atomic-mass_fr.html" allowfullscreen loading="lazy"></iframe>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════ ECE ═══════ -->
+<div class="panel" id="p-ece">
+<div class="content-card">
+<h3>🧪 ECE — Tests d'identification des ions</h3>
+<p style="color:var(--muted);margin-bottom:16px">Protocole expérimental pour identifier les ions en solution à l'aide de tests caractéristiques.</p>
+<div class="ece-steps">
+<div class="ece-step">
+<b>① Préparation des solutions</b>
+<p style="color:var(--muted);font-size:13px">Préparer des solutions aqueuses contenant les ions à identifier : solution de chlorure de sodium (Na⁺, Cl⁻), solution de sulfate de cuivre (Cu²⁺, SO₄²⁻), solution de nitrate d'argent (Ag⁺, NO₃⁻), etc.</p>
+</div>
+<div class="ece-step">
+<b>② Test à la flamme (cations)</b>
+<p style="color:var(--muted);font-size:13px">Plonger un fil de platine nettoyé dans la solution, puis le placer dans la flamme du bec Bunsen. Observer la couleur : Na⁺ → <strong>jaune</strong>, K⁺ → <strong>violet</strong>, Cu²⁺ → <strong>vert-bleu</strong>, Li⁺ → <strong>rouge carmin</strong>.</p>
+</div>
+<div class="ece-step">
+<b>③ Test au nitrate d'argent (anions)</b>
+<p style="color:var(--muted);font-size:13px">Ajouter quelques gouttes de solution de nitrate d'argent (AgNO₃) à la solution test. Cl⁻ → <strong>précipité blanc</strong> qui noircit à la lumière. Br⁻ → <strong>précipité jaune pâle</strong>. I⁻ → <strong>précipité jaune</strong>.</p>
+</div>
+<div class="ece-step">
+<b>④ Test à la soude (cations métalliques)</b>
+<p style="color:var(--muted);font-size:13px">Ajouter quelques gouttes de solution d'hydroxyde de sodium (NaOH). Cu²⁺ → <strong>précipité bleu</strong>. Fe³⁺ → <strong>précipité rouille</strong>. Fe²⁺ → <strong>précipité vert</strong>. Zn²⁺ → <strong>précipité blanc</strong> (redissout en excès).</p>
+</div>
+<div class="ece-step">
+<b>⑤ Test au chlorure de baryum</b>
+<p style="color:var(--muted);font-size:13px">Ajouter quelques gouttes de solution de chlorure de baryum (BaCl₂). SO₄²⁻ → <strong>précipité blanc</strong> fin et dense. Ce test est spécifique des ions sulfate.</p>
+</div>
+<div class="ece-step">
+<b>⑥ Conclusion et rédaction</b>
+<p style="color:var(--muted);font-size:13px">Rédiger le bilan : identifier les ions présents à partir des observations. Préciser le test utilisé, l'observation et la conclusion. Attention aux faux positifs : certains ions donnent des réactions similaires.</p>
+</div>
+</div>
+<div class="table-wrap" style="margin-top:18px"><table>
+<thead><tr><th>Ion testé</th><th>Réactif</th><th>Observation</th></tr></thead>
+<tbody>
+<tr><td>Na⁺</td><td>Flamme</td><td>Flamme jaune</td></tr>
+<tr><td>K⁺</td><td>Flamme</td><td>Flamme violette</td></tr>
+<tr><td>Cu²⁺</td><td>NaOH</td><td>Précipité bleu</td></tr>
+<tr><td>Fe³⁺</td><td>NaOH</td><td>Précipité rouille</td></tr>
+<tr><td>Cl⁻</td><td>AgNO₃</td><td>Précipité blanc (noircit)</td></tr>
+<tr><td>SO₄²⁻</td><td>BaCl₂</td><td>Précipité blanc dense</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- ═══════ VERS LA 1ÈRE SPÉ ═══════ -->
+<div class="panel" id="p-terminale">
+<div class="content-card">
+<h3>🚀 Vers la 1ère Spé</h3>
+<div class="cards">
+<div class="card">
+<h4>Ce qui sera approfondi</h4>
+<ul>
+<li><strong>Configuration électronique</strong> : répartition des électrons en couches (K, L, M) et sous-couches (s, p), notation 1s²2s²2p⁶…</li>
+<li><strong>Classification périodique</strong> : lien entre position dans le tableau et structure électronique, familles chimiques</li>
+<li><strong>Liaisons chimiques</strong> : covalente, ionique, métallique — pourquoi les atomes se lient entre eux</li>
+<li><strong>Énergie d'ionisation</strong> : énergie nécessaire pour arracher un électron, lien avec la position dans le tableau</li>
+</ul>
+</div>
+<div class="card">
+<h4>Liens avec d'autres notions</h4>
+<ul>
+<li><strong>Radioactivité</strong> : transformation du noyau (Z et A changent) — pas comme la formation d'ions !</li>
+<li><strong>Spectroscopie</strong> : les niveaux d'énergie des électrons expliquent les spectres de raies</li>
+<li><strong>Réactions chimiques</strong> : les ions se combinent pour former des précipités, des gaz, de l'eau</li>
+<li><strong>Isotopes</strong> : même Z, A différent — même élément chimique, propriétés nucléaires différentes</li>
+</ul>
+</div>
+</div>
+<div class="content-card" style="background:var(--orange3);border-color:rgba(200,117,51,.22);margin-top:16px">
+<h4 style="color:var(--orange)">🏆 Mini-défi 1ère Spé</h4>
+<p style="color:var(--muted)">L'ion fer Fe³⁺ est formé à partir de l'atome de fer \(^{56}_{26}\textrm{Fe}\). Donner la configuration électronique de l'atome de fer (Z = 26) en utilisant les couches K, L, M. En déduire celle de l'ion Fe³⁺. Pourquoi le fer perd-il 3 électrons et pas 2 ou 4 ?</p>
+<details><summary style="cursor:pointer;color:var(--orange);font-weight:700">Réponse</summary>
+<p style="color:var(--muted)">Atome Fe (Z = 26) : K(2) L(8) M(16) → soit en sous-couches : 1s²2s²2p⁶3s²3p⁶3d⁶4s².<br>
+Ion Fe³⁺ : l'atome perd les 2 électrons 4s et 1 électron 3d → Fe³⁺ : 1s²2s²2p⁶3s²3p⁶3d⁵. La sous-couche 3d⁵ est à moitié remplie (5 électrons sur 6 orbitales), ce qui confère une <strong>stabilité particulière</strong>. C'est pourquoi Fe³⁺ est plus stable que Fe⁴⁺ ou Fe²⁺ (dans certaines conditions).</p>
+</details>
+</div>
+</div>
+</div>
+
+</div><!-- /page -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// Gestion des onglets
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+/* ══ THEME ══ */
+(function(){const t=localStorage.getItem('pc_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pc_theme',n);drawHero();}
 
-    btn.classList.add('active');
-    const targetId = btn.getAttribute('data-target');
-    const targetPanel = document.getElementById(targetId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* ══ TABS ══ */
+const PANELS={cours:'p-cours',relations:'p-relations',exercices:'p-exercices',flashcards:'p-flashcards',quiz:'p-quiz',mindmap:'p-mindmap',simulations:'p-simulations',ece:'p-ece',terminale:'p-terminale'};
+const visited=new Set();
+function switchTab(t){
+  Object.values(PANELS).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const el=document.getElementById(PANELS[t]);if(el)el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  visited.add(t);updateMastery();
+  if(t==='flashcards'&&!fcBuilt)buildFC();
+  if(t==='quiz'&&!quizBuilt)buildQuiz();
+  if(t==='simulations')setTimeout(startAtomSim,200);
+  if(t==='relations')setTimeout(calcAtom,100);
+}
+function updateMastery(){const pct=Math.round(visited.size/9*100);document.getElementById('masterBar').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+' %';}
+
+/* ══ HERO CANVAS — atome animé ══ */
+const hC=document.getElementById('heroCanvas');
+const hCtx=hC.getContext('2d');
+let hFrame=0;
+function drawHero(){
+  const W=hC.width=hC.offsetWidth||500,H=hC.height=hC.offsetHeight||230;
+  const ctx=hCtx;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2,t=Date.now()/1000;
+  // noyau
+  const nR=12;
+  ctx.beginPath();ctx.arc(cx,cy,nR,0,Math.PI*2);
+  const nGrad=ctx.createRadialGradient(cx-2,cy-2,1,cx,cy,nR);
+  nGrad.addColorStop(0,'#F0B888');nGrad.addColorStop(1,'#C87533');
+  ctx.fillStyle=nGrad;ctx.fill();
+  // protons/neutrons dans le noyau
+  for(let i=0;i<6;i++){
+    const a=i*Math.PI/3+t*0.3;
+    const px=cx+4*Math.cos(a),py=cy+4*Math.sin(a);
+    ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);
+    ctx.fillStyle=i%2===0?'rgba(240,184,136,.9)':'rgba(200,117,51,.9)';ctx.fill();
+  }
+  // orbites électroniques
+  const orbits=[{r:50,e:2},{r:80,e:4},{r:110,e:5}];
+  orbits.forEach((orb,oi)=>{
+    ctx.strokeStyle='rgba(224,152,96,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,orb.r,0,Math.PI*2);ctx.stroke();
+    for(let i=0;i<orb.e;i++){
+      const angle=(i/orb.e)*Math.PI*2+t*(1.2-oi*0.3);
+      const ex=cx+orb.r*Math.cos(angle),ey=cy+orb.r*Math.sin(angle);
+      ctx.beginPath();ctx.arc(ex,ey,3.5,0,Math.PI*2);
+      const eGrad=ctx.createRadialGradient(ex,ey,0,ex,ey,3.5);
+      eGrad.addColorStop(0,'rgba(139,214,228,.9)');eGrad.addColorStop(1,'rgba(58,138,159,.6)');
+      ctx.fillStyle=eGrad;ctx.fill();
+      // trail
+      for(let tr=1;tr<=4;tr++){
+        const ta=angle-tr*0.08;
+        const tx=cx+orb.r*Math.cos(ta),ty=cy+orb.r*Math.sin(ta);
+        ctx.beginPath();ctx.arc(tx,ty,2,0,Math.PI*2);
+        ctx.fillStyle=`rgba(58,138,159,${.3-tr*.06})`;ctx.fill();
+      }
+    }
   });
-});
+  // labels
+  ctx.font='bold 11px Inter';ctx.fillStyle='rgba(224,152,96,.7)';
+  ctx.fillText('Noyau',cx+nR+6,cy-4);
+  ctx.fillStyle='rgba(58,138,159,.7)';
+  ctx.fillText('Électrons',cx+60,cy-60);
+  ctx.fillStyle='rgba(200,117,51,.4)';ctx.font='9px Inter';
+  ctx.fillText('d ≈ 10⁻¹⁰ m',10,H-12);
+  ctx.fillText('noyau ≈ 10⁻¹⁵ m',10,H-26);
+  hFrame++;
+}
+(function hloop(){drawHero();requestAnimationFrame(hloop);})();
+
+/* ══ ATOM SIMULATION ══ */
+let atomRunning=false,atomAnim=null;
+function startAtomSim(){if(atomRunning)return;atomRunning=true;(function rl(){if(!atomRunning)return;drawAtomSim();atomAnim=requestAnimationFrame(rl);})();}
+function stopAtomSim(){atomRunning=false;if(atomAnim)cancelAnimationFrame(atomAnim);}
+function updateAtomSim(){}
+function drawAtomSim(){
+  const c=document.getElementById('atomSimCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=300;
+  const ctx=c.getContext('2d');
+  const Z=parseInt(document.getElementById('sim-Z').value)||11;
+  const A=parseInt(document.getElementById('sim-A2').value)||23;
+  const ionLoss=parseInt(document.getElementById('sim-ion').value)||0;
+  const nElec=Math.max(0,Z-ionLoss);
+  const t=Date.now()/1000;
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2;
+  // nucleus
+  const nR=Math.min(20,8+Z*0.5);
+  const nGrad=ctx.createRadialGradient(cx-2,cy-2,1,cx,cy,nR);
+  nGrad.addColorStop(0,'#F0B888');nGrad.addColorStop(1,'#C87533');
+  ctx.beginPath();ctx.arc(cx,cy,nR,0,Math.PI*2);ctx.fillStyle=nGrad;ctx.fill();
+  // nucleons inside
+  const nucleonCount=Math.min(A,20);
+  for(let i=0;i<nucleonCount;i++){
+    const a=i*Math.PI*2/nucleonCount+t*0.2;
+    const r2=Math.min(nR*0.5,3+nucleonCount*0.1);
+    const px=cx+r2*Math.cos(a),py=cy+r2*Math.sin(a);
+    ctx.beginPath();ctx.arc(px,py,2.5,0,Math.PI*2);
+    ctx.fillStyle=i<Z?'rgba(240,184,136,.9)':'rgba(180,120,60,.8)';ctx.fill();
+  }
+  // electron orbits
+  const layers=[];
+  let rem=nElec;
+  [2,8,8,2].forEach(cap=>{if(rem>0){layers.push(Math.min(rem,cap));rem-=cap;}});
+  layers.forEach((eCount,oi)=>{
+    const orbR=50+oi*35;
+    ctx.strokeStyle='rgba(224,152,96,.15)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,orbR,0,Math.PI*2);ctx.stroke();
+    for(let i=0;i<eCount;i++){
+      const angle=(i/eCount)*Math.PI*2+t*(1-oi*0.2)*(oi%2===0?1:-1);
+      const ex=cx+orbR*Math.cos(angle),ey=cy+orbR*Math.sin(angle);
+      ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);
+      const eGrad=ctx.createRadialGradient(ex,ey,0,ex,ey,4);
+      eGrad.addColorStop(0,'rgba(139,214,228,.95)');eGrad.addColorStop(1,'rgba(58,138,159,.5)');
+      ctx.fillStyle=eGrad;ctx.fill();
+    }
+  });
+  // info
+  ctx.font='bold 13px Inter';
+  ctx.fillStyle='#E09860';
+  const sym=document.getElementById('s-sym').value||'X';
+  const ionStr=ionLoss>0?'^'+(ionLoss>1?ionLoss:'')+'+':'';
+  ctx.fillText(sym+ionStr,cx+nR+14,cy+5);
+  ctx.font='11px Inter';ctx.fillStyle='rgba(224,152,96,.6)';
+  ctx.fillText('Z = '+Z+'  A = '+A+'  N = '+(A-Z),20,25);
+  ctx.fillText('Protons: '+Z+'  Neutrons: '+(A-Z)+'  Électrons: '+nElec,20,42);
+  if(ionLoss>0){ctx.fillStyle='rgba(185,28,28,.7)';ctx.fillText('Ion : perte de '+ionLoss+' électron(s)',20,59);}
+  else{ctx.fillStyle='rgba(47,133,90,.7)';ctx.fillText('Atome neutre (électroneutralité)',20,59);}
+}
+
+/* ══ CALCULATOR ══ */
+function calcAtom(){
+  const Z=parseInt(document.getElementById('s-Z').value)||0;
+  const A=parseInt(document.getElementById('s-A').value)||0;
+  const sym=document.getElementById('s-sym').value||'X';
+  if(Z<=0||A<=0){document.getElementById('s-result').textContent='Entrez Z et A positifs.';return;}
+  const N=A-Z;
+  const qNoyau=Z*1.6e-19;
+  const mAtom=A*1.7e-27;
+  const nElec=Z;
+  document.getElementById('s-result').innerHTML=
+    '⟐ '+sym+' (Z='+Z+', A='+A+')<br>'+
+    '  Protons : '+Z+' · Neutrons : N = A−Z = '+N+' · Électrons : '+nElec+'<br>'+
+    '  Charge du noyau : q = '+Z+' × e = '+(qNoyau).toExponential(2)+' C<br>'+
+    '  Masse approchée : m ≈ '+A+' × 1,7×10⁻²⁷ = '+(mAtom).toExponential(2)+' kg<br>'+
+    '  Électroneutralité : '+Z+' protons = '+nElec+' électrons ✓';
+  // draw on canvas
+  const c=document.getElementById('atomCanvas');if(!c)return;
+  c.width=c.offsetWidth||600;const W=c.width,H=260;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#FDF8F3').trim();ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2;
+  // nucleus
+  const nR=Math.min(18,8+Z*0.4);
+  const nGrad=ctx.createRadialGradient(cx-2,cy-2,1,cx,cy,nR);
+  nGrad.addColorStop(0,'#F0B888');nGrad.addColorStop(1,'#C87533');
+  ctx.beginPath();ctx.arc(cx,cy,nR,0,Math.PI*2);ctx.fillStyle=nGrad;ctx.fill();
+  // orbits
+  const layers=[];let rem=Z;
+  [2,8,8].forEach(cap=>{if(rem>0){layers.push(Math.min(rem,cap));rem-=cap;}});
+  layers.forEach((eCount,oi)=>{
+    const orbR=45+oi*30;
+    ctx.strokeStyle='rgba(224,152,96,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,orbR,0,Math.PI*2);ctx.stroke();
+    for(let i=0;i<eCount;i++){
+      const angle=(i/eCount)*Math.PI*2-Math.PI/2;
+      const ex=cx+orbR*Math.cos(angle),ey=cy+orbR*Math.sin(angle);
+      ctx.beginPath();ctx.arc(ex,ey,3.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(139,214,228,.85)';ctx.fill();
+    }
+  });
+  // labels
+  ctx.font='bold 12px Inter';ctx.fillStyle='#E09860';
+  ctx.fillText(sym,cx+nR+8,cy+5);
+  ctx.font='10px Inter';ctx.fillStyle='rgba(224,152,96,.5)';
+  ctx.fillText('p='+Z+' n='+N+' e='+Z,cx+nR+8,cy+20);
+}
+
+/* ══ FLASHCARDS ══ */
+const FC_DATA=[
+  {q:"Composition du noyau",r:"Protons (charge +e) et neutrons (charge 0) = nucléons"},
+  {q:"Notation \(^{A}_{Z}X\)",r:"A = nombre de nucléons, Z = nombre de protons, X = symbole"},
+  {q:"Nombre de neutrons",r:"N = A − Z"},
+  {q:"Charge élémentaire e",r:"e = 1,6 × 10⁻¹⁹ C (charge du proton)"},
+  {q:"Charge de l'électron",r:"−e = −1,6 × 10⁻¹⁹ C"},
+  {q:"Électroneutralité",r:"Dans un atome : Z protons = Z électrons → charge totale nulle"},
+  {q:"Masse d'un nucléon",r:"m_proton ≈ m_neutron ≈ 1,7 × 10⁻²⁷ kg"},
+  {q:"Masse de l'électron",r:"m_électron ≈ 9,1 × 10⁻³¹ kg ≈ m_proton / 1836"},
+  {q:"Masse de l'atome",r:"m_atome ≈ A × m_nucléon ≈ A × 1,7 × 10⁻²⁷ kg"},
+  {q:"Diamètre de l'atome",r:"d ≈ 10⁻¹⁰ m = 0,1 nm = 1 Å"},
+  {q:"Diamètre du noyau",r:"d ≈ 10⁻¹⁵ m = 1 fm (femtomètre)"},
+  {q:"Structure lacunaire",r:"L'atome est constitué de 99,999...% de vide (noyau 10⁵ fois plus petit)"},
+  {q:"Cation",r:"Ion positif : atome qui perd des électrons (ex : Na⁺, Ca²⁺)"},
+  {q:"Anion",r:"Ion négatif : atome qui gagne des électrons (ex : Cl⁻, O²⁻)"},
+  {q:"Ion et noyau",r:"Le noyau ne change JAMAIS lors de la formation d'un ion. Seuls les électrons changent."}
+];
+let fcData=[...FC_DATA],fcBuilt=false;
+function buildFC(){fcBuilt=true;renderFC();}
+function renderFC(){
+  const g=document.getElementById('fcGrid');g.innerHTML='';
+  fcData.forEach((fc,i)=>{
+    g.innerHTML+=`<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>${fc.q}</b></div><div class="flash-back">${fc.r}</div></div></div>`;
+  });
+}
+function shuffleFC(){fcData.sort(()=>Math.random()-.5);renderFC();}
+
+/* ══ QUIZ ══ */
+const QUIZ=[
+  {q:"Quel est le nombre de neutrons dans l'atome \(^{23}_{11}\\textrm{Na}\) ?",o:["11","12","23","34"],c:1},
+  {q:"Quelle est la charge d'un électron ?",o:["+e","0","−e","+2e"],c:2},
+  {q:"La masse de l'atome est principalement concentrée dans :",o:["Le nuage électronique","Le noyau","Les électrons de valence","L'espace vide"],c:1},
+  {q:"Quelle est la valeur de la charge élémentaire e ?",o:["1,6 × 10⁻¹⁹ C","1,6 × 10⁻²⁷ C","9,1 × 10⁻³¹ C","3,0 × 10⁸ C"],c:0},
+  {q:"L'ion Cl⁻ possède combien d'électrons ? (Z = 17)",o:["16","17","18","35"],c:2},
+  {q:"Quel est le rapport entre le diamètre de l'atome et celui du noyau ?",o:["10²","10³","10⁵","10⁸"],c:2},
+  {q:"Un cation est un ion qui a :",o:["Gagné des protons","Perdu des électrons","Gagné des neutrons","Perdu des neutrons"],c:1},
+  {q:"L'électroneutralité d'un atome signifie que :",o:["Le nombre de neutrons = nombre de protons","Le nombre de protons = nombre d'électrons","La charge est positive","Il n'y a pas de charge"],c:1},
+  {q:"L'ion Ca²⁺ est formé à partir de l'atome de calcium (Z = 20). Combien d'électrons possède Ca²⁺ ?",o:["18","20","22","40"],c:0},
+  {q:"La masse d'un atome peut être approchée par :",o:["Z × m_électron","A × m_nucléon","N × m_neutron","Z × m_proton"],c:1},
+  {q:"L'atome d'hydrogène \(^{1}_{1}\\textrm{H}\) possède combien de neutrons ?",o:["0","1","2","3"],c:0},
+  {q:"Lors de la formation d'un ion, que se passe-t-il dans le noyau ?",o:["Il perd des protons","Il gagne des neutrons","Rien ne change","Il perd des nucléons"],c:2}
+];
+let quizBuilt=false,quizScore=0,quizAnswered=[];
+function buildQuiz(){quizBuilt=true;quizScore=0;quizAnswered=new Array(QUIZ.length).fill(false);renderQuiz();}
+function renderQuiz(){
+  const area=document.getElementById('quizArea');area.innerHTML='';
+  QUIZ.forEach((q,i)=>{
+    let html=`<div class="quiz-box" style="margin-bottom:14px"><p style="font-weight:700;margin:0 0 10px">Q${i+1}. ${q.q}</p>`;
+    q.o.forEach((opt,j)=>{
+      html+=`<button class="option" id="q${i}o${j}" onclick="answerQ(${i},${j})">${opt}</button>`;
+    });
+    html+=`</div>`;area.innerHTML+=html;
+  });
+  area.innerHTML+=`<div style="text-align:center;margin-top:16px"><button class="btn primary" onclick="buildQuiz()">🔄 Recommencer</button></div>`;
+}
+function answerQ(qi,oi){
+  if(quizAnswered[qi])return;quizAnswered[qi]=true;
+  const correct=QUIZ[qi].c;
+  if(oi===correct){quizScore++;document.getElementById('q'+qi+'o'+oi).classList.add('correct');}
+  else{document.getElementById('q'+qi+'o'+oi).classList.add('wrong');document.getElementById('q'+qi+'o'+correct).classList.add('correct');}
+  document.getElementById('pctLabel').textContent=Math.round(quizScore/QUIZ.length*100)+' %';
+}
+
+/* ══ CHATBOT PROMPT ══ */
+function setPrompt(t){document.getElementById('promptBox').value=t;}
+
+/* ══ INIT ══ */
+visited.add('cours');updateMastery();
+</script>
+<style>
+.bk-home{
+  position:fixed;bottom:20px;left:20px;z-index:9999;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 18px;border-radius:10px;
+  background:rgba(18,26,46,.87);color:#ddeeff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  text-decoration:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+  transition:.18s ease;
+  cursor:pointer;
+}
+.bk-home:hover{
+  background:rgba(47,159,202,.9);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 7px 22px rgba(47,159,202,.4);
+}
+@media(max-width:600px){
+  .bk-home{bottom:12px;left:12px;padding:8px 13px;font-size:12px}
+}
+</style>
+<a class="bk-home" href="index.html" title="Retour a l'accueil">&#8592; Accueil</a>
+<script>
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
 </script>
 </body>
 </html>
