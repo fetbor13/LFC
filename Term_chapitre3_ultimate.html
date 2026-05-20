@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terminale Spé · Chapitre 3 — Les dosages | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+/* Adjustments for the chapter page specifically */
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+/* Adjustments for the injected content */
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 3 — Les dosages | PhysiChem</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+<div class="topbar"><div class="crumb">Terminale Spé › Chimie › <b>Les dosages</b></div><div class="top-actions"><button class="pill-btn" onclick="switchTab('outils')">Relations clés</button><button class="pill-btn" onclick="switchTab('simulations')">Simuler</button></div></div>
+<div class="page">
+<section class="hero" aria-label="Introduction du chapitre">
+  <div class="hero-card">
+    <div class="eyebrow">Terminale Spé · Chapitre 03</div>
+    <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+    <h2>Les <span>dosages</span></h2>
+    <p class="hero-copy">Doser, c’est transformer une observation expérimentale en quantité de matière. Le chapitre apprend à repérer l’équivalence, écrire le bilan stœchiométrique, choisir un suivi pH-métrique ou conductimétrique, puis conclure avec unité, précision et esprit critique.</p>
+    <div class="hero-grid"><div class="metric"><b>4</b><span>idées expérimentales</span></div><div class="metric"><b>8</b><span>relations utiles</span></div><div class="metric"><b>2</b><span>simulations pleine largeur</span></div></div>
+  </div>
+  <figure class="real-hero-img" aria-label="Montage de titrage"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Titration-setup-eng.png" alt="Spectrophotomètre UV-visible de laboratoire"></figure>
+</section>
+<section class="useful-strip" aria-label="Objectifs">
+  <div class="useful-card mission-1"><small>Comprendre</small><b>Du geste au calcul</b><span>Un titrage relie un volume versé, une réaction support et une quantité de matière inconnue.</span></div>
+  <div class="useful-card mission-2"><small>Mesurer</small><b>Équivalence</b><span>À l’équivalence, les réactifs sont introduits dans les proportions stœchiométriques.</span></div>
+  <div class="useful-card mission-3"><small>Réussir</small><b>ECE et Bac</b><span>Choisir \(\lambda_{\max}\), faire le blanc, tracer une droite et discuter le domaine de validité.</span></div>
+</section>
+
+<section class="panel active" id="tab-cours">
+<div class="content-card">
+<h3>Cours complet</h3>
+<div class="course-grid">
+  <aside class="toc" aria-label="Plan du cours">
+    <div class="toc-title">Plan rapide</div>
+    <a href="#c1">1. Pourquoi doser ?</a>
+    <a href="#c2">2. Réaction support</a>
+    <a href="#c3">3. Équivalence</a>
+    <a href="#c3b">4. Méthode du titrage direct</a>
+    <a href="#c3c">5. Repérage de l'équivalence</a>
+    <a href="#c4">6. pH-métrie</a>
+    <a href="#c5">7. Conductimétrie</a>
+    <a href="#c6">8. Incertitudes et validation</a>
+    <a href="#c7">9. Applications : contrôle qualité</a>
+  </aside>
+  <article class="course-body">
+    <h2 id="c1">1. Pourquoi doser ?</h2>
+    <p>Un dosage sert à déterminer la quantité de matière ou la concentration d’une espèce chimique dans un échantillon. Le résultat peut avoir un enjeu concret : contrôler la composition d’un médicament, vérifier la qualité d’une eau, mesurer l’acidité d’un vinaigre, comparer une boisson à une norme ou suivre une transformation chimique.</p>
+    <div class="box def"><div class="box-label">Définition</div><p>Un <strong>titrage direct</strong> consiste à faire réagir une espèce titrée, de concentration inconnue, avec une espèce titrante, de concentration connue. Le volume de solution titrante versé à l’équivalence permet de remonter à la concentration cherchée.</p></div>
+    <p>La difficulté n’est pas de retenir une formule unique. Elle est de choisir le bon modèle : équation ajustée, coefficients stœchiométriques, grandeur suivie, lecture de l’équivalence, puis calcul avec des volumes dans les bonnes unités.</p>
+
+    <h2 id="c2">2. Réaction support du titrage</h2>
+    <p>La réaction qui sert au dosage doit être <strong>rapide</strong>, <strong>totale</strong> et <strong>unique</strong>. Rapide, pour que chaque ajout de titrant corresponde immédiatement à un nouvel état mesurable ; totale, pour que la stœchiométrie soit exploitable ; unique, pour éviter qu’une autre réaction consomme le titrant ou l’espèce titrée.</p>
+    <div class="formula">\[
+      a\,A+b\,B \longrightarrow c\,C+d\,D
+    \]</div>
+    <p>Si \(A\) est l’espèce titrée et \(B\) l’espèce titrante, les coefficients \(a\) et \(b\) ne sont pas décoratifs : ils pilotent le calcul à l’équivalence.</p>
+    <div class="box ok"><div class="box-label">Exemple</div><p>Pour le titrage d’un acide éthanoïque \(\mathrm{CH_3COOH}\) par les ions hydroxyde \(\mathrm{HO^-}\), la réaction est \[
+      \mathrm{CH_3COOH_{(aq)}}+\mathrm{HO^-_{(aq)}}\rightarrow \mathrm{CH_3COO^-_{(aq)}}+\mathrm{H_2O_{(\ell)}}.
+    \] Les coefficients utiles sont \(1\) et \(1\).</p></div>
+
+    <h2 id="c3">3. Équivalence : le cœur du raisonnement</h2>
+    <p>L’équivalence est l’instant où les réactifs ont été introduits dans les proportions stœchiométriques. Avant l’équivalence, le titrant ajouté est totalement consommé par l’espèce titrée. Après l’équivalence, l’espèce titrée a disparu et le titrant est en excès.</p>
+    <div class="formula key-formula">\[
+      \frac{n_A^{\,0}}{a}=\frac{n_B^{\,E}}{b}
+      \qquad\Longleftrightarrow\qquad
+      \frac{C_A V_A}{a}=\frac{C_B V_E}{b}
+    \]</div>
+    <p>\(C_A\) est la concentration de l’espèce titrée, \(V_A\) le volume prélevé, \(C_B\) la concentration du titrant et \(V_E\) le volume versé à l’équivalence. Les concentrations sont en \(\mathrm{mol\,L^{-1}}\) et les volumes doivent être convertis dans la même unité.</p>
+    <div class="box warn"><div class="box-label">Erreur fréquente</div><p>Écrire automatiquement \(n_A=n_B\) est faux si les coefficients ne valent pas tous les deux \(1\). Pour un triacide noté \(\mathrm{H_3A}\) titré par \(\mathrm{HO^-}\), on a \[
+      \mathrm{H_3A}+3\,\mathrm{HO^-}\rightarrow \mathrm{A^{3-}}+3\,\mathrm{H_2O},
+    \] donc \(n(\mathrm{HO^-})_E=3\,n(\mathrm{H_3A})_0\).</p></div>
+    <details><summary>🔬 Démonstration — Établir la relation \(\dfrac{n_A^0}{a}=\dfrac{n_B^E}{b}\) à l'équivalence</summary>
+    <p>La réaction support du titrage est totale : \(a\,A + b\,B \rightarrow \text{produits}\). On raisonne sur le tableau d'avancement.</p>
+    <p><strong>Avant l'équivalence</strong> : B est le réactif limitant (la quantité de B versée est insuffisante). Le réactif A est en excès.</p>
+    <p><strong>À l'équivalence</strong> : les deux réactifs ont été introduits exactement dans les proportions stœchiométriques. Ni A ni B n'est en excès. L'avancement maximal est atteint :</p>
+    <div class="formula">\[x_{\max} = \frac{n_A^0}{a} = \frac{n_B^E}{b}\]</div>
+    <p>En remplaçant \(n_A^0 = C_A V_A\) et \(n_B^E = C_B V_E\) :</p>
+    <div class="formula">\[\frac{C_A V_A}{a} = \frac{C_B V_E}{b} \implies C_A = \frac{a}{b}\cdot\frac{C_B V_E}{V_A}\]</div>
+    <p>C'est la seule relation à l'équivalence. Elle ne dépend pas du mécanisme de la réaction, seulement de sa stœchiométrie.</p>
+    </details>
+
+    <h2 id="c3b">4. Dosage par titrage direct : méthode</h2>
+    <p>Le titrage direct consiste à ajouter progressivement une solution titrante de concentration connue à un volume précis de la solution à doser.</p>
+    <div class="box prop"><div class="box-label">Méthode — Réaliser un titrage direct</div>
+    <p><strong>Étape 1 :</strong> Prélever un volume précis \(V_A\) de la solution à doser (pipette jaugée).</p>
+    <p><strong>Étape 2 :</strong> Placer dans un bécher et ajouter quelques gouttes d’indicateur coloré (si dosage colorimétrique).</p>
+    <p><strong>Étape 3 :</strong> Remplir la burette graduée avec la solution titrante de concentration \(C_B\) connue.</p>
+    <p><strong>Étape 4 :</strong> Verser la solution titrante en agitant, jusqu’au changement de couleur (ou relever les mesures pH/conductivité). Resserrer les ajouts près de l’équivalence.</p>
+    <p><strong>Étape 5 :</strong> Noter le volume équivalent \(V_E\).</p>
+    <p><strong>Étape 6 :</strong> Exploiter la relation à l’équivalence pour calculer \(C_A\).</p>
+    </div>
+    <div class="box def"><div class="box-label">Matériel nécessaire</div>
+    <p><strong>Burette graduée :</strong> délivre le titrant avec précision (\(\pm0{,}05\,\mathrm{mL}\)).</p>
+    <p><strong>Pipette jaugée :</strong> prélève un volume précis de solution titrée.</p>
+    <p><strong>Fiole jaugée :</strong> prépare des solutions de concentration précise par dilution.</p>
+    </div>
+
+    <h2 id="c3c">5. Repérage de l’équivalence : vue d’ensemble</h2>
+    <p>Plusieurs techniques permettent de repérer l’équivalence. Le choix dépend de la nature de la réaction et des espèces en jeu.</p>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Technique</th><th>Observation</th><th>Courbe ou signal</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Colorimétrique</strong></td><td>Changement de couleur (indicateur coloré)</td><td>Visuel — pas de courbe</td></tr>
+    <tr><td><strong>pH-métrique</strong></td><td>Saut de pH</td><td>\(\mathrm{pH}=f(V)\) — méthode des tangentes</td></tr>
+    <tr><td><strong>Conductimétrique</strong></td><td>Changement de pente</td><td>\(\sigma=f(V)\) — intersection de droites</td></tr>
+    <tr><td><strong>Spectrophotométrique</strong></td><td>Changement d’absorbance</td><td>\(A=f(V)\) ou étalonnage \(A=f(c)\)</td></tr>
+    </tbody>
+    </table></div>
+    <div class="box warn"><div class="box-label">Choix de l’indicateur coloré</div>
+    <p>Un indicateur coloré est adapté si sa <strong>zone de virage</strong> contient le pH à l’équivalence. Exemples : phénolphtaléine (\(8{,}2-10{,}0\)) pour un dosage acide faible / base forte ; bleu de bromothymol (\(6{,}0-7{,}6\)) pour acide fort / base forte.</p></div>
+
+    <h2 id="c4">6. Repérer l’équivalence par pH-métrie</h2>
+    <p>Dans un titrage pH-métrique, on mesure le pH après chaque ajout de titrant. La courbe \(\mathrm{pH}=f(V)\) présente souvent un saut de pH autour de l’équivalence. Pour lire plus précisément \(V_E\), on peut utiliser la <strong>méthode des tangentes</strong> ou repérer le maximum de la dérivée \(\frac{\mathrm{d}\mathrm{pH}}{\mathrm{d}V}\).</p>
+    <div class="box prop"><div class="box-label">Points caractéristiques (acide fort / base forte)</div>
+    <p><strong>Avant l’équivalence :</strong> le pH augmente lentement (l’acidité diminue progressivement).</p>
+    <p><strong>À l’équivalence :</strong> saut brutal de pH — pour un acide fort / base forte, \(\mathrm{pH}\simeq7\).</p>
+    <p><strong>Après l’équivalence :</strong> le pH continue d’augmenter puis se stabilise (excès de base).</p></div>
+    <div class="box ok"><div class="box-label">Exemple — Dosage HCl par NaOH</div>
+    <p>Réaction : \(\mathrm{H^+_{(aq)}}+\mathrm{HO^-_{(aq)}}\rightarrow \mathrm{H_2O_{(\ell)}}\). Si \(V_A=20{,}0\,\mathrm{mL}\) de HCl et \(C_B=0{,}100\,\mathrm{mol\,L^{-1}}\), avec \(V_E=15{,}0\,\mathrm{mL}\) :</p>
+    <div class="formula">\[C_A=\frac{C_BV_E}{V_A}=\frac{0{,}100\times15{,}0\times10^{-3}}{20{,}0\times10^{-3}}=7{,}50\times10^{-2}\,\mathrm{mol\,L^{-1}}\]</div></div>
+    <p>Un indicateur coloré est adapté si sa zone de virage contient le pH à l’équivalence. Il ne suffit donc pas de choisir un indicateur « joli » : il doit virer au bon endroit.</p>
+    <details><summary>🔬 Démonstration — Pourquoi le maximum de \(\mathrm{d\,pH}/\mathrm{d}V\) indique \(V_E\)</summary>
+    <p>Autour de l’équivalence, la courbe \(\mathrm{pH}=f(V)\) présente un <strong>point d’inflexion</strong> : c’est là que la pente \(\mathrm{d\,pH}/\mathrm{d}V\) est maximale.</p>
+    <p>Avant \(V_E\) : l’ajout d’une petite quantité de base modifie peu le pH, car l’acide est en excès et joue son rôle de tampon.</p>
+    <p>À \(V_E\) : les quantités de réactifs sont stœchiométriques. Il n’y a plus rien pour tamponner — un infiniment petit ajout de base fait varier le pH de façon maximale. La dérivée \(\mathrm{d\,pH}/\mathrm{d}V\) est donc maximale à cet instant.</p>
+    <p>Après \(V_E\) : la base est en excès. Le pH augmente mais moins vite (la base dilue l’excès existant).</p>
+    <div class="formula">\[V_E = \arg\max\!\left(\frac{\mathrm{d\,pH}}{\mathrm{d}V}\right)\]</div>
+    <p>En pratique on trace \(\Delta\mathrm{pH}/\Delta V\) en prenant des points expérimentaux successifs et on cherche le maximum de cette courbe en cloche.</p>
+    </details>
+
+    <h2 id="c5">7. Repérer l’équivalence par conductimétrie</h2>
+    <p>La conductivité \(\sigma\) dépend des ions présents et de leur concentration. Au cours du titrage, certains ions disparaissent, d’autres apparaissent, et le signal peut changer de pente. Dans beaucoup de situations de Terminale, l’équivalence est l’intersection de deux portions quasi linéaires.</p>
+    <div class="formula key-formula">\[
+      \sigma=\sum_i \lambda_i [X_i]
+    \]</div>
+    <p>\(\lambda_i\) est la conductivité molaire ionique de l’ion \(X_i\), et \([X_i]\) sa concentration. La relation explique pourquoi remplacer un ion très conducteur par un ion moins conducteur peut faire diminuer \(\sigma\), puis pourquoi l’excès de titrant peut la faire augmenter ensuite.</p>
+    <div class="box ok"><div class="box-label">Exemple — Dosage conductimétrique de NaCl par AgNO\(_3\)</div>
+    <p>Réaction : \(\mathrm{Cl^-_{(aq)}}+\mathrm{Ag^+_{(aq)}}\rightarrow \mathrm{AgCl_{(s)}}\downarrow\).</p>
+    <p><strong>Avant l’équivalence :</strong> \(\mathrm{Cl^-}\) est remplacé par \(\mathrm{NO_3^-}\) (conductivité molaire plus faible) \(\Rightarrow\) \(\sigma\) diminue légèrement.</p>
+    <p><strong>Après l’équivalence :</strong> excès de \(\mathrm{Ag^+}\) et \(\mathrm{NO_3^-}\) \(\Rightarrow\) \(\sigma\) augmente fortement.</p>
+    <p>L’intersection des deux segments linéaires donne \(V_E\).</p></div>
+    <details><summary>🔬 Démonstration — Pourquoi \(\sigma\) change de pente à \(V_E\) en conductimétrie</summary>
+    <p>La conductivité molaire d’un ion dépend de sa nature. Les valeurs caractéristiques à 25 °C :</p>
+    <div class="formula">\[\lambda(\mathrm{H^+}) \approx 350\,\mathrm{S\,cm^2\,mol^{-1}} \gg \lambda(\mathrm{Na^+}) \approx 50\,\mathrm{S\,cm^2\,mol^{-1}}\]</div>
+    <p><strong>Exemple : titrage de HCl par NaOH.</strong></p>
+    <p>Avant \(V_E\) : la réaction \(\mathrm{H^+} + \mathrm{HO^-} \to \mathrm{H_2O}\) consomme les ions \(\mathrm{H^+}\) très conducteurs, remplacés par \(\mathrm{Na^+}\) peu conducteurs. La concentration en ions diminue et \(\sigma\) <strong>baisse</strong>.</p>
+    <p>Après \(V_E\) : plus d’\(\mathrm{H^+}\) à consommer. L’ajout de NaOH apporte \(\mathrm{Na^+}\) et \(\mathrm{HO^-}\) en excès, les deux étant conducteurs. \(\sigma\) <strong>augmente</strong>.</p>
+    <p>Le changement de comportement — passage d’une pente négative à une pente positive — se produit exactement à \(V_E\). L’intersection des deux droites ajustées donne \(V_E\) avec une bonne précision, même sans zone de saut visible.</p>
+    </details>
+
+    <h2 id="c6">8. Incertitudes et validation</h2>
+    <p>Le résultat d’un dosage n’a de sens que s’il est accompagné d’une estimation de son incertitude. La propagation des incertitudes permet de quantifier la confiance dans le résultat.</p>
+    <div class="box def"><div class="box-label">Incertitude-type composée</div>
+    <p>Pour un dosage par titrage, l’incertitude sur la concentration se propage :</p>
+    <div class="formula">\[\frac{u(C_A)}{C_A}\simeq\sqrt{\left(\frac{u(V_A)}{V_A}\right)^2+\left(\frac{u(V_E)}{V_E}\right)^2}\]</div>
+    <p>\(u(V_A)\) est l’incertitude sur la pipette et \(u(V_E)\) l’incertitude sur la lecture de la burette.</p></div>
+    <div class="box ok"><div class="box-label">Exemple numérique</div>
+    <p>\(V_A=10{,}0\pm0{,}05\,\mathrm{mL}\) (pipette classe A) et \(V_E=12{,}5\pm0{,}1\,\mathrm{mL}\) (burette).</p>
+    <div class="formula">\[\frac{u(C_A)}{C_A}=\sqrt{\left(\frac{0{,}05}{10{,}0}\right)^2+\left(\frac{0{,}1}{12{,}5}\right)^2}\simeq9{,}4\times10^{-3}\simeq1\,\%\]</div>
+    <p>Soit \(C_A=(0{,}125\pm0{,}001)\,\mathrm{mol\,L^{-1}}\).</p></div>
+    <div class="box prop"><div class="box-label">Incertitude-type sur une série de mesures</div>
+    <p>Pour \(n\) mesures indépendantes : \(\displaystyle u(x)=\frac{s}{\sqrt{n}}\), où \(s\) est l’écart-type expérimental.</p></div>
+    <div class="box prop"><div class="box-label">Trame de rédaction</div><p>Équation ajustée \(\rightarrow\) relation à l’équivalence \(\rightarrow\) expression littérale de \(C_A\) \(\rightarrow\) application numérique avec unités \(\rightarrow\) incertitude \(\rightarrow\) conclusion contextualisée.</p></div>
+
+    <h2 id="c7">9. Applications : contrôle qualité</h2>
+    <p>Les dosages sont utilisés dans l’industrie, l’agroalimentaire et la santé pour vérifier la conformité des produits.</p>
+    <div class="table-wrap"><table>
+    <thead><tr><th>Application</th><th>Espèce dosée</th><th>Technique</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Vinaigre</strong></td><td>Acide acétique \(\mathrm{CH_3COOH}\)</td><td>pH-métrique par \(\mathrm{NaOH}\)</td></tr>
+    <tr><td><strong>Eau (dureté)</strong></td><td>Ions \(\mathrm{Ca^{2+}}\) et \(\mathrm{Mg^{2+}}\)</td><td>Complexométrique par EDTA</td></tr>
+    <tr><td><strong>Vitamine C</strong></td><td>Acide ascorbique</td><td>pH-métrique ou iodométrique</td></tr>
+    <tr><td><strong>Désinfectant</strong></td><td>\(\mathrm{H_2O_2}\)</td><td>Manganométrique par \(\mathrm{KMnO_4}\)</td></tr>
+    </tbody>
+    </table></div>
+    <div class="box def"><div class="box-label">Dosage par étalonnage</div>
+    <p>Méthode alternative : on trace une courbe d’étalonnage \(A=f(c)\) ou \(\sigma=f(c)\) à partir de solutions de concentrations connues, puis on lit la concentration de l’échantillon inconnu sur la courbe. Avantage : ne nécessite pas de réaction chimique — utilise la loi de Beer-Lambert \(A=\varepsilon\ell c\) pour les espèces colorées.</p></div>
+  </article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-outils">
+<div class="content-card">
+<h3>Relations mathématiques, grandeurs et unités</h3>
+<p>Les relations sont écrites en notation mathématique exploitable, avec fractions, indices et unités. Les volumes doivent être convertis dans la même unité avant calcul.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Relation</th><th>Écriture rigoureuse</th><th>Grandeurs, unités et domaine</th></tr></thead>
+<tbody>
+<tr><td>Quantité de matière</td><td>\(\displaystyle n=C\,V\)</td><td>\(n\) en \(\mathrm{mol}\), \(C\) en \(\mathrm{mol\,L^{-1}}\), \(V\) en \(\mathrm{L}\).</td></tr>
+<tr><td>Concentration molaire</td><td>\(\displaystyle C=\frac{n}{V}\)</td><td>Valable pour une solution homogène. Attention : \(V\) est le volume de solution, pas le volume total de verrerie disponible.</td></tr>
+<tr><td>Équivalence générale</td><td>\(\displaystyle \frac{n_A^{\,0}}{a}=\frac{n_B^{\,E}}{b}\)</td><td>Pour \(aA+bB\rightarrow\) produits. Relation valable uniquement à l’équivalence.</td></tr>
+<tr><td>Concentration titrée</td><td>\(\displaystyle C_A=\frac{a}{b}\,\frac{C_B V_E}{V_A}\)</td><td>\(V_E\) est le volume équivalent. \(C_B\) concentration du titrant. \(V_A\) volume prélevé de solution titrée.</td></tr>
+<tr><td>Dilution</td><td>\(\displaystyle C_m V_m=C_f V_f,\qquad F=\frac{C_m}{C_f}=\frac{V_f}{V_m}\)</td><td>Conservation de la quantité de soluté. Les volumes \(V_m\) et \(V_f\) sont dans la même unité.</td></tr>
+<tr><td>pH-métrie</td><td>\(\displaystyle V_E \text{ au maximum de } \frac{\mathrm d\,\mathrm{pH}}{\mathrm d V}\)</td><td>Méthode utile si le saut de pH est net. \(V\) en \(\mathrm{mL}\) ou \(\mathrm{L}\), mais cohérent dans le calcul.</td></tr>
+<tr><td>Conductimétrie</td><td>\(\displaystyle \sigma=\sum_i \lambda_i [X_i]\)</td><td>\(\sigma\) en \(\mathrm{S\,m^{-1}}\), \(\lambda_i\) en \(\mathrm{S\,m^2\,mol^{-1}}\), \([X_i]\) en \(\mathrm{mol\,m^{-3}}\).</td></tr>
+<tr><td>Incertitude relative</td><td>\(\displaystyle \frac{u(C_A)}{C_A}\simeq \sqrt{\left(\frac{u(C_B)}{C_B}\right)^2+\left(\frac{u(V_E)}{V_E}\right)^2+\left(\frac{u(V_A)}{V_A}\right)^2}\)</td><td>Approximation si les grandeurs sont indépendantes et si les coefficients stœchiométriques sont exacts.</td></tr>
+</tbody>
+</table></div>
+<div class="cards">
+  <div class="card"><h4>Unités qui sauvent</h4><p>\(10{,}0\,\mathrm{mL}=1{,}00\times10^{-2}\,\mathrm{L}\). Si \(C\) est en \(\mathrm{mol\,L^{-1}}\), alors les volumes doivent être en \(\mathrm{L}\) pour obtenir \(n\) en \(\mathrm{mol}\).</p></div>
+  <div class="card"><h4>Réflexe stœchiométrique</h4><p>La relation utile se démontre toujours depuis l’équation ajustée. En cas de doute, écris un tableau d’avancement : l’équivalence correspond au changement de réactif limitant.</p></div>
+</div>
+</div>
+<article class="content-card" style="margin-top:16px">
+<h3>Calculateurs interactifs</h3>
+<p style="color:var(--muted);margin-bottom:14px">Résultats en notation scientifique avec unités.</p>
+<div class="cards">
+  <div class="card">
+    <h4>⚗️ Concentration titrée \(C_A\)</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(C_A=\dfrac{a}{b}\cdot\dfrac{C_B\,V_E}{V_A}\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Coeff. \(a\) (espèce titrée)</label>
+    <input id="tiA" type="number" value="1" min="1" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">Coeff. \(b\) (titrant)</label>
+    <input id="tiB" type="number" value="1" min="1" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(C_B\) (mol·L⁻¹) — titrant</label>
+    <input id="tiCb" type="number" value="0.1" step="0.001" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_E\) (mL) — volume équivalent</label>
+    <input id="tiVe" type="number" value="15" step="0.1" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_A\) (mL) — volume prélevé</label>
+    <input id="tiVa" type="number" value="20" step="0.1" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcTitrage3()" style="width:100%;padding:8px;border-radius:6px;background:var(--active);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="tiResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h4>📊 Incertitude relative composée</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(\dfrac{u(C_A)}{C_A}\simeq\sqrt{\left(\dfrac{u(C_B)}{C_B}\right)^2+\left(\dfrac{u(V_E)}{V_E}\right)^2+\left(\dfrac{u(V_A)}{V_A}\right)^2}\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(u(C_B)/C_B\) (%)</label>
+    <input id="uCb" type="number" value="0.5" step="0.1" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(u(V_E)\) (mL)</label>
+    <input id="uVe" type="number" value="0.1" step="0.05" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_E\) (mL)</label>
+    <input id="uVeVal" type="number" value="15" step="0.1" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(u(V_A)\) (mL)</label>
+    <input id="uVa" type="number" value="0.05" step="0.01" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_A\) (mL)</label>
+    <input id="uVaVal" type="number" value="20" step="0.1" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcIncert3()" style="width:100%;padding:8px;border-radius:6px;background:var(--active);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="uResult" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+  <div class="card">
+    <h4>🔄 Dilution</h4>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:8px">\(c_m V_m = c_f V_f\)</p>
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(c_m\) (mol·L⁻¹) — mère</label>
+    <input id="d3Cm" type="number" value="1" step="0.01" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_m\) (mL) — prélevé</label>
+    <input id="d3Vm" type="number" value="10" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 7px;font-size:14px">
+    <label style="font-size:12px;font-weight:700;color:var(--muted)">\(V_f\) (mL) — final</label>
+    <input id="d3Vf" type="number" value="100" min="0" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);margin:4px 0 10px;font-size:14px">
+    <button onclick="calcDil3()" style="width:100%;padding:8px;border-radius:6px;background:var(--active);color:white;border:none;font-weight:700;cursor:pointer;font-size:13px">Calculer</button>
+    <div id="d3Result" style="margin-top:10px;min-height:40px;font-size:13px;color:var(--muted)"></div>
+  </div>
+</div>
+</article>
+</section>
+
+<section class="panel" id="tab-exercices">
+<div class="content-card">
+<h3>Exercices d’entraînement</h3>
+<p>Les exercices ci-dessous sont plus proches d’un vrai niveau Terminale : contexte expérimental, données utiles, calcul littéral, application numérique, unité, conclusion et discussion du modèle.</p>
+<div class="exercise-list">
+  <article class="exercise-card"><div class="exercise-title"><h4>1. Vinaigre commercial et titrage acido-basique</h4><small>Titrage direct</small></div><p>On dose \(V_A=10{,}0\,\mathrm{mL}\) de vinaigre dilué \(10\) fois par une solution d’hydroxyde de sodium de concentration \(C_B=0{,}100\,\mathrm{mol\,L^{-1}}\). L’équivalence est obtenue pour \(V_E=13{,}2\,\mathrm{mL}\). La réaction est \(\mathrm{CH_3COOH}+\mathrm{HO^-}\rightarrow\mathrm{CH_3COO^-}+\mathrm{H_2O}\).</p><ol><li>Écrire la relation à l’équivalence.</li><li>Calculer la concentration du vinaigre dilué.</li><li>En déduire la concentration du vinaigre commercial.</li><li>Calculer la concentration massique en acide éthanoïque, avec \(M=60{,}0\,\mathrm{g\,mol^{-1}}\).</li></ol><details><summary>Correction détaillée</summary><p>Les coefficients valent \(1\) et \(1\), donc \(C_A V_A=C_B V_E\). Ainsi \(\displaystyle C_A=\frac{0{,}100\times13{,}2\times10^{-3}}{10{,}0\times10^{-3}}=0{,}132\,\mathrm{mol\,L^{-1}}\). Le vinaigre initial a été dilué \(10\) fois, donc \(C_0=1{,}32\,\mathrm{mol\,L^{-1}}\). La concentration massique vaut \(\displaystyle C_m=C_0M=1{,}32\times60{,}0=79{,}2\,\mathrm{g\,L^{-1}}\).</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>2. Acide citrique : attention au triacide</h4><small>Stœchiométrie</small></div><p>On titre \(V_A=25{,}0\,\mathrm{mL}\) d’une solution d’acide citrique \(\mathrm{H_3A}\) par \(\mathrm{HO^-}\) de concentration \(C_B=0{,}200\,\mathrm{mol\,L^{-1}}\). L’équation est \(\mathrm{H_3A}+3\,\mathrm{HO^-}\rightarrow\mathrm{A^{3-}}+3\,\mathrm{H_2O}\). On lit \(V_E=15{,}6\,\mathrm{mL}\).</p><ol><li>Pourquoi \(n(\mathrm{H_3A})\neq n(\mathrm{HO^-})\) à l’équivalence ?</li><li>Calculer \(C_A\).</li><li>Expliquer l’erreur que ferait un élève qui oublierait le coefficient \(3\).</li></ol><details><summary>Correction détaillée</summary><p>À l’équivalence, \(\displaystyle \frac{n(\mathrm{H_3A})}{1}=\frac{n(\mathrm{HO^-})}{3}\), donc \(\displaystyle C_A V_A=\frac{C_BV_E}{3}\). Alors \(\displaystyle C_A=\frac{0{,}200\times15{,}6\times10^{-3}}{3\times25{,}0\times10^{-3}}=4{,}16\times10^{-2}\,\mathrm{mol\,L^{-1}}\). Oublier le \(3\) donnerait une concentration trois fois trop grande.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>3. Choisir un indicateur coloré</h4><small>pH-métrie</small></div><p>Un titrage présente un pH à l’équivalence \(pH_E\simeq8{,}7\). On propose : hélianthine \(3{,}1-4{,}4\), rouge de méthyle \(4{,}2-6{,}2\), bleu de bromothymol \(6{,}0-7{,}6\), phénolphtaléine \(8{,}2-10{,}0\).</p><ol><li>Choisir l’indicateur adapté.</li><li>Justifier par une phrase expérimentale.</li><li>Dire pourquoi un indicateur mal choisi décale la lecture du volume équivalent.</li></ol><details><summary>Correction détaillée</summary><p>On choisit la phénolphtaléine, car sa zone de virage \(8{,}2-10{,}0\) contient \(pH_E\simeq8{,}7\). Elle change de couleur au voisinage du saut de pH. Un indicateur dont la zone de virage est trop éloignée changerait de couleur avant ou après l’équivalence, donc le volume lu serait biaisé.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>4. Lire une courbe pH-métrique</h4><small>Analyse graphique</small></div><p>Pour un titrage, la dérivée \(\frac{\mathrm d\,\mathrm{pH}}{\mathrm dV}\) est maximale pour \(V=12{,}4\,\mathrm{mL}\). On a prélevé \(V_A=20{,}0\,\mathrm{mL}\) d’acide monoprotique, titré par \(\mathrm{HO^-}\) de concentration \(C_B=5{,}00\times10^{-2}\,\mathrm{mol\,L^{-1}}\).</p><ol><li>Identifier \(V_E\).</li><li>Calculer la concentration de l’acide.</li><li>Indiquer pourquoi la dérivée aide à améliorer la lecture.</li></ol><details><summary>Correction détaillée</summary><p>Le maximum de la dérivée donne \(V_E=12{,}4\,\mathrm{mL}\). Pour un acide monoprotique, \(C_A V_A=C_BV_E\). Donc \(\displaystyle C_A=\frac{5{,}00\times10^{-2}\times12{,}4\times10^{-3}}{20{,}0\times10^{-3}}=3{,}10\times10^{-2}\,\mathrm{mol\,L^{-1}}\). La dérivée transforme le saut de pH en pic, ce qui rend la position de l’équivalence plus lisible.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>5. Conductimétrie : trouver l’intersection</h4><small>Modèle linéaire</small></div><p>Lors d’un titrage conductimétrique, avant l’équivalence on modélise \(\sigma_1(V)=0{,}215-0{,}0060V\) et après l’équivalence \(\sigma_2(V)=0{,}087+0{,}0040V\), avec \(V\) en \(\mathrm{mL}\) et \(\sigma\) en \(\mathrm{S\,m^{-1}}\).</p><ol><li>Déterminer le volume équivalent.</li><li>Calculer la conductivité à l’équivalence.</li><li>Expliquer pourquoi l’intersection a un sens chimique.</li></ol><details><summary>Correction détaillée</summary><p>À l’équivalence, les deux modèles se coupent : \(0{,}215-0{,}0060V=0{,}087+0{,}0040V\). Donc \(0{,}128=0{,}0100V\) et \(V_E=12{,}8\,\mathrm{mL}\). La conductivité vaut \(\sigma_E=0{,}215-0{,}0060\times12{,}8=0{,}138\,\mathrm{S\,m^{-1}}\). Avant et après l’équivalence, les ions dominants ne sont pas les mêmes : le changement de pente traduit le changement de réactif limitant.</p></details></article>
+  <article class="exercise-card"><div class="exercise-title"><h4>6. Incertitude et conclusion</h4><small>Esprit ECE</small></div><p>On obtient \(C_A=0{,}132\,\mathrm{mol\,L^{-1}}\), avec \(u(C_A)=0{,}004\,\mathrm{mol\,L^{-1}}\). Une étiquette annonce \(C_{\mathrm{ref}}=0{,}125\,\mathrm{mol\,L^{-1}}\). On utilise le critère \(\displaystyle z=\frac{|C_A-C_{\mathrm{ref}}|}{u(C_A)}\).</p><ol><li>Calculer \(z\).</li><li>Conclure si l’écart paraît significatif avec le critère \(z<2\).</li><li>Rédiger une conclusion expérimentale complète.</li></ol><details><summary>Correction détaillée</summary><p>\(\displaystyle z=\frac{|0{,}132-0{,}125|}{0{,}004}=1{,}75\). Comme \(z<2\), l’écart n’est pas significatif au regard de l’incertitude-type donnée. Conclusion possible : la concentration mesurée \(C_A=(0{,}132\pm0{,}004)\,\mathrm{mol\,L^{-1}}\) est compatible avec la valeur annoncée \(0{,}125\,\mathrm{mol\,L^{-1}}\).</p></details></article>
+</div>
+<h4 style="margin:24px 0 10px">Exercices Bac — VecteurBac vérifiés</h4>
+<p class="note">Titres vérifiés sur VecteurBac. Chaque carte ouvre le sujet PDF ou la page VecteurBac en un clic.</p>
+<div class="cards">
+  <article class="card"><h4>L’acide citrique comme produit ménager</h4><p>Exercice 1, \(9\) points, Métropole septembre 2024 sujet 1. Titrage pH-métrique, triacide, indicateur et masse d’acide citrique.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2024/09/Lacide-citrique-comme-produit-menager.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/lacide-citrique-comme-produit-menager/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Contrôle de la qualité d’un biberon</h4><p>Exercice 1, \(9\) points, Centres étrangers 2023 sujet 1. Dosage spectrophotométrique et titrage conductimétrique des ions nitrate.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2023/03/Controle-de-la-qualite-dun-biberon.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/controle-de-la-qualite-dun-biberon/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>L’importance de la vitamine C</h4><p>Exercice 1, \(9\) points, Asie 2023 sujet 2. Acide-base, titrage conductimétrique et exploitation d’une courbe.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2025/12/Limportance-de-la-vitamine-C.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/limportance-de-la-vitamine-c/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Degré d’hydratation du chlorure de magnésium</h4><p>Exercice B, \(5\) points, Métropole juin 2021 sujet 1. Titrage conductimétrique et exploitation stœchiométrique.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2022/03/Me%CC%81tropole-juin-2021-Sujet-1-Exercice-B-Degre%CC%81-dhydratation-du-chlorure-de-magne%CC%81sium.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/degre-dhydratation-du-chlorure-de-magnesium/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Technique de dosage de l’urée</h4><p>Exercice 2, \(5\) points, Amérique du nord sujet 1. Méthodes de dosage, relation de proportionnalité et validation d’un résultat.</p><div class="btn-row"><a class="primary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/wp-content/uploads/2023/04/Exercice-2-Technique-de-dosage-de-luree-5-points.pdf">Sujet PDF</a><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/technique-de-dosage-de-luree/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Dosage du vinaigre</h4><p>Exercice 2, \(5\) points, Métropole 2025 sujet 1. Dosage pH-métrique de l’acide acétique par NaOH, exploitation du saut de pH.</p><div class="btn-row"><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/dosage-du-vinaigre/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Dureté de l’eau</h4><p>Exercice 3, \(5\) points, Métropole 2025 sujet 1. Dosage complexométrique des ions calcium et magnésium par EDTA.</p><div class="btn-row"><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/durete-de-leau/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Vitamine C</h4><p>Exercice 1, \(5\) points, Asie 2024 sujet 2. Dosage de l’acide ascorbique dans un comprimé par titrage acide-base puis par iodométrie.</p><div class="btn-row"><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/vitamine-c/">Page VecteurBac</a></div></article>
+  <article class="card"><h4>Désinfectant</h4><p>Exercice 2, \(5\) points, Métropole 2024 sujet 2. Dosage de l’eau oxygénée par manganométrie avec \(\mathrm{KMnO_4}\).</p><div class="btn-row"><a class="secondary" target="_blank" rel="noopener noreferrer" href="https://www.vecteurbac.fr/desinfectant/">Page VecteurBac</a></div></article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-flashcards">
+<div class="content-card">
+<h3>Flashcards</h3>
+<div class="flash-layout">
+  <div><div class="flash-card" id="flashCard" tabindex="0" role="button" aria-label="Carte mémoire"><div><h3 id="flashQuestion">Question</h3><p id="flashAnswer" style="display:none"></p></div><span class="hint">Cliquer pour retourner</span></div><div class="answers"><button class="secondary" onclick="prevFlash()">Précédente</button><button class="primary" onclick="flipFlash()">Retourner</button><button class="secondary" onclick="nextFlash()">Suivante</button></div></div>
+  <div class="card"><h4>Mode d’emploi</h4><p>Réponds oralement avant de retourner la carte. Les formules sont rendues avec MathJax après chaque changement.</p><p class="note"><span id="flashIndex">1</span>/<span id="flashTotal">10</span></p></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-mindmap">
+<div class="content-card">
+<h3>Carte mentale</h3>
+<div class="mindmap" style="background:#050e1a">
+<svg viewBox="0 0 1100 520" role="img" aria-label="Carte mentale des dosages">
+<defs>
+<style>
+@keyframes mmDraw3{from{stroke-dashoffset:420}to{stroke-dashoffset:0}}
+@keyframes mmFade3{from{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes mmPulse3{0%,100%{opacity:1}50%{opacity:.7}}
+.m3l1{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw3 .7s .15s ease forwards}
+.m3l2{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw3 .7s .30s ease forwards}
+.m3l3{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw3 .7s .45s ease forwards}
+.m3l4{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw3 .7s .60s ease forwards}
+.m3l5{stroke-dasharray:420;stroke-dashoffset:420;animation:mmDraw3 .7s .75s ease forwards}
+.m3n0{opacity:0;animation:mmFade3 .5s .05s ease forwards,mmPulse3 3s 1s infinite}
+.m3n1{opacity:0;animation:mmFade3 .5s .80s ease forwards}
+.m3n2{opacity:0;animation:mmFade3 .5s .95s ease forwards}
+.m3n3{opacity:0;animation:mmFade3 .5s 1.10s ease forwards}
+.m3n4{opacity:0;animation:mmFade3 .5s 1.25s ease forwards}
+.m3n5{opacity:0;animation:mmFade3 .5s 1.40s ease forwards}
+</style>
+<linearGradient id="m3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d9488"/><stop offset="1" stop-color="#0369a1"/></linearGradient>
+<filter id="m3gc"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="m3gb"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1100" height="520" fill="#050e1a"/>
+<path class="m3l1" d="M550 255 C450 210 360 170 248 122" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="m3l2" d="M550 255 C660 200 760 165 895 120" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="m3l3" d="M550 265 C470 300 390 340 242 395" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="m3l4" d="M550 265 C650 308 750 348 892 398" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<path class="m3l5" d="M550 245 C548 190 547 145 548 78" fill="none" stroke="rgba(0,240,255,.55)" stroke-width="2.5"/>
+<g class="m3n0" filter="url(#m3gb)">
+  <rect x="405" y="200" width="290" height="120" rx="14" fill="url(#m3g)"/>
+  <text x="550" y="248" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="Inter,sans-serif">Les dosages</text>
+  <text x="550" y="272" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="13" font-family="Inter,sans-serif">titrer · équivalence · conclure</text>
+  <text x="550" y="296" text-anchor="middle" fill="rgba(255,255,255,.65)" font-size="12" font-family="Inter,sans-serif">pH-métrie · conductimétrie · colorimétrie</text>
+</g>
+<g class="m3n1" filter="url(#m3gc)">
+  <rect x="82" y="62" width="330" height="108" rx="12" fill="#0d1f2d" stroke="rgba(0,240,255,.35)" stroke-width="1.5"/>
+  <text x="247" y="98" text-anchor="middle" fill="#5eead4" font-size="18" font-weight="800" font-family="Inter,sans-serif">Réaction support</text>
+  <text x="247" y="120" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Inter,sans-serif">rapide · totale · unique</text>
+  <text x="247" y="138" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">aA + bB → produits</text>
+</g>
+<g class="m3n2" filter="url(#m3gc)">
+  <rect x="752" y="62" width="305" height="108" rx="12" fill="#0d1f2d" stroke="rgba(125,211,252,.35)" stroke-width="1.5"/>
+  <text x="904" y="98" text-anchor="middle" fill="#7dd3fc" font-size="18" font-weight="800" font-family="Inter,sans-serif">Équivalence</text>
+  <text x="904" y="120" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">nA/a = nB/b</text>
+  <text x="904" y="138" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">CA = (a/b)·CB·VE / VA</text>
+</g>
+<g class="m3n3" filter="url(#m3gc)">
+  <rect x="68" y="352" width="345" height="108" rx="12" fill="#0d1f2d" stroke="rgba(251,146,60,.35)" stroke-width="1.5"/>
+  <text x="240" y="388" text-anchor="middle" fill="#fb923c" font-size="18" font-weight="800" font-family="Inter,sans-serif">pH-métrie</text>
+  <text x="240" y="410" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">pH = f(V) · saut · max dpH/dV</text>
+  <text x="240" y="428" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">indicateur coloré · phénolphtaléine</text>
+</g>
+<g class="m3n4" filter="url(#m3gc)">
+  <rect x="752" y="356" width="310" height="108" rx="12" fill="#0d1f2d" stroke="rgba(167,139,250,.35)" stroke-width="1.5"/>
+  <text x="907" y="392" text-anchor="middle" fill="#a78bfa" font-size="18" font-weight="800" font-family="Inter,sans-serif">Conductimétrie</text>
+  <text x="907" y="414" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">σ = f(V) · changement de pente</text>
+  <text x="907" y="432" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">intersection 2 droites → VE</text>
+</g>
+<g class="m3n5" filter="url(#m3gc)">
+  <rect x="388" y="20" width="324" height="96" rx="12" fill="#0d1f2d" stroke="rgba(134,239,172,.35)" stroke-width="1.5"/>
+  <text x="550" y="57" text-anchor="middle" fill="#86efac" font-size="18" font-weight="800" font-family="Inter,sans-serif">Résultat &amp; Incertitudes</text>
+  <text x="550" y="78" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Inter,sans-serif">u(CA)/CA — propagation</text>
+  <text x="550" y="97" text-anchor="middle" fill="#64748b" font-size="11" font-family="Inter,sans-serif">pipette · burette · conclusion</text>
+</g>
+</svg>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-simulations">
+<div class="content-card">
+<h3>Simulations modernes</h3>
+<p>Deux simulateurs maison pleine largeur : un titrage pH-métrique avec dérivée et un titrage conductimétrique avec intersection dynamique. Les contrôles restent fins et modernes, dans l’esprit des chapitres précédents.</p>
+<div class="future-sim-suite">
+  <div class="future-sim-title"><div><h4>Dosages : équivalence, signal et modèle</h4><p>Le but est de voir que \(V_E\) n’est pas une valeur magique : c’est le point où le comportement expérimental change parce que le réactif limitant change.</p></div><span class="future-badge">Canvas · interactif</span></div>
+  <div class="future-lab-grid">
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Titrage pH-métrique : saut, dérivée et indicateur</h4><p>La courbe principale donne \(\mathrm{pH}=f(V)\). Le halo montre le pic de \(\frac{\mathrm d\,\mathrm{pH}}{\mathrm dV}\) et la zone de virage d’un indicateur.</p></div><span class="chip blue">pH-métrie</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>Volume équivalent <output id="specLambdaOut">12.5 mL</output></label><input id="specLambda" type="range" min="7" max="19" step="0.1" value="12.5"></div>
+          <div class="future-control"><label>Netteté du saut <output id="specWidthOut">5</output></label><input id="specWidth" type="range" min="2" max="10" value="5"></div>
+          <div class="future-control"><label>\(C_B\) titrant <output id="specConcOut">0.100 mol·L⁻¹</output></label><input id="specConc" type="range" min="40" max="160" value="100"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(V_E\)</span><b id="specM1">12.5 mL</b></div><div class="future-metric"><span>\(C_A\)</span><b id="specM2">6.25e-2</b></div><div class="future-metric"><span>indicateur</span><b id="specM3">adapté</b></div></div>
+          <div class="future-equation">\(\displaystyle C_A=\frac{C_BV_E}{V_A}\) pour un dosage \(1:1\), ici \(V_A=20{,}0\,\mathrm{mL}\).</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="spectrumCanvas" aria-label="Simulation de titrage pH-métrique"></canvas></div>
+      </div>
+    </article>
+    <article class="future-lab">
+      <div class="future-lab-head"><div><h4>Titrage conductimétrique : deux droites, une intersection</h4><p>Avant et après l’équivalence, la composition ionique évolue différemment. L’intersection des modèles linéaires donne \(V_E\).</p></div><span class="chip green">conductimétrie</span></div>
+      <div class="future-lab-body">
+        <div class="future-controls">
+          <div class="future-control"><label>Volume équivalent <output id="calKOut">13.0 mL</output></label><input id="calK" type="range" min="7" max="20" step="0.1" value="13"></div>
+          <div class="future-control"><label>Contraste des pentes <output id="calCOut">0.60</output></label><input id="calC" type="range" min="20" max="100" value="60"></div>
+          <div class="future-control"><label>Bruit de mesure <output id="calNoiseOut">0.015 S·m⁻¹</output></label><input id="calNoise" type="range" min="0" max="35" value="15"></div>
+          <div class="future-metrics"><div class="future-metric"><span>\(V_E\)</span><b id="calM1">13.0 mL</b></div><div class="future-metric"><span>\(\sigma_E\)</span><b id="calM2">0.14</b></div><div class="future-metric"><span>lecture</span><b id="calM3">intersection</b></div></div>
+          <div class="future-equation">\(\displaystyle \sigma=\sum_i \lambda_i[X_i]\). Le changement d’ions dominants change la pente.</div>
+        </div>
+        <div class="future-canvas-wrap"><canvas class="future-canvas" id="calibrationCanvas" aria-label="Simulation de titrage conductimétrique"></canvas></div>
+      </div>
+    </article>
+  </div>
+</div>
+<div class="sim-block-title">Simulations PhET Colorado conservées</div>
+<div class="phet-grid">
+  <article class="sim-card-large"><div class="sim-card-head"><span>pH</span><div><h4>Acid-Base Solutions</h4><p>Explorer force d’un acide/base, concentration et pH.</p></div></div><div class="iframe-wrap"><iframe title="PhET Acid-Base Solutions" loading="lazy" src="https://phet.colorado.edu/sims/html/acid-base-solutions/latest/acid-base-solutions_fr.html"></iframe></div></article>
+  <article class="sim-card-large"><div class="sim-card-head"><span>σ</span><div><h4>Beer's Law Lab</h4><p>Conservée pour les dosages par étalonnage et le lien signal-concentration.</p></div></div><div class="iframe-wrap"><iframe title="PhET Beer’s Law Lab" loading="lazy" src="https://phet.colorado.edu/sims/html/beers-law-lab/latest/beers-law-lab_fr.html"></iframe></div></article>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-quiz">
+<div class="content-card">
+<h3>Quiz et chatbot externe</h3>
+<div class="quiz-ai-grid">
+  <div class="quiz-card"><h4>Quiz interactif</h4><p id="quizProgress" class="note"></p><div id="quizQuestion"></div><div id="quizOptions" class="options"></div><div class="answers"><button class="secondary" onclick="prevQuiz()">Précédent</button><button class="primary" onclick="nextQuiz()">Suivant</button><button class="secondary" onclick="resetQuiz()">Recommencer</button></div><p id="quizFeedback" class="note"></p></div>
+  <div class="ai-helper-card"><h4>Assistant externe</h4><p>Le site statique prépare une question complète ; la réponse est donnée par l’assistant externe choisi.</p><div class="ai-choice-row"><button class="ai-choice" onclick="setAIIntent('simple')">Cours simple</button><button class="ai-choice" onclick="setAIIntent('indice')">Indice</button><button class="ai-choice" onclick="setAIIntent('correction')">Correction</button><button class="ai-choice" onclick="setAIIntent('prepa')">Prépa PCSI</button></div><label class="ai-label" for="aiQuestion">Question de l’élève</label><textarea class="ai-textarea" id="aiQuestion">Explique-moi comment utiliser la loi de Équivalence pour déterminer une concentration inconnue.</textarea><div class="btn-row"><button class="primary" onclick="openAI('chatgpt')">ChatGPT</button><button class="secondary" onclick="openAI('claude')">Claude</button><button class="secondary" onclick="openAI('perplexity')">Perplexity</button><button class="secondary" onclick="copyCurrentPrompt()">Copier</button></div><details class="ai-preview"><summary>Voir le prompt envoyé</summary><div class="prompt-box" id="promptPreview"></div></details></div>
+</div>
+</div>
+</section>
+
+<section class="panel" id="tab-ece">
+<div class="content-card">
+<h3>ECE : réussir un titrage</h3>
+<div class="cards">
+  <div class="card"><h4>Situation type</h4><p>Déterminer la concentration d’un acide, d’une base ou d’un ion par titrage pH-métrique, conductimétrique ou colorimétrique.</p><div class="chips"><span class="chip blue">burette</span><span class="chip green">équivalence</span><span class="chip amber">incertitude</span></div></div>
+  <div class="card"><h4>Gestes évalués</h4><ul><li>Rincer la burette avec le titrant et la pipette avec la solution prélevée.</li><li>Prélever précisément \(V_A\) avec pipette jaugée.</li><li>Agiter, ajouter progressivement, resserrer les points près de l’équivalence.</li><li>Exploiter \(V_E\), convertir les volumes, conclure avec unité.</li></ul></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Étape</th><th>Action attendue</th><th>Justification</th></tr></thead>
+<tbody>
+<tr><td>Préparer</td><td>Choisir la verrerie et rincer correctement.</td><td>Limiter les erreurs systématiques sur \(V_A\) et \(C_B\).</td></tr>
+<tr><td>Mesurer</td><td>Noter le signal après chaque ajout, surtout près du saut.</td><td>La précision de \(V_E\) pilote directement celle de \(C_A\).</td></tr>
+<tr><td>Exploiter</td><td>Identifier \(V_E\) par saut, dérivée ou intersection.</td><td>L’équivalence correspond au changement de réactif limitant.</td></tr>
+<tr><td>Calculer</td><td>Utiliser \(\displaystyle C_A=\frac{a}{b}\frac{C_BV_E}{V_A}\).</td><td>La relation vient de l’équation ajustée.</td></tr>
+<tr><td>Conclure</td><td>Donner résultat, unité, chiffres significatifs et compatibilité.</td><td>Un dosage sans discussion de validité reste incomplet.</td></tr>
+</tbody>
+</table></div>
+<details><summary>Mini-sujet ECE 1 — Acidité d’un jus de citron</summary><p>Diluer un jus, titrer par \(\mathrm{HO^-}\), lire \(V_E\), prendre en compte le caractère triacide de l’acide citrique et conclure sur la masse d’acide dans le fruit.</p></details>
+<details><summary>Mini-sujet ECE 2 — Conductimétrie d’une eau minérale</summary><p>Réaliser un suivi conductimétrique, modéliser deux portions linéaires, déterminer l’intersection et comparer la concentration obtenue à une valeur annoncée.</p></details>
+<details><summary>Mini-sujet ECE 3 — Dosage d’un désinfectant (eau oxygénée)</summary><p>Doser \(\mathrm{H_2O_2}\) par manganométrie en milieu acide : \(2\,\mathrm{MnO_4^-}+5\,\mathrm{H_2O_2}+6\,\mathrm{H^+}\rightarrow 2\,\mathrm{Mn^{2+}}+5\,\mathrm{O_2}+8\,\mathrm{H_2O}\). L’équivalence est repérée par la persistance de la couleur violette. Attention aux coefficients stœchiométriques : \(\dfrac{n(\mathrm{H_2O_2})}{5}=\dfrac{n(\mathrm{MnO_4^-})}{2}\). Conclure sur le titre en volumes du désinfectant.</p></details>
+<details><summary>Mini-sujet ECE 4 — Dosage du vinaigre et degré acétique</summary><p>Titrer un vinaigre dilué 10 fois par \(\mathrm{NaOH}\), déterminer \(C_A\), remonter à la concentration du vinaigre pur, calculer \(C_m=C\times M\) et le degré acétique \(d=C_m/10\). Comparer à l’étiquette et discuter la compatibilité avec l’incertitude.</p></details>
+</div>
+</section>
+
+<section class="panel" id="tab-prepa">
+<div class="content-card">
+<h3>Vers la prépa PCSI</h3>
+<p>En PCSI, un dosage se traite comme un problème de bilan de matière, de modèle expérimental et d’incertitude. On ne se contente pas de lire \(V_E\) : on justifie la réaction support, on découpe avant/après équivalence et on contrôle l’homogénéité.</p>
+
+<div class="box def"><div class="box-label">1. Changement de regard</div>
+<p>En Terminale, on repère l’équivalence graphiquement et on applique la relation stœchiométrique. En PCSI, les dosages deviennent des exercices de calcul formel : on résout les équations de conservation et d’électroneutralité pour déterminer les concentrations à tout point du titrage, pas seulement à l’équivalence. La notion de taux d’avancement \(\alpha\) et de constante d’équilibre \(K\) permet de comprendre pourquoi la réaction support doit être totale et comment quantifier l’erreur si elle ne l’est pas tout à fait.</p></div>
+
+<div class="cards">
+  <div class="card"><h4>2. Tableau d’avancement paramétré</h4><p>Pour \(aA+bB\rightarrow\) produits, avec \(B\) versé progressivement : \[
+    n_A(V)=n_A^0-a\,\xi,\qquad n_B(V)=C_BV-b\,\xi.
+  \] Avant l’équivalence, \(B\) est limitant ; après l’équivalence, \(A\) a disparu.</p></div>
+  <div class="card"><h4>3. Démonstration de la relation</h4><p>À l’équivalence, \(\xi_E=\frac{n_A^0}{a}=\frac{C_BV_E}{b}\). Donc \[
+    C_A=\frac{a}{b}\frac{C_BV_E}{V_A}.
+  \] Cette relation est dimensionnellement homogène : \(\frac{C_BV_E}{V_A}\) a bien l’unité d’une concentration.</p></div>
+  <div class="card"><h4>4. Conductimétrie plus fine</h4><p>On écrit \(\sigma(V)=\sum_i\lambda_i[X_i](V)\). Les fonctions \([X_i](V)\) changent d’expression à l’équivalence, ce qui explique les deux portions linéaires et l’intersection.</p></div>
+  <div class="card"><h4>5. Potentiométrie (ouverture)</h4><p>Dosage redox par suivi du potentiel : \(\displaystyle E=E^\circ+\frac{RT}{nF}\ln\frac{[\mathrm{Ox}]}{[\mathrm{Red}]}\). En PCSI, cette relation (Nernst) permet de tracer \(E=f(V)\) et de lire l’équivalence au saut de potentiel.</p></div>
+</div>
+
+<div class="box ok"><div class="box-label">Mini-démonstration — propagation d’incertitudes</div>
+<p>Partons de \(\displaystyle C_A=\frac{C_BV_E}{V_A}\). On prend le logarithme : \(\ln C_A=\ln C_B+\ln V_E-\ln V_A\).</p>
+<p>En différenciant : \(\displaystyle\frac{\mathrm{d}C_A}{C_A}=\frac{\mathrm{d}C_B}{C_B}+\frac{\mathrm{d}V_E}{V_E}-\frac{\mathrm{d}V_A}{V_A}\).</p>
+<p>Les termes s’ajoutent quadratiquement (variables indépendantes) :</p>
+<div class="formula">\[\frac{u(C_A)}{C_A}=\sqrt{\left(\frac{u(C_B)}{C_B}\right)^2+\left(\frac{u(V_E)}{V_E}\right)^2+\left(\frac{u(V_A)}{V_A}\right)^2}\]</div>
+<p>Si \(C_B\) est préparée avec une précision bien supérieure, on néglige \(u(C_B)/C_B\) — c’est la formule de Terminale. En prépa, on ne néglige jamais un terme sans le justifier.</p></div>
+
+<div class="box prop"><div class="box-label">Application guidée — dosage complet du vinaigre</div>
+<p>\(V_A=10{,}0\,\mathrm{mL}\) de vinaigre dilué \(10\) fois, \(C_B=0{,}10\,\mathrm{mol\,L^{-1}}\), \(V_E=12{,}5\,\mathrm{mL}\), \(M(\mathrm{CH_3COOH})=60\,\mathrm{g\,mol^{-1}}\).</p>
+<p><strong>1.</strong> \(\displaystyle C_A=\frac{C_BV_E}{V_A}=\frac{0{,}10\times12{,}5}{10{,}0}=0{,}125\,\mathrm{mol\,L^{-1}}\).</p>
+<p><strong>2.</strong> Vinaigre pur : \(C_0=10\times C_A=1{,}25\,\mathrm{mol\,L^{-1}}\).</p>
+<p><strong>3.</strong> \(C_m=C_0\times M=1{,}25\times60=75\,\mathrm{g\,L^{-1}}\).</p>
+<p><strong>4.</strong> Degré acétique : \(d=C_m/10=7{,}5°\).</p>
+<p><strong>5.</strong> Incertitude : avec \(u(V_A)=0{,}05\,\mathrm{mL}\) et \(u(V_E)=0{,}1\,\mathrm{mL}\), on trouve \(u(C_A)/C_A\simeq1\,\%\), soit \(d=7{,}5\pm0{,}1°\).</p></div>
+
+<div class="box warn"><div class="box-label">Mini-colle — questions orales</div>
+<p><strong>(a)</strong> Pourquoi la réaction support doit-elle être totale ? Que se passe-t-il si \(K=10^2\) ?</p>
+<p><em>Réponse :</em> Si \(K\) n’est pas très grand, la réaction n’est pas complète à l’équivalence et la relation stœchiométrique n’est plus valide. Pour \(K=10^2\), l’erreur est d’environ \(1\,\%\).</p>
+<p><strong>(b)</strong> On dose un diacide \(\mathrm{H_2A}\) par \(\mathrm{HO^-}\). Prévoir la relation entre \(C_A\), \(V_A\), \(C_B\) et \(V_E\).</p>
+<p><em>Réponse :</em> \(\mathrm{H_2A}+2\mathrm{HO^-}\rightarrow\mathrm{A^{2-}}+2\mathrm{H_2O}\), donc \(\displaystyle C_A=\frac{1}{2}\frac{C_BV_E}{V_A}\).</p>
+<p><strong>(c)</strong> Un dosage conductimétrique de \(\mathrm{AgNO_3}\) par \(\mathrm{NaCl}\) donne \(V_E=14{,}3\,\mathrm{mL}\). Si \(C_A=0{,}050\,\mathrm{mol\,L^{-1}}\) et \(V_A=20\,\mathrm{mL}\), que vaut \(C_B\) ?</p>
+<p><em>Réponse :</em> \(\displaystyle C_B=\frac{C_AV_A}{V_E}=\frac{0{,}050\times20}{14{,}3}\simeq0{,}070\,\mathrm{mol\,L^{-1}}\).</p></div>
+
+<div class="box prop"><div class="box-label">Application prépa courte</div><p>Si \(V_A=20{,}0\,\mathrm{mL}\), \(C_B=0{,}100\,\mathrm{mol\,L^{-1}}\), \(V_E=14{,}6\,\mathrm{mL}\) et que l’espèce titrée est un diacide, alors \[
+  C_A=\frac{1}{2}\frac{C_BV_E}{V_A}=3{,}65\times10^{-2}\,\mathrm{mol\,L^{-1}}.
+\] La division par \(2\) vient de la stœchiométrie, pas d’un réglage expérimental.</p></div>
+</div>
+</section>
+
+<div class="footer-nav"><button class="secondary" onclick="prevPanel()">← Onglet précédent</button><button class="primary" onclick="nextPanel()">Onglet suivant →</button></div>
+</div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// Canvas Starfield from index_cercle_2026
+const canvas=document.getElementById('starfield');
+const ctx=canvas.getContext('2d');
+let w=canvas.width=window.innerWidth;
+let h=canvas.height=window.innerHeight;
+const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  stars.forEach(st=>{
+    st.a+=0.02;
+    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+    st.y-=0.2; if(st.y<0) st.y=h;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+
+// Basic Tab Switching Logic
+function switchTab(tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+    if(targetTab) targetTab.classList.add('active');
+
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    const targetPanel = document.getElementById('tab-' + tabId);
+    if(targetPanel) targetPanel.classList.add('active');
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    switchTab(btn.dataset.tab);
+  });
+});
+</script>
+
+</body>
+</html>
