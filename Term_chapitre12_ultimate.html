@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 12 — Mécanique des fluides | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1196,44 +1194,249 @@ Chaque terme est homogène à une pression : \(\mathrm{Pa}=\mathrm{J\,m^{-3}}\).
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+(function(){const t=localStorage.getItem('physichem_theme')||'light';document.documentElement.setAttribute('data-theme',t);const tb=document.getElementById('themeBtn');tb.textContent=t==='dark'?'☀️':'🌙';tb.setAttribute('aria-pressed',t==='dark'?'true':'false');})();
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');tb.textContent=next==='dark'?'☀️':'🌙';tb.setAttribute('aria-pressed',next==='dark'?'true':'false');localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(n,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+n).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(n==='mindmap')setTimeout(renderMM,50);if(n==='flashcards'&&!fcInit)initFC();if(n==='annales'&&!exoInit)initExos();trackMastery(n);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));document.getElementById('progressTop').style.width=pct+'%';document.getElementById('pctLbl').textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap12';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap12']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--accent)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEUR VENTURI */
+function calcVenturi(){
+  const S1=(parseFloat(document.getElementById('v-s1').value)||10)*1e-4;
+  const S2=(parseFloat(document.getElementById('v-s2').value)||3)*1e-4;
+  const v1=parseFloat(document.getElementById('v-v1').value)||2;
+  const rho=parseFloat(document.getElementById('v-rho').value)||1000;
+  const Qv=S1*v1;
+  const v2=Qv/S2;
+  const dP=0.5*rho*(v2*v2-v1*v1);
+  document.getElementById('v-result').innerHTML=`Q_v = <strong>${(Qv*1000).toFixed(2)} L/s</strong> · v₂ = <strong>${v2.toFixed(2)} m/s</strong> · ΔP = P₁−P₂ = <strong>${Math.round(dP)} Pa</strong>`;
+  const canvas=document.getElementById('v-canvas');
+  canvas.width=canvas.offsetWidth||600;canvas.height=220;
+  const ctx=canvas.getContext('2d');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=isDark?'#1C2A40':'#F8FAFD';ctx.fillRect(0,0,canvas.width,canvas.height);
+  const W=canvas.width,H=canvas.height;
+  const h1=80,h2=Math.max(20,h1*S2/S1),y0=(H-h1)/2;
+  const x1=60,x2=180,x3=320,x4=440,x5=W-60;
+  // Tube outline
+  ctx.fillStyle=isDark?'rgba(75,173,212,0.15)':'rgba(75,173,212,0.1)';
+  ctx.beginPath();ctx.moveTo(x1,y0);ctx.lineTo(x2,y0);ctx.lineTo(x3,(H-h2)/2);ctx.lineTo(x4,(H-h2)/2);ctx.lineTo(x5,y0);ctx.lineTo(x5,y0+h1);ctx.lineTo(x4,(H+h2)/2);ctx.lineTo(x3,(H+h2)/2);ctx.lineTo(x2,y0+h1);ctx.lineTo(x1,y0+h1);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=isDark?'#60C8EC':'#4BADD4';ctx.lineWidth=2;ctx.stroke();
+  // Arrows v1
+  const arr=(x,y,len,color)=>{ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x+len,y-6);ctx.lineTo(x+len+10,y);ctx.lineTo(x+len,y+6);ctx.fill();};
+  arr(x1+10,H/2-h1*0.15,40,'#3DAF82');arr(x1+10,H/2+h1*0.15,40,'#3DAF82');
+  arr(x4+10,H/2-h2*0.2,Math.min(60,40*v2/v1),'#D4854A');arr(x4+10,H/2+h2*0.2,Math.min(60,40*v2/v1),'#D4854A');
+  // Labels
+  ctx.fillStyle=isDark?'#7A90B0':'#5A6A85';ctx.font='bold 12px Instrument Sans';
+  ctx.fillText(`v₁=${v1}m/s`,x1+2,y0-10);
+  ctx.fillText(`v₂=${v2.toFixed(1)}m/s`,x4+2,(H-h2)/2-10);
+  ctx.fillStyle='#3DAF82';ctx.fillText(`P₁ (haute)`,x1+2,y0+h1+20);
+  ctx.fillStyle='#D4854A';ctx.fillText(`P₂ (basse)`,x3+2,(H+h2)/2+20);
+  ctx.fillStyle=isDark?'#7A90B0':'#5A6A85';ctx.font='11px Instrument Sans';
+  ctx.fillText(`ΔP = ${Math.round(dP)} Pa`,W/2-30,H-10);
+}
+setTimeout(calcVenturi,100);
+
+/* FLASHCARDS */
+const FC=[
+  {icon:'💧',q:'Loi fondamentale de la statique des fluides',a:'P₂ − P₁ = −ρg(z₂−z₁) = ρgh · La pression augmente avec la profondeur h. Les points à même altitude ont même pression.',formula:'ΔP = ρg[___]',blanks:['h'],answers:['h']},
+  {icon:'⬆️',q:'Expression de la poussée d\'Archimède',a:'Π = ρ_fluide × g × V_immergé · Dirigée vers le haut · Égale au poids du fluide déplacé (pas du corps).',formula:'Π = ρ_fluide × g × [___]',blanks:['V'],answers:['V','V_immergé','Vimmerge']},
+  {icon:'🚢',q:'Condition de flottaison',a:'ρ_corps < ρ_fluide → flotte. ρ_corps = ρ_fluide → équilibre indifférent. ρ_corps > ρ_fluide → coule.',formula:'Flotte si ρ_corps [___] ρ_fluide',blanks:['<'],answers:['<']},
+  {icon:'📏',q:'Débit volumique',a:'Q_v = S × v (m³/s) · S = section (m²) · v = vitesse (m/s). Débit massique : Q_m = ρQ_v (kg/s).',formula:'Q_v = [___] × v',blanks:['S'],answers:['S']},
+  {icon:'🔄',q:'Équation de continuité (fluide incompressible)',a:'S₁v₁ = S₂v₂ = Q_v = constante. Si S diminue, v augmente et vice versa.',formula:'S₁v₁ = [___]v₂',blanks:['S₂'],answers:['S₂','S2']},
+  {icon:'⚡',q:'Théorème de Bernoulli',a:'P + ½ρv² + ρgz = constante le long d\'une ligne de courant. Fluide incompressible, parfait, régime permanent.',formula:'P + ½ρv² + ρg[___] = cste',blanks:['z'],answers:['z']},
+  {icon:'🔧',q:'Conditions d\'application de Bernoulli',a:'1. Fluide incompressible (ρ=cste) · 2. Fluide parfait (non visqueux) · 3. Régime permanent · 4. Même ligne de courant · 5. Sans pompe entre A et B.',formula:'Bernoulli : fluide incompressible et [___]',blanks:['parfait'],answers:['parfait','non visqueux']},
+  {icon:'🌊',q:'Effet Venturi — conséquence de Bernoulli',a:'Si la section diminue → v augmente → P diminue (Bernoulli). L\'accélération crée une dépression. Utilisé pour mesurer le débit.',formula:'Section ↓ → vitesse ↑ → pression [___]',blanks:['↓'],answers:['↓','diminue','baisse']},
+  {icon:'🚿',q:'Vitesse de vidange par un orifice (Torricelli)',a:'v = √(2gh) · h = profondeur de l\'orifice sous la surface libre. Analogue à la chute libre d\'hauteur h.',formula:'v_Torricelli = √(2g[___])',blanks:['h'],answers:['h']},
+  {icon:'✈️',q:'Tube de Pitot — mesure de vitesse',a:'v = √(2ΔP/ρ) · ΔP = P_totale − P_statique = ½ρv² · Utilisé sur les avions pour mesurer la vitesse relative de l\'air.',formula:'v = √(2ΔP/[___])',blanks:['ρ'],answers:['ρ','rho']},
+  {icon:'💧',q:'Pression à 10 m de profondeur dans l\'eau',a:'ΔP = ρgh = 1000 × 9,81 × 10 ≈ 98 100 Pa ≈ 10⁵ Pa ≈ 1 atm. À chaque 10 m, +1 atm.',formula:'ΔP = 1000 × 9,81 × [___] ≈ 10⁵ Pa',blanks:['10'],answers:['10']},
+  {icon:'🌊',q:'Définition d\'un fluide parfait',a:'Fluide sans viscosité (frottements internes nuls). Approximation valide pour l\'eau en mouvement rapide. Condition d\'application de Bernoulli.',formula:'Fluide parfait : viscosité = [___]',blanks:['0'],answers:['0','zéro','nulle']},
+  {icon:'📐',q:'Unité de la pression',a:'Pascal (Pa) = N/m². 1 atm = 101 325 Pa ≈ 10⁵ Pa. 1 bar = 10⁵ Pa. Pression atmosphérique ≈ 1 bar au niveau de la mer.',formula:'1 atm ≈ [___] Pa',blanks:['101325'],answers:['101325','10^5','1e5','100000']},
+  {icon:'⬆️',q:'Pourquoi un iceberg flotte-t-il ?',a:'ρ_glace = 917 kg/m³ < ρ_eau = 1000 kg/m³. La poussée Π = ρ_eau × g × V_immergé = poids = ρ_glace × g × V_total. Fraction immergée = ρ_glace/ρ_eau = 91,7%.',formula:'Fraction immergée = ρ_glace / ρ_[___]',blanks:['eau'],answers:['eau','fluide']},
+  {icon:'💧',q:'Vases communicants — principe',a:'Un liquide homogène au repos occupe le même niveau dans tous les vases communicants. Conséquence directe de ΔP = ρgh (surfaces isobares horizontales).',formula:'Vases communicants : niveau [___] partout',blanks:['identique'],answers:['identique','égal','même']},
+];
+let fcIdx=0,fcFlipped=false,fcOrder=[...Array(FC.length).keys()],fcInit=false;
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){const c=FC[fcOrder[fcIdx]];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${fcOrder.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;}
+function nextCard(){fcIdx=(fcIdx+1)%fcOrder.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+fcOrder.length)%fcOrder.length;renderFC();}
+function shuffleCards(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}fcIdx=0;renderFC();}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');}
+
+/* MINDMAP */
+const MM_B=[
+  {label:'Statique fluides',color:'#4BADD4',nodes:[{label:'ΔP = ρgh',def:'Pression augmente avec profondeur. ΔP = ρ×g×h.'},{label:'Surfaces isobares',def:'Plans horizontaux dans un fluide au repos.'},{label:'Vases communicants',def:'Même niveau pour liquide homogène au repos.'}]},
+  {label:'Archimède',color:'#3DAF82',nodes:[{label:'Π = ρ_fluide·g·V',def:'Force vers le haut. Égale au poids de fluide déplacé.'},{label:'Conditions flottaison',def:'ρ_corps < ρ_fluide → flotte. ρ_corps > ρ_fluide → coule.'},{label:'Sous-marin/iceberg',def:'Applications directes du principe d\'Archimède.'}]},
+  {label:'Continuité',color:'#7B6FD0',nodes:[{label:'Q_v = Sv = cste',def:'Conservation du débit volumique. Fluide incompressible.'},{label:'Section ↓ → v ↑',def:'Effet convergent. Analogue à l\'eau d\'un tuyau.'},{label:'Q_m = ρQ_v',def:'Débit massique. Constant si ρ = cste.'}]},
+  {label:'Bernoulli',color:'#D4854A',nodes:[{label:'P + ½ρv² + ρgz = cste',def:'Conservation énergie/volume. Fluide parfait, permanent.'},{label:'Conditions application',def:'Incompressible, parfait, permanent, même ligne de courant.'},{label:'v↑ → P↓',def:'Augmentation vitesse → baisse de pression.'}]},
+  {label:'Applications',color:'#E8915A',nodes:[{label:'Venturi : ΔP = ½ρΔv²',def:'Rétrécissement → dépression → mesure débit.'},{label:'Torricelli : v = √(2gh)',def:'Vidange réservoir. Analogue chute libre.'},{label:'Tube de Pitot',def:'v = √(2ΔP/ρ). Mesure vitesse avion.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#4BADD4';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/>`;
+  h+=`<rect x="${cx-115}" y="${cy-28}" width="230" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">MÉCANIQUE</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">DES FLUIDES</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=134,bh=34;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
   });
-  requestAnimationFrame(draw);
+  svg.innerHTML=h;
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch12.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+/* VIDEOS */
+const VIDEOS=[
+  {id:'Jmn8mMZLmxM',title:'La poussée d\'Archimède expliquée',channel:'e-penser',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'OVLd-Q6W7pE',title:'Bernoulli et l\'effet Venturi',channel:'Science étonnante',duration:'16 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'bHIhgxav9LY',title:'Pourquoi les bateaux flottent-ils ?',channel:'Scilabus',duration:'10 min',level:'easy',levelTxt:'Accessible'},
+  {id:'YTZoKvp_X_E',title:'La mécanique des fluides en action',channel:'MinutePhysics',duration:'8 min',level:'easy',levelTxt:'Accessible'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* CHATBOT */
+const SYS=`Tu es un assistant pédagogique expert en mécanique des fluides niveau Terminale Spécialité. Tu réponds en français, clairement, avec formules et exemples numériques. Limite-toi à : statique des fluides (ΔP=ρgh, surfaces isobares, vases communicants), poussée d\'Archimède (Π=ρ_fluide·g·V_immergé, conditions de flottaison), débit volumique (Q_v=Sv), équation de continuité (S₁v₁=S₂v₂), théorème de Bernoulli (P+½ρv²+ρgz=cste, conditions d\'application), applications (Venturi, Torricelli v=√(2gh), tube de Pitot).`;
+let hist=[];
+async function sendMsg(){const inp=document.getElementById('chatIn');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';addMsg('user',txt);document.getElementById('sendBtn').disabled=true;showTyping();hist.push({role:'user',content:txt});try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:hist})});const d=await r.json();const reply=d.content?.[0]?.text||'Erreur.';hist.push({role:'assistant',content:reply});removeTyping();addMsg('bot',reply);}catch(e){removeTyping();addMsg('bot','⚠️ Chatbot hors ligne. Déployez le site pour l\'activer.');}document.getElementById('sendBtn').disabled=false;}
+function suggest(t){document.getElementById('chatIn').value=t;sendMsg();}
+function addMsg(r,text){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg'+(r==='user'?' user':'');d.innerHTML=`<div class="msg-av">${r==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+/* QUIZ */
+const QS=[
+  {q:'La loi fondamentale de la statique des fluides est :',opts:['ΔP = ρgh (la pression augmente avec la profondeur)','ΔP = ρgv','ΔP = ½ρv²','P = ρgz'],ans:0,corr:'ΔP = P₂ − P₁ = −ρg(z₂−z₁) = ρgh. La pression augmente de ρgh quand on descend de h.'},
+  {q:'La poussée d\'Archimède vaut :',opts:['Π = ρ_fluide × g × V_immergé','Π = ρ_corps × g × V_total','Π = ρ_fluide × g × V_total','Π = m_corps × g'],ans:0,corr:'Π = ρ_fluide × g × V_immergé. Elle est égale au POIDS DU FLUIDE DÉPLACÉ, pas au poids du corps.'},
+  {q:'L\'équation de continuité pour un fluide incompressible donne :',opts:['S₁v₁ = S₂v₂ (débit conservé)','S₁v₁² = S₂v₂²','P₁S₁ = P₂S₂','v₁/S₁ = v₂/S₂'],ans:0,corr:'Q_v = S₁v₁ = S₂v₂ = constante. Si la section diminue, la vitesse augmente proportionnellement.'},
+  {q:'Dans un tube de Venturi, quand la section se réduit, la pression :',opts:['Diminue (effet Venturi)','Augmente','Reste constante','Double'],ans:0,corr:'D\'après Bernoulli : quand v augmente (section réduite), P diminue pour que P + ½ρv² = cste. C\'est l\'effet Venturi.'},
+  {q:'Le théorème de Bernoulli s\'applique à un fluide :',opts:['Incompressible, parfait, en régime permanent','Compressible et visqueux','Uniquement aux liquides','En régime turbulent'],ans:0,corr:'Bernoulli : fluide incompressible (ρ=cste), parfait (non visqueux), régime permanent, sur une ligne de courant.'},
+  {q:'La vitesse de vidange par un orifice à la profondeur h (Torricelli) est :',opts:['v = √(2gh)','v = √(gh)','v = 2gh','v = √(g/h)'],ans:0,corr:'v = √(2gh). Obtenu par Bernoulli entre la surface (v≈0, z=h) et l\'orifice (z=0). Analogue à la chute libre.'},
+  {q:'Un corps flotte dans l\'eau si :',opts:['Sa masse volumique est inférieure à celle de l\'eau','Sa masse est inférieure à 1 kg','Son volume est supérieur à 1 L','Il est creux'],ans:0,corr:'ρ_corps < ρ_eau (1000 kg/m³) → Π > P → flotte. Ex : bois (ρ≈600), glace (ρ=917), liège (ρ≈120).'},
+  {q:'Un tuyau passe de S₁ = 4 cm² à S₂ = 1 cm². Si v₁ = 3 m/s, v₂ vaut :',opts:['12 m/s','0,75 m/s','6 m/s','3 m/s'],ans:0,corr:'S₁v₁ = S₂v₂ → v₂ = S₁v₁/S₂ = 4×3/1 = 12 m/s. La section est 4× plus petite → vitesse 4× plus grande.'},
+  {q:'La poussée d\'Archimède est toujours dirigée :',opts:['Verticalement vers le haut','Verticalement vers le bas','Horizontalement','Perpendiculairement à la surface'],ans:0,corr:'Π⃗ = −ρ_fluide·g·V_immergé·e⃗_z : toujours verticale vers le haut. C\'est la résultante des forces de pression du fluide.'},
+  {q:'La pression à 20 m de profondeur dans l\'eau (P₀ = 10⁵ Pa) vaut :',opts:['3×10⁵ Pa','10⁵ Pa','2×10⁵ Pa','20×10⁵ Pa'],ans:0,corr:'P = P₀ + ρgh = 10⁵ + 1000×9,81×20 = 10⁵ + 1,96×10⁵ ≈ 3×10⁵ Pa. À chaque 10 m : +1 atm ≈ 10⁵ Pa.'},
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'💧 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap12)d.chap12={};d.chap12.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ANNALES */
+const EXOS=[{"title":"écoulement du sang dans une artère","subtitle":"Amérique du nord 2025 sujet 2 Bis — Exercice 2","sujet":"25-PYCPE2","year":"2025","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Fluides","débit","artère","Doppler"],"enonce":"Relier vitesse d'écoulement, débit et contexte médical.","url":"https://www.vecteurbac.fr/ecoulement-du-sang-dans-une-artere/"},{"title":"La viscosité du glycérol","subtitle":"Centres étrangers 2025 sujet 2 — Exercice 3","sujet":"25-PYCJ2G11","year":"2025","duration":"1h03","points":6,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Fluides","viscosité","chute","mouvement"],"enonce":"Exploiter un mouvement de chute dans un fluide visqueux.","url":"https://www.vecteurbac.fr/la-viscosite-du-glycerol/"},{"title":"Viscosimètre à chute de bille","subtitle":"Métropole 2025 sujet 1 — Exercice 3","sujet":"25-PYCJ1ME1","year":"2025","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Fluides","viscosimètre","Stokes","bille"],"enonce":"Déterminer une viscosité à partir d'une chute de bille et d'un modèle de frottement.","url":"https://www.vecteurbac.fr/viscosimetre-a-chute-de-bille/"},{"title":"Des écoulements sanguins","subtitle":"Nouvelle-Calédonie 2025 sujet 1 — Exercice 2","sujet":"25-PYCJ1NC1","year":"2025","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Fluides","débit","sang","vitesse"],"enonce":"Comparer et exploiter différents écoulements sanguins.","url":"https://www.vecteurbac.fr/des-ecoulements-sanguins/"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter);
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card"><div class="exo-card-header"><div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div><div class="exo-title">${e.title}</div><div class="exo-subtitle">${e.subtitle}</div><div class="exo-pills"><span class="pill yr">📅 ${e.year}</span><span class="pill dur">⏱ ${e.duration}</span><span class="pill pt">📊 ${e.points} pts</span>${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}<span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span></div></div><div class="exo-card-body"><div class="exo-enonce">${e.enonce}</div><div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div><div class="exo-actions"><a href="${e.url}" target="_blank" rel="noopener noreferrer" class="exo-link-btn">🔗 Voir sur VecteurBac ↗</a><button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}</button></div></div></div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';if(n==='done'){const d=getMastery();if(!d.chap12)d.chap12={};d.chap12.annales=1;setMastery(d);updateMasteryUI();}}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

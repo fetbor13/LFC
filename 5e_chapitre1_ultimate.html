@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Collège 5ème — Chapitre 1 · Les circuits électriques · PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>5EME · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+    <div class="topbar">
+      <div class="crumb">Physique-Chimie › 5ème › <b>Les circuits électriques</b></div>
+      <div class="top-actions"><button class="small-btn" onclick="window.print()">🖨️</button><button class="theme-btn" id="themeBtn">🌙</button></div>
+    </div>
+    <div class="page">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">Énergie et conversions · Chapitre 1</div>
+          <h2>Les circuits électriques</h2>
+          <p class="hero-copy">Un chapitre pour passer du montage réel au schéma scientifique : générateur, récepteurs, sens du courant, conducteurs, isolants, série, dérivation et sécurité. Le cours est enrichi avec des analogies concrètes, des méthodes pas à pas, des schémas interactifs, des simulations, des quiz et des activités expérimentales.</p>
+        </div>
+        <div class="hero-img"><img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&w=1200&q=80" alt="Circuit électronique moderne"><span class="img-label">Électricité · circuits · sécurité</span></div>
+      </section>
+      <section class="useful-strip">
+        <article class="useful-card"><b>1. Réaliser</b><span>Un circuit fermé pour allumer une lampe ou faire tourner un moteur.</span></article>
+        <article class="useful-card"><b>2. Schématiser</b><span>Utiliser les symboles normalisés et reconnaître les boucles.</span></article>
+        <article class="useful-card"><b>3. Protéger</b><span>Identifier les courts-circuits et comprendre les risques.</span></article>
+      </section>
+
+      <section class="panel active" id="tab-cours">
+        <div class="content-grid">
+          <aside class="toc"><div class="toc-title">Plan du cours</div><ul>
+            <li><a href="#c1">1. Circuit électrique</a></li><li><a href="#c2">2. Réaliser un circuit</a></li><li><a href="#c3">3. Schématiser</a></li><li><a href="#c4">4. Courant électrique</a></li><li><a href="#c5">5. Conducteurs / isolants</a></li><li><a href="#c6">6. Court-circuit</a></li><li><a href="#c7">7. Série / dérivation</a></li><li><a href="#c8">8. Bilan</a></li>
+          </ul></aside>
+          <div class="content">
+            <h2 id="c1">1. Qu’est-ce qu’un circuit électrique ?</h2>
+            <div class="box"><div class="box-label">Définition</div><p>Un <strong>circuit électrique</strong> est un ensemble de <strong>dipôles</strong> reliés par des fils de connexion. Pour qu’un courant puisse circuler, il faut au moins un <strong>générateur</strong> et une <strong>boucle fermée</strong>.</p></div>
+            <p>Imagine un circuit électrique comme un circuit d’eau dans une maison : la pompe (générateur) pousse l’eau (courant) à travers des tuyaux (fils) jusqu’au robinet (récepteur). Si un tuyau est coupé, l’eau ne coule plus — de même, si le circuit est ouvert, le courant ne circule plus.</p>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Dipôle</h4><p>Composant électrique qui possède deux bornes. Exemples : pile, lampe, moteur, résistance, DEL, interrupteur. Chaque dipôle se branche en reliant une borne à un fil et l’autre borne à un autre fil.</p></div>
+              <div class="mini-card"><h4>Générateur / récepteur</h4><p>Le générateur fournit l’énergie électrique. Le récepteur la reçoit et la transforme : lumière, mouvement, chaleur. Sans générateur, aucun courant ne peut circuler dans le circuit.</p></div>
+            </div>
+            <div class="box"><div class="box-label">Analogie — l’eau dans les tuyaux</div><p>Pense au courant électrique comme à de l’eau qui circule dans des tuyaux : <strong>le générateur est la pompe</strong> qui pousse l’eau, <strong>les fils sont les tuyaux</strong> qui guident l’eau, <strong>les récepteurs sont les appareils</strong> qui utilisent l’eau (robinet, douche), et <strong>l’interrupteur est une vanne</strong> qui ouvre ou ferme le passage. Si la vanne est fermée, l’eau ne coule pas — si le circuit est ouvert, le courant ne passe pas.</p></div>
+            <div class="grid-3">
+              <div class="mini-card"><h4>Chaîne d’énergie</h4><p>Générateur → transfert → récepteur → effet utile. Exemple : pile → fil → lampe → lumière.</p></div>
+              <div class="mini-card"><h4>Circuit ouvert</h4><p>La boucle est interrompue : le courant ne peut pas circuler. La lampe reste éteinte même si la pile est branchée.</p></div>
+              <div class="mini-card"><h4>Circuit fermé</h4><p>La boucle est complète : le courant circule du générateur aux récepteurs et la lampe brille.</p></div>
+            </div>
+            <div class="course-visual" id="courseCircuitVisual">
+              <div class="course-visual-head">
+                <div>
+                  <span class="micro-tag">Schéma interactif premium</span>
+                  <h3>Circuit simple : de la pile à la lampe</h3>
+                </div>
+                <button class="course-switch is-on" id="courseSwitchBtn" type="button" onclick="toggleCourseCircuit()">Circuit fermé</button>
+              </div>
+              <div class="course-circuit-stage" aria-label="Schéma interactif d'un circuit électrique simple">
+                <svg viewBox="0 0 920 420" class="course-circuit-svg" role="img">
+                  <defs>
+                    <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+                      <feGaussianBlur stdDeviation="7" result="blur"/>
+                      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                    <linearGradient id="panelGrad" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0" stop-color="rgba(255,255,255,.12)"/>
+                      <stop offset="1" stop-color="rgba(255,255,255,.025)"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x="24" y="24" width="872" height="372" rx="34" class="course-panel-bg"/>
+                  <path id="courseWirePath" class="course-wire course-flow" d="M178 210 H350 M442 210 H690 M690 210 V316 H178 V210"/>
+                  <line x1="178" y1="132" x2="178" y2="288" class="course-wire"/>
+                  <line x1="142" y1="160" x2="142" y2="260" class="course-wire"/>
+                  <text x="104" y="116" class="course-svg-label">Générateur</text>
+                  <text x="193" y="158" class="course-pol plus">+</text>
+                  <text x="112" y="286" class="course-pol minus">−</text>
+                  <g class="course-comp" tabindex="0">
+                    <title>La pile est le générateur : elle fournit l’énergie électrique au circuit.</title>
+                    <rect x="93" y="126" width="130" height="176" rx="24" class="glass-card"/>
+                    <text x="118" y="340" class="course-caption">Pile</text>
+                  </g>
+                  <g id="courseSwitchOpen" class="course-switch-open" style="display:none">
+                    <line x1="350" y1="210" x2="398" y2="170" class="course-wire"/>
+                    <line x1="424" y1="210" x2="442" y2="210" class="course-wire"/>
+                  </g>
+                  <g id="courseSwitchClosed" class="course-switch-closed">
+                    <line x1="350" y1="210" x2="442" y2="210" class="course-wire"/>
+                  </g>
+                  <circle cx="350" cy="210" r="7" class="terminal"/><circle cx="442" cy="210" r="7" class="terminal"/>
+                  <g class="course-comp" tabindex="0">
+                    <title>L'interrupteur ouvre ou ferme la boucle. Fermé : le courant passe. Ouvert : le courant est interrompu.</title>
+                    <text x="327" y="145" class="course-svg-label">Interrupteur</text>
+                    <text x="327" y="340" class="course-caption">Commande</text>
+                  </g>
+                  <g class="course-comp" tabindex="0">
+                    <title>La lampe est un récepteur : elle reçoit l’énergie électrique et la transforme en lumière.</title>
+                    <circle cx="690" cy="210" r="54" class="lamp-shell"/>
+                    <circle id="courseLampGlow" cx="690" cy="210" r="42" class="lamp-core lamp-on"/>
+                    <path d="M662 238 L718 182 M662 182 L718 238" class="lamp-cross"/>
+                    <text x="654" y="145" class="course-svg-label">Récepteur</text>
+                    <text x="660" y="340" class="course-caption">Lampe</text>
+                  </g>
+                  <path id="courseCurrentPath" class="current-dashes" d="M200 210 H330 M460 210 H636 M690 264 V306 H204"/>
+                  <g id="courseElectronPath" class="electron-dashes">
+                    <path d="M204 316 H690 V264 M636 210 H460 M330 210 H200"/>
+                  </g>
+                  <text x="278" y="374" class="course-status-text" id="courseCircuitStatusSvg">Boucle fermée : le courant conventionnel circule du + vers le −.</text>
+                </svg>
+                <div class="course-readouts">
+                  <div><small>État</small><b id="courseState">Fermé</b></div>
+                  <div><small>Lampe</small><b id="courseLampState">Allumée</b></div>
+                  <div><small>Courant</small><b id="courseCurrentState">Présent</b></div>
+                </div>
+              </div>
+              <p class="course-visual-note"><strong>À observer :</strong> lorsque la boucle est ouverte, le trajet du courant est interrompu. La lampe s’éteint même si tous les dipôles sont encore présents.</p>
+            <div class="box"><div class="box-label">Expérience de pensée</div><p>Si tu coupes un fil n’importe où dans la boucle, le courant s’arrête partout. C’est comme une route coupée par un pont levant : plus aucune voiture ne peut faire le tour. L’interrupteur est simplement un endroit où l’on peut couper ou rétablir la route volontairement.</p></div>
+            </div>
+            <h2 id="c2">2. Réaliser un circuit simple</h2>
+            <p>Pour qu’une lampe brille, le circuit doit être <strong>fermé</strong>. Si un interrupteur est ouvert, la boucle est coupée : le courant ne circule plus.</p>
+            <div class="box ok"><div class="box-label">À retenir</div><ul><li>Une pile seule ne suffit pas : il faut relier correctement les bornes.</li><li>La lampe doit être traversée par le courant : le courant entre par une borne et ressort par l’autre.</li><li>Un interrupteur est un dipôle de commande : il ouvre ou ferme la boucle.</li><li>Un fil débranché ou desserré empêche le courant de circuler.</li><li>Si la lampe ne brille pas, il faut vérifier chaque connexion une par une.</li></ul></div>
+            <p>Pour réaliser un circuit, suis toujours le même principe : commence par le générateur, relie une borne au premier dipôle, puis continue jusqu’à revenir à l’autre borne du générateur. La boucle doit être complète, comme une boucle de ficelle qui ne serait pas coupée.</p>
+            <div class="box"><div class="box-label">Méthode — réaliser un circuit</div><ol><li>Placer la pile ou le générateur sur la table.</li><li>Relier une borne du générateur à une borne de la lampe avec un fil.</li><li>Relier l’autre borne de la lampe à une borne de l’interrupteur.</li><li>Relier l’autre borne de l’interrupteur à la borne restante du générateur.</li><li>Fermer l’interrupteur et observer.</li></ol></div>
+            <h3>Nœud, branche et boucle</h3>
+            <div class="grid-3">
+              <div class="mini-card"><h4>Boucle ou maille</h4><p>Chemin fermé que le courant peut parcourir.</p></div>
+              <div class="mini-card"><h4>Nœud</h4><p>Point du circuit où se rejoignent au moins trois connexions ou plusieurs branches.</p></div>
+              <div class="mini-card"><h4>Branche</h4><p>Portion du circuit située entre deux nœuds. La branche principale contient le générateur.</p></div>
+            </div>
+            <h2 id="c3">3. Schématisation et symboles normalisés</h2>
+            <p>Un schéma électrique n’est pas un dessin réaliste : c’est une représentation simplifiée, de forme claire, avec des symboles normalisés. On évite les fils qui se croisent inutilement et on place les dipôles sur des segments droits.</p>
+            <div class="table-wrap"><table><thead><tr><th>Composant</th><th>Rôle</th><th>Symbole attendu</th><th>Erreur fréquente</th></tr></thead><tbody>
+              <tr><td>Pile / générateur</td><td>Fournit l’énergie électrique</td><td><span class="sym">+ | | −</span> ou <span class="sym">G</span></td><td>Oublier les bornes + et −</td></tr>
+              <tr><td>Lampe</td><td>Convertit l’énergie en lumière</td><td><span class="sym">○ avec croix</span></td><td>Dessiner une ampoule réaliste</td></tr>
+              <tr><td>Interrupteur</td><td>Ouvre ou ferme le circuit</td><td><span class="sym">contact ouvert/fermé</span></td><td>Ne pas distinguer ouvert et fermé</td></tr>
+              <tr><td>Moteur</td><td>Convertit l’énergie en mouvement</td><td><span class="sym">M dans un cercle</span></td><td>Oublier que le sens du courant peut changer sa rotation</td></tr>
+              <tr><td>DEL / diode</td><td>Laisse passer le courant dans un seul sens</td><td><span class="sym">diode + flèches pour DEL</span></td><td>La brancher dans le mauvais sens</td></tr>
+            </tbody></table></div>
+            <div class="box"><div class="box-label">Méthode — schématiser</div><ol><li>Repérer tous les dipôles du montage réel.</li><li>Identifier le générateur, les récepteurs et l’interrupteur.</li><li>Tracer une forme simple, souvent rectangulaire.</li><li>Placer chaque symbole normalisé sur un côté du rectangle.</li><li>Ajouter le sens du courant avec une flèche sur un fil.</li><li>Vérifier que chaque dipôle a bien ses deux bornes reliées.</li></ol></div>
+            <p>Le schéma électrique est le langage universel des électriciens et des physiciens. Dans le monde entier, on utilise les mêmes symboles : cela permet à n’importe quel technicien de comprendre un montage sans avoir besoin du circuit réel devant lui. C’est comme une carte routière : elle ne montre pas les arbres et les maisons, mais elle indique clairement le chemin à suivre.</p>
+            <div class="svg-box"><svg viewBox="0 0 800 200" class="circuit-svg" role="img"><title>Symboles normalisés des dipôles</title><line x1="40" y1="100" x2="100" y2="100" class="wire"/><line x1="100" y1="75" x2="100" y2="125" stroke="var(--ink)" stroke-width="4"/><line x1="112" y1="85" x2="112" y2="115" stroke="var(--ink)" stroke-width="2.5"/><line x1="112" y1="100" x2="160" y2="100" class="wire"/><text x="95" y="60" class="label">Pile</text><line x1="220" y1="100" x2="280" y2="100" class="wire"/><circle cx="310" cy="100" r="28" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="291" y1="118" x2="329" y2="82" stroke="var(--ink)" stroke-width="2"/><line x1="291" y1="82" x2="329" y2="118" stroke="var(--ink)" stroke-width="2"/><line x1="338" y1="100" x2="390" y2="100" class="wire"/><text x="285" y="60" class="label">Lampe</text><line x1="450" y1="100" x2="480" y2="100" class="wire"/><circle cx="480" cy="100" r="4" fill="var(--accent)"/><line x1="480" y1="100" x2="530" y2="75" stroke="var(--ink)" stroke-width="2.5"/><circle cx="530" cy="100" r="4" fill="var(--accent)"/><line x1="530" y1="100" x2="570" y2="100" class="wire"/><text x="460" y="60" class="label">Interrupteur</text><line x1="630" y1="100" x2="660" y2="100" class="wire"/><circle cx="695" cy="100" r="28" fill="none" stroke="var(--ink)" stroke-width="2.5"/><text x="683" y="108" font-family="IBM Plex Mono,monospace" font-size="18" font-weight="800" fill="var(--accent)">M</text><line x1="723" y1="100" x2="760" y2="100" class="wire"/><text x="670" y="60" class="label">Moteur</text></svg></div>
+            <div class="box warn"><div class="box-label">Erreurs fréquentes en schématisation</div><ul><li>Dessiner les composants de façon réaliste (une ampoule en 3D) au lieu d’utiliser le symbole normalisé (cercle avec croix).</li><li>Oublier de fermer la boucle : le schéma doit représenter un circuit complet.</li><li>Croiser des fils inutilement : un schéma propre est un schéma lisible.</li><li>Ne pas indiquer les bornes + et − du générateur.</li><li>Oublier la flèche indiquant le sens conventionnel du courant.</li></ul></div>
+            <h2 id="c4">4. Le courant électrique</h2>
+            <div class="box"><div class="box-label">Définition</div><p>Le courant électrique correspond au déplacement de charges électriques. Dans les métaux, ce sont surtout les <strong>électrons</strong> qui se déplacent.</p></div>
+            <div class="formula">Sens conventionnel : \( + \longrightarrow - \)<br><small>Les électrons se déplacent en réalité dans le sens opposé : \( - \longrightarrow + \).</small></div>
+            <p>En physique-chimie au collège, on représente le courant par une flèche placée sur un fil. Cette flèche part de la borne positive du générateur et revient vers sa borne négative, à l’extérieur du générateur.</p>
+            <p>Pourquoi ce sens "à l’envers" ? Quand les premiers savants ont étudié l’électricité au XVIIIᵉ siècle, ils ne connaissaient pas l’existence des électrons. Benjamin Franklin a choisi arbitrairement un sens pour le courant, du positif vers le négatif. Ce n’est que bien plus tard que l’on a découvert que les électrons, porteurs de charge négative, se déplacent en réalité dans le sens inverse. Par convention, on garde le sens historique, dit "sens conventionnel".</p>
+            <div class="box"><div class="box-label">Analogie — le courant dans un fleuve</div><p>Imagine un fleuve : l’eau coule toujours de la source (en hauteur) vers la mer (en bas). De la même façon, le courant électrique "coule" de la borne + (potentiel élevé) vers la borne − (potentiel bas), comme l’eau qui descend une pente. Le générateur joue le rôle d’une pompe qui remonte l’eau en haut de la colline pour que le cycle continue.</p></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Sens conventionnel</h4><p>De la borne + vers la borne − du générateur, à l’extérieur de celui-ci. C’est le sens que l’on flèche sur les schémas.</p></div>
+              <div class="mini-card"><h4>Sens des électrons</h4><p>De la borne − vers la borne +, à l’extérieur du générateur. C’est le déplacement réel des charges dans les métaux.</p></div>
+            </div>
+            <div class="box warn"><div class="box-label">Attention</div><p>Ne confonds pas le sens du courant et le sens de déplacement des électrons ! Sur un schéma, on flèche toujours le sens conventionnel (+ vers −). Les électrons vont dans l’autre sens, mais on ne les flèche pas au collège.</p></div>
+            <h2 id="c5">5. Conducteurs et isolants</h2>
+            <div class="table-wrap"><table><thead><tr><th>Famille</th><th>Propriété</th><th>Exemples</th><th>Test expérimental</th></tr></thead><tbody>
+              <tr><td><strong>Conducteur</strong></td><td>Laisse passer le courant électrique</td><td>Cuivre, aluminium, fer, acier, graphite, corps humain humide</td><td>La lampe du testeur s’allume</td></tr>
+              <tr><td><strong>Isolant</strong></td><td>Ne laisse pas passer le courant dans les conditions usuelles</td><td>Plastique, verre, bois sec, papier, céramique, air sec</td><td>La lampe du testeur reste éteinte</td></tr>
+            </tbody></table></div>
+            <div class="box warn"><div class="box-label">Nuance importante</div><p>Un matériau peut devenir plus conducteur selon les conditions. Par exemple, le bois sec est isolant, mais la peau mouillée laisse plus facilement passer le courant : c’est pour cela qu’il ne faut jamais manipuler un appareil électrique avec les mains mouillées.</p></div>
+            <p>Dans la vie quotidienne, on utilise les conducteurs et les isolants ensemble : les fils électriques sont en cuivre (conducteur) entourés de plastique (isolant). Le cuivre permet au courant de circuler, tandis que le plastique nous protège en empêchant le courant de sortir du fil. Sans cette gaine isolante, toucher un fil serait dangereux !</p>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Pourquoi le cuivre ?</h4><p>Le cuivre est un excellent conducteur, facile à travailler et moins cher que d’autres métaux conducteurs comme l’argent. C’est pourquoi il est utilisé dans presque tous les fils électriques.</p></div>
+              <div class="mini-card"><h4>Pourquoi le plastique ?</h4><p>Le plastique est un isolant efficace, souple et résistant. Il entoure les fils pour protéger les personnes contre les chocs électriques et éviter les courts-circuits entre fils voisins.</p></div>
+            </div>
+            <div class="box"><div class="box-label">Testeur de conductivité</div><p>Pour tester si un matériau est conducteur ou isolant, on réalise un circuit-test : on insère le matériau dans la boucle. Si la lampe s’allume, le matériau est conducteur. Si la lampe reste éteinte, le matériau est isolant. C’est une expérience simple que tu peux faire en TP.</p></div>
+            <div class="box danger"><div class="box-label">Sécurité — le corps humain</div><p>Le corps humain, surtout s’il est humide (transpiration, eau), est un conducteur partiel. C’est pourquoi il ne faut jamais : toucher un appareil électrique les mains mouillées, utiliser un sèche-cheveux près du bain, ou insérer un objet métallique dans une prise. Le courant pourrait traverser votre corps et provoquer une électrisation, voire une électrocution.</p></div>
+            <h2 id="c6">6. Court-circuit et sécurité</h2>
+            <div class="box danger"><div class="box-label">Danger</div><p>Un <strong>court-circuit</strong> apparaît quand un fil relie directement les deux bornes d’un dipôle. Si les deux bornes du générateur sont reliées directement, le courant peut devenir très intense, provoquer un échauffement et créer un risque d’incendie.</p></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Dipôle court-circuité</h4><p>Le courant préfère passer par le fil, donc le dipôle ne fonctionne plus. La lampe s’éteint mais le circuit n’est pas forcément dangereux si la pile est faible.</p></div>
+              <div class="mini-card"><h4>Générateur court-circuité</h4><p>Situation très dangereuse : le fil et la pile peuvent chauffer fortement, le fil peut fondre, et un incendie peut se déclarer.</p></div>
+            </div>
+            <p>Un court-circuit, c’est comme si on ouvrait une autoroute directe entre les deux bornes du générateur. Au lieu de passer par les récepteurs (qui "ralentissent" le courant), le courant prend le chemin le plus facile et devient beaucoup plus intense. C’est cette intensité excessive qui provoque l’échauffement.</p>
+            <div class="box"><div class="box-label">Comment se protéger ?</div><ul><li><strong>Fusible :</strong> un petit composant qui fond si le courant est trop intense, coupant ainsi le circuit automatiquement.</li><li><strong>Disjoncteur :</strong> un appareil qui se déclenche et coupe le courant en cas de surintensité, sans se détruire (on peut le réarmer).</li><li><strong>Prise terre :</strong> une troisième broche sur les prises qui évacue le courant de fuite vers le sol en cas de défaut d’isolation.</li></ul></div>
+            <div class="box warn"><div class="box-label">Dans la maison</div><p>À la maison, un appareil qui grille le fusible ou fait sauter le disjoncteur est souvent victime d’un court-circuit. C’est le signe que quelque chose ne va pas : il ne faut jamais remplacer un fusible par un objet métallique (comme du fil de fer) car cela supprime la protection !</p></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Court-circuit d’un récepteur</h4><p>Si on court-circuite une lampe avec un fil, la lampe s’éteint car le courant passe par le fil (chemin plus facile). Les autres récepteurs du circuit peuvent être affectés.</p></div>
+              <div class="mini-card"><h4>Court-circuit du générateur</h4><p>Le danger est maximal : le courant n’est plus limité par aucun récepteur. La pile peut chauffer, le fil peut rougir, et un incendie peut se déclarer. Ne JAMAIS faire cette expérience !</p></div>
+            </div>
+            <h2 id="c7">7. Dipôles en série et en dérivation</h2>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Circuit en série</h4><p>Les dipôles sont branchés les uns à la suite des autres dans une seule boucle. Si un dipôle ne fonctionne plus, toute la boucle est ouverte.</p></div>
+              <div class="mini-card"><h4>Circuit en dérivation</h4><p>Les dipôles sont placés sur plusieurs branches. Chaque récepteur peut fonctionner indépendamment des autres.</p></div>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Question</th><th>Série</th><th>Dérivation</th></tr></thead><tbody>
+              <tr><td>Nombre de boucles</td><td>Une seule boucle</td><td>Plusieurs boucles</td></tr>
+              <tr><td>Si une lampe est grillée</td><td>Les autres s’éteignent</td><td>Les autres peuvent rester allumées</td></tr>
+              <tr><td>Éclat d’une lampe si on ajoute des récepteurs</td><td>Souvent plus faible</td><td>Chaque branche est alimentée directement</td></tr>
+              <tr><td>Exemple quotidien</td><td>Ancienne guirlande</td><td>Installation électrique domestique</td></tr>
+              <tr><td>Nœuds</td><td>Aucun nœud (une seule boucle)</td><td>Au moins deux nœuds (jonctions)</td></tr>
+              <tr><td>Indépendance des récepteurs</td><td>Tous dépendent les uns des autres</td><td>Chaque récepteur est indépendant</td></tr>
+            </tbody></table></div>
+            <p>Dans la vie quotidienne, les installations électriques sont toujours en dérivation. Imagine si toutes les lampes de ta maison étaient en série : dès qu’une ampoule grillait, toute la maison serait dans le noir ! En dérivation, chaque appareil peut fonctionner ou être éteint indépendamment des autres. C’est pour cela que tu peux allumer la lumière du salon sans que cela affecte la télévision ou la lampe de ta chambre.</p>
+            <div class="box"><div class="box-label">Analogie — les routes et les carrefours</div><p>Un circuit en série, c’est comme une route unique qui relie plusieurs villages : si la route est coupée, aucun village ne peut être atteint. Un circuit en dérivation, c’est comme un réseau de routes avec des carrefours (nœuds) : chaque village a sa propre route, et si une route est bloquée, les autres restent accessibles.</p></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Guirlande de Noël ancienne</h4><p>Les anciennes guirlandes étaient en série : si une ampoule grillait, il fallait tester chaque ampoule une par une pour trouver celle qui ne marchait plus. Très fastidieux !</p></div>
+              <div class="mini-card"><h4>Installation moderne</h4><p>Les installations modernes sont en dérivation : chaque prise et chaque interrupteur commande un appareil sans affecter les autres. C’est plus pratique et plus sûr.</p></div>
+            </div>
+            <div class="box warn"><div class="box-label">Attention — danger de la dérivation</div><p>En dérivation, plus on ajoute de récepteurs, plus le courant total augmente dans la branche principale. Si trop d’appareils sont branchés sur la même prise, le courant peut devenir trop intense et faire disjoncter. C’est la surcharge électrique, une autre cause d’incendie.</p></div>
+            <div class="svg-box"><svg viewBox="0 0 850 280" class="circuit-svg" role="img"><title>Comparaison circuit série vs dérivation</title><!-- Série --><rect x="30" y="20" width="370" height="240" rx="18" fill="rgba(217,139,169,0.06)" stroke="rgba(217,139,169,0.25)" stroke-width="1.5"/><text x="130" y="52" class="label" font-size="15" fill="var(--accent)" font-weight="900">MONTAGE EN SÉRIE</text><path d="M100 130 H170 H250 H330 V210 H100 V130" class="wire flow"/><line x1="100" y1="95" x2="100" y2="165" stroke="var(--ink)" stroke-width="4"/><line x1="85" y1="110" x2="85" y2="150" stroke="var(--ink)" stroke-width="2.5"/><circle cx="180" cy="130" r="22" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="165" y1="145" x2="195" y2="115" stroke="var(--ink)" stroke-width="2"/><line x1="165" y1="115" x2="195" y2="145" stroke="var(--ink)" stroke-width="2"/><text x="172" y="170" class="label">L1</text><circle cx="260" cy="130" r="22" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="245" y1="145" x2="275" y2="115" stroke="var(--ink)" stroke-width="2"/><line x1="245" y1="115" x2="275" y2="145" stroke="var(--ink)" stroke-width="2"/><text x="252" y="170" class="label">L2</text><text x="60" y="80" class="label">Pile</text><!-- Dérivation --><rect x="430" y="20" width="400" height="240" rx="18" fill="rgba(217,139,169,0.06)" stroke="rgba(217,139,169,0.25)" stroke-width="1.5"/><text x="510" y="52" class="label" font-size="15" fill="var(--accent)" font-weight="900">MONTAGE EN DÉRIVATION</text><path d="M500 130 H540 M720 130 H780 M500 130 V75 H780 V130 M500 130 V190 H780 V130" class="wire flow"/><line x1="500" y1="95" x2="500" y2="165" stroke="var(--ink)" stroke-width="4"/><line x1="485" y1="110" x2="485" y2="150" stroke="var(--ink)" stroke-width="2.5"/><circle cx="630" cy="75" r="22" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="615" y1="90" x2="645" y2="60" stroke="var(--ink)" stroke-width="2"/><line x1="615" y1="60" x2="645" y2="90" stroke="var(--ink)" stroke-width="2"/><text x="622" y="112" class="label">L1</text><circle cx="630" cy="130" r="22" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="615" y1="145" x2="645" y2="115" stroke="var(--ink)" stroke-width="2"/><line x1="615" y1="115" x2="645" y2="145" stroke="var(--ink)" stroke-width="2"/><text x="622" y="167" class="label">L2</text><circle cx="630" cy="190" r="22" fill="none" stroke="var(--ink)" stroke-width="2.5"/><line x1="615" y1="205" x2="645" y2="175" stroke="var(--ink)" stroke-width="2"/><line x1="615" y1="175" x2="645" y2="205" stroke="var(--ink)" stroke-width="2"/><text x="622" y="227" class="label">L3</text><text x="460" y="80" class="label">Pile</text></svg></div>
+            <p class="content" style="max-width:850px">Sur ce schéma comparatif, on voit clairement la différence : en série, les lampes sont sur le même fil (une seule boucle), tandis qu’en dérivation, chaque lampe a sa propre branche (plusieurs boucles). C’est cette structure qui explique pourquoi les lampes en dérivation fonctionnent indépendamment.</p>
+            <h2 id="c8">8. Bilan du chapitre</h2>
+            <div class="box ok"><div class="box-label">Je dois savoir faire</div><ul><li>Reconnaître un circuit fermé, ouvert, en série ou en dérivation.</li><li>Identifier générateur, récepteurs, fils, interrupteur, nœuds et branches.</li><li>Placer le sens conventionnel du courant.</li><li>Classer des matériaux en conducteurs ou isolants.</li><li>Repérer les courts-circuits dangereux.</li><li>Schématiser un circuit avec des symboles normalisés.</li><li>Réaliser un circuit simple à partir d’un schéma.</li><li>Utiliser l’analogie de l’eau pour comprendre le courant électrique.</li><li>Expliquer pourquoi les installations domestiques sont en dérivation.</li></ul></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Vocabulaire clé</h4><p>Circuit, dipôle, générateur, récepteur, boucle, branche, nœud, interrupteur, courant, conducteur, isolant, court-circuit, série, dérivation.</p></div>
+              <div class="mini-card"><h4>Compétences du chapitre</h4><p>Réaliser, schématiser, analyser, protéger. Quatre verbes d’action pour maîtriser l’électricité en 5ème.</p></div>
+            </div>
+            <div class="box"><div class="box-label">Auto-évaluation</div><p>Avant de passer aux exercices, pose-toi ces questions : Saurais-je dessiner le schéma d’un circuit avec une pile, un interrupteur et une lampe ? Saurais-je expliquer à un camarade ce qu’est un court-circuit ? Saurais-je dire pourquoi on utilise du cuivre dans les fils et du plastique autour ? Si la réponse est oui pour les trois, tu es prêt ! Sinon, relis la section correspondante du cours.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" active id="tab-simulations">
+        <div class="sim-wrap wide">
+          <h2 class="section-title">Simulations et laboratoire virtuel</h2>
+          <div class="sim-card"><div class="sim-head"><h3>PhET — Circuit Construction Kit DC</h3><span class="source-tag">PhET Colorado conservé</span></div><p>Construis librement des circuits avec piles, fils, lampes, interrupteurs et appareils de mesure. À utiliser pour vérifier le rôle d’un interrupteur, d’une lampe, d’un court-circuit et d’un branchement en série/dérivation.</p>
+<div class="box"><div class="box-label">Comment utiliser cette simulation</div><ol><li>Clique sur la simulation pour l’activer (elle peut prendre quelques secondes à charger).</li><li>Glisse-dépose des composants (pile, lampe, fils, interrupteur) depuis la barre d’outils.</li><li>Relie les composants en cliquant sur les extrémités des fils.</li><li>Ferme l’interrupteur pour observer le courant qui circule (les petites flèches ou les électrons animés).</li><li>Ajoute un ampèremètre ou un voltmètre pour mesurer les grandeurs électriques.</li><li>Essaie de court-circuiter une lampe et observe ce qui se passe !</li></ol></div>
+<div class="iframe-shell"><iframe loading="lazy" allowfullscreen src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc-virtual-lab/latest/circuit-construction-kit-dc-virtual-lab_fr.html"></iframe></div></div>
+
+          <div class="sim-card">
+            <div class="sim-head"><h3>Console Pro — Diagnostic de circuit</h3><span class="source-tag">Simulation intégrée avancée</span></div>
+            <p>Analyse un circuit comme dans un vrai laboratoire : choisis l’architecture, ouvre ou ferme l’interrupteur, provoque une panne, puis observe les boucles actives, l’état des lampes et le niveau de risque.</p>
+            <div class="box"><div class="box-label">Guide d’utilisation</div><ul><li><strong>Architecture :</strong> choisis entre boucle simple, montage en série ou en dérivation pour voir comment les dipôles sont connectés.</li><li><strong>Interrupteur :</strong> ouvre ou ferme le circuit. Observe comment la fermeture de l’interrupteur permet au courant de circuler.</li><li><strong>Incident :</strong> simule une lampe grillée ou un court-circuit. Observe les conséquences sur le circuit.</li><li><strong>Tension :</strong> fais varier la tension du générateur avec le curseur. Plus la tension est élevée, plus le courant peut être intense.</li></ul></div>
+            <div class="pro-console">
+              <div class="controls">
+                <div class="control"><label>Architecture du montage</label><div class="toggle"><button id="topoSimple" class="active" onclick="setTopology('simple')">Boucle simple</button><button id="topoSerie" onclick="setTopology('serie')">Série</button><button id="topoDeriv" onclick="setTopology('derive')">Dérivation</button></div></div>
+                <div class="control"><label>Interrupteur <span id="proSwitchLabel">fermé</span></label><div class="toggle"><button id="proSwClosed" class="active" onclick="setProSwitch(true)">Fermé</button><button id="proSwOpen" onclick="setProSwitch(false)">Ouvert</button></div></div>
+                <div class="control"><label>Incident de laboratoire</label><div class="toggle"><button id="incidentNone" class="active" onclick="setIncident('none')">Aucun</button><button id="incidentLamp" onclick="setIncident('lamp')">L2 grillée</button><button id="incidentShort" onclick="setIncident('short')">Court-circuit</button></div></div>
+                <div class="control"><label>Tension du générateur <span id="voltageLabel">4,5 V</span></label><input id="voltageRange" type="range" min="3" max="9" step="0.5" value="4.5" oninput="updateProLab()"></div>
+              </div>
+              <div class="pro-stage">
+                <svg id="proCircuitSvg" viewBox="0 0 780 330" aria-label="Schéma interactif de circuit électrique"></svg>
+                <div class="pro-dashboard">
+                  <div class="metric"><small>Courant</small><b id="metricCurrent">présent</b></div>
+                  <div class="metric"><small>Lampes</small><b id="metricLamps">1 / 1</b></div>
+                  <div class="metric"><small>Diagnostic</small><b id="metricDiag">circuit fermé</b></div>
+                  <div class="metric"><small>Risque</small><b id="metricRisk">normal</b></div>
+                </div>
+              </div>
+            </div>
+            <div class="pro-sim-note"><strong>Exploitation :</strong> compare ce qui se passe lorsqu’une lampe est grillée en série puis en dérivation. Explique pourquoi les installations domestiques ne sont pas montées comme une simple guirlande en série.</div>
+            <div class="box"><div class="box-label">Scénarios à tester</div><ol><li><strong>Scénario 1 :</strong> Boucle simple + interrupteur fermé → observe que la lampe brille et le courant est présent.</li><li><strong>Scénario 2 :</strong> Boucle simple + interrupteur ouvert → la lampe s’éteint car le circuit est ouvert.</li><li><strong>Scénario 3 :</strong> Montage en série + L2 grillée → toutes les lampes s’éteignent car la boucle est ouverte.</li><li><strong>Scénario 4 :</strong> Montage en dérivation + L2 grillée → L1 et L3 restent allumées car elles sont sur des branches indépendantes.</li><li><strong>Scénario 5 :</strong> N’importe quel montage + court-circuit → DANGER ! Le courant devient très intense et le générateur risque de chauffer.</li></ol></div>
+          </div>
+
+          <div class="sim-card">
+            <div class="sim-head"><h3>Banc d’essai — Conducteurs et isolants</h3><span class="source-tag">Simulation intégrée avancée</span></div>
+            <p>Teste un matériau dans une chaîne de mesure : l’interface indique si la lampe-test s’allume, classe le matériau et explique la nuance scientifique.</p>
+            <div class="box"><div class="box-label">Mode d’emploi</div><p>Clique sur un matériau dans la liste pour l’insérer dans le circuit-test. La lampe témoin s’allumera si le matériau est conducteur, ou restera éteinte s’il est isolant. Le panneau de résultats te donne le pourcentage de conductivité et une explication scientifique. Compare les résultats entre les métaux, les non-métaux et les matériaux organiques.</p></div>
+            <div class="tester-stage">
+              <div><div class="material-grid pro" id="materials"></div><div class="mat-result" id="matResult">Sélectionne un matériau pour lancer le diagnostic.</div></div>
+              <div class="tester-visual"><svg id="testerSvg" viewBox="0 0 260 220"></svg><div id="testerLabel" style="font-weight:900;text-align:center;margin-top:6px">En attente de matériau</div></div>
+            </div>
+          </div>
+
+          <div class="sim-card">
+            <div class="sim-head"><h3>Comparateur série / dérivation — panne L2</h3><span class="source-tag">Simulation intégrée avancée</span></div>
+            <p>Visualise l’indépendance des branches : la même panne n’a pas la même conséquence selon le montage.</p>
+            <div class="box"><div class="box-label">Protocole d’observation</div><ol><li>Sélectionne le montage en série et observe les trois lampes allumées.</li><li>Clique sur "Griller L2" et observe ce qui arrive à L1 et L3.</li><li>Repasse en montage en dérivation et observe les trois lampes.</li><li>Clique à nouveau sur "Griller L2" et compare avec le résultat en série.</li><li>Conclusion : pourquoi les installations domestiques sont-elles en dérivation ?</li></ol></div>
+            <div class="toggle" style="margin-bottom:14px"><button id="serieBtn" class="active" onclick="setNetwork('serie')">Montage en série</button><button id="deriveBtn" onclick="setNetwork('derive')">Montage en dérivation</button><button id="faultBtn" onclick="toggleFault()">Griller L2</button></div>
+            <div class="svg-box"><svg id="networkSvg" viewBox="0 0 850 310" class="circuit-svg"></svg></div>
+            <div class="box"><div class="box-label">Observation</div><p id="networkText">En série, les récepteurs sont dans une seule boucle : si L2 est grillée, tout s’éteint.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="tab-math"><div class="sim-wrap wide"><h2 class="section-title">Outils mathématiques et unités</h2><div class="box"><div class="box-label">Pourquoi un onglet maths ici ?</div><p>Dans ce chapitre, il y a peu de calculs, mais les élèves doivent installer les bases : grandeurs, symboles, unités, conversions simples et lecture de relations. Ces outils seront indispensables en 5ème chapitre 3, puis en 4ème avec les lois de l’électricité.</p></div><div class="table-wrap"><table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th><th>Symbole unité</th><th>Appareil / usage</th></tr></thead><tbody><tr><td>Intensité du courant</td><td>\(I\)</td><td>ampère</td><td>A</td><td>Ampèremètre, branché en série</td></tr><tr><td>Tension électrique</td><td>\(U\)</td><td>volt</td><td>V</td><td>Voltmètre, branché en dérivation</td></tr><tr><td>Résistance</td><td>\(R\)</td><td>ohm</td><td>\(\Omega\)</td><td>Ohmmètre, hors circuit</td></tr><tr><td>Puissance électrique</td><td>\(P\)</td><td>watt</td><td>W</td><td>À revoir en 3ème</td></tr></tbody></table></div><div class="grid-2"><div class="mini-card"><h4>Conversion rapide</h4><p>\(1\,\text{A}=1000\,\text{mA}\)</p><p>Donc \(250\,\text{mA}=0{,}250\,\text{A}\).</p></div><div class="mini-card"><h4>Lecture d’une relation</h4><p>Dans \(I_0=I_1+I_2\), l’intensité dans la branche principale est la somme des intensités dans les branches dérivées. Ce sera travaillé plus tard.</p></div></div><div class="box"><div class="box-label">Méthode des 5C adaptée</div><ol><li><strong>Comprendre</strong> la situation : quel montage ? quelle boucle ?</li><li><strong>Choisir</strong> les grandeurs utiles : courant, tension, nombre de lampes.</li><li><strong>Calculer</strong> uniquement si une relation est donnée.</li><li><strong>Contrôler</strong> l’unité et le sens physique.</li><li><strong>Conclure</strong> par une phrase scientifique.</li></ol></div><div class="grid-3"><div class="mini-card"><h4>Exemple 1</h4><p>Convertir \(0{,}35\,\text{A}\) en mA.</p><p><strong>Réponse :</strong> \(0{,}35\times1000=350\,\text{mA}\).</p></div><div class="mini-card"><h4>Exemple 2</h4><p>Deux branches ont \(I_1=80\,\text{mA}\) et \(I_2=120\,\text{mA}\).</p><p>\(I_0=I_1+I_2=200\,\text{mA}\).</p></div><div class="mini-card"><h4>Exemple 3</h4><p>Un voltmètre affiche “1”.</p><p>Le calibre est trop faible : il faut commencer par le plus grand calibre.</p></div></div><div class="box warn"><div class="box-label">Erreurs fréquentes</div><ul><li>Confondre la grandeur et son unité : \(I\) est une grandeur, A est une unité.</li><li>Écrire “ampérage” au lieu d’intensité.</li><li>Oublier qu’un appareil de mesure a un sens et un branchement spécifique.</li><li>Écrire une relation en texte au lieu d’une vraie notation mathématique.</li></ul><div class="grid-2">
+<div class="mini-card"><h4>Ampèremètre</h4><p>Se branche en série dans le circuit. Il mesure l’intensité du courant qui le traverse. Symbole : A dans un cercle. Il ne faut jamais le brancher directement aux bornes du générateur.</p></div>
+<div class="mini-card"><h4>Voltmètre</h4><p>Se branche en dérivation aux bornes du dipôle dont on veut mesurer la tension. Symbole : V dans un cercle. Contrairement à l’ampèremètre, il se place en parallèle.</p></div>
+</div>
+<div class="formula">Loi des nœuds (aperçu) : \(I_0 = I_1 + I_2\)<br><small>Dans un circuit en dérivation, l’intensité dans la branche principale est égale à la somme des intensités dans les branches dérivées.</small></div>
+<div class="box ok"><div class="box-label">Ce qu’il faut retenir</div><p>En 5ème, tu n’as pas encore besoin de faire des calculs complexes sur les circuits. Mais tu dois connaître les grandeurs (intensité, tension, résistance), leurs symboles et leurs unités. Ce vocabulaire te sera indispensable en 4ème pour appliquer les lois de l’électricité.</p></div></div></div></section>
+
+      <section class="panel" id="tab-flashcards"><div class="fc-wrap"><h2 class="section-title">Flashcards</h2><p class="content" style="max-width:760px;color:var(--text2)">Trois modes pour mémoriser : recto-verso, complétion et chrono.</p><div class="fc-mode-tabs"><button class="fc-mode on" data-mode="free">Révision libre</button><button class="fc-mode" data-mode="complete">Complétion</button><button class="fc-mode" data-mode="chrono">Chrono</button></div><div class="fc-panel active" id="fc-free"><div class="fc-counter" id="fcCounter">Carte 1 / 24</div><div class="card-scene" onclick="flipCard()"><div class="card-3d" id="card3d"><div class="card-face card-front"><div class="card-q" id="fcQ"></div><div style="margin-top:16px;color:var(--text3);font-size:12px;font-weight:800">Clique pour retourner</div></div><div class="card-face card-back"><div class="card-a" id="fcA"></div></div></div></div><div class="fc-controls"><button class="fc-btn" onclick="prevCard()">← Précédente</button><button class="fc-btn primary" onclick="nextCard()">Suivante →</button><button class="fc-btn" onclick="shuffleCards()">Mélanger</button></div></div><div class="fc-panel" id="fc-complete"><div class="completion-card"><p id="compQ" style="font-family:'Clash Display';font-size:22px;font-weight:600"></p><input class="completion-input" id="compInput" placeholder="Écris le mot manquant"><button class="fc-btn primary" onclick="checkCompletion()">Vérifier</button><div class="feedback" id="compFeedback"></div></div><div class="fc-controls"><button class="fc-btn" onclick="newCompletion()">Nouvelle phrase</button></div></div><div class="fc-panel" id="fc-chrono"><div class="chrono-top"><div class="chrono-time" id="chronoTime">30</div><div class="chrono-bar"><div class="chrono-fill" id="chronoFill"></div></div><button class="fc-btn primary" onclick="startChrono()">Démarrer</button></div><div class="chrono-card"><div class="chrono-q" id="chronoQ">Appuie sur démarrer.</div></div><div class="chrono-actions"><button class="fc-btn primary" onclick="chronoKnow(true)">Je savais</button><button class="fc-btn" onclick="chronoKnow(false)">À revoir</button></div><div class="feedback ok" id="chronoResult"></div></div></div></section>
+
+      <section class="panel" id="tab-exercices"><div class="exo-wrap"><h2 class="section-title">Exercices progressifs</h2><div id="exercises"></div></div></section>
+
+      <section class="panel" id="tab-quiz"><div class="quiz-wrap"><h2 class="section-title">Quiz interactif</h2><div class="quiz-card" id="quizCard"><div class="quiz-head"><span class="pill" id="quizLevel">Question</span><span class="quiz-score" id="quizScore">0 / 0</span></div><div class="qtext" id="quizQ"></div><div class="options" id="quizOpts"></div><div class="correction" id="quizCorr"></div><div class="quiz-footer"><div class="quiz-progress"><span id="quizProg"></span></div><button class="quiz-btn" id="nextQuiz" onclick="nextQuiz()">Suivante</button></div></div><div class="final-box" id="quizFinal"><div class="final-score" id="finalScore"></div><p id="finalMsg"></p><button class="quiz-btn" onclick="restartQuiz()">Recommencer</button></div></div></section>
+
+      <section class="panel" id="tab-tp"><div class="tp-wrap"><h2 class="section-title">TP et activités expérimentales</h2><div class="exo-card"><div class="exo-meta"><span class="pill">TP 1</span><span class="pill">Réaliser</span><span class="pill">Sécurité</span></div><h3 class="exo-title">Premier circuit, premières lueurs</h3><p><strong>Objectif :</strong> faire briller une lampe avec une pile, des fils et un interrupteur, puis représenter le montage.</p><div class="grid-2"><div class="mini-card"><h4>Matériel</h4><ul><li>1 pile 4,5 V ou générateur basse tension</li><li>1 lampe adaptée</li><li>3 à 4 fils de connexion</li><li>1 interrupteur</li></ul></div><div class="mini-card"><h4>Protocole</h4><ol><li>Réaliser une boucle avec pile, interrupteur et lampe.</li><li>Fermer puis ouvrir l’interrupteur.</li><li>Inverser l’ordre des dipôles.</li><li>Dessiner puis schématiser le circuit.</li></ol></div></div><div class="box"><div class="box-label">Questions</div><ol><li>Dans quelle situation la lampe brille-t-elle ?</li><li>Quel est le rôle du générateur ?</li><li>Pourquoi l’interrupteur est-il un dipôle de commande ?</li><li>L’ordre des dipôles change-t-il l’état de la lampe ?</li></ol></div><div class="solution show"><strong>Conclusion attendue :</strong> la lampe brille lorsque la boucle est fermée. La pile fournit l’énergie, la lampe la convertit en lumière, et l’interrupteur ouvre ou ferme le circuit.</div></div><div class="exo-card"><div class="exo-meta"><span class="pill">TP 2</span><span class="pill">Démarche scientifique</span><span class="pill">Conducteurs / isolants</span></div><h3 class="exo-title">Tous les matériaux conduisent-ils le courant ?</h3><p><strong>Objectif :</strong> tester différents objets pour les classer en conducteurs ou isolants.</p><div class="box warn"><div class="box-label">Sécurité</div><p>Utiliser uniquement une pile ou un générateur basse tension de laboratoire. Ne jamais tester avec une prise secteur.</p></div><ol><li>Réaliser un circuit test avec une lampe.</li><li>Laisser une ouverture dans la boucle pour insérer l’objet à tester.</li><li>Observer si la lampe s’allume.</li><li>Classer l’objet dans un tableau.</li></ol><div class="table-wrap"><table><thead><tr><th>Objet</th><th>Observation</th><th>Classement</th></tr></thead><tbody><tr><td>Trombone métallique</td><td>La lampe s’allume</td><td>Conducteur</td></tr><tr><td>Règle plastique</td><td>La lampe reste éteinte</td><td>Isolant</td></tr><tr><td>Mine de crayon</td><td>La lampe peut s’allumer</td><td>Conducteur</td></tr><tr><td>Gomme</td><td>La lampe reste éteinte</td><td>Isolant</td></tr><tr><td>Piece de monnaie</td><td>La lampe s’allume</td><td>Conducteur</td></tr><tr><td>Craie</td><td>La lampe reste éteinte</td><td>Isolant</td></tr></tbody></table></div>
+<div class="box ok"><div class="box-label">Conclusion du TP 2</div><p>On peut classer les matériaux en deux familles : les conducteurs (métaux, graphite) qui laissent passer le courant, et les isolants (plastique, verre, bois sec) qui le bloquent. Le corps humain humide est un conducteur partiel : c’est pourquoi il ne faut jamais toucher un appareil électrique avec les mains mouillées.</p></div>
+<div class="box danger"><div class="box-label">Rappel de sécurité essentiel</div><ul><li>Ne JAMAIS utiliser une prise secteur pour tester un matériau : utiliser uniquement une pile ou un générateur basse tension du laboratoire.</li><li>Ne jamais tester le corps humain avec du courant : même une pile peut être dangereuse si le courant traverse le cœur.</li><li>Toujours débrancher le circuit avant de modifier le montage.</li><li>Signaler immédiatement tout fil dénudé ou tout composant qui chauffe anormalement au professeur.</li></ul></div></div>
+
+<div class="exo-card"><div class="exo-meta"><span class="pill">TP 3</span><span class="pill">Série vs dérivation</span><span class="pill">Démarche d’investigation</span></div><h3 class="exo-title">Que se passe-t-il quand une lampe grille ?</h3><p><strong>Objectif :</strong> comparer le comportement d’un circuit en série et d’un circuit en dérivation lorsqu’une lampe est retirée.</p>
+<div class="grid-2"><div class="mini-card"><h4>Matériel</h4><ul><li>1 pile 4,5 V ou générateur</li><li>3 lampes adaptées avec supports</li><li>1 interrupteur</li><li>Fils de connexion</li></ul></div><div class="mini-card"><h4>Protocole</h4><ol><li>Réaliser un circuit en série avec les 3 lampes et l’interrupteur.</li><li>Dévisser L2 et observer. Noter ce qui se passe pour L1 et L3.</li><li>Revisser L2, puis réaliser un circuit en dérivation avec les 3 lampes.</li><li>Dévisser L2 à nouveau et observer. Noter ce qui se passe pour L1 et L3.</li><li>Comparer les deux situations.</li></ol></div></div>
+<div class="box"><div class="box-label">Questions</div><ol><li>Dans le circuit en série, que se passe-t-il pour L1 et L3 quand L2 est dévissée ?</li><li>Dans le circuit en dérivation, que se passe-t-il pour L1 et L3 quand L2 est dévissée ?</li><li>Pourquoi les installations domestiques sont-elles en dérivation et non en série ?</li><li>Dans un circuit en série, l’ordre des lampes change-t-il leur éclat ?</li></ol></div>
+<div class="solution show"><strong>Conclusion attendue :</strong> en série, si une lampe est retirée, la seule boucle est ouverte et toutes les lampes s’éteignent. En dérivation, chaque lampe a sa propre boucle : si une lampe est retirée, les autres continuent de briller. C’est pourquoi les installations domestiques sont en dérivation : on peut allumer ou éteindre chaque appareil indépendamment.</div>
+<div class="box warn"><div class="box-label">Consigne de sécurité pour ce TP</div><p>Ne jamais court-circuiter la pile. Ne jamais relier directement les deux bornes du générateur avec un fil. Manipuler les fils avec précaution pour éviter les courts-circuits accidentels. Toujours vérifier que le circuit est correct avant de fermer l’interrupteur.</p></div></div>
+
+<div class="exo-card"><div class="exo-meta"><span class="pill">TP 4</span><span class="pill">Schématisation</span><span class="pill">Compétence expérimentale</span></div><h3 class="exo-title">Du montage réel au schéma normalisé</h3><p><strong>Objectif :</strong> apprendre à passer d’un montage réel à un schéma électrique normalisé, puis inversement.</p>
+<div class="grid-2"><div class="mini-card"><h4>Matériel</h4><ul><li>1 pile 4,5 V</li><li>2 lampes avec supports</li><li>1 interrupteur</li><li>Fils de connexion</li><li>Fiche de schémas à compléter</li></ul></div><div class="mini-card"><h4>Protocole</h4><ol><li>Réaliser un circuit en série avec la pile, l’interrupteur et les 2 lampes.</li><li>Dessiner le montage réaliste (comme une photo).</li><li>Schématiser le même circuit avec les symboles normalisés.</li><li>Échanger ton schéma avec un camarade : il doit réaliser le circuit à partir de ton schéma.</li></ol></div></div>
+<div class="box"><div class="box-label">Critères de réussite du schéma</div><ul><li>Tous les dipôles sont représentés par leur symbole normalisé.</li><li>La boucle est fermée et bien visible.</li><li>Les bornes + et − du générateur sont indiquées.</li><li>Le sens conventionnel du courant est fléché.</li><li>Les fils sont tracés avec des segments horizontaux et verticaux (pas de diagonales).</li><li>Le schéma est propre, lisible et ne comporte pas de croisements inutiles.</li></ul></div>
+<div class="box ok"><div class="box-label">Conclusion du TP 4</div><p>Le schéma électrique est un outil de communication : il permet à n’importe qui de comprendre et de reproduire un montage. Un bon schéma est simple, clair et utilise les symboles normalisés. La réalisation d’un circuit à partir d’un schéma est une compétence essentielle en sciences physiques.</p></div></div></div></section>
+
+      <section class="panel" id="tab-chatbot"><div class="chat-wrap" style="display:block"><h2 class="section-title">Chatbots externes pour s’entraîner</h2><p class="content" style="max-width:820px;color:var(--text2)">L’élève choisit un assistant externe, copie le prompt ci-dessous, puis lui demande une aide ciblée sur le chapitre. L’objectif n’est pas d’obtenir directement les réponses, mais de se faire guider pas à pas. Le prompt est structuré en 4 niveaux de difficulté pour permettre une révision progressive et complète.</p>
+<div class="box"><div class="box-label">Conseils pour bien utiliser les chatbots</div><ul><li><strong>Commence par le prompt fourni</strong> : il est conçu pour guider le chatbot vers une pédagogie adaptée au collège.</li><li><strong>Pose des questions précises</strong> : "Explique-moi la différence entre série et dérivation" plutôt que "Parle-moi d’électricité".</li><li><strong>Demande des exercices</strong> : "Propose-moi 3 questions sur les courts-circuits".</li><li><strong>Vérifie avec le cours</strong> : compare toujours la réponse du chatbot avec le contenu de cette page.</li><li><strong>Signale les erreurs</strong> : si le chatbot dit quelque chose de différent du cours, demande-lui de vérifier.</li></ul></div><div class="ai-grid"><article class="ai-card"><div class="ai-logo">💬</div><h3>ChatGPT</h3><p>Pour expliquer, reformuler et corriger étape par étape.</p><a href="https://chatgpt.com/" target="_blank" rel="noopener">Ouvrir ↗</a></article><article class="ai-card"><div class="ai-logo">✨</div><h3>Gemini</h3><p>Pour générer des exemples, quiz rapides et explications visuelles.</p><a href="https://gemini.google.com/" target="_blank" rel="noopener">Ouvrir ↗</a></article><article class="ai-card"><div class="ai-logo">🧠</div><h3>Claude</h3><p>Pour obtenir une explication longue, structurée et progressive.</p><a href="https://claude.ai/" target="_blank" rel="noopener">Ouvrir ↗</a></article><article class="ai-card"><div class="ai-logo">🪁</div><h3>Copilot</h3><p>Pour demander une vérification rapide ou un entraînement guidé.</p><a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Ouvrir ↗</a></article></div><div class="prompt-box"><h3 style="margin-top:0">Prompt prêt à copier</h3><textarea id="externalPrompt" readonly>Tu es un professeur de physique-chimie expérimenté dans un collège français. Tu enseignes en classe de 5ème et tu dois m’aider à réviser le chapitre : "Les circuits électriques".
+
+ CONTEXTES PÉDAGOGIQUES :
+- Élève de 5ème (environ 12-13 ans)
+- Programme français de physique-chimie
+- Vocabulaire scientifique adapté au collège
+- Progression du simple vers le complexe
+
+ OBJECTIFS DE RÉVISION (par ordre de difficulté croissante) :
+
+ NIVEAU 1 — CONNAISSANCES DE BASE :
+1. Définir ce qu’est un circuit électrique (fermé, ouvert)
+2. Identifier le rôle du générateur, du récepteur, de l’interrupteur et des fils
+3. Citer des exemples de dipôles et les classer (générateur vs récepteur)
+
+ NIVEAU 2 — COMPRÉHENSION :
+4. Expliquer le sens conventionnel du courant (+ vers −) et le sens des électrons
+5. Distinguer conducteur et isolant avec des exemples concrets
+6. Comprendre l’analogie de l’eau dans les tuyaux pour le courant
+
+ NIVEAU 3 — APPLICATION :
+7. Expliquer le danger d’un court-circuit (du générateur et d’un récepteur)
+8. Différencier montage en série et montage en dérivation
+9. Prévoir ce qui se passe quand une lampe grille (en série vs en dérivation)
+
+ NIVEAU 4 — ANALYSE ET SCHÉMATISATION :
+10. Schématiser un circuit avec les symboles normalisés
+11. Analyser une situation de panne et proposer des hypothèses
+12. Expliquer pourquoi les installations domestiques sont en dérivation
+
+ RÈGLES D’INTERACTION :
+- Commence par évaluer mon niveau avec 2-3 questions de diagnostic
+- Adapte la difficulté à mes réponses
+- Utilise des analogies concrètes (eau, routes, etc.)
+- Ne JAMAIS donner la réponse directement : guide-moi avec des indices
+- Après chaque erreur, explique pourquoi c’est faux et donne un indice
+- Utilise le format : Question → Ma réponse → Ton feedback → Explication
+- Propose des QCM, des textes à trous, et des mises en situation
+- Termine chaque session par un résumé des points acquis et des points à retravailler
+
+ MÉTHODE :
+1. Pose une question
+2. Attends ma réponse
+3. Si correct : félicite et passe au niveau suivant
+4. Si incorrect : explique l’erreur, donne un indice, repose la question différemment
+5. Après 5 questions, fais un bilan intermédiaire
+6. Après 10 questions, fais un bilan final avec recommandations</textarea><div class="prompt-actions"><button class="fc-btn primary" onclick="copyExternalPrompt()">Copier le prompt</button><span class="copy-status" id="copyStatus"></span></div><div class="ai-tip"><strong>Conseil professeur :</strong> demande toujours “explique-moi sans faire l’exercice à ma place”, puis compare la réponse avec le cours du site.</div></div></div></section>
+
+      <section class="panel" id="tab-future"><div class="future-wrap"><h2 class="section-title">Vers la classe supérieure</h2><p style="color:var(--text2);max-width:860px">Ce chapitre est une porte d’entrée : les mots “boucle”, “branche”, “générateur”, “récepteur” et “courant” deviennent ensuite des outils pour écrire des lois quantitatives.</p><div class="future-lane"><div class="future-card"><div class="future-level">5ème<br>suite</div><div><h3>Grandeurs électriques et lois de l’intensité</h3><p>Tu apprendras à mesurer une intensité avec un ampèremètre et à utiliser la relation \(I_0=I_1+I_2\) dans un circuit en dérivation. Tu découvriras aussi comment utiliser un voltmètre et tu comprendras la notion de tension entre deux points.</p></div></div><div class="future-card"><div class="future-level">4ème</div><div><h3>Tension, résistance et loi d’Ohm</h3><p>Tu verras les grandeurs \(U\), \(I\), \(R\), leurs unités et la relation \(U=R\times I\). Les circuits seront analysés avec des appareils de mesure. Tu découvriras aussi la loi des nœuds et la loi des mailles, qui permettent de prévoir le comportement de n’importe quel circuit.</p></div></div><div class="future-card"><div class="future-level">4ème</div><div><h3>Circuit avec condensateur et bobine</h3><p>Tu exploreras de nouveaux dipôles comme le condensateur (qui stocke l’énergie) et la bobine (qui s’oppose aux variations du courant). Ces composants sont à la base de l’électronique moderne.</p></div></div><div class="future-card"><div class="future-level">3ème</div><div><h3>Puissance, énergie et sécurité domestique</h3><p>Tu relieras l’électricité au quotidien : puissance des appareils \(P=U\times I\), production d’électricité, sécurité, surcharge et consommation énergétique. Tu comprendras pourquoi trop d’appareils sur une multiprise est dangereux.</p></div></div><div class="future-card"><div class="future-level">3ème</div><div><h3>Énergie électrique et développement durable</h3><p>Tu étudieras les différentes sources d’énergie (renouvelables et non renouvelables), le transport de l’électricité et l’impact environnemental de la consommation énergétique.</p></div></div><div class="future-card"><div class="future-level">Lycée</div><div><h3>Modélisation plus fine</h3><p>Les circuits deviennent des systèmes à modéliser : tension, intensité, dipôles, caractéristiques, capteurs, mesures numériques et énergie. Tu utiliseras des lois quantitatives pour prévoir et optimiser le fonctionnement des circuits.</p></div></div><div class="future-card"><div class="future-level">Lycée</div><div><h3>Électronique et programmation</h3><p>Au lycée, tu pourras combiner l’électricité avec l’informatique : capteurs, microcontrôleurs, programmation (Arduino, Python) et objets connectés. Les circuits que tu étudies en 5ème sont les briques de base de toutes ces technologies.</p></div></div></div><div class="box ok"><div class="box-label">Pourquoi c’est important ?</div><p>Comprendre les circuits, c’est apprendre à raisonner sur une chaîne d’énergie : une source, un transfert, une conversion et des règles de sécurité. C’est aussi un premier pas vers l’électronique, la robotique et les objets connectés. Chaque appareil que tu utilises au quotidien (téléphone, ordinateur, console de jeux) contient des circuits électriques basés sur les mêmes principes que tu découvres dans ce chapitre.</p></div>
+            <div class="grid-2">
+              <div class="mini-card"><h4>Connexion avec la vie quotidienne</h4><p>Quand tu allumes la lumière, charges ton téléphone ou utilises le four, tu utilises des circuits électriques en dérivation. Comprendre ces circuits te permet de les utiliser en toute sécurité.</p></div>
+              <div class="mini-card"><h4>Connexion avec les métiers</h4><p>Électricien, ingénieur, technicien de maintenance, développeur de systèmes embarqués : tous ces métiers reposent sur la compréhension des circuits électriques.</p></div>
+            </div>
+            <div class="box"><div class="box-label">Le savais-tu ?</div><p>Le premier circuit électrique simple a été réalisé par Alessandro Volta en 1800 avec sa "pile voltaïque" : des disques de cuivre et de zinc empilés et séparés par du carton imbibé d’eau salée. Cette invention a révolutionné le monde et ouvert la voie à toutes les technologies électriques que nous connaissons aujourd’hui.</p></div></div></section>
+    </div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

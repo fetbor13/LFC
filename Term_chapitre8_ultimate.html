@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 8 — Synthèse organique | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1427,44 +1425,302 @@ u_c=\sqrt{u_A^2+u_B^2}
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+/* THEME */
+(function(){const t=localStorage.getItem('physichem_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pt=document.getElementById('progressTop');if(pt)pt.style.width=pct+'%';const pl=document.getElementById('pctLbl');if(pl)pl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap8';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap8']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* CALCULATEUR RENDEMENT */
+function calcRend(){
+  const mobt=parseFloat(document.getElementById('r-mobt').value)||12.4;
+  const mp=parseFloat(document.getElementById('r-mp').value)||180;
+  const nth=parseFloat(document.getElementById('r-nth').value)||0.1;
+  const stoe=parseFloat(document.getElementById('r-stoe').value)||1;
+  const nobt=mobt/mp;
+  const nthprod=nth*stoe;
+  const rend=Math.min(100,(nobt/nthprod)*100).toFixed(1);
+  document.getElementById('r-result').innerHTML=`
+    n(obtenu) = m/M = ${mobt}/${mp} = <strong>${nobt.toFixed(4)} mol</strong><br>
+    n(théorique produit) = n(réactif limitant) × ${stoe} = <strong>${nthprod.toFixed(4)} mol</strong><br>
+    <strong style="font-size:18px">Rendement r = ${rend}%</strong><br>
+    ${parseFloat(rend)>=80?'✅ Très bon rendement':parseFloat(rend)>=50?'⚠️ Rendement moyen — optimiser les conditions':'❌ Rendement faible — identifier les pertes'}`;
+}
+calcRend();
+
+/* FLASHCARDS */
+const FC=[{icon:'📊',q:'Formule du rendement d\'une synthèse',a:'r = n(obtenu)/n(théorique) × 100% · n_théorique calculé depuis le réactif limitant · r ≤ 100%',formula:'r = n[___] / n(théo) × 100%',blanks:['obtenu'],answers:['obtenu'],topic:'Rendement'},
+  {icon:'🔒',q:'Pourquoi protéger un groupe fonctionnel ?',a:'Pour éviter qu\'il réagisse lors d\'une étape ultérieure. On le transforme en groupe inactif, on fait la réaction souhaitée ailleurs, puis on déprotège.',formula:'Protéger → réagir → [___]',blanks:['déprotéger'],answers:['déprotéger','deproteger'],topic:'Réactions'},
+  {icon:'🧪',q:'Test positif pour un aldéhyde (pas une cétone)',a:'Réactif de Tollens : dépôt de miroir argenté (Ag) · Liqueur de Fehling : précipité rouge brique (Cu₂O)',formula:'Tollens → dépôt [___] = aldéhyde',blanks:['argenté'],answers:['argenté','argente','Ag'],topic:'Réactions'},
+  {icon:'🌿',q:'DNPH : test pour quel groupe fonctionnel ?',a:'DNPH détecte le groupe carbonyle C=O (aldéhyde ET cétone). Précipité jaune-orange.',formula:'DNPH → [___] jaune/orange = carbonyle',blanks:['précipité'],answers:['précipité','precipite'],topic:'Réactions'},
+  {icon:'⚗️',q:'Conditions de l\'estérification',a:'Acide carboxylique + alcool → ester + eau · Catalyseur H⁺ (H₂SO₄) · Reflux · Réaction limitée (K ≈ 4) · Totalement réversible',formula:'Estérification : K ≈ [___]',blanks:['4'],answers:['4'],topic:'Réactions'},
+  {icon:'🧼',q:'Différence estérification vs saponification',a:'Estérification : acide + alcool → ester + eau (limitée, K≈4). Saponification : ester + NaOH → carboxylate + alcool (totale, K≫1).',formula:'Saponification : totale car K [___] 1',blanks:['>>'],answers:['>>','≫'],topic:'Réactions'},
+  {icon:'🌱',q:'Économie d\'atomes — formule',a:'E_atomes = M(produit souhaité)/M(somme tous réactifs) × 100%. Idéalement = 100% (pas de sous-produits).',formula:'E_atomes = M[___] / M(réactifs) × 100%',blanks:['produit'],answers:['produit'],topic:'Chimie verte'},
+  {icon:'💧',q:'Recristallisation : principe',a:'Dissoudre le solide dans un minimum de solvant chaud → refroidissement lent → cristaux purs · Impuretés restent en solution',formula:'Recristallisation → solvant [___] puis refroidissement',blanks:['chaud'],answers:['chaud'],topic:'Purification'},
+  {icon:'🔬',q:'Eau de brome : test pour ?',a:'Décoloration de l\'eau de brome = présence d\'une liaison C=C (alcène) ou d\'un phénol. La double liaison additionne Br₂.',formula:'Eau de brome décolorée → liaison [___]',blanks:['C=C'],answers:['C=C','double liaison','C=C (alcène)'],topic:'Réactions'},
+  {icon:'🏭',q:'Saponification : produits obtenus',a:'Ester + NaOH → sel d\'acide (carboxylate Na⁺) + alcool. Réaction totale. C\'est ainsi que l\'on fabrique le savon (corps gras + NaOH).',formula:'Corps gras + NaOH → [___] + glycérol',blanks:['savon'],answers:['savon','carboxylate'],topic:'Réactions'},
+  {icon:'⚡',q:'Qu\'est-ce que la rétrosynthèse ?',a:'Approche qui part du produit cible et "décompose" la molécule en précurseurs plus simples. Permet de planifier la voie de synthèse.',formula:'Rétrosynthèse : produit → [___]',blanks:['réactifs'],answers:['réactifs','reactifs','précurseurs'],topic:'Réactions'},
+  {icon:'🌍',q:'Substitution nucléophile SN2 : mécanisme',a:'Nucléophile Nu: attaque par derrière le carbone portant le groupement partant (Walden). Nu: + R–X → R–Nu + X⁻ · Une seule étape.',formula:'Nu: + R–X → R–[___] + X⁻',blanks:['Nu'],answers:['Nu'],topic:'Réactions'},
+  {icon:'🧬',q:'Réaction d\'addition sur un alcène',a:'La double liaison C=C réagit avec HBr, Cl₂, H₂O (en milieu acide). La double liaison devient simple. Ex: CH₂=CH₂ + HBr → CH₃CH₂Br.',formula:'C=C + HBr → [___]',blanks:['C-C'],answers:['C-C','liaison simple','produit saturé'],topic:'Réactions'},
+  {icon:'📋',q:'Causes principales de faible rendement',a:'Réaction limitée (K fini) · Réactions parasites · Pertes lors de la purification · Réaction incomplète · Produit sur les parois',formula:'Rendement < 100% car [___] ou réactions parasites',blanks:['K fini'],answers:['K fini','réaction limitée','equilibre'],topic:'Rendement'},
+  {icon:'♻️',q:'3 principes fondamentaux de la chimie verte',a:'1. Prévention des déchets · 2. Économie d\'atomes · 3. Solvants verts · + catalyse, énergie renouvelable, matières premières biosourcées',formula:'Chimie verte : [___] d\'atomes + déchets prévenus',blanks:['économie'],answers:['économie','economie'],topic:'Chimie verte'},
+  ];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.some(ans=>v.includes(ans)||ans.includes(v)&&v.length>2)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse attendue : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+  {label:'Stratégie de synthèse',color:'#3DAF82',nodes:[{label:'Analyse rétrosynthétique',def:'Partir du produit et remonter vers les réactifs disponibles.'},{label:'Choix des conditions',def:'Solvant, T, catalyseur, temps. Optimiser le rendement.'},{label:'Montage expérimental',def:'Reflux pour chauffer sans perdre le solvant.'}]},
+  {label:'Protection/Déprotection',color:'#4BADD4',nodes:[{label:'Bloquer un groupe',def:'Transformer en groupe inactif temporairement.'},{label:'Réagir sélectivement',def:'La réaction voulue se fait sans interférence.'},{label:'Retrouver le groupe',def:'Hydrolyse en milieu acide/basique pour déprotéger.'}]},
+  {label:'Réactions clés',color:'#7B6FD0',nodes:[{label:'Estérification (K≈4)',def:'Acide + alcool ⇌ ester + eau. Limitée.'},{label:'Saponification (totale)',def:'Ester + NaOH → carboxylate + alcool. K ≫ 1.'},{label:'SN, Addition, Oxydation',def:'Substitution nucléophile, addition sur C=C, alcool → acide.'}]},
+  {label:'Rendement & Purification',color:'#D4854A',nodes:[{label:'r = n_obt/n_théo × 100',def:'Calculé depuis le réactif limitant. r ≤ 100%.'},{label:'Recristallisation',def:'Solvant chaud → refroidissement → cristaux purs.'},{label:'Distillation, Extraction',def:'Séparation liquides selon Téb ou solubilité.'}]},
+  {label:'Chimie verte',color:'#E8915A',nodes:[{label:'Économie d\'atomes',def:'E_atomes = M_produit/M_réactifs × 100%.'},{label:'Solvants verts',def:'Eau, alcools, solvants biosourcés. Éviter Cl solvants.'},{label:'Prévention déchets',def:'Concevoir sans sous-produits. Recycler les solvants.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#3DAF82';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">SYNTHÈSE</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">ORGANIQUE</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=132,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
   });
-  requestAnimationFrame(draw);
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch8.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'OVLd-Q6W7pE',title:'La synthèse organique — comment ça marche ?',channel:'Scilabus',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'YTZoKvp_X_E',title:'Chimie verte et développement durable',channel:'Science étonnante',duration:'14 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'KhAYHLxMDiI',title:'Synthèse de l\'aspirine — TP virtuel',channel:'e-penser',duration:'10 min',level:'easy',levelTxt:'Accessible'},
+  {id:'Nq5-euEMaHI',title:'Chromatographie et séparation',channel:'Hygiène Mentale',duration:'9 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+/* CHATBOT — FAQ locale (pas d'API externe) */
+const FAQ=[
+  {kw:['rendement','calculer','calcul','formule','efficacité'],a:'**Rendement d\'une synthèse :** \n\n\\( \\eta = \\frac{n_{\\text{obtenu}}}{n_{\\text{théorique}}} \\times 100\\,\\% \\)\n\n• \\(n_{\\text{théorique}}\\) est calculé à partir du réactif limitant et de la stœchiométrie.\n• Un rendement < 100% peut s\'expliquer par : réaction limitée (équilibre), pertes lors des transferts, purification, réactions parasites.\n• Pour l\'estérification (K ≈ 4), le rendement est souvent < 70% sans artifice.'},
+  {kw:['estérification','ester','Fischer','acide','alcool'],a:'**Estérification (Fischer) :** \n\nAcide carboxylique + alcool ⇌ ester + eau\n\n• Réaction **limitée** : K ≈ 4 (à 25°C).\n• **Catalyseur** : acide sulfurique (accélère sans déplacer l\'équilibre).\n• Pour améliorer le rendement : excès d\'un réactif, élimination de l\'eau (distillation azéotropique).\n• Cinétique lente : plusieurs heures à reflux.'},
+  {kw:['saponification','base','soude','NaOH','hydrolyse basique'],a:'**Saponification :** \n\nEster + NaOH → carboxylate + alcool\n\n• Réaction **totale** (K ≫ 1), contrairement à l\'estérification.\n• Le carboxylate formé est ionique (soluble dans l\'eau), l\'alcool est séparé.\n• Utilisée pour fabriquer du savon (carboxylate de sodium).\n• Attention : l\'hydrolyse acide (ester + H₂O + H⁺) est limitée comme l\'estérification.'},
+  {kw:['protection','déprotection','protéger','groupe fonctionnel'],a:'**Protection / Déprotection :** \n\n1. **Protéger** un groupe fonctionnel = le transformer temporairement en un groupe inactif.\n2. Réaliser la réaction souhaitée sur un autre site.\n3. **Déprotéger** = restaurer le groupe initial.\n\nExemples :\n• Alcool → acétal (avec éthanal + H⁺)\n• Aldéhyde → acétal\n• Amine → carbamate (Boc)\n\nC\'est indispensable quand un réactif pourrait réagir avec plusieurs groupes.'},
+  {kw:['recristallisation','purifier','purification','solide','cristal'],a:'**Recristallisation :** \n\n1. Dissoudre le solide impur dans un **solvant chaud** (quantité minimale).\n2. Laisser refroidir **lentement**.\n3. Les cristaux purs se forment ; les impuretés restent en solution.\n4. Filtrer à froid (Büchner).\n\nCritères du solvant : solubilise à chaud, pas à froid ; n\'est pas miscible ; n\'est pas réactif.\n\nLe rendement diminue mais la pureté augmente.'},
+  {kw:['CCM','chromatographie','couche mince','TLC','séparation'],a:'**CCM (Chromatographie sur Couche Mince) :** \n\n• Technique de séparation et d\'identification.\n• Dépôt sur plaque (silice) → élution avec un éluant.\n• **Rf = distance parcourue par l\'espèce / distance parcourue par le front du solvant**.\n• Révélation : UV, DNPH, permanganate, vapeurs de diiode.\n\nPermet de :\n- Vérifier la pureté d\'un produit (une seule tache).\n- Suivre l\'avancement d\'une réaction.\n- Identifier par comparaison avec un témoin.'},
+  {kw:['DNPH','test','aldéhyde','cétone','carbonyle'],a:'**Test à la DNPH (2,4-dinitrophénylhydrazine) :** \n\n• Détecte le groupe **carbonyle C=O** (aldéhydes ET cétones).\n• Résultat : précipité **jaune-orange**.\n• **Ne distingue pas** aldéhyde de cétone → utiliser **Tollens** en complément.\n\n**Réactif de Tollens** : miroir argenté uniquement avec les aldéhydes (réducteurs). Pas de réaction avec les cétones.'},
+  {kw:['Tollens','miroir','argent','aldéhyde','distinction'],a:'**Réactif de Tollens :** \n\n• Solution de \\([\\text{Ag}(\\text{NH}_3)_2]^+\\) (ion diammineargent(I)).\n• Avec un **aldéhyde** : dépôt de **miroir argenté** (Ag⁰) sur la paroi.\n• Avec une **cétone** : **pas de réaction**.\n\n→ Permet de distinguer aldéhyde (test +) et cétone (test −).\n\nÀ combiner avec la DNPH qui détecte les deux.'},
+  {kw:['chimie verte','verte','développement durable','environnement','12 principes'],a:'**Chimie verte (12 principes de Anastas & Warner) :** \n\n1. Prévention des déchets\n2. Économie d\'atomes\n3. Synthèses moins dangereuses\n4. Conception de produits sûrs\n5. Solvants et auxiliaires plus sûrs\n6. Efficacité énergétique\n7. Ressources renouvelables\n8. Réactions en moins d\'étapes\n9. Catalyse > stœchiométrie\n10. Dégradation dans l\'environnement\n11. Analyse en temps réel\n12. Chimie intrinsèquement plus sûre\n\n**Économie d\'atomes** = \\(\\frac{M_{\\text{produit}}}{\\sum M_{\\text{réactifs}}} \\times 100\\%\\)'},
+  {kw:['économie d\'atomes','atome','atomes','atom economy','E_atomes'],a:'**Économie d\'atomes :** \n\n\\(E_{\\text{atomes}} = \\frac{M_{\\text{produit souhaité}}}{\\sum M_{\\text{réactifs}}} \\times 100\\,\\%\\)\n\n• Mesure la proportion de matière engagée qui se retrouve dans le produit utile.\n• Réaction d\'addition : E ≈ 100% (pas de sous-produit).\n• Estérification : E ≈ 85% (l\'eau est sous-produit).\n• Substitution : dépend de la masse du groupe partant.\n\nLe **rendement** et l\'**économie d\'atomes** sont deux critères complémentaires.'},
+  {kw:['distillation','séparer','séparation','liquide','ébullition'],a:'**Distillation :** \n\n• **Distillation simple** : séparer des liquides de Téb très différentes (> 30°C).\n• **Distillation fractionnée** : séparer des liquides de Téb proches (colonne de Vigreux).\n\nDans une synthèse :\n- **Distillation azéotropique** : éliminer l\'eau formée pour déplacer l\'équilibre (estérification).\n- Le **reflux** empêche la perte de produits volatils : les vapeurs condensent et retombent.\n\nToujours relever la température en tête de colonne pour identifier les fractions.'},
+  {kw:['extraction','liquide-liquide','solvant','ampoule','séparatrice'],a:'**Extraction liquide-liquide :** \n\n• Séparer un soluté entre deux solvants non miscibles dans une **ampoule à décanter**.\n• Le soluté se répartit selon sa solubilité dans chaque solvant.\n\n**Coefficient de partage** : \\(K = \\frac{C_{\\text{solvant organique}}}{C_{\\text{eau}}}\\)\n\nAstuce : plusieurs extractions avec de petits volumes sont plus efficaces qu\'une seule avec un grand volume.\n\nL\'organique est souvent en haut si moins dense que l\'eau.'},
+  {kw:['réfux','reflux','chauffer','chauffage','montage'],a:'**Chauffage à reflux :** \n\n• Montage : ballon + réfrigérant vertical (eau entre par le bas, sort par le haut).\n• Les vapeurs condensent et retombent dans le ballon → **pas de perte de matière**.\n• Permet de chauffer plus vite (accélère la cinétique) sans évaporer les réactifs.\n\nEssentiel pour :\n- Estérification (lente, K faible)\n- Hydrolyse\n- Toute réaction nécessitant une température élevée sur une longue durée'},
+  {kw:['brome','Br','débromage','alcène','addition','double liaison'],a:'**Test à l\'eau de brome :** \n\n• L\'eau de brome (Br₂) est **orange-brun**.\n• En présence d\'un **alcène** (C=C) : **décoloration** (addition de Br₂ sur la double liaison).\n\\(\\text{C=C} + \\text{Br}_2 \\rightarrow \\text{C(Br)–C(Br)}\\)\n\n• Les alcanes et les composés saturés ne réagissent pas (pas de décoloration immédiate).\n\nCe test permet de **caractériser la présence d\'une double liaison C=C**.'},
+  {kw:['IR','spectroscopie','spectre','infrarouge','absorption'],a:'**Spectroscopie IR :** \n\n• Identifie les **groupes fonctionnels** par absorption de vibrations.\n\nBandes caractéristiques :\n- O–H (alcool) : large vers 3200-3600 cm⁻¹\n- C=O (carbonyle) : forte vers 1700-1740 cm⁻¹\n- C–H : vers 2850-3000 cm⁻¹\n- N–H : vers 3300-3500 cm⁻¹\n- C=C : vers 1600-1680 cm⁻¹\n\nLa **zone 1500-400 cm⁻¹** est l\'empreinte digitale (identification de la molécule).'},
+  {kw:['RMN','résonance','magnétique','proton','déplacement'],a:'**Spectroscopie RMN du proton :** \n\n• **Déplacement chimique δ** (en ppm) : identifie l\'environnement du proton.\n  - 0-2 ppm : H sur C saturé\n  - 2-3 ppm : H voisin d\'un groupe attracteur (C=O, etc.)\n  - 3-5 ppm : H sur C–O (alcool)\n  - 6-8 ppm : H aromatique\n  - 9-10 ppm : H aldéhydique\n  - 10-13 ppm : COOH\n\n• **Multiplicité** (règle des n+1) : indique le nombre de voisins.\n• **Intégration** : proportionnelle au nombre de H équivalents.'},
+  {kw:['rétrosynthèse','rétro','stratégie','synthèse','multistep','plan'],a:'**Rétrosynthèse :** \n\nMéthode de planification d\'une synthèse en partant du **produit cible** et en remontant vers les **réactifs de départ**.\n\n1. Identifier les **liaisons à former** dans la cible.\n2. Déduire les réactions possibles pour chaque liaison.\n3. Choisir la séquence la plus courte, la plus sélective.\n4. Protéger les groupes sensibles si nécessaire.\n\nExemple : pour synthétiser un ester → partir de l\'acide + l\'alcool, ou utiliser une saponification inverse.'},
+  {kw:['catalyseur','catalyse','accélérer','vitesse','activation'],a:'**Catalyseur :** \n\n• Accélère la réaction en abaissant l\'énergie d\'activation.\n• **Ne modifie pas l\'équilibre** (K constant) → ne change pas le rendement à l\'équilibre.\n• Est régénéré en fin de réaction (pas consommé).\n\nExemples :\n- **Acide sulfurique** : catalyseur de l\'estérification/hydrolyse.\n- **Pd/C** : hydrogénation des alcènes.\n- **Enzymes** : biocatalyse (très sélective).\n\n⚠️ Un catalyseur permet d\'atteindre l\'équilibre plus vite, mais pas de le déplacer.'},
+];
+function sendMsg(){const inp=document.getElementById('chatIn');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';addMsg('user',txt);document.getElementById('sendBtn').disabled=true;showTyping();const lower=txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');let best=null,bestScore=0;for(const f of FAQ){let sc=0;for(const k of f.kw){const kn=k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');if(lower.includes(kn))sc+=kn.length;}if(sc>bestScore){bestScore=sc;best=f;}}setTimeout(()=>{removeTyping();if(best){addMsg('bot',best.a);}else{addMsg('bot','Je suis un assistant spécialisé en **Synthèse organique** (Terminale Spé). Pose-moi une question sur : le rendement, l\'estérification, la saponification, la protection/déprotection, la purification (recristallisation, CCM, distillation), les tests chimiques (DNPH, Tollens, eau de brome), la spectroscopie (IR, RMN), la chimie verte ou la rétrosynthèse. 😊');}document.getElementById('sendBtn').disabled=false;},600+Math.random()*400);}
+function suggest(t){document.getElementById('chatIn').value=t;sendMsg();}
+function addMsg(r,text){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg'+(r==='user'?' user':'');d.innerHTML=`<div class="msg-av">${r==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+/* QUIZ */
+const QS=[
+  {q:'Le rendement d\'une synthèse se calcule :',opts:['r = m(obtenu)/m(réactifs) × 100%','r = K × 100%','r = n(obtenu)/n(théorique) × 100%','r = τ × M(produit)'],ans:2,corr:'r = n(obtenu)/n(théorique) × 100%. n_théorique est calculé depuis le réactif limitant.'},
+  {q:'La saponification est différente de l\'estérification car :',opts:['Elle est plus lente','Elle est totale (NaOH, K ≫ 1)','Elle ne produit pas d\'alcool','Elle nécessite un catalyseur acide'],ans:1,corr:'Saponification : ester + NaOH → carboxylate + alcool. K ≫ 1 → totale. L\'estérification est limitée (K ≈ 4).'},
+  {q:'Le réactif de Tollens permet de distinguer :',opts:['Un alcène d\'un alcool','Un acide d\'une amine','Un ester d\'un éther','Un aldéhyde d\'une cétone (miroir argenté)'],ans:3,corr:'Tollens donne un miroir argenté avec les aldéhydes uniquement (réducteurs). Les cétones ne réagissent pas.'},
+  {q:'Protéger un groupe fonctionnel en synthèse consiste à :',opts:['L\'éliminer définitivement','Le remplacer par un autre','Le transformer temporairement en groupe inactif','Catalyser sa réaction'],ans:2,corr:'Protection = transformation temporaire en groupe inactif → réaction souhaitée ailleurs → déprotection pour retrouver le groupe initial.'},
+  {q:'L\'économie d\'atomes se calcule par :',opts:['M(réactifs)/M(produit) × 100%','M(produit)/M(tous réactifs) × 100%','Rendement × 100%','n(produit)/n(réactif limitant)'],ans:1,corr:'E_atomes = M_produit/M_somme(réactifs) × 100%. Mesure l\'efficacité de la réaction (ratio matière utile/matière engagée).'},
+  {q:'La recristallisation permet de :',opts:['Séparer deux liquides selon leur Téb','Extraire un composé dans un solvant','Identifier un groupe fonctionnel','Purifier un solide par dissolution dans solvant chaud puis refroidissement'],ans:3,corr:'Dissolution dans solvant chaud (min de solvant) → refroidissement lent → cristaux purs. Les impuretés restent en solution.'},
+  {q:'Le test à la DNPH détecte :',opts:['Les aldéhydes ET les cétones (groupe C=O)','Uniquement les aldéhydes','Les alcools','Les acides carboxyliques'],ans:0,corr:'La DNPH forme un précipité jaune-orange avec tout groupe carbonyle C=O (aldéhyde + cétone). Pour distinguer, utiliser Tollens.'},
+  {q:'Pour améliorer le rendement d\'une estérification (K≈4), on peut :',opts:['Ajouter un catalyseur','Refroidir le milieu réactionnel','Éliminer l\'eau formée ou utiliser excès de réactif','Diminuer le temps de réaction'],ans:2,corr:'Déplacer l\'équilibre vers les produits par élimination de l\'eau (distillation azéotropique) ou excès d\'un réactif.'},
+  {q:'La chimie verte vise principalement à :',opts:['Synthétiser uniquement des produits verts','Concevoir des procédés moins polluants et plus efficaces','Utiliser uniquement l\'eau comme solvant','Éliminer tous les catalyseurs'],ans:1,corr:'La chimie verte (12 principes) vise à réduire l\'impact environnemental : économie d\'atomes, solvants moins toxiques, énergie minimale, déchets prévenus.'},
+  {q:'L\'eau de brome se décolore en présence de :',opts:['Un alcool','Un acide carboxylique','Un ester','Une double liaison C=C (alcène)'],ans:3,corr:'Br₂ s\'additionne sur C=C : C=C + Br₂ → C(Br)–C(Br). La solution orange de Br₂ se décolore = test positif alcène.'},
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🧬 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap8)d.chap8={};d.chap8.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ANNALES VECTEURBAC — VRAIS SUJETS BAC */
+const EXOS=[{"title":"Arôme de poire","subtitle":"Asie 2025 sujet 1 — Exercice 3","sujet":"25-PYCJ1JA1","year":"2025","duration":"0h42","points":4,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Synthèse organique","spectroscopie","arôme"],"enonce":"Identifier et exploiter une synthèse d'espèce odorante.","url":"https://www.vecteurbac.fr/arome-de-poire/"},{"title":"Un parfum de rose","subtitle":"Métropole 2025 sujet 2 — Exercice 3","sujet":"25-PYCJ2ME1","year":"2025","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Synthèse organique","mécanisme","titrage"],"enonce":"Relier structure, protocole de synthèse et contrôle d'un produit parfumé.","url":"https://www.vecteurbac.fr/un-parfum-de-rose/"},{"title":"L'arôme d'ananas","subtitle":"Centres étrangers 2024 sujet 1 — Exercice 1","sujet":"24-PYCG11BIS","year":"2024","duration":"1h35","points":9,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Synthèse organique","rendement","spectroscopie","titrage"],"enonce":"Sujet complet autour d'une synthèse organique et de son contrôle.","url":"https://www.vecteurbac.fr/larome-dananas/"},{"title":"Optimisation de la synthèse de l'éthanoate de benzyle","subtitle":"Amérique du nord sujet 2 — Exercice 2","sujet":"23-PYCJ2AN1","year":"2023","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Synthèse organique","rendement","cinétique","titrage"],"enonce":"Choisir et justifier des stratégies d'optimisation d'une synthèse d'ester.","url":"https://www.vecteurbac.fr/optimisation-de-la-synthese-de-lethanoate-de-benzyle/"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap8)d.chap8={};d.chap8.annales=1;setMastery(d);updateMasteryUI();}
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

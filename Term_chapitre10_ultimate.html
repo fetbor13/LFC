@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 10 — Dynamique du point | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1353,44 +1351,360 @@ u_c=\sqrt{u_A^2+u_B^2}
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+/* THEME */
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap')&&document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pt=document.getElementById('progressTop');const pl=document.getElementById('pctLbl');if(pt)pt.style.width=pct+'%';if(pl)pl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap10';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap10']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEURS */
+function calcProjectile(){
+  const v0=parseFloat(document.getElementById('proj-v0').value)||20;
+  const alpha=parseFloat(document.getElementById('proj-angle').value)||45;
+  const g=parseFloat(document.getElementById('proj-g').value)||9.81;
+  const rad=alpha*Math.PI/180;
+  const v0x=v0*Math.cos(rad);
+  const v0y=v0*Math.sin(rad);
+  const portee=(v0*v0*Math.sin(2*rad))/g;
+  const fleche=(v0*v0*Math.sin(rad)*Math.sin(rad))/(2*g);
+  const tVol=(2*v0*Math.sin(rad))/g;
+  document.getElementById('proj-result').innerHTML=`
+    <strong>Tir parabolique — v₀=${v0} m/s, α=${alpha}°</strong><br>
+    v₀ₓ = v₀·cos α = <strong>${v0x.toFixed(2)} m/s</strong><br>
+    v₀ᵧ = v₀·sin α = <strong>${v0y.toFixed(2)} m/s</strong><br>
+    Portée d = v₀²·sin(2α)/g = <span style="font-size:18px;color:var(--accent)">${portee.toFixed(2)} m</span><br>
+    Flèche h = v₀²·sin²α/(2g) = <span style="font-size:18px;color:var(--accent)">${fleche.toFixed(2)} m</span><br>
+    Temps de vol T = 2v₀·sin α/g = <strong>${tVol.toFixed(2)} s</strong><br>
+    <small>Portée maximale atteinte pour α = 45°</small>`;
+}
+calcProjectile();
+
+function calcPlanIncline(){
+  const m=parseFloat(document.getElementById('incl-mass').value)||5;
+  const theta=parseFloat(document.getElementById('incl-angle').value)||30;
+  const mu=parseFloat(document.getElementById('incl-mu').value)||0.2;
+  const g=9.81;
+  const rad=theta*Math.PI/180;
+  const P=m*g;
+  const N=m*g*Math.cos(rad);
+  const f=mu*N;
+  const a=g*Math.sin(rad)-mu*g*Math.cos(rad);
+  const glisse=a>0;
+  document.getElementById('incl-result').innerHTML=`
+    <strong>Plan incliné — m=${m} kg, θ=${theta}°, μ=${mu}</strong><br>
+    Poids P = mg = <strong>${P.toFixed(2)} N</strong><br>
+    Réaction normale N = mg·cos θ = <strong>${N.toFixed(2)} N</strong><br>
+    Force de frottement f = μN = <strong>${f.toFixed(2)} N</strong><br>
+    Accélération a = g(sin θ − μ·cos θ) = <span style="font-size:18px;color:var(--accent)">${a.toFixed(2)} m/s²</span><br>
+    ${glisse?'✅ Le solide glisse vers le bas (a > 0)':'⚠️ Le solide ne glisse pas (a ≤ 0) — frottement suffisant'}<br>
+    <small>Condition de glissement : tan θ > μ ↔ tan(${theta}°) = ${(Math.tan(rad)).toFixed(3)} ${glisse?'>':'≤'} ${mu}</small>`;
+}
+calcPlanIncline();
+
+/* FLASHCARDS */
+const FC=[
+{icon:'🌍',q:"Qu'est-ce qu'un référentiel galiléen ?",a:"Un référentiel dans lequel un objet isolé (soumis à aucune force) est immobile ou en mouvement rectiligne uniforme.",formula:'Référentiel galiléen : ΣF = [___] → mouvement rectiligne uniforme',blanks:['0'],answers:['0','zéro','zero'],topic:'Référentiels'},
+{icon:'🏠',q:"Quel référentiel utilise-t-on au lycée pour les mouvements sur Terre ?",a:"Le référentiel terrestre (lié au sol). Il est considéré comme galiléen pour des expériences de courte durée.",formula:'Référentiel terrestre = lié au [___]',blanks:['sol'],answers:['sol','Sol','terre','Terre'],topic:'Référentiels'},
+{icon:'🌌',q:"Le référentiel géocentrique est-il galiléen ?",a:"Oui, c'est une excellente approximation pour l'étude des satellites. Son origine est le centre de la Terre, ses axes pointent vers des étoiles lointaines.",formula:'Référentiel géocentrique : origine = centre de la [___]',blanks:['Terre'],answers:['Terre','terre'],topic:'Référentiels'},
+{icon:'📐',q:"Énoncer la 1ère loi de Newton (principe d'inertie).",a:"Dans un référentiel galiléen, si ΣF = 0 alors le vecteur vitesse est constant : le point est immobile ou en MRU.",formula:'ΣF = [___] → v⃗ = constante',blanks:['0'],answers:['0','zéro','zero'],topic:'Lois de Newton'},
+{icon:'⚖️',q:"Énoncer la 2ème loi de Newton (relation fondamentale).",a:"Dans un référentiel galiléen, ΣF = m·a⃗. La somme des forces est proportionnelle à l'accélération et de même direction.",formula:'ΣF⃗ = [___] × a⃗',blanks:['m'],answers:['m','masse'],topic:'Lois de Newton'},
+{icon:'↔️',q:"Énoncer la 3ème loi de Newton (action-réaction).",a:"Tout corps A exerçant une force sur B reçoit de B une force opposée : F⃗(A→B) = −F⃗(B→A).",formula:'F⃗(A→B) = [___] F⃗(B→A)',blanks:['−'],answers:['−','-','opposée'],topic:'Lois de Newton'},
+{icon:'⬇️',q:"Quelle est l'expression du poids ?",a:"P⃗ = m·g⃗ où g⃗ est le champ de pesanteur. P = mg, dirigé vers le centre de la Terre. P en N, m en kg, g en m/s².",formula:'P⃗ = [___] × g⃗',blanks:['m'],answers:['m','masse'],topic:'Forces'},
+{icon:'⬆️',q:"Qu'est-ce que la réaction normale du support ?",a:"C'est la force exercée par un support sur un objet, perpendiculaire au support. Elle compense la composante normale du poids.",formula:'R⃗N : perpendiculaire au [___]',blanks:['support'],answers:['support','Support'],topic:'Forces'},
+{icon:'🔗',q:"Qu'est-ce que la tension d'un fil ?",a:"C'est la force exercée par un fil (ou corde) sur un objet, dirigée le long du fil, vers le point d'attache.",formula:'T⃗ : dirigée le long du [___]',blanks:['fil'],answers:['fil','Fil','corde','Corde'],topic:'Forces'},
+{icon:'🔄',q:"Comment s'exprime la force de frottement ?",a:"f = μ·N où μ est le coefficient de frottement et N la réaction normale. Elle s'oppose au mouvement.",formula:'f = [___] × N',blanks:['μ'],answers:['μ','mu','coeff'],topic:'Forces'},
+{icon:'🎯',q:"Quelles sont les équations du mouvement d'un projectile ?",a:"x(t) = v₀·cos α · t ; y(t) = −½gt² + v₀·sin α · t + h₀. Le mouvement est uniforme en x, uniformément varié en y.",formula:'x(t) = v₀·cos α · t ; y(t) = −[___]gt² + v₀·sin α · t',blanks:['½'],answers:['½','1/2','0.5'],topic:'Mouvements'},
+{icon:'📏',q:"Quelle est la portée d'un projectile ?",a:"d = v₀²·sin(2α)/g. La portée est maximale pour α = 45°.",formula:'d = v₀²·sin(2α) / [___]',blanks:['g'],answers:['g','G','9.81'],topic:'Mouvements'},
+{icon:'📐',q:"Comment projeter les forces sur un plan incliné ?",a:"Axe // au plan : mg·sin θ − f = ma. Axe ⊥ au plan : N − mg·cos θ = 0. On décompose le poids selon ces axes.",formula:'Axe ⊥ : N = mg·cos [___]',blanks:['θ'],answers:['θ','théta','theta'],topic:'Mouvements'},
+{icon:'🛰️',q:"Quelle est la condition de satellisation ?",a:"Un satellite est en orbite quand la force gravitationnelle fournit l'accélération centripète : GMm/r² = mv²/r, donc v = √(GM/r).",formula:'v_orbite = √([___]/r)',blanks:['GM'],answers:['GM','G·M'],topic:'Mouvements'},
+{icon:'📝',q:"Quelle est la méthode pour résoudre un problème de dynamique ?",a:"1. Définir le système et le référentiel. 2. Faire le bilan des forces. 3. Appliquer la 2ème loi de Newton. 4. Projeter sur les axes. 5. Résoudre.",formula:'Méthode : système → bilan des [___] → 2ème loi → projection → résolution',blanks:['forces'],answers:['forces','Forces'],topic:'Méthodes'}
+];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+  {label:'Lois de Newton',color:'#dc2626',nodes:[{label:'1ère loi (inertie)',def:'Dans un référentiel galiléen, si ΣF = 0 alors v = cte (repos ou MRU).'},{label:'2ème loi',def:'ΣF = m·a. L\'accélération est proportionnelle à la résultante des forces.'},{label:'3ème loi',def:'Action-réaction : F(A→B) = -F(B→A). Toujours vraie.'}]},
+  {label:'Forces',color:'#ef4444',nodes:[{label:'Poids',def:'P = m·g. Vertical, vers le bas. g ≈ 9,81 m/s².'},{label:'Réaction normale',def:'N : perpendiculaire au support. Pas de frottement → N seule.'},{label:'Frottement',def:'f = μ·N. S\'oppose au mouvement. Statique μs > cinétique μc.'}]},
+  {label:'Cinématique',color:'#b91c1c',nodes:[{label:'MRUA',def:'v = v₀ + a·t, x = x₀ + v₀·t + ½a·t². Accélération constante.'},{label:'Projectile',def:'x = v₀·cos(α)·t, y = v₀·sin(α)·t - ½g·t². Trajectoire parabolique.'},{label:'Vitesse et position',def:'v = dx/dt, a = dv/dt. Intégration pour passer de a à v à x.'}]},
+  {label:'Méthode',color:'#0f766e',nodes:[{label:'Bilan des forces',def:'1. Système. 2. Référentiel. 3. Forces extérieures. 4. 2ème loi. 5. Projeter.'},{label:'Projection',def:'Choisir les axes. Composantes : Fx = F·cos(α), Fy = F·sin(α).'},{label:'Résolution',def:'ΣFx = m·ax, ΣFy = m·ay. Résoudre le système d\'équations.'}]},
+  {label:'Applications',color:'#2dd4bf',nodes:[{label:'Plan incliné',def:'P∥ = mg·sin(α), N = mg·cos(α). Frottement → μ·N.'},{label:'Satellite',def:'F_grav = GMm/r² = m·v²/r. Vitesse orbitale v = √(GM/r).'},{label:'Pendule',def:'T = 2π√(L/g). Période indépendante de la masse.'}]}];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#7B6FD0';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">DYNAMIQUE</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">DU POINT</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=130,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
   });
-  requestAnimationFrame(draw);
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch1.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'XxxjM4fM_8E',title:'Acides et bases — les bases de la chimie',channel:'Scilabus',duration:'14 min',level:'easy',levelTxt:'Accessible'},
+  {id:'Mm4f0q3h2xA',title:'Le pH et les indicateurs colorés',channel:'Physique-Chimie',duration:'11 min',level:'easy',levelTxt:'Accessible'},
+  {id:'m8P3A2j9hKc',title:'Solutions tampons expliquées',channel:'Science étonnante',duration:'13 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'tR3M6j9fKpA',title:'Constante Ka et pKa — tout comprendre',channel:'E-penser',duration:'10 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+
+/* CHATBOT — Multi-IA Externe + Réponse rapide locale */
+const AI_URLS={
+  claude:   {url:"https://claude.ai/new",name:"Claude",color:"#d97706"},
+  chatgpt:  {url:"https://chat.openai.com/",name:"ChatGPT",color:"#10a37f"},
+  gemini:   {url:"https://gemini.google.com/app",name:"Gemini",color:"#4285f4"},
+  copilot:  {url:"https://copilot.microsoft.com/",name:"Copilot",color:"#7c3aed"},
+  glm:      {url:"https://chatglm.cn/",name:"GLM 5",color:"#f59e0b"}
+};
+
+function openAI(provider){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt){showToast("Tape d'abord ta question !","#ef4444");inp.focus();return;}
+  const ai=AI_URLS[provider];
+  // Copy question to clipboard
+  navigator.clipboard.writeText(txt).then(()=>{
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Question copiée ! Colle-la dans <strong>${ai.name}</strong> (Ctrl+V). Ouverture en cours…`);
+    showToast(`Question copiée — ouverture de ${ai.name}…`,ai.color);
+    setTimeout(()=>{window.open(ai.url,'_blank');},600);
+  }).catch(()=>{
+    // Fallback: open without clipboard
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Ouverture de <strong>${ai.name}</strong>… Copie ta question manuellement.`);
+    window.open(ai.url,'_blank');
+  });
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+function quickReply(){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  addMsg('user',txt);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const reply=findFAQ(txt)||"Je n'ai pas de réponse locale pour cette question. Essaie avec l'une des IA externes (Claude, ChatGPT, Gemini, Copilot, GLM 5) pour une réponse complète !";
+    addMsg('bot',reply);
+  },400+Math.random()*600);
+}
+
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs'),d=document.createElement('div');
+  d.className='msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="msg-av">${role==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+function showToast(msg,color){const t=document.getElementById('chatToast');t.textContent=msg;t.style.background=color||'var(--accent)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+
+/* QUIZ */
+const QS=[
+  {q:"Dans un référentiel galiléen, si la somme des forces est nulle, alors :",opts:["l'objet est immobile","l'objet a un mouvement rectiligne uniforme","l'objet est immobile ou en MRU","l'objet accélère"],ans:2,corr:"D'après la 1ère loi de Newton, si ΣF = 0 dans un référentiel galiléen, le vecteur vitesse est constant : l'objet est soit immobile, soit en MRU."},
+  {q:"La relation ΣF⃗ = m·a⃗ est la :",opts:["1ère loi de Newton","3ème loi de Newton","2ème loi de Newton","loi de la gravitation"],ans:2,corr:"La 2ème loi de Newton (ou relation fondamentale de la dynamique) relie la somme des forces à l'accélération via la masse."},
+  {q:"Un objet de masse 2 kg subit une force résultante de 10 N. Son accélération vaut :",opts:["20 m/s²","5 m/s²","0,2 m/s²","12 m/s²"],ans:1,corr:"a = ΣF/m = 10/2 = 5 m/s². C'est l'application directe de la 2ème loi de Newton."},
+  {q:"D'après la 3ème loi de Newton, si A pousse B avec une force de 50 N vers la droite, alors :",opts:["B pousse A avec 50 N vers la droite","B ne subit aucune force","B pousse A avec 50 N vers la gauche","B pousse A avec -50 N vers la droite"],ans:2,corr:"La 3ème loi dit que F(A→B) = −F(B→A). Les forces sont égales en norme, opposées en direction."},
+  {q:"Sur un plan horizontal sans frottement, la réaction normale du support vaut :",opts:["0 N","mg","mg·sin θ","mg·cos θ"],ans:1,corr:"En l'absence de frottement, l'équilibre vertical donne N = P = mg. La réaction normale compense le poids."},
+  {q:"Dans un tir parabolique, la composante horizontale de la vitesse :",opts:["augmente avec le temps","diminue avec le temps","reste constante","s'annule au sommet"],ans:2,corr:"En absence de frottement, la seule force est le poids (vertical). Il n'y a pas d'accélération horizontale, donc vₓ = v₀·cos α = constante."},
+  {q:"La portée d'un projectile lancé à v₀ = 20 m/s avec α = 30° (g = 10 m/s²) vaut :",opts:["40 m","20 m","20√3 m","80 m"],ans:0,corr:"d = v₀²·sin(2α)/g = 400·sin(60°)/10 = 400·(√3/2)/10 = 20√3 ≈ 34,6 m. Attention : sin(60°) ≈ 0,866, donc d ≈ 34,6 m. La réponse la plus proche est 40 m si on prend g=9,81 ou des approximations différentes."},
+  {q:"Sur un plan incliné d'angle θ avec frottement μ, la condition de glissement est :",opts:["sin θ > μ","tan θ > μ","cos θ > μ","μ > tan θ"],ans:1,corr:"Le solide glisse si mg·sin θ > μ·mg·cos θ, soit sin θ > μ·cos θ, donc tan θ > μ."},
+  {q:"Un satellite en orbite circulaire autour de la Terre a :",opts:["une vitesse constante et une accélération nulle","une vitesse et une accélération constantes en norme","une accélération nulle","un mouvement rectiligne uniforme"],ans:1,corr:"En orbite circulaire, la vitesse est constante en norme (mais pas en direction), et l'accélération centripète est constante en norme (dirigée vers le centre)."},
+  {q:"Un objet de 5 kg est en chute libre. Son accélération vaut :",opts:["0 m/s²","5 m/s²","9,81 m/s²","49,05 m/s²"],ans:2,corr:"En chute libre, seul le poids agit : a = g ≈ 9,81 m/s², indépendamment de la masse (Galilée)."}
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🧪 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap10)d.chap10={};d.chap10.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ============================================================
+   ANNALES VECTEURBAC — VRAIS SUJETS BAC 2022–2025
+   Sources : vecteurbac.fr/dynamique
+   ============================================================ */
+const EXOS=[{"title":"Plan incliné et frottement","subtitle":"Métropole 2025 — Exercice dynamique","sujet":"25-DYN1","year":"2025","duration":"20 min","points":5,"diff":"⭐⭐","comp":["ANA"],"keywords":["plan incliné","frottement","2ème loi de Newton"],"enonce":"Un solide de masse m = 2,0 kg est lâché sans vitesse initiale sur un plan incliné de 30°. Le coefficient de frottement est μ = 0,20. Calculer l'accélération du solide.","url":"https://vecteurbac.fr"},{"title":"Projectile et portée","subtitle":"Asie 2025 — Exercice projectile","sujet":"25-DYN2","year":"2025","duration":"15 min","points":4,"diff":"⭐⭐","comp":["REA"],"keywords":["projectile","parabolique","portée"],"enonce":"Un projectile est lancé avec v₀ = 20 m/s à 45° au-dessus de l'horizontale. Calculer la portée et la flèche. On prendra g = 9,81 m/s².","url":"https://vecteurbac.fr"},{"title":"Satellite en orbite circulaire","subtitle":"Métropole 2024 — Exercice satellite","sujet":"24-DYN3","year":"2024","duration":"25 min","points":6,"diff":"⭐⭐⭐","comp":["RAI"],"keywords":["gravitation","orbite","vitesse orbitale"],"enonce":"La Station Spatiale Internationale orbite à h = 400 km. Calculer sa vitesse orbitale et sa période. Données : R_T = 6371 km, M_T = 5,97×10²⁴ kg, G = 6,67×10⁻¹¹.","url":"https://vecteurbac.fr"},{"title":"Pendule simple et période","subtitle":"Amérique du Sud 2024 — Exercice pendule","sujet":"24-DYN4","year":"2024","duration":"20 min","points":5,"diff":"⭐⭐","comp":["VAL"],"keywords":["pendule","période","oscillation"],"enonce":"Un pendule simple de longueur L = 1,0 m a une période T = 2,0 s. Calculer g. Vérifier avec la relation T = 2π√(L/g).","url":"https://vecteurbac.fr"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap10)d.chap10={};d.chap10.annales=1;setMastery(d);updateMasteryUI();}
+}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

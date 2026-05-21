@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 14 — Ondes mécaniques et sonores | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1073,44 +1071,354 @@ u_c=\sqrt{u_A^2+u_B^2}
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+/* THEME */
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap')&&document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pt=document.getElementById('progressTop');const pl=document.getElementById('pctLbl');if(pt)pt.style.width=pct+'%';if(pl)pl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap14';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap14']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEURS */
+function calcOnde(){
+  const v=parseFloat(document.getElementById('onde-v').value);
+  const f=parseFloat(document.getElementById('onde-f').value);
+  const lam=parseFloat(document.getElementById('onde-lambda').value);
+  let resV=v,resF=f,resLam=lam,resT;
+  const provided=[!isNaN(v),!isNaN(f),!isNaN(lam)];
+  const count=provided.filter(Boolean).length;
+  if(count<2){document.getElementById('onde-result').innerHTML='<strong>⚠️ Entrez au moins 2 valeurs</strong>';return;}
+  if(provided[0]&&provided[1]){resLam=v/f;resT=1/f;}
+  else if(provided[0]&&provided[2]){resF=v/lam;resT=1/resF;}
+  else if(provided[1]&&provided[2]){resV=f*lam;resT=1/f;}
+  document.getElementById('onde-result').innerHTML=`
+    <strong>v = λ × f</strong><br>
+    Célérité v = <span style="font-size:18px;color:var(--accent)">${resV.toFixed(2)}</span> m/s<br>
+    Fréquence f = <span style="font-size:18px;color:var(--accent)">${resF.toFixed(2)}</span> Hz<br>
+    Longueur d'onde λ = <span style="font-size:18px;color:var(--accent)">${resLam.toFixed(4)}</span> m<br>
+    Période T = <span style="font-size:18px;color:var(--accent)">${resT.toExponential(3)}</span> s`;
+}
+calcOnde();
+
+function calcDoppler(){
+  const vs=parseFloat(document.getElementById('doppler-vs').value)||30;
+  const vson=parseFloat(document.getElementById('doppler-vson').value)||340;
+  const fs=parseFloat(document.getElementById('doppler-fs').value)||440;
+  const fApproche=vson*fs/(vson-vs);
+  const fEloigne=vson*fs/(vson+vs);
+  document.getElementById('doppler-result').innerHTML=`
+    <strong>Effet Doppler : f' = f × v_son / (v_son ∓ v_source)</strong><br>
+    Vitesse source = ${vs} m/s · Vitesse son = ${vson} m/s<br>
+    f source = ${fs} Hz<br>
+    f' approche = <span style="font-size:18px;color:var(--accent)">${fApproche.toFixed(1)}</span> Hz (${fApproche>fs?'↑ plus aigu':'identique'})<br>
+    f' éloignement = <span style="font-size:18px;color:var(--accent)">${fEloigne.toFixed(1)}</span> Hz (${fEloigne<fs?'↓ plus grave':'identique'})<br>
+    Δf = ${(fApproche-fEloigne).toFixed(1)} Hz`;
+}
+calcDoppler();
+
+/* FLASHCARDS */
+const FC=[
+{icon:'🌊',q:"Qu'est-ce qu'une onde progressive ?",a:"Une onde progressive est la propagation d'une perturbation dans un milieu sans transport de matière, mais avec transport d'énergie.",formula:'Onde = propagation d\'une [___] sans transport de matière',blanks:['perturbation'],answers:['perturbation'],topic:'Ondes'},
+{icon:'⚡',q:"Qu'est-ce que la célérité d'une onde ?",a:"La célérité v est la vitesse de propagation de l'onde. v = d/Δt. Elle dépend du milieu de propagation.",formula:'v = [___] / Δt',blanks:['d'],answers:['d','distance'],topic:'Ondes'},
+{icon:'↔️',q:"Différence entre onde transversale et longitudinale ?",a:"Transversale : déplacement perpendiculaire à la propagation (ex : corde). Longitudinale : déplacement parallèle (ex : son).",formula:'Onde transversale : déplacement [___] à la propagation',blanks:['perpendiculaire'],answers:['perpendiculaire'],topic:'Ondes'},
+{icon:'🔊',q:"Qu'est-ce que le son ?",a:"Le son est une onde mécanique longitudinale de compression-dilatation se propageant dans un milieu matériel (air, eau, solide).",formula:'Son = onde mécanique [___]',blanks:['longitudinale'],answers:['longitudinale'],topic:'Son'},
+{icon:'📏',q:"Quelle est la relation entre v, f et λ ?",a:"v = λ × f. La célérité est le produit de la longueur d'onde par la fréquence.",formula:'v = [___] × f',blanks:['λ'],answers:['λ','lambda'],topic:'Périodiques'},
+{icon:'🔁',q:"Quelle est la relation entre période et fréquence ?",a:"T = 1/f et f = 1/T. La période est en secondes, la fréquence en hertz (Hz).",formula:'T = [___] / f',blanks:['1'],answers:['1'],topic:'Périodiques'},
+{icon:'🔭',q:"Qu'est-ce que la diffraction ?",a:"Phénomène d'étalement de l'onde lorsqu'elle rencontre une ouverture ou un obstacle de taille comparable à λ. θ ≈ λ/a.",formula:'θ ≈ [___] / a',blanks:['λ'],answers:['λ','lambda'],topic:'Interférences'},
+{icon:'🔄',q:"Qu'est-ce que l'interférence ?",a:"Superposition de deux ondes cohérentes. Constructive si Δφ = 2kπ, destructive si Δφ = (2k+1)π.",formula:'Interférence constructive : Δφ = [___]π',blanks:['2k'],answers:['2k'],topic:'Interférences'},
+{icon:'🚗',q:"Qu'est-ce que l'effet Doppler ?",a:"Variation de fréquence perçue due au mouvement relatif source-observateur. Approche : f' > f. Éloignement : f' < f.",formula:'Effet Doppler : variation de [___] perçue',blanks:['fréquence'],answers:['fréquence','frequence'],topic:'Interférences'},
+{icon:'🎵',q:"Qu'est-ce qu'une onde stationnaire ?",a:"Superposition de deux ondes de même fréquence se propageant en sens contraire. Présente des nœuds et des ventres.",formula:'Onde stationnaire : nœuds et [___]',blanks:['ventres'],answers:['ventres','ventre'],topic:'Interférences'},
+{icon:'🎸',q:"Qu'est-ce que la résonance ?",a:"Phénomène d'amplification des oscillations lorsque la fréquence excitatrice est proche de la fréquence propre du système.",formula:'Résonance : f excitatrice ≈ f [___]',blanks:['propre'],answers:['propre'],topic:'Interférences'},
+{icon:'📐',q:"Comment calculer le déphasage ?",a:"Δφ = 2π × δ/λ où δ est la différence de marche. Δφ en radians, δ et λ en mètres.",formula:'Δφ = 2π × [___] / λ',blanks:['δ'],answers:['δ','delta'],topic:'Périodiques'},
+{icon:'🔬',q:"Qu'est-ce que l'intensité sonore ?",a:"L'intensité sonore I est la puissance sonore par unité de surface (W/m²). Niveau sonore L = 10 log(I/I₀).",formula:'L = 10 log(I/[___])',blanks:['I₀'],answers:['I₀','I0'],topic:'Son'},
+{icon:'🎯',q:"Conditions d'interférences constructives et destructives ?",a:"Constructive : δ = kλ (k entier). Destructive : δ = (k+½)λ. La différence de marche détermine le type.",formula:'Constructive : δ = [___]λ',blanks:['k'],answers:['k'],topic:'Méthodes'},
+{icon:'📋',q:"Comment mesurer la célérité du son ?",a:"Par le temps de propagation entre deux micros : v = d/Δt. Ou par la longueur d'onde : v = λf avec un GBF et un oscilloscope.",formula:'v = d / [___]',blanks:['Δt'],answers:['Δt','dt'],topic:'Méthodes'}
+];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+    {label:'Ondes mécaniques',color:'#0f766e',nodes:[{label:'Définition',def:'Perturbation se propageant sans transport de matière.'},{label:'Onde transversale',def:'Déplacement perpendiculaire à la propagation.'},{label:'Onde longitudinale',def:'Déplacement parallèle à la propagation (ex: son).'}]},
+  {label:'Célérité',color:'#14b8a6',nodes:[{label:'v = d/Δt',def:'Célérité = distance / retard.'},{label:'v = λf',def:'Relation entre longueur d\'onde, fréquence et célérité.'},{label:'v = √(T/μ)',def:'Célérité sur une corde. T = tension, μ = masse linéique.'}]},
+  {label:'Diffraction',color:'#0d9488',nodes:[{label:'θ ≈ λ/a',def:'Demi-angle de diffraction. a = largeur de l\'ouverture.'},{label:'Tache centrale',def:'Largeur double des taches secondaires.'},{label:'Condition',def:'Diffraction notable si a ≈ λ ou a < λ.'}]},
+  {label:'Interférences',color:'#0f766e',nodes:[{label:'Interfrange i = λD/a',def:'Distance entre deux franges consécutives.'},{label:'Constructive',def:'δ = kλ. Amplitudes additionnées.'},{label:'Destructive',def:'δ = (k+½)λ. Amplitudes opposées.'}]},
+  {label:'Effet Doppler',color:'#2dd4bf',nodes:[{label:'f\' = f₀v/(v±vₛ)',def:'Fréquence perçue modifiée par le mouvement.'},{label:'Source approche',def:'f\' > f₀ (signe − au dénominateur).'},{label:'Radar Doppler',def:'Δf = 2f₀v/c. Utilisé en météo et routier.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#7B6FD0';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">ONDES</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">MÉCANIQUES</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=130,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
   });
-  requestAnimationFrame(draw);
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch14.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'LQ8fxOBq5f8',title:'Les ondes mécaniques progressives',channel:'Physique-Chimie',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'mk7w5f2fGHk',title:'Ondes sonores et acoustique',channel:'Scilabus',duration:'14 min',level:'easy',levelTxt:'Accessible'},
+  {id:'xpNpKGteJCY',title:'Interférences et diffraction',channel:'Science étonnante',duration:'15 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'h4On9sbH3OU',title:'Effet Doppler — explication complète',channel:'E-penser',duration:'11 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+
+/* CHATBOT — Multi-IA Externe + Réponse rapide locale */
+const AI_URLS={
+  claude:   {url:"https://claude.ai/new",name:"Claude",color:"#d97706"},
+  chatgpt:  {url:"https://chat.openai.com/",name:"ChatGPT",color:"#10a37f"},
+  gemini:   {url:"https://gemini.google.com/app",name:"Gemini",color:"#4285f4"},
+  copilot:  {url:"https://copilot.microsoft.com/",name:"Copilot",color:"#7c3aed"},
+  glm:      {url:"https://chatglm.cn/",name:"GLM 5",color:"#f59e0b"}
+};
+
+function openAI(provider){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt){showToast("Tape d'abord ta question !","#ef4444");inp.focus();return;}
+  const ai=AI_URLS[provider];
+  // Copy question to clipboard
+  navigator.clipboard.writeText(txt).then(()=>{
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Question copiée ! Colle-la dans <strong>${ai.name}</strong> (Ctrl+V). Ouverture en cours…`);
+    showToast(`Question copiée — ouverture de ${ai.name}…`,ai.color);
+    setTimeout(()=>{window.open(ai.url,'_blank');},600);
+  }).catch(()=>{
+    // Fallback: open without clipboard
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Ouverture de <strong>${ai.name}</strong>… Copie ta question manuellement.`);
+    window.open(ai.url,'_blank');
+  });
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+function quickReply(){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  addMsg('user',txt);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const reply=findFAQ(txt)||"Je n'ai pas de réponse locale pour cette question. Essaie avec l'une des IA externes (Claude, ChatGPT, Gemini, Copilot, GLM 5) pour une réponse complète !";
+    addMsg('bot',reply);
+  },400+Math.random()*600);
+}
+
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs'),d=document.createElement('div');
+  d.className='msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="msg-av">${role==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+function showToast(msg,color){const t=document.getElementById('chatToast');t.textContent=msg;t.style.background=color||'var(--accent)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+
+/* QUIZ */
+const QS=[
+  {q:"Une onde mécanique se propage :",opts:["avec transport de matière et d'énergie","sans transport de matière ni d'énergie","avec transport d'énergie mais sans transport de matière","avec transport de matière mais sans transport d'énergie"],ans:2,corr:"Une onde transporte de l'énergie mais pas de matière. Les points du milieu oscillent autour de leur position d'équilibre."},
+  {q:"Si v = 340 m/s et f = 440 Hz, que vaut λ ?",opts:["0,77 m","1,30 m","0,13 m","7,70 m"],ans:0,corr:"λ = v/f = 340/440 = 0,773 m ≈ 0,77 m. Relation fondamentale v = λf."},
+  {q:"Le son dans l'air est une onde :",opts:["transversale","longitudinale","électromagnétique","stationnaire"],ans:1,corr:"Le son est une onde mécanique longitudinale : les couches d'air se compriment et se dilatent dans la direction de propagation."},
+  {q:"La diffraction d'une onde est observée quand :",opts:["la fente est très grande devant λ","la fente est du même ordre de grandeur que λ","la fente est transparente","l'onde est circulaire"],ans:1,corr:"La diffraction est marquée quand la taille de l'ouverture a est du même ordre de grandeur que la longueur d'onde λ."},
+  {q:"Deux ondes interfèrent constructivement si la différence de marche δ vaut :",opts:["(k+½)λ","kλ","kπ","λ/4"],ans:1,corr:"Interférence constructive quand δ = kλ (k entier). L'interférence destructive correspond à δ = (k+½)λ."},
+  {q:"L'effet Doppler provoque :",opts:["un changement de longueur d'onde uniquement","un changement de fréquence perçue dû au mouvement","un changement de célérité","une augmentation de l'amplitude"],ans:1,corr:"L'effet Doppler modifie la fréquence perçue quand la source ou l'observateur se déplace. Approche → f' > f, éloignement → f' < f."},
+  {q:"Dans une onde stationnaire, un nœud correspond à :",opts:["un point d'amplitude maximale","un point d'amplitude nulle","un point de pression maximale","un point de vitesse maximale"],ans:1,corr:"Un nœud est un point où l'amplitude est toujours nulle. Un ventre est un point d'amplitude maximale."},
+  {q:"Le niveau sonore L = 10 log(I/I₀). Si I double, L augmente de :",opts:["2 dB","10 dB","3 dB","6 dB"],ans:2,corr:"L₂ − L₁ = 10 log(2I/I) = 10 log 2 ≈ 3 dB. Un doublement d'intensité correspond à +3 dB."},
+  {q:"La célérité du son dans l'air à 20°C vaut environ :",opts:["3×10⁸ m/s","340 m/s","1500 m/s","50 m/s"],ans:1,corr:"Le son se propage à environ 340 m/s dans l'air à 20°C, environ 1500 m/s dans l'eau et 5000 m/s dans l'acier."},
+  {q:"Une onde sur une corde a v=50 m/s et f=100 Hz. Sa longueur d'onde est :",opts:["0,5 m","2 m","5000 m","0,02 m"],ans:0,corr:"λ = v/f = 50/100 = 0,50 m. La longueur d'onde diminue si la fréquence augmente (à célérité constante)."}
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🧪 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap14)d.chap14={};d.chap14.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ============================================================
+   ANNALES VECTEURBAC — VRAIS SUJETS BAC 2022–2025
+   Sources : vecteurbac.fr/ondes-mecaniques
+   ============================================================ */
+const EXOS=[{"title":"Ondes sonores et musique","subtitle":"Métropole 2025 — Exercice ondes","sujet":"25-O1","year":"2025","duration":"20 min","points":5,"diff":"⭐⭐","comp":["ANA"],"keywords":["son","fréquence","longueur d'onde","célérité"],"enonce":"Un diapason émet un son de fréquence f = 440 Hz. Calculer la longueur d'onde dans l'air (v = 340 m/s) et dans l'eau (v = 1500 m/s).","url":"https://vecteurbac.fr"},{"title":"Diffraction d'une onde ultrasonore","subtitle":"Asie 2025 — Exercice diffraction","sujet":"25-O2","year":"2025","duration":"15 min","points":4,"diff":"⭐⭐","comp":["REA"],"keywords":["diffraction","ultrasons","fente","longueur d'onde"],"enonce":"Un émetteur ultrasonore (f = 40 kHz) est placé devant une fente de largeur a = 8 mm. La célérité du son est v = 340 m/s. Y a-t-il diffraction ?","url":"https://vecteurbac.fr"},{"title":"Interférences à deux sources","subtitle":"Métropole 2024 — Exercice interférences","sujet":"24-O3","year":"2024","duration":"25 min","points":6,"diff":"⭐⭐⭐","comp":["RAI"],"keywords":["interférences","différence de marche","constructive","destructive"],"enonce":"Deux sources S1 et S2 émettent en phase des ondes de λ = 2,0 cm. Un point M est à d1 = 15 cm de S1 et d2 = 19 cm de S2. L'interférence est-elle constructive ou destructive ?","url":"https://vecteurbac.fr"},{"title":"Effet Doppler et radar","subtitle":"Amérique du Sud 2024 — Exercice Doppler","sujet":"24-O4","year":"2024","duration":"20 min","points":5,"diff":"⭐⭐","comp":["VAL"],"keywords":["Doppler","fréquence","vitesse","radar"],"enonce":"Un véhicule roule à 130 km/h vers un radar fixe émettant à f = 24 GHz. Calculer la fréquence reçue par le véhicule (vson = 340 m/s pour illustration).","url":"https://vecteurbac.fr"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap14)d.chap14={};d.chap14.annales=1;setMastery(d);updateMasteryUI();}
+}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

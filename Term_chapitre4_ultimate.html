@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 4 — Cinétique chimique | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -706,44 +704,59 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
+
+
+// 2026 Ultimate Aesthetics (Canvas)
 const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
-
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
-
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

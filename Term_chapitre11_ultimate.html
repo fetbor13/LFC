@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 11 — Mouvements des planètes et satellites | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1227,44 +1225,242 @@ La masse du satellite se simplifie, puis \(v=\sqrt{\frac{GM}{r}}\). Avec \(v=\fr
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+(function(){const t=localStorage.getItem('physichem_theme')||'light';document.documentElement.setAttribute('data-theme',t);const tb=document.getElementById('themeBtn');tb.textContent=t==='dark'?'☀️':'🌙';tb.setAttribute('aria-pressed',t==='dark'?'true':'false');})();
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');tb.textContent=next==='dark'?'☀️':'🌙';tb.setAttribute('aria-pressed',next==='dark'?'true':'false');localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(n,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+n).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(n==='mindmap')setTimeout(renderMM,50);if(n==='flashcards'&&!fcInit)initFC();if(n==='annales'&&!exoInit)initExos();trackMastery(n);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));document.getElementById('progressTop').style.width=pct+'%';document.getElementById('pctLbl').textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap11';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap11']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--accent)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEUR KEPLER */
+function calcKepler(){
+  const M=parseFloat(document.getElementById('k-m').value)*1e24||1.989e30;
+  const r=parseFloat(document.getElementById('k-r').value)*1e9||1.496e11;
+  const G=6.674e-11;
+  const v=Math.sqrt(G*M/r);
+  const T=2*Math.PI*Math.sqrt(r*r*r/(G*M));
+  const Tdays=T/86400;
+  const Em=-G*M*1e24/(2*r);
+  document.getElementById('k-result').innerHTML=`v = <strong>${(v/1000).toFixed(2)} km/s</strong> · T = <strong>${Tdays.toFixed(1)} jours</strong> · T²/r³ = <strong>${(T*T/(r*r*r)).toExponential(3)} s²·m⁻³</strong>`;
+  const canvas=document.getElementById('k-canvas');
+  canvas.width=canvas.offsetWidth||600;canvas.height=220;
+  const ctx=canvas.getContext('2d');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  ctx.fillStyle=isDark?'#1C2A40':'#F8FAFD';ctx.fillRect(0,0,canvas.width,canvas.height);
+  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,orR=Math.min(W,H)*0.38;
+  ctx.strokeStyle=isDark?'rgba(96,200,236,0.2)':'rgba(75,173,212,0.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.arc(cx,cy,orR,0,2*Math.PI);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fillStyle='#F4A96A';ctx.fill();
+  ctx.fillStyle=isDark?'#7A90B0':'#5A6A85';ctx.font='11px Instrument Sans';ctx.fillText('Astre',cx-16,cy+24);
+  const angle=Date.now()/3000%(2*Math.PI);
+  const sx=cx+orR*Math.cos(angle),sy=cy+orR*Math.sin(angle);
+  ctx.beginPath();ctx.arc(sx,sy,7,0,2*Math.PI);ctx.fillStyle='#4BADD4';ctx.fill();
+  ctx.fillStyle=isDark?'#7A90B0':'#5A6A85';ctx.fillText('Satellite',sx+10,sy+4);
+  ctx.strokeStyle=isDark?'rgba(96,200,236,0.5)':'rgba(75,173,212,0.5)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(sx,sy);ctx.stroke();
+  requestAnimationFrame(calcKepler);
+}
+calcKepler();
+
+/* FLASHCARDS */
+const FC=[
+  {icon:'🌍',q:'Énoncé de la 1ère loi de Kepler',a:'Chaque planète décrit une ellipse dont le Soleil occupe un foyer. Le point le plus proche est le périhélie, le plus éloigné est l\'aphélie.',formula:'Orbite = [___] avec Soleil à un foyer',blanks:['ellipse'],answers:['ellipse']},
+  {icon:'⚖️',q:'Énoncé de la 2ème loi de Kepler (loi des aires)',a:'Le rayon vecteur Soleil-planète balaie des aires égales en des temps égaux. La planète va plus vite au périhélie.',formula:'dA/dt = [___] (constante)',blanks:['constante'],answers:['constante','cste']},
+  {icon:'📐',q:'3ème loi de Kepler (orbite circulaire)',a:'T²/r³ = 4π²/(GM) = constante pour tous les satellites du même astre central. Ne dépend pas de la masse du satellite.',formula:'T² / r³ = 4π² / ([___])',blanks:['GM'],answers:['GM']},
+  {icon:'🚀',q:'Vitesse orbitale d\'un satellite (orbite circulaire)',a:'v = √(GM/r). Obtenue par PFD : force grav. = force centripète. Indépendante de la masse du satellite.',formula:'v = √([___]/r)',blanks:['GM'],answers:['GM']},
+  {icon:'⏱',q:'Période orbitale d\'un satellite (orbite circulaire)',a:'T = 2π√(r³/GM). Déduite de v = 2πr/T et v = √(GM/r).',formula:'T = 2π√(r³/[___])',blanks:['GM'],answers:['GM']},
+  {icon:'📡',q:'Conditions d\'un satellite géostationnaire',a:'1) Plan équatorial · 2) Sens direct · 3) T = 24h = 86400s. Altitude ≈ 35 800 km. Immobile vu de la Terre.',formula:'Géostationnaire : T = [___] h',blanks:['24'],answers:['24']},
+  {icon:'🛰️',q:'Altitude du satellite géostationnaire',a:'r³ = GMT²/(4π²) → r = 42 164 km → h = r − R_T = 35 793 km ≈ 35 800 km.',formula:'h_géostationnaire ≈ [___] km',blanks:['35800'],answers:['35800','35 800']},
+  {icon:'🧑‍🚀',q:'Pourquoi les astronautes flottent-ils dans l\'ISS ?',a:'Ils sont en chute libre permanente (orbite = trajectoire parabolique infinie). L\'ISS et eux tombent ensemble → impesanteur. g(400km) ≈ 8,69 m/s² ≠ 0 !',formula:'g(400km) ≈ [___] m/s²',blanks:['8.69'],answers:['8.69','8,69','8.7']},
+  {icon:'⚡',q:'Énergie mécanique d\'un satellite (orbite circulaire)',a:'Em = −GMm/(2r) < 0. Toujours négative pour un satellite lié. Em = Ec + Epp = GMm/(2r) − GMm/r.',formula:'Em = −GMm / ([___])',blanks:['2r'],answers:['2r']},
+  {icon:'🔗',q:'Relation Ec, Epp et Em sur orbite circulaire',a:'Ec = −Epp/2 = −Em. L\'énergie cinétique vaut la moitié de la valeur absolue de l\'énergie potentielle (théorème du viriel).',formula:'Ec = −[___]/2',blanks:['Epp'],answers:['Epp']},
+  {icon:'🚀',q:'Principe de la propulsion par réaction',a:'Conservation de la quantité de mouvement dans le vide. En éjectant des gaz vers l\'arrière, la fusée prend de la vitesse vers l\'avant : Δ(m·v_fusée) = −Δ(m_gaz·v_gaz).',formula:'Propulsion : conservation de p = [___]',blanks:['mv'],answers:['mv','m·v']},
+  {icon:'🌍',q:'Périhélie et aphélie — définitions',a:'Périhélie : point le plus PROCHE du Soleil (r_min = a(1−e)). Aphélie : point le plus ÉLOIGNÉ (r_max = a(1+e)). e = excentricité.',formula:'r_perihelie = a(1 [___] e)',blanks:['−'],answers:['−','-']},
+  {icon:'📊',q:'Excentricité d\'une ellipse',a:'e = 0 → cercle. 0 < e < 1 → ellipse. e = 1 → parabole (vitesse de libération). Terre : e = 0,017.',formula:'Cercle : e = [___]',blanks:['0'],answers:['0']},
+  {icon:'🌍',q:'Vitesse de l\'ISS (h = 400 km)',a:'r = R_T + h = 6 371 + 400 = 6 771 km = 6,771×10⁶ m. v = √(GM_T/r) = √(3,986×10¹⁴/6,771×10⁶) ≈ 7,66 km/s.',formula:'v_ISS ≈ [___] km/s',blanks:['7.66'],answers:['7.66','7,66','7.7']},
+  {icon:'🔢',q:'Constante de Kepler pour le Système Solaire',a:'4π²/(GM_☉) = 4π²/(6,674×10⁻¹¹×1,989×10³⁰) ≈ 2,97×10⁻¹⁹ s²·m⁻³. Même valeur pour toutes les planètes.',formula:'4π²/GM_☉ ≈ [___] s²·m⁻³',blanks:['2.97e-19'],answers:['2.97e-19','2,97×10⁻¹⁹']},
+];
+let fcIdx=0,fcFlipped=false,fcOrder=[...Array(FC.length).keys()],fcInit=false;
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){const c=FC[fcOrder[fcIdx]];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${fcOrder.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;}
+function nextCard(){fcIdx=(fcIdx+1)%fcOrder.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+fcOrder.length)%fcOrder.length;renderFC();}
+function shuffleCards(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]];}fcIdx=0;renderFC();}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');}
+
+/* MINDMAP */
+const MM_B=[
+  {label:'Lois de Kepler',color:'#4BADD4',nodes:[{label:'1ère : ellipse + foyer',def:'Orbite elliptique, Soleil à un foyer. Périhélie/Aphélie.'},{label:'2ème : loi des aires',def:'Aires égales en temps égaux. Conservation L.'},{label:'3ème : T²/r³ = cste',def:'4π²/(GM). Même constante pour tout le système.'}]},
+  {label:'Satellites',color:'#3DAF82',nodes:[{label:'v = √(GM/r)',def:'PFD → grav. = centripète. Indép. de masse sat.'},{label:'T = 2π√(r³/GM)',def:'Déduite de v et de la circonférence 2πr.'},{label:'Em = −GMm/2r',def:'Toujours négative. Ec = −Epp/2.'}]},
+  {label:'Géostationnaire',color:'#7B6FD0',nodes:[{label:'T = 24h · Plan équatorial',def:'3 conditions : T=24h, plan équatorial, sens direct.'},{label:'h ≈ 35 800 km',def:'r = 42 164 km. Calcul via 3ème loi Kepler.'},{label:'v = 3,07 km/s',def:'v = 2πr/T.'}]},
+  {label:'Impesanteur',color:'#D4854A',nodes:[{label:'Chute libre permanente',def:'g(ISS) ≈ 8,69 m/s². Astronautes tombent avec ISS.'},{label:'Propulsion par réaction',def:'Conservation quantité mouvement. Éjection gaz.'},{label:'g ≠ 0 dans l\'ISS',def:'Confusion courante : ce n\'est PAS l\'absence de g.'}]},
+  {label:'Énergie',color:'#E8915A',nodes:[{label:'Em = Ec + Epp < 0',def:'Satellite lié : Em toujours négative.'},{label:'Théorème du viriel',def:'Ec = −Epp/2 sur orbite circulaire.'},{label:'Élever l\'orbite → E↑',def:'Il faut fournir de l\'énergie pour monter.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#4BADD4';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/>`;
+  h+=`<rect x="${cx-115}" y="${cy-28}" width="230" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">PLANÈTES &amp;</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">SATELLITES</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=134,bh=34;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
   });
-  requestAnimationFrame(draw);
+  svg.innerHTML=h;
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch11.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+/* VIDEOS */
+const VIDEOS=[
+  {id:'Jmn8mMZLmxM',title:'Les satellites artificiels expliqués',channel:'e-penser',duration:'14 min',level:'easy',levelTxt:'Accessible'},
+  {id:'OVLd-Q6W7pE',title:'Lois de Kepler et gravitation',channel:'Science étonnante',duration:'18 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'bHIhgxav9LY',title:'L\'impesanteur : pourquoi les astronautes flottent',channel:'Scilabus',duration:'11 min',level:'easy',levelTxt:'Accessible'},
+  {id:'YTZoKvp_X_E',title:'Satellites géostationnaires et orbites',channel:'Science étonnante',duration:'13 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+/* CHATBOT */
+const SYS=`Tu es un assistant pédagogique expert en mécanique céleste niveau Terminale Spécialité. Tu réponds en français, clairement, avec formules vectorielles LaTeX et exemples numériques. Limite-toi à : lois de Kepler (3 lois), orbite elliptique (périhélie, aphélie, excentricité), mouvement circulaire uniforme des satellites, PFD → v=√(GM/r), période T=2π√(r³/GM), 3ème loi T²/r³=cste, satellites géostationnaires (conditions, altitude 35800km), impesanteur (chute libre permanente, g≠0 dans ISS), propulsion par réaction (conservation quantité mouvement), énergie mécanique Em=−GMm/(2r), théorème du viriel Ec=−Epp/2.`;
+let hist=[];
+async function sendMsg(){const inp=document.getElementById('chatIn');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';addMsg('user',txt);document.getElementById('sendBtn').disabled=true;showTyping();hist.push({role:'user',content:txt});try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:hist})});const d=await r.json();const reply=d.content?.[0]?.text||'Erreur.';hist.push({role:'assistant',content:reply});removeTyping();addMsg('bot',reply);}catch(e){removeTyping();addMsg('bot','⚠️ Chatbot hors ligne. Déployez le site pour l\'activer.');}document.getElementById('sendBtn').disabled=false;}
+function suggest(t){document.getElementById('chatIn').value=t;sendMsg();}
+function addMsg(r,text){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg'+(r==='user'?' user':'');d.innerHTML=`<div class="msg-av">${r==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+/* QUIZ */
+const QS=[
+  {q:'La 3ème loi de Kepler s\'écrit :',opts:['T²/r³ = 4π²/(GM) = constante','T/r² = constante','T²/r = 4π²/(GM)','T³/r² = GM/(4π²)'],ans:0,corr:'T²/r³ = 4π²/(GM). Valable pour tous les corps en orbite autour du même astre central M.'},
+  {q:'La vitesse orbitale d\'un satellite circulaire est :',opts:['v = √(GM/r)','v = √(GMr)','v = GM/r','v = √(G/Mr)'],ans:0,corr:'v = √(GM/r). Obtenue par PFD : GMm/r² = mv²/r. Ne dépend pas de la masse m du satellite.'},
+  {q:'Un satellite géostationnaire doit avoir :',opts:['T = 24h, orbite équatoriale, sens direct','T = 12h, orbite polaire','T = 24h, orbite quelconque','T = 90 min, orbite équatoriale'],ans:0,corr:'3 conditions : T = 24h (période Terre), plan équatorial (inclinaison 0°), sens direct (ouest→est). Altitude ≈ 35 800 km.'},
+  {q:'L\'énergie mécanique d\'un satellite lié est :',opts:['Toujours négative : Em = −GMm/(2r)','Toujours positive','Nulle','Positive puis négative'],ans:0,corr:'Em = Ec + Epp = GMm/(2r) − GMm/r = −GMm/(2r) < 0 toujours. Un satellite lié a une énergie mécanique négative.'},
+  {q:'Dans l\'ISS (h = 400 km), la valeur de g est :',opts:['g ≈ 8,69 m/s² (non nul)','g = 0 m/s²','g ≈ 9,81 m/s²','g ≈ 1,62 m/s²'],ans:0,corr:'g(400km) = GM_T/(R_T+h)² ≈ 8,69 m/s². Les astronautes flottent car ils sont en chute libre permanente, pas parce que g = 0 !'},
+  {q:'La 1ère loi de Kepler indique que les orbites des planètes sont :',opts:['Des ellipses avec le Soleil à un foyer','Des cercles avec le Soleil au centre','Des paraboles','Des hyperboles'],ans:0,corr:'Des ellipses dont le Soleil occupe un foyer (pas le centre). Cas particulier : cercle si e = 0.'},
+  {q:'Sur orbite circulaire, la relation entre Ec et Epp est :',opts:['Ec = −Epp/2 (théorème du viriel)','Ec = Epp','Ec = −Epp','Ec = 2Epp'],ans:0,corr:'Ec = GMm/(2r) = −Epp/2. C\'est le théorème du viriel. On en déduit Em = Ec + Epp = −Ec.'},
+  {q:'Pour doubler la période T d\'un satellite (3ème loi), il faut multiplier r par :',opts:['2^(2/3) ≈ 1,587','2','4','√2'],ans:0,corr:'T²/r³ = cste. (2T)²/r\'³ = T²/r³ → 4T²/r\'³ = T²/r³ → r\'³ = 4r³ → r\' = 4^(1/3)·r = 2^(2/3)·r ≈ 1,587·r.'},
+  {q:'La loi des aires (2ème loi de Kepler) indique que :',opts:['La planète va plus vite au périhélie qu\'à l\'aphélie','La planète va à vitesse constante','La planète va plus vite à l\'aphélie','La vitesse ne dépend pas de la position'],ans:0,corr:'Le rayon vecteur balaie des aires égales en temps égaux → la planète va plus vite quand elle est proche du Soleil (périhélie).'},
+  {q:'La propulsion des fusées dans le vide repose sur :',opts:['La conservation de la quantité de mouvement','La poussée de l\'air','La force magnétique','La loi de Kepler'],ans:0,corr:'En éjectant des gaz à grande vitesse vers l\'arrière, la fusée acquiert de la quantité de mouvement vers l\'avant : Σp = constante (système isolé).'},
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🚀 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap11)d.chap11={};d.chap11.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ANNALES VECTEURBAC */
+const EXOS=[{"title":"Exploration du ciel profond par le télescope James Webb","subtitle":"Polynésie 2025 sujet 2 — Exercice 1","sujet":"25-PYCJ2PO1","year":"2025","duration":"1h56","points":11,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Satellites","Kepler","Doppler","télescope"],"enonce":"Sujet long autour du télescope James Webb et de son mouvement.","url":"https://www.vecteurbac.fr/exploration-du-ciel-profond-par-le-telescope-james-webb/"},{"title":"La face cachée de la Lune","subtitle":"Centres étrangers 2025 sujet 1 — Exercice 3","sujet":"25-PYCJ2JA1","year":"2025","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Satellites","Lune","ondes","nucléaire"],"enonce":"Exploiter des données orbitales dans un contexte lunaire.","url":"https://www.vecteurbac.fr/la-face-cachee-de-la-lune/"},{"title":"Physique et raccordement routier","subtitle":"Amérique du nord 2024 sujet 1 — Exercice 2","sujet":"25-PYCJ1AN1","year":"2024","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Satellites","Kepler","raccordement"],"enonce":"Application des lois de Kepler dans un sujet contextualisé.","url":"https://www.vecteurbac.fr/physique-et-raccordement-routier/"},{"title":"Métis, un satellite en sursis ?","subtitle":"Nouvelle-Calédonie 2025 sujet 1 — Exercice 3","sujet":"25-PYCJ1NC1","year":"2025","duration":"1h03","points":6,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Satellites","orbite","période","altitude"],"enonce":"Analyser le devenir orbital d'un satellite à partir de données physiques.","url":"https://www.vecteurbac.fr/metis-un-satellite-en-sursis/"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter);
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card"><div class="exo-card-header"><div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div><div class="exo-title">${e.title}</div><div class="exo-subtitle">${e.subtitle}</div><div class="exo-pills"><span class="pill yr">📅 ${e.year}</span><span class="pill dur">⏱ ${e.duration}</span><span class="pill pt">📊 ${e.points} pts</span>${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}<span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span></div></div><div class="exo-card-body"><div class="exo-enonce">${e.enonce}</div><div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div><div class="exo-actions"><a href="${e.url}" target="_blank" rel="noopener noreferrer" class="exo-link-btn">🔗 Voir sur VecteurBac ↗</a><button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}</button></div></div></div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';if(n==='done'){const d=getMastery();if(!d.chap11)d.chap11={};d.chap11.annales=1;setMastery(d);updateMasteryUI();}}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

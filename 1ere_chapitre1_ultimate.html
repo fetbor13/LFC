@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 1 — La mole et la spectroscopie | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="crumb">Première Spé › Constitution &amp; Transformations › <b>La mole et la spectroscopie</b></div>
+    <div class="top-actions">
+      <button class="pill-btn" onclick="switchTab('outils')">Relations clés</button>
+      <button class="pill-btn" onclick="switchTab('simulations')">Simuler</button>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Première Spé · Chapitre 1</div>
+        <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+        <h2>La mole &amp; <span>la spectroscopie</span></h2>
+        <p class="hero-copy">De l'atome à l'éprouvette : comprendre comment compter des milliards de milliards d'entités grâce à la mole, maîtriser masse molaire, concentrations, volume molaire des gaz et utiliser la loi de Beer-Lambert pour doser une solution colorée par spectrophotométrie.</p>
+        <div class="hero-grid">
+          <div class="metric"><b>8</b><span>relations essentielles</span></div>
+          <div class="metric"><b>8</b><span>exercices corrigés</span></div>
+          <div class="metric"><b>3</b><span>simulateurs intégrés</span></div>
+        </div>
+      </div>
+      <div class="real-hero-img"><canvas id="heroCanvas" width="480" height="240"></canvas></div>
+    </section>
+
+    <section class="useful-strip">
+      <article class="useful-card mission-1"><small>Mission 01</small><b>Masse molaire</b><span>Calculer M d'une espèce à partir du tableau périodique et de la formule chimique.</span></article>
+      <article class="useful-card mission-2"><small>Mission 02</small><b>Mole &amp; concentration</b><span>Utiliser \(n=m/M\), \(c=n/V\) et les dilutions avec rigueur sur les unités.</span></article>
+      <article class="useful-card mission-3"><small>Mission 03</small><b>Beer-Lambert</b><span>Exploiter \(A=\varepsilon\,l\,c\) pour doser une solution inconnue par étalonnage.</span></article>
+    </section>
+
+    <!-- ===================== COURS ===================== -->
+    <section class="panel active" id="tab-cours">
+      <article class="content-card course-grid">
+        <aside class="toc">
+          <div class="toc-title">Plan du cours</div>
+          <a href="#c1">I. Masse molaire</a>
+          <a href="#c2">II. La mole</a>
+          <a href="#c3">III. Concentrations</a>
+          <a href="#c4">IV. Dilution</a>
+          <a href="#c5">V. Volume molaire</a>
+          <a href="#c6">VI. Spectroscopie</a>
+          <a href="#c7">VII. Beer-Lambert</a>
+          <a href="#c8">VIII. Dosage</a>
+        </aside>
+        <div class="course-body">
+
+          <h2 id="c1">I. Masse molaire</h2>
+          <div class="box def"><div class="box-label">Définition</div>
+          <p>La <strong>masse molaire atomique</strong> \(M\) d'un élément est la masse d'une mole d'atomes de cet élément. Elle se lit dans le tableau périodique, en \(\mathrm{g\,mol^{-1}}\).</p>
+          <div class="formula">$$M = N_A \times m_{\text{atome}}$$</div>
+          <p>où \(N_A = 6{,}022\times10^{23}\ \mathrm{mol^{-1}}\) et \(m_{\text{atome}}\) est la masse d'un atome en grammes.</p></div>
+
+          <div class="box prop"><div class="box-label">Masse molaire d'une espèce \(A_a B_b C_c\ldots\)</div>
+          <div class="formula">$$M_{\text{espèce}} = a\,M(A) + b\,M(B) + c\,M(C) + \ldots$$</div>
+          <p>avec \(a\), \(b\), \(c\) les indices stœchiométriques et \(M(A)\), \(M(B)\), \(M(C)\) les masses molaires atomiques en \(\mathrm{g\,mol^{-1}}\).</p></div>
+
+          <div class="table-wrap"><table><thead><tr><th>Espèce</th><th>Formule</th><th>Calcul</th><th>\(M\) (g·mol⁻¹)</th></tr></thead><tbody>
+            <tr><td>Eau</td><td>\(\mathrm{H_2O}\)</td><td>\(2\times1{,}0+16{,}0\)</td><td>18,0</td></tr>
+            <tr><td>Dioxyde de carbone</td><td>\(\mathrm{CO_2}\)</td><td>\(12{,}0+2\times16{,}0\)</td><td>44,0</td></tr>
+            <tr><td>Chlorure de sodium</td><td>\(\mathrm{NaCl}\)</td><td>\(23{,}0+35{,}5\)</td><td>58,5</td></tr>
+            <tr><td>Glucose</td><td>\(\mathrm{C_6H_{12}O_6}\)</td><td>\(6\times12{,}0+12\times1{,}0+6\times16{,}0\)</td><td>180,0</td></tr>
+            <tr><td>Saccharose</td><td>\(\mathrm{C_{12}H_{22}O_{11}}\)</td><td>\(12\times12+22\times1+11\times16\)</td><td>342,0</td></tr>
+          </tbody></table></div>
+
+          <div class="box warn"><div class="box-label">Piège classique</div>
+          <p>Ne jamais oublier de multiplier l'indice par la masse molaire atomique. Dans \(\mathrm{Fe_2O_3}\) : \(M=2\times55{,}8+3\times16{,}0=111{,}6+48{,}0=159{,}6\ \mathrm{g\,mol^{-1}}\).</p></div>
+
+          <h2 id="c2">II. La mole et la quantité de matière</h2>
+          <div class="box def"><div class="box-label">La mole — Définition BIPM 2019</div>
+          <p>La <strong>mole</strong> est la quantité de matière d'un système contenant exactement \(6{,}02214076\times10^{23}\) entités élémentaires (atomes, molécules, ions, électrons…).</p>
+          <div class="formula">$$N_A = 6{,}022\times10^{23}\ \mathrm{mol^{-1}} \qquad \text{(nombre d'Avogadro)}$$</div>
+          <p>La quantité de matière \(n\) s'exprime en <strong>moles</strong> (mol), unité de base du Système International.</p></div>
+
+          <div class="box prop"><div class="box-label">Relation fondamentale \(n\), \(m\), \(M\)</div>
+          <div class="formula">$$\boxed{n = \frac{m}{M}} \qquad \Longleftrightarrow \qquad m = n \times M$$</div>
+          <table style="margin-top:10px"><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité SI</th></tr></thead><tbody>
+            <tr><td>Quantité de matière</td><td>\(n\)</td><td>mol</td></tr>
+            <tr><td>Masse</td><td>\(m\)</td><td>g (ou kg)</td></tr>
+            <tr><td>Masse molaire</td><td>\(M\)</td><td>g·mol⁻¹</td></tr>
+          </tbody></table>
+          <p style="margin-top:10px">Nombre d'entités : \(\displaystyle N = n \times N_A\) — avec \(N\) sans unité, \(n\) en mol.</p></div>
+
+          <div class="box ok"><div class="box-label">Exemples numériques</div>
+          <p><strong>1. Masse de 0,25 mol de NaCl :</strong> \(m = 0{,}25\times58{,}5 = 14{,}6\ \mathrm g\).</p>
+          <p><strong>2. Quantité de 50 g de \(\mathrm{CaCO_3}\) (\(M=100\)) :</strong> \(n = 50/100 = 0{,}50\ \mathrm{mol}\).</p>
+          <p><strong>3. Nombre de molécules d'eau dans 18 g :</strong> \(n=18/18=1\ \mathrm{mol}\) → \(N=6{,}022\times10^{23}\) molécules.</p></div>
+
+          <h2 id="c3">III. Concentrations en solution</h2>
+          <div class="box def"><div class="box-label">Concentration molaire</div>
+          <div class="formula">$$\boxed{c = \frac{n}{V}} \qquad \Longleftrightarrow \qquad n = c \times V$$</div>
+          <table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité courante</th></tr></thead><tbody>
+            <tr><td>Concentration molaire</td><td>\(c\)</td><td>mol·L⁻¹</td></tr>
+            <tr><td>Quantité de matière</td><td>\(n\)</td><td>mol</td></tr>
+            <tr><td>Volume de solution</td><td>\(V\)</td><td>L</td></tr>
+          </tbody></table></div>
+
+          <div class="box prop"><div class="box-label">Concentration massique</div>
+          <div class="formula">$$C_m = \frac{m}{V} \quad \text{(g·L}^{-1}\text{)} \qquad \text{Lien :}\quad C_m = c \times M$$</div>
+          <p>Exemple : solution de NaCl à \(c=0{,}1\ \mathrm{mol\,L^{-1}}\) → \(C_m=0{,}1\times58{,}5=5{,}85\ \mathrm{g\,L^{-1}}\).</p></div>
+
+          <div class="box ok"><div class="box-label">Préparation d'une solution par dissolution</div>
+          <p>On dissout \(m = 5{,}85\ \mathrm g\) de NaCl dans un volume final \(V=250\ \mathrm{mL}=0{,}250\ \mathrm L\).</p>
+          <p>\(n = m/M = 5{,}85/58{,}5 = 0{,}100\ \mathrm{mol}\)</p>
+          <p>\(c = n/V = 0{,}100/0{,}250 = \mathbf{0{,}400\ mol\,L^{-1}}\)</p></div>
+
+          <h2 id="c4">IV. Dilution</h2>
+          <div class="box def"><div class="box-label">Loi de conservation de la matière lors d'une dilution</div>
+          <p>En ajoutant du solvant (eau), la quantité de matière du soluté est conservée :</p>
+          <div class="formula">$$n_{\text{soluté}} = \text{constante} \quad \Longrightarrow \quad \boxed{c_1 V_1 = c_2 V_2}$$</div>
+          <p>\(c_1\), \(V_1\) : solution mère (avant dilution) — \(c_2\), \(V_2\) : solution fille (après dilution).</p></div>
+
+          <div class="box prop"><div class="box-label">Facteur de dilution \(f\)</div>
+          <div class="formula">$$f = \frac{V_2}{V_1} = \frac{c_1}{c_2} \geq 1$$</div>
+          <p>Exemple : diluer 10 fois une solution à \(c_1=0{,}50\ \mathrm{mol\,L^{-1}}\) → \(c_2=0{,}050\ \mathrm{mol\,L^{-1}}\). Si \(V_2=100\ \mathrm{mL}\), alors \(V_1=10\ \mathrm{mL}\).</p></div>
+
+          <div class="box warn"><div class="box-label">Protocole de dilution</div>
+          <p>1. Prélever \(V_1\) de solution mère à la pipette jaugée. 2. Introduire dans une fiole jaugée de \(V_2\). 3. Compléter avec de l'eau distillée jusqu'au trait de jauge. 4. Homogénéiser. Ne jamais ajouter de soluté !</p></div>
+
+          <h2 id="c5">V. Volume molaire des gaz</h2>
+          <div class="box def"><div class="box-label">Volume molaire \(V_m\)</div>
+          <p>À température et pression fixées, le volume occupé par une mole de <em>tout</em> gaz parfait est le même : c'est le <strong>volume molaire</strong> \(V_m\).</p>
+          <div class="formula">$$n_{\text{gaz}} = \frac{V_{\text{gaz}}}{V_m}$$</div>
+          <p>Valeurs standard : \(V_m\approx22{,}4\ \mathrm{L\,mol^{-1}}\) à 0°C et 1 atm · \(V_m\approx24{,}0\ \mathrm{L\,mol^{-1}}\) à 20°C et 1 atm.</p></div>
+
+          <div class="box prop"><div class="box-label">Loi des gaz parfaits</div>
+          <div class="formula">$$PV = nRT \qquad R = 8{,}314\ \mathrm{J\,mol^{-1}\,K^{-1}}$$</div>
+          <p>\(P\) en Pa · \(V\) en m³ · \(T\) en K · \(n\) en mol. On en déduit \(V_m=RT/P\).</p></div>
+
+          <h2 id="c6">VI. Spectroscopie d'absorbance</h2>
+          <div class="box def"><div class="box-label">Spectre d'absorption — couleur d'une solution</div>
+          <p>Une solution colorée <strong>absorbe</strong> certaines longueurs d'onde et <strong>transmet</strong> les autres. La couleur <em>perçue</em> est la couleur <strong>complémentaire</strong> de la couleur absorbée.</p></div>
+
+          <div class="table-wrap"><table><thead><tr><th>Couleur absorbée</th><th>\(\lambda_{\text{abs}}\) (nm)</th><th>Couleur perçue (complémentaire)</th></tr></thead><tbody>
+            <tr><td>Violet</td><td>400–435</td><td>Jaune-vert</td></tr>
+            <tr><td>Bleu</td><td>435–480</td><td>Orange</td></tr>
+            <tr><td>Bleu-vert</td><td>480–500</td><td>Rouge</td></tr>
+            <tr><td>Vert</td><td>500–560</td><td>Rouge-violet (magenta)</td></tr>
+            <tr><td>Jaune-vert</td><td>560–580</td><td>Violet</td></tr>
+            <tr><td>Jaune</td><td>580–600</td><td>Violet</td></tr>
+            <tr><td>Orange</td><td>600–625</td><td>Bleu</td></tr>
+            <tr><td>Rouge</td><td>625–750</td><td>Vert</td></tr>
+          </tbody></table></div>
+
+          <p>Exemple : le permanganate de potassium \(\mathrm{KMnO_4}\) absorbe le vert (\(\lambda\approx530\ \mathrm{nm}\)) → couleur perçue = <strong>violet</strong>.</p>
+
+          <div class="box prop"><div class="box-label">Absorbance \(A\)</div>
+          <div class="formula">$$A = \log\!\left(\frac{I_0}{I}\right) = -\log(T)$$</div>
+          <p>\(I_0\) = intensité lumineuse incidente · \(I\) = intensité transmise · \(T = I/I_0\) = transmittance. \(A\) est <strong>sans unité</strong>.</p>
+          <p>Repères : \(A=0\) → pas d'absorption (\(T=100\%\)) · \(A=1\) → absorption de 90% (\(T=10\%\)) · \(A=2\) → absorption de 99%.</p></div>
+
+          <div class="box ok"><div class="box-label">Choix de la longueur d'onde de mesure</div>
+          <p>On mesure à \(\lambda_{\max}\), la longueur d'onde du <strong>maximum d'absorption</strong>. C'est là où \(\varepsilon\) est maximal → la mesure est la plus sensible et la plus précise.</p></div>
+
+          <h2 id="c7">VII. Loi de Beer-Lambert</h2>
+          <div class="box def"><div class="box-label">Loi de Beer-Lambert</div>
+          <div class="formula">$$\boxed{A = \varepsilon(\lambda)\cdot l \cdot c}$$</div>
+          <table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th><th>Commentaire</th></tr></thead><tbody>
+            <tr><td>Absorbance</td><td>\(A\)</td><td>sans unité</td><td>grandeur mesurée</td></tr>
+            <tr><td>Coefficient d'extinction molaire</td><td>\(\varepsilon\)</td><td>L·mol⁻¹·cm⁻¹</td><td>dépend de \(\lambda\) et de la substance</td></tr>
+            <tr><td>Longueur du trajet optique</td><td>\(l\)</td><td>cm</td><td>largeur de la cuve (souvent 1 cm)</td></tr>
+            <tr><td>Concentration molaire</td><td>\(c\)</td><td>mol·L⁻¹</td><td>c'est la grandeur cherchée lors d'un dosage</td></tr>
+          </tbody></table></div>
+
+          <div class="box prop"><div class="box-label">Interprétation graphique</div>
+          <p>À \(\lambda\) et \(l\) fixés, \(A\) est <strong>proportionnelle</strong> à \(c\) → la courbe \(A = f(c)\) est une droite passant par l'origine. On parle de <em>droite d'étalonnage</em>.</p>
+          <p>La pente de cette droite vaut \(\varepsilon \cdot l\).</p></div>
+
+          <div class="box warn"><div class="box-label">Conditions de validité</div>
+          <p>1. Solution <strong>diluée</strong> (\(c \lesssim 10^{-2}\ \mathrm{mol\,L^{-1}}\)) — 2. Radiation <strong>monochromatique</strong> centrée sur \(\lambda_{\max}\) — 3. Pas de réaction chimique dans la cuve — 4. Si \(A > 1\), diluer la solution inconnue.</p></div>
+
+          <h2 id="c8">VIII. Dosage par étalonnage</h2>
+          <div class="box ok"><div class="box-label">Protocole complet</div>
+          <p>1. Préparer des solutions étalons de concentrations connues \(c_1 < c_2 < \ldots < c_n\).</p>
+          <p>2. Mesurer l'absorbance \(A_i\) de chaque étalon à \(\lambda_{\max}\) (longueur d'onde d'absorption maximale de la solution).</p>
+          <p>3. Tracer \(A = f(c)\) → régression linéaire. La droite doit passer par l'origine.</p>
+          <p>4. Mesurer \(A_{\text{inconnue}}\) → lire \(c_{\text{inconnue}}\) sur la droite d'étalonnage.</p></div>
+
+          <div class="box def"><div class="box-label">Exemple de dosage — diiode \(\mathrm{I_2}\)</div>
+          <p>Droite étalonnage : \(A = 650\,c\) avec \(c\) en \(\mathrm{mol\,L^{-1}}\). Mesure : \(A_{\text{inconnue}} = 0{,}92\).</p>
+          <div class="formula">$$c_{\text{inconnue}} = \frac{A_{\text{inconnue}}}{\varepsilon \cdot l} = \frac{0{,}92}{650} = 1{,}42\times10^{-3}\ \mathrm{mol\,L^{-1}}$$</div></div>
+
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== OUTILS ===================== -->
+    <section class="panel" id="tab-outils">
+      <article class="content-card">
+        <h3>Relations &amp; Dimensions</h3>
+        <p class="small">Toutes les grandeurs doivent être exprimées dans les unités indiquées avant d'appliquer les relations.</p>
+        <div class="cards">
+          <div class="card"><h4>Masse molaire</h4>
+          <div class="formula">$$M = \sum_i a_i\,M(E_i)$$</div>
+          <p>\(M\) en \(\mathrm{g\,mol^{-1}}\), \(a_i\) indice stœchiométrique, \(M(E_i)\) masse molaire atomique de l'élément \(E_i\).</p>
+          <p class="small">Dimension : \([M] = M\,N^{-1}\) (masse par quantité de matière).</p></div>
+
+          <div class="card"><h4>Quantité de matière</h4>
+          <div class="formula">$$n = \frac{m}{M} \quad;\quad m = n\,M$$</div>
+          <p>\(n\) en mol · \(m\) en g · \(M\) en g·mol⁻¹. Vérification dimensionnelle : \(\mathrm{g / (g\,mol^{-1}) = mol}\).</p></div>
+
+          <div class="card"><h4>Nombre d'entités</h4>
+          <div class="formula">$$N = n \times N_A$$</div>
+          <p>\(N\) sans unité · \(n\) en mol · \(N_A = 6{,}022\times10^{23}\ \mathrm{mol^{-1}}\). \(\quad n = N / N_A\).</p></div>
+
+          <div class="card"><h4>Concentration molaire</h4>
+          <div class="formula">$$c = \frac{n}{V} \quad;\quad n = c\,V$$</div>
+          <p>\(c\) en mol·L⁻¹ · \(n\) en mol · \(V\) en L. Vérification : \(\mathrm{mol / L = mol\,L^{-1}}\).</p></div>
+
+          <div class="card"><h4>Concentration massique</h4>
+          <div class="formula">$$C_m = \frac{m}{V} = c \times M$$</div>
+          <p>\(C_m\) en g·L⁻¹ · \(m\) en g · \(V\) en L. Lien : si \(c\) est connu, \(C_m = c \times M\).</p></div>
+
+          <div class="card"><h4>Dilution</h4>
+          <div class="formula">$$c_1 V_1 = c_2 V_2$$</div>
+          <p>\(c_1\) et \(V_1\) : solution mère · \(c_2\) et \(V_2\) : solution fille. Facteur \(f = c_1/c_2 = V_2/V_1 \geq 1\).</p></div>
+
+          <div class="card"><h4>Volume molaire des gaz</h4>
+          <div class="formula">$$n = \frac{V_{\text{gaz}}}{V_m} \quad;\quad PV = nRT$$</div>
+          <p>\(V_m = 24{,}0\ \mathrm{L\,mol^{-1}}\) à 20°C, 1 atm. \(R=8{,}314\ \mathrm{J\,mol^{-1}\,K^{-1}}\).</p></div>
+
+          <div class="card"><h4>Beer-Lambert</h4>
+          <div class="formula">$$A = \varepsilon\,l\,c$$</div>
+          <p>\(A\) sans unité · \(\varepsilon\) en L·mol⁻¹·cm⁻¹ · \(l\) en cm · \(c\) en mol·L⁻¹. Pente droite étalonnage = \(\varepsilon\,l\).</p></div>
+        </div>
+
+        <div class="box ok" style="margin-top:18px"><div class="box-label">Méthode dimensionnelle — Beer-Lambert</div>
+        <p>Vérification : \(\varepsilon\,l\,c = \mathrm{(L\,mol^{-1}\,cm^{-1})\,(cm)\,(mol\,L^{-1})} = \mathrm{L\,mol^{-1}\cdot mol\,L^{-1}} = 1\) (sans unité). ✓</p></div>
+
+        <div class="box warn" style="margin-top:12px"><div class="box-label">Conversions indispensables</div>
+        <p>1 L = 10⁻³ m³ · 1 mL = 10⁻³ L · 1 mmol = 10⁻³ mol · 1 μmol = 10⁻⁶ mol · 1 g = 10⁻³ kg. Toujours homogénéiser les unités avant le calcul.</p></div>
+      </article>
+    </section>
+
+    <!-- ===================== EXERCICES ===================== -->
+    <section class="panel" id="tab-exercices">
+      <article class="content-card">
+        <h3>Exercices d'entraînement corrigés</h3>
+
+        <div class="exercise"><h4>Exercice 1 — Masse molaire du sulfate de cuivre pentahydraté</h4>
+        <p>Le sulfate de cuivre pentahydraté a pour formule \(\mathrm{CuSO_4 \cdot 5H_2O}\). Calculer sa masse molaire. Données : \(M(\mathrm{Cu})=63{,}5\), \(M(\mathrm{S})=32{,}1\), \(M(\mathrm{O})=16{,}0\), \(M(\mathrm{H})=1{,}0\ \mathrm{g\,mol^{-1}}\).</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$M = 63{,}5 + 32{,}1 + 4\times16{,}0 + 5\times(2\times1{,}0+16{,}0) = 63{,}5+32{,}1+64{,}0+90{,}0 = 249{,}6\ \mathrm{g\,mol^{-1}}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 2 — Quantité de matière et nombre d'entités</h4>
+        <p>On dispose de 9,0 g d'eau \(\mathrm{H_2O}\) (\(M=18{,}0\ \mathrm{g\,mol^{-1}}\)). Calculer la quantité de matière \(n\) et le nombre de molécules \(N\).</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$n = \frac{m}{M} = \frac{9{,}0}{18{,}0} = 0{,}50\ \mathrm{mol}$$</div>
+        <div class="formula">$$N = n \times N_A = 0{,}50 \times 6{,}022\times10^{23} = 3{,}01\times10^{23}\ \text{molécules}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 3 — Préparation d'une solution de NaCl</h4>
+        <p>On prépare 500 mL d'une solution de chlorure de sodium à \(c = 0{,}200\ \mathrm{mol\,L^{-1}}\). Quelle masse de NaCl faut-il peser ? (\(M(\mathrm{NaCl})=58{,}5\ \mathrm{g\,mol^{-1}}\))</p>
+        <details><summary>Afficher la correction</summary>
+        <p>Conversion : \(V = 500\ \mathrm{mL} = 0{,}500\ \mathrm{L}\).</p>
+        <div class="formula">$$n = c \times V = 0{,}200 \times 0{,}500 = 0{,}100\ \mathrm{mol}$$</div>
+        <div class="formula">$$m = n \times M = 0{,}100 \times 58{,}5 = 5{,}85\ \mathrm{g}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 4 — Dilution</h4>
+        <p>On dispose d'une solution mère de HCl à \(c_1 = 1{,}0\ \mathrm{mol\,L^{-1}}\). On prélève \(V_1 = 20{,}0\ \mathrm{mL}\) et on dilue dans une fiole de \(V_2 = 200\ \mathrm{mL}\). Calculer \(c_2\).</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$c_2 = \frac{c_1 V_1}{V_2} = \frac{1{,}0 \times 20{,}0}{200} = 0{,}10\ \mathrm{mol\,L^{-1}}$$</div>
+        <p>Facteur de dilution : \(f = V_2/V_1 = 200/20{,}0 = 10\).</p></details></div>
+
+        <div class="exercise"><h4>Exercice 5 — Volume molaire des gaz</h4>
+        <p>On mesure un volume de \(V = 2{,}40\ \mathrm{L}\) de dioxygène \(\mathrm{O_2}\) à 20°C et 1 atm. Calculer la quantité de matière et la masse de ce gaz. (\(M(\mathrm{O_2})=32{,}0\ \mathrm{g\,mol^{-1}}\), \(V_m=24{,}0\ \mathrm{L\,mol^{-1}}\))</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$n = \frac{V}{V_m} = \frac{2{,}40}{24{,}0} = 0{,}100\ \mathrm{mol}$$</div>
+        <div class="formula">$$m = n \times M = 0{,}100 \times 32{,}0 = 3{,}20\ \mathrm{g}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 6 — Loi de Beer-Lambert</h4>
+        <p>Une solution de bleu de méthylène a un coefficient \(\varepsilon = 7{,}4\times10^4\ \mathrm{L\,mol^{-1}\,cm^{-1}}\) à \(\lambda_{\max}=664\ \mathrm{nm}\). Cuve de \(l=1{,}00\ \mathrm{cm}\). On mesure \(A=0{,}555\). Calculer la concentration \(c\).</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$c = \frac{A}{\varepsilon \cdot l} = \frac{0{,}555}{7{,}4\times10^4 \times 1{,}00} = 7{,}5\times10^{-6}\ \mathrm{mol\,L^{-1}}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 7 — Dosage par étalonnage (permanganate)</h4>
+        <p>Droite d'étalonnage de \(\mathrm{KMnO_4}\) à \(\lambda_{\max}=530\ \mathrm{nm}\) : \(A = 2{,}50\times10^3 \cdot c\) avec \(c\) en \(\mathrm{mol\,L^{-1}}\). Solution inconnue : \(A_x = 0{,}625\). Calculer \(c_x\), puis la concentration massique.</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$c_x = \frac{A_x}{2{,}50\times10^3} = \frac{0{,}625}{2500} = 2{,}50\times10^{-4}\ \mathrm{mol\,L^{-1}}$$</div>
+        <p>\(M(\mathrm{KMnO_4})=158{,}0\ \mathrm{g\,mol^{-1}}\)</p>
+        <div class="formula">$$C_m = c_x \times M = 2{,}50\times10^{-4} \times 158{,}0 = 3{,}95\times10^{-2}\ \mathrm{g\,L^{-1}}$$</div></details></div>
+
+        <div class="exercise"><h4>Exercice 8 — Bilan de synthèse</h4>
+        <p>On dissout \(m=4{,}90\ \mathrm g\) d'acide sulfurique \(\mathrm{H_2SO_4}\) dans 500 mL de solution. 1. Calculer \(M(\mathrm{H_2SO_4})\). 2. Calculer \(n\). 3. Calculer \(c\). 4. Sachant que \(K=800\ \mathrm{L\,mol^{-1}\,cm^{-1}}\) et \(l=1\ \mathrm{cm}\), calculer \(A\) à la longueur d'onde d'absorption.</p>
+        <details><summary>Afficher la correction</summary>
+        <div class="formula">$$M = 2\times1{,}0+32{,}1+4\times16{,}0 = 98{,}1\ \mathrm{g\,mol^{-1}}$$</div>
+        <div class="formula">$$n = 4{,}90/98{,}1 = 0{,}0499\ \mathrm{mol} \approx 5{,}0\times10^{-2}\ \mathrm{mol}$$</div>
+        <div class="formula">$$c = 0{,}0499/0{,}500 = 9{,}98\times10^{-2}\ \mathrm{mol\,L^{-1}}\approx 0{,}100\ \mathrm{mol\,L^{-1}}$$</div>
+        <div class="formula">$$A = \varepsilon\,l\,c = 800\times1\times0{,}100 = 80\quad\text{(hors linéarité : diluer !)}$$</div>
+        <p>Une absorbance de 80 montre que la loi de Beer-Lambert n'est plus linéaire : il faut diluer au minimum par un facteur 80.</p></details></div>
+
+      </article>
+    </section>
+
+    <!-- ===================== FLASHCARDS ===================== -->
+    <section class="panel" id="tab-flashcards">
+      <article class="content-card">
+        <h3>Flashcards enrichies — 18 cartes</h3>
+        <p class="small">Clique sur une carte pour retourner la réponse.</p>
+        <div class="flashcard-grid" id="fcGrid"></div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+          <button class="btn" onclick="renderFC()">↺ Réinitialiser</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== QUIZ ===================== -->
+    <section class="panel" id="tab-quiz">
+      <article class="content-card">
+        <h3>Quiz &amp; Chatbot</h3>
+        <div class="ai-grid">
+          <div class="quiz-box">
+            <div id="quizQuestion"></div>
+            <div id="quizOptions"></div>
+            <div id="quizFeedback" class="sim-result" style="display:none"></div>
+            <button class="btn primary" style="margin-top:10px" onclick="nextQuiz()">Question suivante →</button>
+          </div>
+          <div class="card">
+            <h4>Prompt IA contextualisé</h4>
+            <textarea id="aiPrompt" class="prompt-box">Tu es professeur de Première spécialité physique-chimie. Explique le chapitre "La mole et la spectroscopie". Couvre : masse molaire M, relation n=m/M, nombre d'Avogadro N_A, concentration molaire c=n/V, concentration massique C_m=m/V, dilution c1V1=c2V2, volume molaire des gaz, absorbance A=log(I0/I), loi de Beer-Lambert A=εlc, dosage par étalonnage. Pour chaque notion : définition, formule MathJax, unités SI, exemple numérique, piège fréquent.</textarea>
+            <div class="btn-row">
+              <button class="btn primary" onclick="copyPrompt()">Copier le prompt</button>
+              <a class="btn" href="https://chat.openai.com/" target="_blank" rel="noopener">ChatGPT</a>
+              <a class="btn" href="https://claude.ai/" target="_blank" rel="noopener">Claude</a>
+              <a class="btn" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== MINDMAP ===================== -->
+    <section class="panel" id="tab-mindmap">
+      <article class="content-card">
+        <h3>Carte mentale</h3>
+        <div class="mindmap">
+          <div class="map-center">La mole &amp; la spectroscopie — 1ère Spé</div>
+          <div class="map-branches">
+            <div class="map-branch"><h4 style="color:var(--active)">Masse molaire</h4><ul><li>\(M = \sum a_i M(E_i)\)</li><li>Unité : g·mol⁻¹</li><li>Lue dans le tableau périodique</li><li>Calculée sur la formule</li></ul></div>
+            <div class="map-branch"><h4 style="color:#ffb86b">La mole</h4><ul><li>\(N_A = 6{,}022\times10^{23}\ \mathrm{mol^{-1}}\)</li><li>\(n = m/M\)</li><li>\(N = n \times N_A\)</li><li>Unité de quantité de matière</li></ul></div>
+            <div class="map-branch"><h4 style="color:#a3ff5f">Concentrations</h4><ul><li>\(c = n/V\) (mol·L⁻¹)</li><li>\(C_m = m/V\) (g·L⁻¹)</li><li>\(C_m = c \times M\)</li><li>Dilution : \(c_1 V_1 = c_2 V_2\)</li></ul></div>
+            <div class="map-branch"><h4 style="color:#ff6bd6">Volume molaire</h4><ul><li>\(n = V/V_m\)</li><li>\(V_m = 24{,}0\ \mathrm{L\,mol^{-1}}\) à 20°C</li><li>\(PV = nRT\)</li><li>Loi des gaz parfaits</li></ul></div>
+            <div class="map-branch"><h4 style="color:#00ffb3">Spectroscopie</h4><ul><li>Couleur absorbée ≠ couleur perçue</li><li>Complémentaire du cercle chromatique</li><li>Absorbance \(A = \log(I_0/I)\)</li><li>Mesure à \(\lambda_{\max}\)</li></ul></div>
+            <div class="map-branch"><h4 style="color:var(--red)">Beer-Lambert</h4><ul><li>\(A = \varepsilon\,l\,c\)</li><li>Droite étalonnage passant par O</li><li>Dosage : \(c = A/(\varepsilon l)\)</li><li>Valide si \(A \leq 1\) et solution diluée</li></ul></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== SIMULATIONS ===================== -->
+    <section class="panel" id="tab-simulations">
+      <article class="content-card">
+        <h3>Simulations locales — neon fine</h3>
+        <div class="sim-grid">
+
+          <div style="border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.05);box-shadow:var(--shadow2)">
+            <div style="padding:14px"><h4>Simulateur 1 — Compteur moléculaire Avogadro</h4>
+            <p style="font-size:13px;color:var(--muted)">Visualiser combien de molécules contient une quantité de matière donnée.</p>
+            <div class="control"><label>\(n\) (mmol)</label><input type="range" id="avN" min="0.01" max="2" step="0.01" value="0.5" oninput="drawAvogadro()" /></div>
+            <div class="neon-canvas-wrap"><canvas id="avCanvas" class="canvas" width="900" height="260"></canvas></div>
+            <div id="avResult" class="sim-result"></div>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.05);box-shadow:var(--shadow2)">
+            <div style="padding:14px"><h4>Simulateur 2 — Beer-Lambert coloré</h4>
+            <p style="font-size:13px;color:var(--muted)">Observer l'intensité de couleur d'une solution en fonction de sa concentration.</p>
+            <div class="control"><label>\(c\) (mmol·L⁻¹)</label><input type="range" id="blC" min="0.1" max="10" step="0.1" value="2" oninput="drawBeerColor()" /></div>
+            <div class="control"><label>\(l\) (cm)</label><input type="range" id="blL" min="0.5" max="5" step="0.5" value="1" oninput="drawBeerColor()" /></div>
+            <div class="neon-canvas-wrap"><canvas id="blCanvas" class="canvas" width="900" height="260"></canvas></div>
+            <div id="blResult" class="sim-result"></div>
+            </div>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="content-card" style="margin-top:14px">
+        <h3>Simulateur 3 — Calculateur \(n = m/M\) interactif</h3>
+        <div class="control"><label>Masse \(m\) (g)</label><input type="range" id="calcM" min="1" max="500" step="1" value="90" oninput="drawCalcNMM()" /></div>
+        <div class="control"><label>Masse molaire \(M\) (g·mol⁻¹)</label><input type="range" id="calcMM" min="1" max="400" step="1" value="180" oninput="drawCalcNMM()" /></div>
+        <canvas id="calcCanvas" class="canvas" width="900" height="200"></canvas>
+        <div id="calcResult" class="sim-result"></div>
+      </article>
+
+      <article class="content-card" style="margin-top:14px">
+        <h3>PhET Colorado intégrées</h3>
+        <div class="sim-grid">
+          <div class="sim-card">
+            <iframe title="PhET Molarité" loading="lazy" src="https://phet.colorado.edu/sims/html/molarity/latest/molarity_fr.html"></iframe>
+            <div class="sim-body"><h4>PhET — Molarité</h4><p style="font-size:13px;color:var(--muted)">Visualisez la relation entre quantité de matière, volume et concentration. Observez la couleur changer avec \(c\).</p></div>
+          </div>
+          <div class="sim-card">
+            <iframe title="PhET Loi de Beer" loading="lazy" src="https://phet.colorado.edu/sims/html/beers-law-lab/latest/beers-law-lab_fr.html"></iframe>
+            <div class="sim-body"><h4>PhET — Loi de Beer</h4><p style="font-size:13px;color:var(--muted)">Vérifiez \(A=\varepsilon\,l\,c\). Modifiez \(c\), \(l\), \(\lambda\) et observez l'absorbance varier linéairement.</p></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== ECE ===================== -->
+    <section class="panel" id="tab-ece">
+      <article class="content-card">
+        <h3>ECE — Dosage spectrophotométrique d'une solution colorée</h3>
+        <p style="color:var(--muted)">Objectif : déterminer la concentration d'une solution de bleu de méthylène inconnue par étalonnage spectrophotométrique.</p>
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Préparer les solutions étalons</b><p>Préparer 5 solutions de bleu de méthylène de concentrations connues : \(0{,}5 / 1{,}0 / 2{,}0 / 3{,}0 / 4{,}0\ \mu\mathrm{mol\,L^{-1}}\) par dilutions successives depuis une solution mère.</p></div>
+          <div class="ece-step"><b>2. Choisir \(\lambda_{\max}\)</b><p>Le bleu de méthylène absorbe principalement vers 664 nm (rouge). Régler le spectrophotomètre à \(\lambda_{\max}=664\ \mathrm{nm}\). C'est là où \(\varepsilon\) est maximal.</p></div>
+          <div class="ece-step"><b>3. Mesurer les absorbances</b><p>Étalonner à blanc (eau distillée, \(A_0=0\)). Mesurer \(A_i\) pour chaque solution étalon. Remplir le tableau \((c_i,A_i)\).</p></div>
+          <div class="ece-step"><b>4. Tracer la droite étalonnage</b><p>Tracer \(A = f(c)\) sur papier millimétré ou tableur. Vérifier la linéarité (la droite doit passer par l'origine). Déterminer la pente \(\varepsilon\,l\).</p></div>
+          <div class="ece-step"><b>5. Doser la solution inconnue</b><p>Mesurer \(A_{\text{inconnue}}\). Lire \(c_{\text{inconnue}}\) sur la droite. Si \(A > 1\), diluer d'abord la solution.</p></div>
+          <div class="ece-step"><b>6. Calculer et valider</b><p>Calculer \(c_{\text{inconnue}} = A / (\varepsilon\,l)\). Vérifier que le point se trouve bien dans la zone linéaire. Exprimer le résultat avec son incertitude.</p></div>
+        </div>
+        <div class="box warn" style="margin-top:14px"><div class="box-label">Sécurité et précision</div>
+        <p>Rincer la cuve à l'eau distillée entre chaque mesure · Placer la cuve dans le même sens à chaque fois · Le blanc doit être mesuré avec le même solvant que les solutions · Agiter avant la mesure.</p></div>
+        <canvas id="eceCanvas" class="canvas" width="900" height="300" style="margin-top:14px"></canvas>
+        <div class="val-grid">
+          <div><b>Relation utilisée</b><br>\(A = \varepsilon\,l\,c\) — droite étalonnage</div>
+          <div><b>Conclusion</b><br>Pente = \(\varepsilon\,l\) · lecture graphique de \(c_x\)</div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== VERS TERMINALE ===================== -->
+    <section class="panel" id="tab-terminale">
+      <article class="content-card">
+        <h3>Vers Terminale &amp; Prépa PCSI</h3>
+        <div class="cards">
+          <div class="card"><h4>Tableau d'avancement</h4>
+          <p>En Terminale, la mole sert à remplir le tableau d'avancement d'une réaction chimique. À l'état initial, \(n_0\) ; à l'état final, \(n_0 - a\xi\) pour un réactif consommé avec un coefficient \(a\).</p>
+          <div class="formula">$$n(A,t) = n_0(A) - a\,\xi$$</div></div>
+
+          <div class="card"><h4>Dosages acide-base</h4>
+          <p>En Terminale, le dosage par étalonnage est complété par le dosage par réaction (titrage). La relation \(c_1 V_1 = c_2 V_2 / (\nu_1/\nu_2)\) s'applique à l'équivalence.</p>
+          <div class="formula">$$\frac{n(A)_{\text{éq}}}{\nu_A} = \frac{n(B)_{\text{éq}}}{\nu_B}$$</div></div>
+
+          <div class="card"><h4>Spectroscopie en Terminale</h4>
+          <p>La spectrophotométrie est complétée par la spectroscopie IR (liaisons chimiques) et la RMN (environnement des protons), toutes utilisent la même logique d'interaction lumière-matière.</p></div>
+
+          <div class="card"><h4>En PCSI — Chimie des solutions</h4>
+          <p>Les concentrations deviennent des activités, la loi de Beer-Lambert est utilisée pour le suivi cinétique et le dosage de mélanges. L'activité \(a_i = c_i / c°\) avec \(c°=1\ \mathrm{mol\,L^{-1}}\).</p></div>
+        </div>
+        <div class="box ok" style="margin-top:14px"><div class="box-label">Pont conceptuel</div>
+        <p>Maîtriser \(n = m/M\) et \(c = n/V\) est indispensable pour tout le cours de chimie en Terminale et en CPGE. Ces deux relations apparaissent dans presque tous les exercices de chimie des solutions, cinétique chimique, et équilibres.</p></div>
+      </article>
+    </section>
+
+  </div><!-- /page -->
+
+    </main>
+  </div>
+</div>
+<script>
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

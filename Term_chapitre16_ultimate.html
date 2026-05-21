@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 16 — Noyaux, masse et énergie | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1375,44 +1373,366 @@ u_c=\sqrt{u_A^2+u_B^2}
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+/* THEME */
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap')&&document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pt=document.getElementById('progressTop');const pl=document.getElementById('pctLbl');if(pt)pt.style.width=pct+'%';if(pl)pl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap16';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap16']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEURS */
+function calcDecroissance(){
+  const N0=parseFloat(document.getElementById('dec-N0').value)||1000;
+  const t12=parseFloat(document.getElementById('dec-t12').value)||5.0;
+  const t=parseFloat(document.getElementById('dec-t').value)||10.0;
+  const lambda=Math.log(2)/t12;
+  const Nt=N0*Math.exp(-lambda*t);
+  const A=lambda*Nt;
+  const pctDecay=((N0-Nt)/N0*100);
+  document.getElementById('dec-result').innerHTML=`
+    <strong>Loi de décroissance : N(t) = N₀ × e⁻ᵏᵗ</strong><br>
+    λ = ln2 / t½ = 0,693 / ${t12} = <strong>${lambda.toExponential(3)} s⁻¹</strong><br>
+    N(t) = ${N0} × e^(−${lambda.toExponential(3)} × ${t}) = <span style="font-size:18px;color:var(--accent)">${Nt.toFixed(2)}</span> noyaux<br>
+    Activité A = λ × N = <strong>${A.toExponential(3)} Bq</strong><br>
+    <small>Pourcentage décroché : ${pctDecay.toFixed(1)} % — Il reste ${((Nt/N0)*100).toFixed(1)} % des noyaux</small>`;
+}
+calcDecroissance();
+
+function calcEnergie(){
+  const dm_u=parseFloat(document.getElementById('erg-dm').value);
+  const A1=parseInt(document.getElementById('erg-A1').value)||0;
+  const Z1=parseInt(document.getElementById('erg-Z1').value)||0;
+  const A2=parseInt(document.getElementById('erg-A2').value)||0;
+  const Z2=parseInt(document.getElementById('erg-Z2').value)||0;
+  const A3=parseInt(document.getElementById('erg-A3').value)||0;
+  const Z3=parseInt(document.getElementById('erg-Z3').value)||0;
+  let dm,dE_MeV,dE_J;
+  if(!isNaN(dm_u)&&dm_u!==0){
+    dm=dm_u;
+    dE_MeV=Math.abs(dm)*931.5;
+    dE_J=Math.abs(dm)*1.66054e-27*9e16;
+    document.getElementById('erg-result').innerHTML=`
+      <strong>Conversion masse-énergie</strong><br>
+      Δm = ${dm.toExponential(4)} u<br>
+      ΔE = |Δm| × 931,5 = <span style="font-size:18px;color:var(--accent)">${dE_MeV.toFixed(2)} MeV</span><br>
+      ΔE = |Δm| × c² = <strong>${dE_J.toExponential(3)} J</strong><br>
+      <small>1 u = 1,66054×10⁻²⁷ kg ↔ 931,5 MeV/c²</small>`;
+  } else if(A1>0&&A2>0&&A3>0){
+    const N1=A1-Z1, N2=A2-Z2, N3=A3-Z3;
+    const msg=`Réaction : ¹⁽¹⁾₍₁₎X → ²⁽²⁾₍₂₎Y + ³⁽³⁾₍₃₎Z<br>`+
+      `<small>Conservation A : ${A1} → ${A2}+${A3}=${A2+A3} ${A1===A2+A3?'✓':'✗'} | Z : ${Z1} → ${Z2}+${Z3}=${Z2+Z3} ${Z1===Z2+Z3?'✓':'✗'}</small><br>`+
+      `Entrez Δm en u pour calculer l'énergie libérée.`;
+    document.getElementById('erg-result').innerHTML=`<strong>Vérification de conservation</strong><br>${msg}`;
+  } else {
+    document.getElementById('erg-result').innerHTML=`<strong>Entrez soit Δm (en u), soit les nombres A/Z pour vérifier la conservation.</strong>`;
+  }
+}
+calcEnergie();
+
+/* FLASHCARDS */
+const FC=[
+{icon:'⚛️',q:"Qu'est-ce qu'un nucléon ?",a:"Un nucléon est un constituant du noyau : proton (charge +e) ou neutron (neutre). Le nombre de masse A = Z + N.",formula:'A = [___] + N',blanks:['Z'],answers:['Z'],topic:'Noyau'},
+{icon:'🔬',q:"Que sont des isotopes ?",a:"Des noyaux ayant même numéro atomique Z mais des nombres de masse A différents. Même élément chimique, masses différentes.",formula:'Isotopes : même [___], A différents',blanks:['Z'],answers:['Z'],topic:'Noyau'},
+{icon:'☢️',q:"Qu'est-ce que la radioactivité α ?",a:"Émission d'un noyau d'hélium ⁴₂He. Le noyau père perd 4 nucléons et 2 protons : A→A−4, Z→Z−2.",formula:'α : ΔA = [___], ΔZ = −2',blanks:['−4'],answers:['−4','-4'],topic:'Radioactivité'},
+{icon:'⚡',q:"Qu'est-ce que la radioactivité β⁻ ?",a:"Conversion d'un neutron en proton avec émission d'un électron et d'un antineutrino. A conservé, Z augmente de 1.",formula:'β⁻ : n → p + [___] + ν̄',blanks:['e⁻'],answers:['e⁻','e-','électron'],topic:'Radioactivité'},
+{icon:'💫',q:"Qu'est-ce que la radioactivité β⁺ ?",a:"Conversion d'un proton en neutron avec émission d'un positon et d'un neutrino. A conservé, Z diminue de 1.",formula:'β⁺ : p → n + [___] + ν',blanks:['e⁺'],answers:['e⁺','e+','positon'],topic:'Radioactivité'},
+{icon:'⏱️',q:"Qu'est-ce que la demi-vie t₁/₂ ?",a:"Le temps au bout duquel la moitié des noyaux radioactifs se sont désintégrés. Elle est liée à λ par t₁/₂ = ln2/λ.",formula:'t₁/₂ = [___] / λ',blanks:['ln 2'],answers:['ln 2','ln2','0,693'],topic:'Radioactivité'},
+{icon:'📐',q:"Quelle est la loi de décroissance radioactive ?",a:"N(t) = N₀ × e^(−λt). Le nombre de noyaux diminue exponentiellement avec le temps.",formula:'N(t) = [___] × e^(−λt)',blanks:['N₀'],answers:['N₀','N0','N_0'],topic:'Radioactivité'},
+{icon:'🔋',q:"Qu'est-ce que le défaut de masse ?",a:"La différence entre la masse des nucléons séparés et la masse du noyau : Δm = Zmₚ + Nmₙ − m_noyau > 0.",formula:'Δm = Zmₚ + Nmₙ − [___]',blanks:['m_noyau'],answers:['m_noyau','m(noyau)','m_noy'],topic:'Énergie'},
+{icon:'💡',q:"Qu'est-ce que l'énergie de liaison ?",a:"L'énergie qu'il faut fournir pour dissocier le noyau en nucléons isolés : Eℓ = Δm × c². Elle mesure la stabilité du noyau.",formula:'Eℓ = [___] × c²',blanks:['Δm'],answers:['Δm','deltam','défaut de masse'],topic:'Énergie'},
+{icon:'⚖️',q:"Quelle est la relation d'Einstein ?",a:"E = mc². Toute masse peut être convertie en énergie et réciproquement. 1 u ↔ 931,5 MeV/c².",formula:'E = [___] × c²',blanks:['m'],answers:['m','masse'],topic:'Énergie'},
+{icon:'💥',q:"Qu'est-ce que la fission nucléaire ?",a:"La scission d'un noyau lourd en deux noyaux plus légers, libérant de l'énergie et des neutrons. Ex : ²³⁵U + n → ⁹²Kr + ¹⁴¹Ba + 3n.",formula:'Fission : noyau [___] → 2 noyaux légers + neutrons',blanks:['lourd'],answers:['lourd','lourds'],topic:'Fission/Fusion'},
+{icon:'🌟',q:"Qu'est-ce que la fusion nucléaire ?",a:"La réunion de deux noyaux légers en un noyau plus lourd, libérant beaucoup d'énergie. Ex : ²H + ³H → ⁴He + n + 17,6 MeV.",formula:'Fusion : 2 noyaux [___] → 1 noyau + énergie',blanks:['légers'],answers:['légers','legers'],topic:'Fission/Fusion'},
+{icon:'📏',q:"Comment réaliser un bilan de masse et d'énergie ?",a:"Δm = Σm(réactifs) − Σm(produits). Si Δm > 0, la réaction est exoénergétique. E_lib = |Δm| × c².",formula:'Δm > 0 → réaction [___]',blanks:['exoénergétique'],answers:['exoénergétique','exoenergetique','exo'],topic:'Fission/Fusion'},
+{icon:'🔔',q:"Qu'est-ce que l'activité radioactive ?",a:"Le nombre de désintégrations par seconde : A = λN = −dN/dt. Elle s'exprime en becquerels (Bq).",formula:'A = [___] × N',blanks:['λ'],answers:['λ','lambda'],topic:'Méthodes'},
+{icon:'🏺',q:"Comment fonctionne la datation au carbone 14 ?",a:"On mesure le rapport ¹⁴C/¹²C dans un échantillon. L'âge est t = (t₁/₂/ln2) × ln(N₀/N(t)). Valable jusqu'à ~50 000 ans.",formula:'t = (t₁/₂/[___]) × ln(N₀/N(t))',blanks:['ln 2'],answers:['ln 2','ln2'],topic:'Méthodes'}
+];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+  {label:'Noyau',color:'#0f766e',nodes:[{label:'Nucléons : Z, N, A',def:'A = Z + N. Protons (Z) et neutrons (N). Isotopes : même Z, A différents.'},{label:'⁴₂X notation',def:'Notation du noyau : A = nombre de masse, Z = numéro atomique.'},{label:'Vallée de stabilité',def:'N ≈ Z pour noyaux légers, N > Z pour noyaux lourds. ~250 noyaux stables.'}]},
+  {label:'Radioactivité',color:'#14b8a6',nodes:[{label:'α : ⁴₂He émis',def:'A→A−4, Z→Z−2. Noyaux lourds.'},{label:'β⁻ : n→p+e⁻+ν̄',def:'A conservé, Z+1. Trop de neutrons.'},{label:'β⁺ : p→n+e⁺+ν',def:'A conservé, Z−1. Trop de protons.'}]},
+  {label:'Décroissance',color:'#0d9488',nodes:[{label:'N(t) = N₀e⁻ᵏᵗ',def:'Loi de décroissance exponentielle. λ = constante radioactive.'},{label:'t₁/₂ = ln2/λ',def:'Demi-vie : temps pour que N₀/2 noyaux se désintègrent.'},{label:'A = λN (Bq)',def:'Activité = désintégrations par seconde. 1 Bq = 1 dés.s⁻¹.'}]},
+  {label:'Énergie',color:'#0f766e',nodes:[{label:'Défaut de masse',def:'Δm = Zmₚ + Nmₙ − m_noyau > 0. Le noyau est plus léger.'},{label:'Eℓ = Δmc²',def:'Énergie de liaison. 1 u ↔ 931,5 MeV/c².'},{label:'Eℓ/A : courbe d\'Aston',def:'Maximum ~8,8 MeV pour ⁵⁶Fe. Stabilité relative.'}]},
+  {label:'Fission/Fusion',color:'#2dd4bf',nodes:[{label:'Fission : noyau lourd→2 légers',def:'²³⁵U + n → Kr + Ba + 3n + ~200 MeV. Réaction en chaîne.'},{label:'Fusion : 2 légers→1 lourd',def:'²H + ³H → ⁴He + n + 17,6 MeV. Soleil, ITER.'},{label:'Datation ¹⁴C',def:'t = (t₁/₂/ln2)×ln(N₀/N). Valable ~50 000 ans.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#7B6FD0';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">NOYAUX, MASSE</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">ET ÉNERGIE</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=130,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
   });
-  requestAnimationFrame(draw);
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch16.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'KkflMdpqLJo',title:'Radioactivité : α, β, γ — tout comprendre',channel:'Physique-Chimie',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'sWuc_HoRJLw',title:'E=mc² et l\'énergie nucléaire expliquée',channel:'Science étonnante',duration:'14 min',level:'easy',levelTxt:'Accessible'},
+  {id:'7bH0ZmQXh1I',title:'Fission et fusion nucléaire',channel:'L'Esprit Sorcier',duration:'11 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'YxGv7BHqSaQ',title:'Datation au carbone 14 — méthode et limites',channel:'E-penser',duration:'10 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+
+/* CHATBOT — Multi-IA Externe + Réponse rapide locale */
+const AI_URLS={
+  claude:   {url:"https://claude.ai/new",name:"Claude",color:"#d97706"},
+  chatgpt:  {url:"https://chat.openai.com/",name:"ChatGPT",color:"#10a37f"},
+  gemini:   {url:"https://gemini.google.com/app",name:"Gemini",color:"#4285f4"},
+  copilot:  {url:"https://copilot.microsoft.com/",name:"Copilot",color:"#7c3aed"},
+  glm:      {url:"https://chatglm.cn/",name:"GLM 5",color:"#f59e0b"}
+};
+
+function openAI(provider){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt){showToast("Tape d'abord ta question !","#ef4444");inp.focus();return;}
+  const ai=AI_URLS[provider];
+  // Copy question to clipboard
+  navigator.clipboard.writeText(txt).then(()=>{
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Question copiée ! Colle-la dans <strong>${ai.name}</strong> (Ctrl+V). Ouverture en cours…`);
+    showToast(`Question copiée — ouverture de ${ai.name}…`,ai.color);
+    setTimeout(()=>{window.open(ai.url,'_blank');},600);
+  }).catch(()=>{
+    // Fallback: open without clipboard
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Ouverture de <strong>${ai.name}</strong>… Copie ta question manuellement.`);
+    window.open(ai.url,'_blank');
+  });
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+function quickReply(){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  addMsg('user',txt);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const reply=findFAQ(txt)||"Je n'ai pas de réponse locale pour cette question. Essaie avec l'une des IA externes (Claude, ChatGPT, Gemini, Copilot, GLM 5) pour une réponse complète !";
+    addMsg('bot',reply);
+  },400+Math.random()*600);
+}
+
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs'),d=document.createElement('div');
+  d.className='msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="msg-av">${role==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+function showToast(msg,color){const t=document.getElementById('chatToast');t.textContent=msg;t.style.background=color||'var(--accent)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+
+/* QUIZ */
+const QS=[
+  {q:"Deux noyaux isotopes ont nécessairement :",opts:["le même nombre de neutrons","le même nombre de masse A","le même numéro atomique Z","la même masse"],ans:2,corr:"Des isotopes ont le même Z (même élément chimique) mais des A différents, donc des nombres de neutrons et des masses différents."},
+  {q:"Lors d'une désintégration α, le noyau fils a :",opts:["A−2 et Z−2","A−4 et Z−2","A−4 et Z−4","A−2 et Z−4"],ans:1,corr:"La radioactivité α émet un noyau d'hélium ⁴₂He : A diminue de 4 et Z diminue de 2."},
+  {q:"Lors d'une désintégration β⁻, la particule émise est :",opts:["un positon e⁺","un proton","un électron e⁻","un neutron"],ans:2,corr:"En β⁻, un neutron se transforme en proton : n → p + e⁻ + ν̄. L'électron est émis avec un antineutrino."},
+  {q:"La demi-vie du carbone 14 est 5 734 ans. Sa constante radioactive λ vaut environ :",opts:["1,21×10⁻⁴ an⁻¹","3,83×10⁻¹² s⁻¹","1,21×10⁻⁴ s⁻¹","3,83×10⁻¹² an⁻¹"],ans:0,corr:"λ = ln2/t₁/₂ = 0,693/5734 ≈ 1,21×10⁻⁴ an⁻¹. Attention aux unités : si t₁/₂ est en années, λ est en an⁻¹."},
+  {q:"Le défaut de masse d'un noyau est :",opts:["négatif, car le noyau est plus lourd que ses nucléons","nul pour un noyau stable","positif, car le noyau est plus léger que ses nucléons séparés","égal à Z×mₚ"],ans:2,corr:"Δm = Zmₚ + Nmₙ − m_noyau > 0. Le noyau est plus léger que ses constituants séparés : la différence est le défaut de masse."},
+  {q:"L'énergie de liaison par nucléon Eℓ/A est maximale pour :",opts:["l'hydrogène ¹H","l'hélium ⁴He","le fer ⁵⁶Fe","l'uranium ²³⁵U"],ans:2,corr:"Le fer-56 a l'énergie de liaison par nucléon maximale (~8,79 MeV). C'est le noyau le plus stable. Les noyaux légers et lourds sont moins stables."},
+  {q:"La fission d'un noyau d'uranium-235 libère environ :",opts:["2 eV","200 eV","200 MeV","200 GeV"],ans:2,corr:"La fission d'un noyau d'²³⁵U libère environ 200 MeV, soit ~50 millions de fois plus qu'une réaction chimique (~4 eV)."},
+  {q:"La fusion deutérium-tritium libère 17,6 MeV. Cette énergie correspond à :",opts:["Δm × 931,5 avec Δm en u","Δm × c avec Δm en kg","Δm × 1,6×10⁻¹⁹ avec Δm en u","Δm × 6,02×10²³ avec Δm en u"],ans:0,corr:"E = |Δm| × c². En pratique, E(MeV) = |Δm|(u) × 931,5. Ici Δm = 17,6/931,5 ≈ 0,0189 u."},
+  {q:"Un échantillon a une activité de 1 000 Bq. Cela signifie :",opts:["1 000 noyaux se sont désintégrés en tout","1 000 désintégrations par seconde se produisent","l'échantillon émet 1 000 rayons gamma par seconde","l'échantillon contient 1 000 noyaux radioactifs"],ans:1,corr:"L'activité A = λN est le nombre de désintégrations par seconde. 1 Bq = 1 désintégration par seconde."},
+  {q:"Les trois principes de radioprotection sont :",opts:["temps, distance, écran","dose, débit, durée","source, milieu, récepteur","nature, activité, demi-vie"],ans:0,corr:"Pour réduire l'exposition : réduire le temps d'exposition, augmenter la distance (intensité ∝ 1/d²), et interposer un écran absorbant."}
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🧪 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap16)d.chap16={};d.chap16.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ============================================================
+   ANNALES VECTEURBAC — VRAIS SUJETS BAC 2022–2025
+   Sources : vecteurbac.fr/noyaux-masse-energie
+   ============================================================ */
+const EXOS=[{"title":"Désintégration de l'iode-131","subtitle":"Métropole 2025 — Exercice radioactivité","sujet":"25-N16","year":"2025","duration":"20 min","points":5,"diff":"⭐⭐","comp":["ANA"],"keywords":["décroissance","demi-vie","activité","iode-131"],"enonce":"L'iode-131 a une demi-vie de 8,02 jours. Un patient reçoit une activité de 400 MBq. Calculer le nombre de noyaux initiaux et l'activité après 24 jours.","url":"https://vecteurbac.fr"},{"title":"Énergie de liaison du fer-56","subtitle":"Asie 2025 — Exercice énergie nucléaire","sujet":"25-N2","year":"2025","duration":"15 min","points":4,"diff":"⭐⭐","comp":["REA"],"keywords":["défaut de masse","énergie de liaison","Eℓ/A","courbe d'Aston"],"enonce":"Calculer l'énergie de liaison par nucléon du fer-56. Données : m(⁵⁶Fe) = 55,92039 u, mₚ = 1,00728 u, mₙ = 1,00866 u.","url":"https://vecteurbac.fr"},{"title":"Fission de l'uranium-235","subtitle":"Métropole 2024 — Exercice fission","sujet":"24-N3","year":"2024","duration":"25 min","points":6,"diff":"⭐⭐⭐","comp":["RAI"],"keywords":["fission","bilan de masse","énergie libérée","réaction en chaîne"],"enonce":"Dans la fission ²³⁵U + n → ⁹⁴Sr + ¹⁴⁰Xe + 2n, calculer l'énergie libérée. Vérifier les conservations de A et Z.","url":"https://vecteurbac.fr"},{"title":"Datation au carbone 14","subtitle":"Amérique du Sud 2024 — Exercice datation","sujet":"24-N4","year":"2024","duration":"20 min","points":5,"diff":"⭐⭐","comp":["VAL"],"keywords":["carbone 14","datation","demi-vie","activité résiduelle"],"enonce":"Un fragment osseux a une activité en ¹⁴C de 0,12 Bq/g (activité moderne : 0,23 Bq/g). Déterminer l'âge de l'échantillon.","url":"https://vecteurbac.fr"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap16)d.chap16={};d.chap16.annales=1;setMastery(d);updateMasteryUI();}
+}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

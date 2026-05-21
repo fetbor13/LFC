@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 1 — Réactions acido-basiques | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -759,44 +757,218 @@ ightarrow\) produits, la relation d’équivalence est :</p>
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
+
+
+// V7 — Simulations dynamiques robustes
+function formatSciLatex(x){
+  if(!Number.isFinite(x) || x<=0) return '0';
+  const e=Math.floor(Math.log10(x));
+  const m=x/Math.pow(10,e);
+  return m.toFixed(2).replace('.',',')+'\\times10^{'+e+'}';
+}
+function updatePHSim(){
+  const slider=document.getElementById('phSlider');
+  if(!slider) return;
+  const ph=Number(slider.value);
+  const marker=document.getElementById('phMarker');
+  if(marker) marker.style.left=(ph/14*100)+'%';
+  const val=document.getElementById('phValue');
+  if(val) val.textContent='pH '+ph.toFixed(1).replace('.',',');
+  const c=Math.pow(10,-ph);
+  const oh=Math.pow(10,ph-14);
+  const nature=ph<6.9?'Solution acide':(ph>7.1?'Solution basique':'Solution neutre à 25 °C');
+  const txt=document.getElementById('phText');
+  if(txt) txt.innerHTML='\\([\\mathrm{H_3O^+}]='+formatSciLatex(c)+'\\,\\mathrm{mol\\,L^{-1}}\\)<br>\\([\\mathrm{HO^-}]='+formatSciLatex(oh)+'\\,\\mathrm{mol\\,L^{-1}}\\)';
+  const nat=document.getElementById('phNature');
+  if(nat) nat.textContent=nature+' — lorsque le pH diminue de 1, la concentration en ions oxonium est multipliée par 10.';
+  typeset(txt);
+}
+function getThemeColors(){
+  const dark=document.documentElement.dataset.theme==='dark';
+  if(dark) return {axis:'rgba(0,240,255,.75)',grid:'rgba(0,240,255,.07)',text:'#c0eeff',acid:'#00ffd5',base:'#ff9d00',cursor:'#ee44ff',bgFill:true};
+  return {axis:'#64748b',grid:'#e2e8f0',text:'#111827',acid:'#2f6288',base:'#73ad8c',cursor:'#c99a4e',bgFill:false};
+}
+function drawDistribution(){
+  const canvas=document.getElementById('distributionCanvas');
+  const select=document.getElementById('speciesSelect');
+  const phInput=document.getElementById('distPhSlider');
+  if(!canvas||!select||!phInput) return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.clientWidth || 760, h=canvas.clientHeight || 330;
+  canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
+  const [pkaStr, acidName, baseName]=select.value.split('|');
+  const pKa=Number(pkaStr), ph=Number(phInput.value);
+  const C=getThemeColors();
+  const padL=48, padR=20, padT=22, padB=42;
+  const plotW=w-padL-padR, plotH=h-padT-padB;
   ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
-  });
-  requestAnimationFrame(draw);
+  if(C.bgFill){const bgG=ctx.createLinearGradient(0,0,w,h);bgG.addColorStop(0,'#020c1a');bgG.addColorStop(1,'#030d18');ctx.fillStyle=bgG;ctx.fillRect(0,0,w,h);}
+  ctx.lineWidth=1;
+  ctx.strokeStyle=C.bgFill?'rgba(0,240,255,.07)':C.grid;
+  ctx.fillStyle=C.text;
+  ctx.font='12px Inter, Arial, sans-serif';
+  for(let i=0;i<=14;i+=2){
+    const x=padL+(i/14)*plotW;
+    ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,padT+plotH); ctx.stroke();
+    ctx.fillStyle=C.axis; ctx.textAlign='center'; ctx.fillText(String(i),x,padT+plotH+22);
+  }
+  for(let yv=0;yv<=100;yv+=25){
+    const y=padT+plotH-(yv/100)*plotH;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+plotW,y); ctx.stroke();
+    ctx.fillStyle=C.axis; ctx.textAlign='right'; ctx.fillText(yv+' %',padL-8,y+4);
+  }
+  ctx.strokeStyle=C.axis; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+plotH); ctx.lineTo(padL+plotW,padT+plotH); ctx.stroke();
+  function pt(xp, acid){
+    const ratio=Math.pow(10,xp-pKa);
+    const alphaAcid=1/(1+ratio);
+    const yv=(acid?alphaAcid:1-alphaAcid)*100;
+    return [padL+(xp/14)*plotW, padT+plotH-(yv/100)*plotH];
+  }
+  function curve(acid,color){
+    if(C.bgFill){ctx.shadowBlur=14;ctx.shadowColor=color;ctx.globalAlpha=.35;ctx.strokeStyle=color;ctx.lineWidth=5;ctx.beginPath();for(let i=0;i<=280;i++){const xp=14*i/280;const [x,y]=pt(xp,acid);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke();ctx.globalAlpha=1;ctx.shadowBlur=8;}
+    ctx.strokeStyle=color; ctx.lineWidth=C.bgFill?2.5:3; ctx.beginPath();
+    for(let i=0;i<=280;i++){
+      const xp=14*i/280; const [x,y]=pt(xp,acid);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
+  }
+  curve(true,C.acid); curve(false,C.base);
+  const xph=padL+(ph/14)*plotW;
+  if(C.bgFill){ctx.shadowBlur=8;ctx.shadowColor=C.cursor;}
+  ctx.strokeStyle=C.cursor; ctx.lineWidth=2; ctx.setLineDash([6,5]); ctx.beginPath(); ctx.moveTo(xph,padT); ctx.lineTo(xph,padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+  ctx.shadowBlur=0;
+  const xpka=padL+(pKa/14)*plotW;
+  ctx.strokeStyle=C.axis; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(xpka,padT); ctx.lineTo(xpka,padT+plotH); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.axis; ctx.textAlign='center'; ctx.fillText('pKₐ',xpka,padT-7);
+  ctx.fillStyle=C.text; ctx.textAlign='center'; ctx.fillText('pH',padL+plotW/2,h-8);
+  ctx.save(); ctx.translate(14,padT+plotH/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('Pourcentage de forme',0,0); ctx.restore();
+  ctx.fillStyle=C.acid; ctx.textAlign='left'; ctx.fillText(acidName,padL+10,padT+18);
+  ctx.fillStyle=C.base; ctx.textAlign='left'; ctx.fillText(baseName,padL+10,padT+36);
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function updateDistribution(){
+  const select=document.getElementById('speciesSelect');
+  const phInput=document.getElementById('distPhSlider');
+  if(!select||!phInput) return;
+  const [pkaStr, acidName, baseName]=select.value.split('|');
+  const pKa=Number(pkaStr), ph=Number(phInput.value);
+  const ratio=Math.pow(10,ph-pKa);
+  const acid=100/(1+ratio), base=100-acid;
+  drawDistribution();
+  const readout=document.getElementById('distReadout');
+  if(readout){
+    readout.innerHTML='<div class="dist-pill"><b>pH choisi</b>'+ph.toFixed(1).replace('.',',')+'</div>'+
+      '<div class="dist-pill"><b>'+acidName+'</b>'+acid.toFixed(1).replace('.',',')+' %</div>'+
+      '<div class="dist-pill"><b>'+baseName+'</b>'+base.toFixed(1).replace('.',',')+' %</div>';
+  }
+}
+function calcKapKa(){
+  const pka=Number(document.getElementById('calcPka')?.value);
+  const ka=Math.pow(10,-pka);
+  const box=document.getElementById('kaResult');
+  if(!box)return;
+  const eStr=ka.toExponential(2).replace('.',',').replace(/e([+-]?\d+)/,'\\times10^{$1}');
+  const force=pka<2?'acide fort':pka<7?'acide faible':pka<12?'acide très faible':'quasi inerte';
+  box.innerHTML='\\(K_a=10^{-'+pka.toFixed(2).replace('.',',')+'}\\approx '+eStr+'\\) — '+force;
+  typeset(box);
+}
+function calcHH(){
+  const pka=Number(document.getElementById('hhPka')?.value);
+  const ah=Number(document.getElementById('hhAH')?.value);
+  const am=Number(document.getElementById('hhAm')?.value);
+  const box=document.getElementById('hhResult');
+  if(!box||!ah||!am)return;
+  const ratio=am/ah;
+  const ph=pka+Math.log10(ratio);
+  const phStr=ph.toFixed(2).replace('.',',');
+  box.innerHTML='\\(\\mathrm{pH}='+pka.toFixed(2).replace('.',',')+'+\\log\\dfrac{'+am.toPrecision(3).replace('.',',')+'}{'+ah.toPrecision(3).replace('.',',')+'}='+phStr+'\\)';
+  if(ph<pka-1||ph>pka+1) box.innerHTML+='<br><small style="color:var(--amber)">⚠ Hors zone tampon efficace (pKa±1)</small>';
+  typeset(box);
+}
+function calcPred(){
+  const pka=Number(document.getElementById('predPka')?.value);
+  const ph=Number(document.getElementById('predPh')?.value);
+  const box=document.getElementById('predResult');
+  if(!box)return;
+  const ratio=Math.pow(10,ph-pka);
+  const acidPct=(100/(1+ratio)).toFixed(1).replace('.',',');
+  const basePct=(100*ratio/(1+ratio)).toFixed(1).replace('.',',');
+  let msg;
+  if(Math.abs(ph-pka)<0.05) msg='\\(\\mathrm{pH}\\approx pK_a\\) : AH et A⁻ en proportions égales (50 %/50 %).';
+  else if(ph<pka) msg='\\(\\mathrm{pH}&lt;pK_a\\) : forme <strong>AH prédomine</strong> ('+acidPct+' % AH · '+basePct+' % A⁻).';
+  else msg='\\(\\mathrm{pH}&gt;pK_a\\) : forme <strong>A⁻ prédomine</strong> ('+basePct+' % A⁻ · '+acidPct+' % AH).';
+  box.innerHTML=msg;
+  typeset(box);
+}
+function calcTitrage(){
+  const a=Number(document.getElementById('coefA')?.value||1);
+  const b=Number(document.getElementById('coefB')?.value||1);
+  const cb=Number(document.getElementById('cb')?.value||0);
+  const ve=Number(document.getElementById('ve')?.value||0)*1e-3;
+  const va=Number(document.getElementById('va')?.value||0)*1e-3;
+  const box=document.getElementById('titrageResult');
+  if(!a||!b||!cb||!ve||!va||!box) return;
+  const ca=(a/b)*cb*ve/va;
+  box.innerHTML='\\(C_A=\\frac{a}{b}\\,\\frac{C_BV_E}{V_A}=\\frac{'+a+'}{'+b+'}\\times\\frac{'+cb.toPrecision(3).replace('.',',')+'\\times '+(ve*1000).toFixed(1).replace('.',',')+'}{'+(va*1000).toFixed(1).replace('.',',')+'}='+ca.toPrecision(3).replace('.',',')+'\\,\\mathrm{mol\\,L^{-1}}\\)';
+  typeset(box);
+}
+window.addEventListener('resize',()=>{ if(document.getElementById('tab-simulations')?.classList.contains('active')) drawDistribution(); });
+setTimeout(()=>{ updatePHSim(); updateDistribution(); calcTitrage(); },150);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

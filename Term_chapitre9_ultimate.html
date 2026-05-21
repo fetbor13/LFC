@@ -170,7 +170,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 </style>
 
 <style>
-/* Adjustments for the chapter page specifically */
 .workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
 .tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .tab {
@@ -188,7 +187,6 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .page { padding: 24px; }
 .main { overflow-y: auto; max-height: calc(100vh - 80px); }
 
-/* Adjustments for the injected content */
 .course-body { color: var(--ink); line-height: 1.6; }
 .hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
 .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -204,7 +202,7 @@ border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-h
 .course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
 .hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
 .real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.useful-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
 .course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
 .topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
@@ -226,7 +224,7 @@ th { background: rgba(255,255,255,0.05); color: var(--active); }
 <canvas id="starfield"></canvas>
 <div class="shell" id="app">
   <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
-    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Terminale Spé · Chapitre 9 — Cinématique du point | PhysiChem</strong></div></div>
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
     <div class="top-actions">
       <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
     </div>
@@ -1688,44 +1686,337 @@ u_c=\sqrt{u_A^2+u_B^2}
     </main>
   </div>
 </div>
-
 <script>
-// Canvas Starfield from index_cercle_2026
-const canvas=document.getElementById('starfield');
-const ctx=canvas.getContext('2d');
-let w=canvas.width=window.innerWidth;
-let h=canvas.height=window.innerHeight;
-const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
-function draw(){
-  ctx.clearRect(0,0,w,h);
-  stars.forEach(st=>{
-    st.a+=0.02;
-    ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
-    ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
-    st.y-=0.2; if(st.y<0) st.y=h;
+
+/* THEME */
+(function(){const t=localStorage.getItem('physichem_theme')||'light';document.documentElement.setAttribute('data-theme',t);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=t==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap')&&document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pTop=document.getElementById('progressTop');const pLbl=document.getElementById('pctLbl');if(pTop)pTop.style.width=pct+'%';if(pLbl)pLbl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap9';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap9']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEUR PROJECTILE */
+function drawProjectile(){
+  const v0=parseFloat(document.getElementById('p-v0').value)||20;
+  const theta=(parseFloat(document.getElementById('p-theta').value)||45)*Math.PI/180;
+  const g=parseFloat(document.getElementById('p-g').value)||9.81;
+  const vx=v0*Math.cos(theta), vy=v0*Math.sin(theta);
+  const tmax=2*vy/g;
+  const xmax=vx*tmax;
+  const ymax=vy*vy/(2*g);
+  document.getElementById('p-result').innerHTML=`
+    <strong>Portée : ${xmax.toFixed(1)} m</strong> · Hauteur max : ${ymax.toFixed(1)} m · Durée : ${tmax.toFixed(2)} s<br>
+    vₓ = ${vx.toFixed(2)} m/s · v_y0 = ${vy.toFixed(2)} m/s`;
+  const canvas=document.getElementById('p-canvas');
+  canvas.width=canvas.offsetWidth||600; canvas.height=220;
+  const ctx=canvas.getContext('2d');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#1C2A40':'#F8FAFD',tc=isDark?'#7A90B0':'#5A6A85';
+  ctx.fillStyle=bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const W=canvas.width,H=canvas.height,pad=40;
+  // Axes
+  ctx.strokeStyle=tc; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad,pad);ctx.lineTo(pad,H-pad);ctx.lineTo(W-pad,H-pad);ctx.stroke();
+  ctx.fillStyle=tc; ctx.font='11px Instrument Sans';
+  ctx.fillText('y (m)',pad-25,(pad+H-pad)/2); ctx.fillText('x (m)',W/2,H-8);
+  // Courbe
+  ctx.strokeStyle='#7B6FD0'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  const steps=100;
+  for(let i=0;i<=steps;i++){
+    const t=i*tmax/steps;
+    const x=vx*t;
+    const y=vy*t-0.5*g*t*t;
+    if(y<0) break;
+    const px=pad+(x/xmax)*(W-2*pad);
+    const py=H-pad-(y/ymax)*(H-2*pad)*0.85;
+    if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // Point de départ
+  ctx.beginPath();ctx.arc(pad,H-pad,5,0,Math.PI*2);ctx.fillStyle='#7B6FD0';ctx.fill();
+  // Annotations
+  ctx.fillStyle='#7B6FD0'; ctx.font='11px Instrument Sans';
+  ctx.fillText(`${xmax.toFixed(0)}m`,W-pad-20,H-pad+14);
+  ctx.fillText(`${ymax.toFixed(0)}m`,pad+4,pad+(H-2*pad)*0.12);
+}
+setTimeout(drawProjectile,100);
+
+/* FLASHCARDS */
+const FC=[{icon:'🌍',q:'Définition d\'un référentiel',a:'Solide de référence + horloge. Le mouvement est toujours décrit par rapport à un référentiel. Ex: terrestre, géocentrique, héliocentrique.',formula:'Référentiel = solide + [___]',blanks:['horloge'],answers:['horloge'],topic:'Cinématique'},
+  {icon:'⚡',q:'Vecteur vitesse — définition',a:'v⃗(t) = dOM⃗/dt. Tangent à la trajectoire. Norme = vitesse scalaire v (m/s).',formula:'v⃗ = d[___]/dt',blanks:['OM'],answers:['OM','OM⃗'],topic:'Cinématique'},
+  {icon:'🔄',q:'Vecteur accélération — définition',a:'a⃗(t) = dv⃗/dt = d²OM⃗/dt². Unité : m/s². Indique la variation du vecteur vitesse.',formula:'a⃗ = d[___]/dt',blanks:['v⃗'],answers:['v⃗','v'],topic:'Cinématique'},
+  {icon:'⚖️',q:'2ème loi de Newton',a:'ΣF⃗ = ma⃗. S\'applique dans un référentiel galiléen. Relie forces extérieures et accélération.',formula:'Σ[___] = m·a⃗',blanks:['F⃗'],answers:['F⃗','F'],topic:'Dynamique'},
+  {icon:'📍',q:'Équation horaire MRUA selon x',a:'x(t) = x₀ + v₀t + ½at². Pour la chute libre : z(t) = z₀ + v₀t − ½gt².',formula:'x(t) = x₀ + v₀t + [___]at²',blanks:['½'],answers:['½','1/2'],topic:'Cinématique'},
+  {icon:'🏹',q:'Équation de la trajectoire (tir oblique)',a:'y = x·tan(θ) − gx²/(2v₀²cos²θ). Parabole. Valide uniquement en l\'absence de frottements (champ pesanteur uniforme).',formula:'Trajectoire tir oblique : [___] parabolique',blanks:['y'],answers:['y'],topic:'Projectile'},
+  {icon:'🍎',q:'Durée de chute libre d\'une hauteur h (v₀=0)',a:'z(t) = h − ½gt² = 0 → t = √(2h/g). Vitesse à l\'impact : v = g·t = √(2gh).',formula:'t_sol = √(2h/[___])',blanks:['g'],answers:['g'],topic:'Chute libre'},
+  {icon:'💫',q:'Quantité de mouvement — définition',a:'p⃗ = mv⃗. En kg·m/s. 2ème loi de Newton : ΣF⃗ = dp⃗/dt.',formula:'p⃗ = [___]·v⃗',blanks:['m'],answers:['m'],topic:'Dynamique'},
+  {icon:'🚫',q:'Conservation de la quantité de mouvement',a:'Si ΣF⃗_ext = 0⃗ alors p⃗ = constante. Application : chocs, explosions. Conservation vectorielle !',formula:'Si ΣF_ext = 0 → p⃗ = [___]',blanks:['constante'],answers:['constante'],topic:'Dynamique'},
+  {icon:'🎯',q:'Portée maximale d\'un projectile',a:'Pour v₀ fixe, la portée est maximale pour θ = 45°. R_max = v₀²/g.',formula:'R_max : angle optimal θ = [___]°',blanks:['45'],answers:['45'],topic:'Projectile'},
+  {icon:'📐',q:'Mouvement circulaire uniforme (MCU)',a:'v = Rω = cste · a = Rω² (centripète, vers le centre) · T = 2π/ω (période)',formula:'MCU : a = R[___]² (centripète)',blanks:['ω'],answers:['ω','omega'],topic:'Cinématique'},
+  {icon:'🌍',q:'Référentiel galiléen — définition',a:'Référentiel dans lequel un corps libre (pas de force) est en MRU. Le référentiel héliocentrique est galiléen. Le référentiel terrestre est approché galiléen.',formula:'Référentiel galiléen → corps libre en [___]',blanks:['MRU'],answers:['MRU'],topic:'Cinématique'},
+  {icon:'📈',q:'Comment lire la vitesse sur un graphe x(t) ?',a:'v(t) = pente de la tangente à la courbe x(t) à l\'instant t. Si la courbe est une droite → MRU (v = cste = pente).',formula:'v = pente de la tangente à [___](t)',blanks:['x'],answers:['x'],topic:'Cinématique'},
+  {icon:'🏃',q:'MRU : équations',a:'v = cste · x(t) = x₀ + v·t · a = 0. La résultante des forces est nulle (pas de force, ou forces qui se compensent).',formula:'MRU : a = [___], x = x₀ + vt',blanks:['0'],answers:['0'],topic:'Cinématique'},
+  {icon:'🔢',q:'Composantes du tir oblique',a:'vₓ = v₀cos(θ) = cste · vy(t) = v₀sin(θ) − gt · x(t) = vₓ·t · y(t) = vy₀·t − ½gt²',formula:'vₓ = v₀[___](θ) = constante',blanks:['cos'],answers:['cos'],topic:'Projectile'},
+  ];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+  {label:'Référentiel & repère',color:'#7B6FD0',nodes:[{label:'Solide + horloge',def:'Référentiel = solide de référence + repère de temps.'},{label:'Galiléen',def:'Corps libre en MRU. Héliocentrique exact, terrestre approché.'},{label:'Relativité du mvt',def:'Un même objet a des mouvements différents selon le référentiel.'}]},
+  {label:'Vecteurs cinématiques',color:'#4BADD4',nodes:[{label:'OM⃗(t) = position',def:'x(t), y(t) = équations horaires.'},{label:'v⃗ = dOM⃗/dt',def:'Tangent à la trajectoire. En m/s.'},{label:'a⃗ = dv⃗/dt',def:'Variation du vecteur vitesse. En m/s².'}]},
+  {label:'Newton 2 : ΣF⃗ = ma⃗',color:'#3DAF82',nodes:[{label:'Référentiel galiléen',def:'Condition d\'application de ΣF = ma.'},{label:'Bilan des forces',def:'Poids, normale, frottement, tension...'},{label:'Intégration → eq. horaires',def:'De a(t) → v(t) → x(t) avec CI.'}]},
+  {label:'Chute libre & Projectile',color:'#D4854A',nodes:[{label:'Chute libre : a = −g',def:'ΣF = P = mg↓. z(t) = z₀+v₀t−½gt².'},{label:'Tir oblique : parabole',def:'vₓ = cste · vy = v₀sinθ−gt.'},{label:'Portée max à θ=45°',def:'R = v₀²sin(2θ)/g. R_max = v₀²/g.'}]},
+  {label:'Quantité de mvt',color:'#E8915A',nodes:[{label:'p⃗ = mv⃗',def:'En kg·m/s. ΣF⃗ = dp⃗/dt.'},{label:'Conservation si ΣF_ext=0',def:'Chocs, explosions, propulsion.'},{label:'Choc inélastique',def:'m₁v₁+m₂v₂ = (m₁+m₂)V_f.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#7B6FD0';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">CINÉMATIQUE</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">DU POINT</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=132,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
   });
-  requestAnimationFrame(draw);
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
 }
-draw();
-window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch9.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
 
-// Basic Tab Switching Logic
-function switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const targetTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
-    if(targetTab) targetTab.classList.add('active');
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
 
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const targetPanel = document.getElementById('tab-' + tabId);
-    if(targetPanel) targetPanel.classList.add('active');
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'Jmn8mMZLmxM',title:'La chute libre expliquée',channel:'e-penser',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'OVLd-Q6W7pE',title:'Cinématique — vecteurs vitesse et accélération',channel:'Scilabus',duration:'11 min',level:'easy',levelTxt:'Accessible'},
+  {id:'YTZoKvp_X_E',title:'Les lois de Newton approfondies',channel:'Science étonnante',duration:'16 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'bHIhgxav9LY',title:'Quantité de mouvement et chocs',channel:'MinutePhysics',duration:'6 min',level:'easy',levelTxt:'Accessible'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+/* CHATBOT */
+const FAQ=[
+{k:['référentiel','galiléen','galileen'],r:'Un **référentiel galiléen** est un référentiel dans lequel un corps soumis à aucune force est en MRU (ou au repos). La 2ème loi de Newton (ΣF⃗ = ma⃗) n\'est valable que dans un référentiel galiléen. Exemples : référentiel de Copernic (héliocentrique), référentiel terrestre (approximation locale).'},
+{k:['position','vecteur position','repère','coordonnées'],r:'Le **vecteur position** OM⃗(t) repère le point M dans l\'espace : OM⃗ = x(t)·e⃗x + y(t)·e⃗y + z(t)·e⃗z. Il faut choisir un **référentiel**, un **repère** (origine + base orthonormée) et une **origine des dates** t₀.'},
+{k:['vitesse','vecteur vitesse','dérivée','tangent'],r:'Le **vecteur vitesse** est la dérivée du vecteur position : v⃗ = dOM⃗/dt. Il est toujours **tangent à la trajectoire**. Ses composantes : vₓ = dx/dt, vy = dy/dt, vz = dz/dt. Sa norme : v = √(vₓ² + vy² + vz²) en m·s⁻¹.'},
+{k:['accélération','accélération','vecteur accélération','dérivée seconde'],r:'Le **vecteur accélération** est la dérivée du vecteur vitesse : a⃗ = dv⃗/dt = d²OM⃗/dt². Composantes : aₓ = dvₓ/dt, ay = dvy/dt. Unité : m·s⁻². Dans la base de Frenet : a⃗ = (dv/dt)·u⃗t + (v²/R)·u⃗n.'},
+{k:['newton','2ème loi','deuxième loi','seconde loi','principe fondamental'],r:'La **2ème loi de Newton** : ΣF⃗_ext = m·a⃗ = dp⃗/dt. La somme des forces extérieures appliquées au système est égale au produit de la masse par l\'accélération. Valable uniquement dans un **référentiel galiléen**.'},
+{k:['chute libre','chute','verticale','gravité','pesanteur'],r:'La **chute libre** : le seul force est le poids P⃗ = mg⃗. On a a⃗ = g⃗ (indépendant de la masse !). Avec Oy ascendant : y(t) = y₀ + v₀t − ½gt², vy(t) = v₀ − gt. Durée de chute depuis h (v₀=0) : t = √(2h/g).'},
+{k:['projectile','tir oblique','parabolique','parabole','lancer','oblique'],r:'Le **tir oblique** : aₓ = 0, ay = −g. Équations horaires : x = v₀cos(θ)·t, y = v₀sin(θ)·t − ½gt². **Trajectoire** (parabole) : y = x·tan(θ) − gx²/(2v₀²cos²θ). Portée : R = v₀²sin(2θ)/g. Flèche : H = v₀²sin²(θ)/(2g).'},
+{k:['portée','flèche','rangee','distance','hauteur max','sommet'],r:'La **portée** d\'un projectile : R = v₀²·sin(2θ)/g (maximale pour θ=45°). La **flèche** (hauteur max) : H = v₀²·sin²(θ)/(2g). Au sommet, la vitesse est **purement horizontale** : v = v₀cos(θ) et vy = 0.'},
+{k:['mru','mrua','uniforme','rectiligne','uniformément'],r:'**MRU** (Mouvement Rectiligne Uniforme) : v = cste, a = 0 → x(t) = x₀ + vt. **MRUA** (Uniformément Accéléré) : a = cste → v(t) = v₀ + at, x(t) = x₀ + v₀t + ½at². Cas particulier : chute libre verticale.'},
+{k:['quantité de mouvement','quantite','impulsion','moment','conservation'],r:'La **quantité de mouvement** : p⃗ = m·v⃗ (en kg·m·s⁻¹). Elle se **conserve** si ΣF⃗_ext = 0⃗ (système isolé/pseudo-isolé). Choc élastique : p⃗ et Ec conservés. Choc inélastique : p⃗ conservé mais Ec non. m₁v₁ + m₂v₂ = (m₁+m₂)·Vf (choc mou).'},
+{k:['frenet','base de frenet','tangent','normal','centripète'],r:'La **base de Frenet** (u⃗t, u⃗n) : u⃗t tangent à la trajectoire, u⃗n vers le centre de courbure. Accélération : a⃗ = (dv/dt)·u⃗t + (v²/R)·u⃗n. Terme tangentiel = variation de vitesse, terme normal = changement de direction.'},
+{k:['équations horaires','equations horaires','horaires','composantes'],r:'Les **équations horaires** sont les composantes du vecteur position en fonction du temps. Pour un projectile : x(t) = v₀cos(θ)·t, y(t) = y₀ + v₀sin(θ)·t − ½gt². On obtient la trajectoire en éliminant t : y(x).'},
+{k:['circulaire','mcu','rotation','omega','vitesse angulaire'],r:'Le **MCU** (Mouvement Circulaire Uniforme) : vitesse de norme constante mais direction qui change → accélération **centripète** a = v²/R = Rω² dirigée vers le centre. ω = 2π/T (vitesse angulaire), v = Rω (vitesse linéaire).'},
+{k:['force','bilan','poids','réaction','frottement'],r:'Le **bilan des forces** est indispensable avant d\'appliquer la 2ème loi de Newton. Forces courantes : poids P⃗ = mg⃗, réaction R⃗ (normale au support), frottement f⃗, tension T⃗. On projette ΣF⃗ = ma⃗ sur les axes du repère choisi.'},
+{k:['unité','unite','dimension','grandeur','si'],r:'Les **unités SI** essentielles en cinématique : position (m), vitesse (m·s⁻¹), accélération (m·s⁻²), temps (s), angle (rad), quantité de mouvement (kg·m·s⁻¹). Toujours vérifier l\'homogénéité dimensionnelle d\'une formule !'},
+{k:['méthode','résoudre','problème','comment','étapes'],r:'**Méthode de résolution** : 1) Définir système + référentiel (galiléen). 2) Bilan des forces. 3) Choisir repère + origine. 4) Appliquer 2ème loi de Newton (ΣF⃗ = ma⃗). 5) Projeter sur les axes → équations horaires. 6) Exploiter conditions initiales. 7) Vérifier ordre de grandeur et unités.'},
+{k:['choc','collision','élastique','inélastique','mou'],r:'Les **chocs** : Élastique → p⃗ ET Ec conservés. Inélastique → p⃗ conservé, Ec diminue. Mou (parfaitement inélastique) → les objets restent collés : m₁v₁ + m₂v₂ = (m₁+m₂)·Vf. L\'énergie cinétique perdue est transformée (chaleur, déformation).'},
+{k:['vitesse maximale','sommet','apogée','au sommet'],r:'Au **sommet** de la trajectoire parabolique : vy = 0, donc la vitesse est purement horizontale : v = v₀cos(θ). L\'accélération reste g⃗ vers le bas. Temps pour atteindre le sommet : t_sommet = v₀sin(θ)/g.'},
+];
+const GENERIC_REPLIES=[
+'Je peux t\'aider en cinématique ! Pose-moi une question sur les référentiels, vecteurs position/vitesse/accélération, chute libre, tir oblique, quantité de mouvement ou la 2ème loi de Newton.',
+'Essaie de préciser ta question. Je maîtrise : référentiels galiléens, MRU/MRUA, chute libre, tir oblique, équations horaires, base de Frenet, conservation de p⃗...',
+];
+function sendMsg(){const inp=document.getElementById('chatIn');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';addMsg('user',txt);document.getElementById('sendBtn').disabled=true;showTyping();const lower=txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');let best=null,bestScore=0;for(const entry of FAQ){let score=0;for(const kw of entry.k){const kwNorm=kw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');if(lower.includes(kwNorm))score+=kw.length;}if(score>bestScore){bestScore=score;best=entry;}}setTimeout(()=>{removeTyping();if(best&&bestScore>0){addMsg('bot',best.r);}else{addMsg('bot',GENERIC_REPLIES[Math.floor(Math.random()*GENERIC_REPLIES.length)]);}document.getElementById('sendBtn').disabled=false;},600+Math.random()*400);}
+function suggest(t){document.getElementById('chatIn').value=t;sendMsg();}
+function addMsg(r,text){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg'+(r==='user'?' user':'');d.innerHTML=`<div class="msg-av">${r==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+/* QUIZ */
+const QS=[
+  {q:'La 2ème loi de Newton s\'écrit :',opts:['ΣF⃗ = mv⃗','ΣF⃗ = mp⃗','ΣF⃗ = ma⃗','a⃗ = v⃗/t'],ans:2,corr:'ΣF⃗ = ma⃗. La résultante des forces = masse × accélération. S\'applique dans un référentiel galiléen.'},
+  {q:'Le vecteur vitesse est :',opts:['Perpendiculaire à la trajectoire','Tangent à la trajectoire (dérivée de OM⃗)','Parallèle à l\'accélération','Toujours vertical'],ans:1,corr:'v⃗ = dOM⃗/dt. Toujours tangent à la trajectoire en tout point du mouvement.'},
+  {q:'Pour un tir oblique (θ=45°, v₀=20 m/s), la portée vaut :',opts:['v₀/g ≈ 2,04 m','2v₀²/g ≈ 81,6 m','v₀²sin(θ)/g','v₀²/g ≈ 40,8 m'],ans:3,corr:'R_max = v₀²sin(2θ)/g = v₀²sin(90°)/g = v₀²/g = 400/9,81 ≈ 40,8 m pour θ=45°.'},
+  {q:'Un objet en chute libre (v₀=0) depuis h=5m. Durée de chute :',opts:['t = h/g ≈ 0,51 s','t = √(h/g) ≈ 0,71 s','t = √(2h/g) ≈ 1,01 s','t = 2h/g ≈ 1,02 s'],ans:2,corr:'z(t) = h−½gt² = 0 → t = √(2h/g) = √(10/9,81) ≈ 1,01 s.'},
+  {q:'La quantité de mouvement se conserve si :',opts:['Le système est en MRU','La résultante des forces extérieures est nulle','L\'accélération est constante','La masse est constante'],ans:1,corr:'ΣF⃗_ext = dp⃗/dt = 0⃗ → p⃗ = constante. Système isolé (ou pseudo-isolé).'},
+  {q:'Dans un MRU, l\'accélération est :',opts:['Constante non nulle','Croissante','Égale à g','Nulle (a = 0)'],ans:3,corr:'MRU = Mouvement Rectiligne Uniforme. Vitesse constante → a = dv/dt = 0.'},
+  {q:'La trajectoire d\'un projectile (tir oblique) est :',opts:['Une droite','Un arc de cercle','Une parabole','Une ellipse'],ans:2,corr:'y = x·tan(θ) − gx²/(2v₀²cos²θ) est une équation de parabole.'},
+  {q:'Le vecteur accélération centripète (MCU) est :',opts:['Tangent au cercle','Dirigé vers le centre du cercle','Vertical','Nul'],ans:1,corr:'En MCU, a⃗ = Rω² dirigé vers le centre (centripète). La vitesse est tangente mais l\'accélération pointe vers le centre.'},
+  {q:'Lors d\'une chute libre, la composante horizontale de vitesse :',opts:['Augmente','Diminue','S\'annule','Reste constante (vₓ = cste)'],ans:3,corr:'Horizontalement, aucune force → aₓ = 0 → vₓ = v₀cos(θ) = cste. Seule la composante verticale change.'},
+  {q:'Un référentiel galiléen est un référentiel dans lequel :',opts:['Tous les corps tombent à la même vitesse','L\'accélération est constante','Un corps libre est en MRU (pas d\'accélération)','La gravité est nulle'],ans:2,corr:'Référentiel galiléen : un corps soumis à aucune force est en MRU (ou au repos). La 2ème loi de Newton s\'y applique.'},
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🚀 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap9)d.chap9={};d.chap9.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ANNALES VECTEURBAC */
+const EXOS=[{"title":"Compétition de saut d'obstacles en Hobby Horse","subtitle":"Asie septembre 2025 — Exercice 1","sujet":"25-PYCPE4","year":"2025","duration":"1h56","points":11,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Mouvement","projectile","trajectoire","Doppler"],"enonce":"Sujet complet incluant mouvement dans un champ de pesanteur uniforme.","url":"https://www.vecteurbac.fr/competition-de-saut-dobstacles-en-hobby-horse/"},{"title":"Le mölky","subtitle":"Polynésie 2025 sujet 1 — Exercice 2","sujet":"25-PYCJ1PO1","year":"2025","duration":"1h03","points":6,"diff":"⭐⭐","comp":["APP","ANA","REA"],"keywords":["Mouvement","projectile","équations horaires"],"enonce":"Étudier un lancer et exploiter les équations horaires du mouvement.","url":"https://www.vecteurbac.fr/le-molky/"},{"title":"L'homme canon","subtitle":"Liban 2024 sujet 1 — Exercice 3","sujet":"24-PYCJ1G11","year":"2024","duration":"0h53","points":5,"diff":"⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Projectile","trajectoire","vitesse initiale"],"enonce":"Modéliser une trajectoire parabolique et vérifier une condition d'atteinte.","url":"https://www.vecteurbac.fr/lhomme-canon/"},{"title":"Autour du basket-ball","subtitle":"Métropole 2024 sujet 2 — Exercice 1","sujet":"24-PYCJ2ME1","year":"2024","duration":"1h56","points":11,"diff":"⭐⭐⭐","comp":["APP","ANA","REA","VAL"],"keywords":["Mouvement","Python","trajectoire","intensité sonore"],"enonce":"Sujet riche autour d'un lancer, avec modélisation et exploitation numérique.","url":"https://www.vecteurbac.fr/autour-du-basket-ball/"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap9)d.chap9={};d.chap9.annales=1;setMastery(d);updateMasteryUI();}
+}
+window.addEventListener('resize',()=>{if(document.getElementById('tab-animations').classList.contains('active'))drawProjectile();});
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
 }
 
-document.querySelectorAll('.tab').forEach(btn => {
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    switchTab(btn.dataset.tab);
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
   });
 });
-</script>
 
+</script>
 </body>
 </html>

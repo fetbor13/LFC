@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 4 — Titrage colorimétrique | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="crumb">Première Spé › Chimie analytique › <b>Titrage colorimétrique</b></div>
+    <div class="top-actions">
+      <button class="pill-btn" onclick="switchTab('outils')">Relations clés</button>
+      <button class="pill-btn" onclick="switchTab('simulations')">Simuler</button>
+    </div>
+  </div>
+  <div class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Première Spé · Chapitre 4</div>
+        <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+        <h2>Titrage <span>colorimétrique</span></h2>
+        <p class="hero-copy">Déterminer la concentration inconnue d'une espèce chimique en solution grâce à une réaction support totale, rapide et unique. Repérer l'équivalence par le changement de couleur d'un indicateur coloré et exploiter la relation stœchiométrique.</p>
+        <div class="hero-grid">
+          <div class="metric"><b>5</b><span>sections</span></div>
+          <div class="metric"><b>15</b><span>flashcards</span></div>
+          <div class="metric"><b>12</b><span>quiz</span></div>
+        </div>
+      </div>
+      <div class="hero-canvas-wrap">
+        <canvas id="heroCanvas"></canvas>
+      </div>
+    </section>
+
+    <div class="useful-strip">
+      <div class="useful-card mission-1"><small>Essentiel</small><b>\(\dfrac{C_AV_A}{a}=\dfrac{C_BV_E}{b}\)</b><span>Relation à l'équivalence</span></div>
+      <div class="useful-card mission-2"><small>Méthode</small><b>Repérer V_E puis calculer C_A</b><span>Lire le virage de l'indicateur</span></div>
+      <div class="useful-card mission-3"><small>Piège</small><b>V_E ≠ volume quelconque</b><span>Bien distinguer V_versé et V_E</span></div>
+    </div>
+
+    <!-- ====================== COURS ====================== -->
+    <section class="panel active" id="panel-cours">
+      <div class="content-card">
+        <div class="course-grid">
+          <nav class="toc">
+            <div class="toc-title">Plan</div>
+            <a href="#s1">I · Principe du titrage</a>
+            <a href="#s2">II · L'équivalence</a>
+            <a href="#s3">III · Repérage colorimétrique</a>
+            <a href="#s4">IV · Calcul de C_A</a>
+            <a href="#s5">V · Précision et incertitudes</a>
+            <a href="#s6">VI · Applications</a>
+          </nav>
+          <div class="course-body">
+
+<!-- SECTION 1 -->
+<h2 id="s1">I · Principe du titrage</h2>
+
+<div class="box def"><div class="box-label">Définition</div>
+<p>Un <strong>titrage</strong> (ou dosage) est une technique d'analyse chimique quantitative permettant de <strong>déterminer la concentration \(C_A\)</strong> d'une espèce chimique A (le <strong>réactif titré</strong>) en solution, en la faisant réagir avec une espèce chimique B de concentration connue \(C_B\) (le <strong>réactif titrant</strong>).</p>
+</div>
+
+<h3>Montage expérimental</h3>
+<div class="cards">
+<div class="card"><h4>Burette graduée</h4><p>Contient la <strong>solution titrante</strong> (B, de concentration \(C_B\) connue). On verse progressivement, goutte à goutte, un volume \(V_B\) variable.</p></div>
+<div class="card"><h4>Erlenmeyer (ou bécher)</h4><p>Contient un volume \(V_A\) précisément mesuré de la <strong>solution titrée</strong> (A, de concentration \(C_A\) inconnue) + quelques gouttes d'indicateur coloré.</p></div>
+</div>
+
+<div class="box prop"><div class="box-label">Conditions de la réaction support</div>
+<p>La réaction chimique utilisée comme support du titrage doit vérifier <strong>trois conditions obligatoires</strong> :</p>
+<p><strong>1. Totale</strong> — le taux d'avancement final vaut \(\tau = 1\). La réaction se poursuit jusqu'à consommation complète du réactif limitant.</p>
+<p><strong>2. Rapide</strong> — l'équilibre est atteint immédiatement après chaque ajout de solution titrante.</p>
+<p><strong>3. Unique</strong> — il n'y a pas de réaction parasite susceptible de perturber la mesure.</p>
+</div>
+
+<div class="box warn"><div class="box-label">Piège fréquent</div>
+<p>Ne pas confondre <em>titrage</em> (détermination d'une concentration) et <em>dilution</em> (diminution d'une concentration par ajout de solvant). Dans un titrage, il y a une <strong>réaction chimique</strong> entre les deux solutions.</p>
+</div>
+
+<!-- SECTION 2 -->
+<h2 id="s2">II · L'équivalence</h2>
+
+<div class="box def"><div class="box-label">Définition</div>
+<p>L'<strong>équivalence</strong> est l'instant du titrage où les réactifs A et B ont été introduits dans les <strong>proportions stœchiométriques exactes</strong>. À ce moment précis, ni A ni B n'est en excès : les deux sont entièrement consommés.</p>
+<p>Le volume de solution titrante versé à cet instant est noté \(V_E\) : le <strong>volume équivalent</strong>.</p>
+</div>
+
+<p>Pour la réaction support :</p>
+<div class="formula">\[ aA + bB \longrightarrow \text{produits} \]</div>
+
+<div class="box prop"><div class="box-label">Relation fondamentale à l'équivalence</div>
+<p>À l'équivalence, le rapport des quantités de matière introduites égale le rapport des coefficients stœchiométriques :</p>
+</div>
+
+<div class="formula">\[ \boxed{\dfrac{n_A}{a} = \dfrac{n_B}{b}} \qquad\Leftrightarrow\qquad \boxed{\dfrac{C_A\,V_A}{a} = \dfrac{C_B\,V_E}{b}} \]</div>
+
+<p>avec :</p>
+<ul>
+<li>\(n_A = C_A \times V_A\) : quantité de matière de A initialement dans l'erlenmeyer (mol)</li>
+<li>\(n_B = C_B \times V_E\) : quantité de matière de B versée à l'équivalence (mol)</li>
+<li>\(a, b\) : coefficients stœchiométriques</li>
+<li>\(V_A\) et \(V_E\) dans la <strong>même unité</strong> (L ou mL)</li>
+</ul>
+
+<div class="cards">
+<div class="card"><h4>Avant l'équivalence</h4><p>\(V_B < V_E\) : le réactif B n'a pas été versé en quantité suffisante. <strong>Le réactif A est en excès</strong>, B est le réactif limitant.</p></div>
+<div class="card"><h4>Après l'équivalence</h4><p>\(V_B > V_E\) : on a versé plus de B que nécessaire. <strong>Le réactif B est en excès</strong>, A a été entièrement consommé.</p></div>
+</div>
+
+<!-- SECTION 3 -->
+<h2 id="s3">III · Repérage colorimétrique de l'équivalence</h2>
+
+<div class="box def"><div class="box-label">Indicateur coloré</div>
+<p>Un <strong>indicateur coloré</strong> est une espèce chimique dont la couleur en solution change en fonction du pH. Il possède une <strong>zone de virage</strong> : intervalle de pH dans lequel la couleur change. L'indicateur doit être choisi tel que <strong>sa zone de virage encadre le pH à l'équivalence</strong>.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Indicateur</th><th>Forme acide</th><th>Zone de virage (pH)</th><th>Forme basique</th><th>Usage typique</th></tr></thead>
+<tbody>
+<tr><td><strong>Hélianthine</strong></td><td style="color:#c0392b">Rouge</td><td>3,1 — 4,4</td><td style="color:#f39c12">Jaune-orangé</td><td>Base forte + acide faible</td></tr>
+<tr><td><strong>Bleu de bromothymol (BBT)</strong></td><td style="color:#f1c40f">Jaune</td><td>6,0 — 7,6</td><td style="color:#2980b9">Bleu</td><td>Acide fort + base forte</td></tr>
+<tr><td><strong>Phénolphtaléine</strong></td><td>Incolore</td><td>8,2 — 10,0</td><td style="color:#e84393">Rose-fuchsia</td><td>Acide faible + base forte</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="box ok"><div class="box-label">Méthode de choix</div>
+<p><strong>Étape 1</strong> : déterminer le pH à l'équivalence du titrage (acide fort/base forte → pH ≈ 7 ; acide faible/base forte → pH > 7 ; base faible/acide fort → pH < 7).</p>
+<p><strong>Étape 2</strong> : choisir l'indicateur dont la zone de virage <strong>encadre</strong> ce pH à l'équivalence.</p>
+</div>
+
+<div class="box warn"><div class="box-label">Piège fréquent</div>
+<p>La phénolphtaléine ne convient <strong>pas</strong> pour un titrage acide fort / base forte classique (pH_éq ≈ 7) car sa zone de virage (8,2–10,0) est trop haute. Le BBT est alors le meilleur choix.</p>
+</div>
+
+<h3>Le virage en pratique</h3>
+<p>On repère l'équivalence par le <strong>changement de couleur persistant</strong> du mélange : la goutte de titrant qui provoque le virage correspond au volume \(V_E\). La précision du repérage dépend de la netteté du saut de pH et du choix de l'indicateur.</p>
+
+<!-- SECTION 4 -->
+<h2 id="s4">IV · Calcul de \(C_A\)</h2>
+
+<div class="box ok"><div class="box-label">Méthode en 4 étapes</div>
+<p><strong>1.</strong> Écrire l'équation de la réaction support et identifier \(a\) et \(b\).</p>
+<p><strong>2.</strong> Lire \(V_E\) : le volume de solution titrante versé au moment du virage de l'indicateur.</p>
+<p><strong>3.</strong> Appliquer la relation à l'équivalence :</p>
+</div>
+
+<div class="formula">\[ C_A = \dfrac{a}{b}\,\dfrac{C_B\,V_E}{V_A} \]</div>
+
+<p><strong>4.</strong> Vérifier la cohérence des unités : \(V_A\) et \(V_E\) doivent être dans la même unité.</p>
+
+<h3>Exemple 1 — Titrage 1:1 (HCl par NaOH)</h3>
+<div class="exercise">
+<h4>Énoncé</h4>
+<p>On titre \(V_A = 20{,}0\;\mathrm{mL}\) d'acide chlorhydrique par une solution de soude de concentration \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\). Le virage du BBT a lieu pour \(V_E = 16{,}0\;\mathrm{mL}\).</p>
+<p>Réaction support : \(\mathrm{HCl_{(aq)} + NaOH_{(aq)} \to NaCl_{(aq)} + H_2O_{(\ell)}}\) avec \(a = 1\), \(b = 1\).</p>
+<details><summary>Correction détaillée</summary>
+<p>Réaction 1:1 ⟹ \(\dfrac{C_A V_A}{1} = \dfrac{C_B V_E}{1}\)</p>
+<p>\[C_A = \dfrac{C_B \times V_E}{V_A} = \dfrac{0{,}100 \times 16{,}0}{20{,}0} = \boxed{0{,}080\;\mathrm{mol\cdot L^{-1}}}\]</p>
+<p>Vérification : \(n_A = 0{,}080 \times 0{,}0200 = 1{,}60\times 10^{-3}\;\mathrm{mol}\) et \(n_B = 0{,}100 \times 0{,}0160 = 1{,}60\times 10^{-3}\;\mathrm{mol}\). Bien \(n_A = n_B\).</p>
+</details>
+</div>
+
+<h3>Exemple 2 — Titrage 1:2 (H₂C₂O₄ par NaOH)</h3>
+<div class="exercise">
+<h4>Énoncé</h4>
+<p>Titrage de \(V_A = 20{,}0\;\mathrm{mL}\) d'acide oxalique par NaOH à \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\). Le virage de la phénolphtaléine se produit pour \(V_E = 25{,}0\;\mathrm{mL}\).</p>
+<p>Réaction support : \(\mathrm{H_2C_2O_{4\,(aq)} + 2\,NaOH_{(aq)} \to Na_2C_2O_{4\,(aq)} + 2\,H_2O_{(\ell)}}\) avec \(a = 1\), \(b = 2\).</p>
+<details><summary>Correction détaillée</summary>
+<p>\[C_A = \dfrac{a}{b}\,\dfrac{C_B V_E}{V_A} = \dfrac{1}{2}\,\dfrac{0{,}100 \times 25{,}0}{20{,}0} = \dfrac{2{,}50}{40{,}0} = \boxed{0{,}0625\;\mathrm{mol\cdot L^{-1}}}\]</p>
+</details>
+</div>
+
+<!-- SECTION 5 -->
+<h2 id="s5">V · Précision et incertitudes</h2>
+
+<div class="box prop"><div class="box-label">Sources d'incertitude</div>
+<p><strong>Burette graduée</strong> : graduation au 0,05 mL. L'incertitude sur \(V_E\) est de l'ordre de ±0,05 mL.</p>
+<p><strong>Pipette jaugée</strong> : précision sur \(V_A\) de l'ordre de ±0,02 mL pour une pipette de 20 mL.</p>
+<p><strong>Repérage du virage</strong> : subjectivité du repérage visuel → incertitude ±0,1 à ±0,5 mL selon la netteté du saut de pH.</p>
+</div>
+
+<div class="formula">\[ \dfrac{u(C_A)}{C_A} = \sqrt{\left(\dfrac{u(C_B)}{C_B}\right)^2 + \left(\dfrac{u(V_E)}{V_E}\right)^2 + \left(\dfrac{u(V_A)}{V_A}\right)^2} \]</div>
+
+<p>avec \(u(X)\) l'incertitude-type sur la grandeur \(X\).</p>
+
+<div class="box warn"><div class="box-label">Piège fréquent</div>
+<p>Si le virage est dépassé (couleur trop intense), \(V_E\) est <strong>surestimé</strong>, donc \(C_A\) calculé sera <strong>trop grand</strong>. Il faut arrêter au premier changement de couleur persistant.</p>
+</div>
+
+<!-- SECTION 6 -->
+<h2 id="s6">VI · Applications</h2>
+
+<div class="cards">
+<div class="card"><h4>Titrage du vinaigre</h4>
+<p>Le vinaigre contient de l'acide acétique \(\mathrm{CH_3COOH}\). On le titre par NaOH. Le <strong>degré d'acidité</strong> est la masse d'acide acétique (en g) pour 100 mL de vinaigre. Un vinaigre « 8° » contient 8 g d'acide acétique pour 100 mL.</p>
+<p>Formule : \(\text{degré} = C_A \times M_{\mathrm{CH_3COOH}} \times 100\;\mathrm{mL}\)</p>
+<p>avec \(M = 60{,}0\;\mathrm{g\cdot mol^{-1}}\).</p>
+</div>
+<div class="card"><h4>Titrage du Destop (soude)</h4>
+<p>Le Destop contient de l'hydroxyde de sodium \(\mathrm{NaOH}\). On le titre par HCl de concentration connue. Même méthode : déterminer \(V_E\) puis calculer \(C_{\mathrm{NaOH}}\).</p>
+</div>
+</div>
+
+<div class="cards" style="margin-top:14px">
+<div class="card"><h4>Titrage d'une eau de Javel</h4>
+<p>Réaction d'oxydoréduction : on titre les ions hypochlorite \(\mathrm{ClO^-}\) par le thiosulfate de sodium \(\mathrm{Na_2S_2O_3}\). L'équivalence est repérée par la disparition de la coloration due au diiode.</p>
+</div>
+<div class="card"><h4>Contrôle qualité en industrie</h4>
+<p>Les titrages colorimétriques sont utilisés dans l'industrie agroalimentaire (acidité du lait, du jus de fruits), pharmaceutique (principes actifs acides ou basiques) et environnementale (dureté de l'eau).</p>
+</div>
+</div>
+
+          </div><!-- course-body -->
+        </div><!-- course-grid -->
+      </div><!-- content-card -->
+    </section>
+
+    <!-- ====================== RELATIONS & DIMENSIONS ====================== -->
+    <section class="panel" id="panel-outils">
+      <div class="content-card">
+        <h3>Relations essentielles — Titrage colorimétrique</h3>
+
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Relation</th><th>Signification</th><th>Unités</th></tr></thead>
+        <tbody>
+        <tr><td>\(n = C \times V\)</td><td>Quantité de matière de soluté dans un volume V de solution de concentration C</td><td>\(n\) en mol, \(C\) en \(\mathrm{mol\cdot L^{-1}}\), \(V\) en L</td></tr>
+        <tr><td>\(\dfrac{n_A}{a} = \dfrac{n_B}{b}\)</td><td>Relation à l'équivalence pour la réaction \(aA + bB \to \text{produits}\)</td><td>Rapports en mol</td></tr>
+        <tr><td>\(\dfrac{C_A V_A}{a} = \dfrac{C_B V_E}{b}\)</td><td>Relation à l'équivalence en termes de concentrations et volumes</td><td>\(V_A\) et \(V_E\) dans la même unité</td></tr>
+        <tr><td>\(C_A = \dfrac{a}{b}\,\dfrac{C_B V_E}{V_A}\)</td><td>Expression de la concentration inconnue</td><td>\(C_A\) en \(\mathrm{mol\cdot L^{-1}}\)</td></tr>
+        <tr><td>\(\text{degré} = C_A \times M \times 0{,}100\)</td><td>Degré d'acidité d'un vinaigre (masse en g pour 100 mL)</td><td>degré en \(\mathrm{g/100\,mL}\)</td></tr>
+        </tbody>
+        </table>
+        </div>
+
+        <h3>Dimensions et homogénéité</h3>
+        <div class="formula">\[ [C_A] = \dfrac{[a]}{[b]} \times \dfrac{[C_B][V_E]}{[V_A]} = \dfrac{\mathrm{mol\cdot L^{-1}} \times \mathrm{L}}{\mathrm{L}} = \mathrm{mol\cdot L^{-1}} \quad\checkmark \]</div>
+
+        <h3>Conversions utiles</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Grandeur</th><th>Conversion</th></tr></thead>
+        <tbody>
+        <tr><td>Volume</td><td>\(1\;\mathrm{L} = 1000\;\mathrm{mL} = 10^{-3}\;\mathrm{m^3}\)</td></tr>
+        <tr><td>Concentration</td><td>\(1\;\mathrm{mol\cdot L^{-1}} = 10^{-3}\;\mathrm{mol\cdot mL^{-1}} = 1\;\mathrm{mmol\cdot mL^{-1}}\)</td></tr>
+        <tr><td>Quantité de matière</td><td>\(1\;\mathrm{mol} = 10^3\;\mathrm{mmol} = 10^6\;\mathrm{\mu mol}\)</td></tr>
+        </tbody>
+        </table>
+        </div>
+
+        <h3>Méthode d'isolement de \(C_A\)</h3>
+        <div class="method-grid">
+          <div class="step"><b>Étape 1</b><p>Écrire la relation : \(\dfrac{C_A V_A}{a} = \dfrac{C_B V_E}{b}\)</p></div>
+          <div class="step"><b>Étape 2</b><p>Multiplier des deux côtés par \(\dfrac{a}{V_A}\)</p></div>
+          <div class="step"><b>Étape 3</b><p>Obtenir : \(C_A = \dfrac{a}{b}\,\dfrac{C_B V_E}{V_A}\)</p></div>
+          <div class="step"><b>Étape 4</b><p>AN : remplacer les valeurs, vérifier que \(V_A\) et \(V_E\) sont dans la même unité.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== EXERCICES ====================== -->
+    <section class="panel" id="panel-exercices">
+      <div class="content-card">
+        <h3>Exercices — Titrage colorimétrique</h3>
+
+        <p style="margin-bottom:18px"><span class="chip green">S'entraîner</span> Application directe &nbsp; <span class="chip amber">Appliquer</span> Raisonnement guidé &nbsp; <span class="chip blue">Approfondir</span> Problème complet</p>
+
+        <div class="exercise">
+          <h4><span class="chip green">S'entraîner</span> Exercice 1 — Calcul direct de C_A (5 min · REA)</h4>
+          <p>On titre \(V_A = 10{,}0\;\mathrm{mL}\) d'acide chlorhydrique par une solution de NaOH à \(C_B = 0{,}050\;\mathrm{mol\cdot L^{-1}}\). Le virage du BBT est observé pour \(V_E = 12{,}0\;\mathrm{mL}\).</p>
+          <p>Réaction : \(\mathrm{HCl + NaOH \to NaCl + H_2O}\) (1:1).</p>
+          <p><strong>Calculer \(C_A\).</strong></p>
+          <details><summary>Correction</summary>
+          <p>Réaction 1:1 : \(C_A V_A = C_B V_E\)</p>
+          <p>\(C_A = \dfrac{C_B V_E}{V_A} = \dfrac{0{,}050 \times 12{,}0}{10{,}0} = \boxed{0{,}060\;\mathrm{mol\cdot L^{-1}}}\)</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip green">S'entraîner</span> Exercice 2 — Quantité de matière à l'équivalence (5 min · REA)</h4>
+          <p>\(C_B = 0{,}200\;\mathrm{mol\cdot L^{-1}}\), \(V_E = 8{,}5\;\mathrm{mL}\).</p>
+          <p><strong>Calculer \(n_B\) versé à l'équivalence.</strong></p>
+          <details><summary>Correction</summary>
+          <p>\(n_B = C_B \times V_E = 0{,}200 \times 8{,}5 \times 10^{-3} = \boxed{1{,}70 \times 10^{-3}\;\mathrm{mol}}\)</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip amber">Appliquer</span> Exercice 3 — Titrage du vinaigre (15 min · APP · REA · ANA)</h4>
+          <p>On titre \(V_A = 10{,}0\;\mathrm{mL}\) d'un vinaigre dilué 10 fois par NaOH à \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\). Virage de la phénolphtaléine pour \(V_E = 15{,}0\;\mathrm{mL}\).</p>
+          <p>Réaction : \(\mathrm{CH_3COOH + NaOH \to CH_3COONa + H_2O}\) (1:1).</p>
+          <p>M(CH₃COOH) = 60,0 g/mol.</p>
+          <p><strong>1.</strong> Calculer \(C_A\) du vinaigre dilué.</p>
+          <p><strong>2.</strong> En déduire \(C_0\) du vinaigre commercial (facteur de dilution 10).</p>
+          <p><strong>3.</strong> Calculer le degré d'acidité et comparer à l'étiquette « 8° ».</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> \(C_A = \dfrac{C_B V_E}{V_A} = \dfrac{0{,}100 \times 15{,}0}{10{,}0} = 0{,}150\;\mathrm{mol\cdot L^{-1}}\)</p>
+          <p><strong>2.</strong> \(C_0 = 10 \times C_A = 10 \times 0{,}150 = 1{,}50\;\mathrm{mol\cdot L^{-1}}\)</p>
+          <p><strong>3.</strong> Degré = \(C_0 \times M \times 0{,}100 = 1{,}50 \times 60{,}0 \times 0{,}100 = 9{,}0\;\mathrm{g/100\,mL}\) soit 9°.</p>
+          <p>Écart avec l'étiquette : \(\dfrac{|9{,}0 - 8{,}0|}{8{,}0} \times 100 = 12{,}5\;\%\). Écart acceptable compte tenu des incertitudes expérimentales.</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip amber">Appliquer</span> Exercice 4 — Stœchiométrie 1:2 (15 min · APP · REA)</h4>
+          <p>On titre \(V_A = 20{,}0\;\mathrm{mL}\) d'acide sulfurique \(\mathrm{H_2SO_4}\) par NaOH à \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\). Virage du BBT pour \(V_E = 24{,}0\;\mathrm{mL}\).</p>
+          <p>Réaction : \(\mathrm{H_2SO_4 + 2\,NaOH \to Na_2SO_4 + 2\,H_2O}\) (a=1, b=2).</p>
+          <p><strong>Calculer \(C_A\).</strong></p>
+          <details><summary>Correction</summary>
+          <p>\(C_A = \dfrac{a}{b}\,\dfrac{C_B V_E}{V_A} = \dfrac{1}{2}\,\dfrac{0{,}100 \times 24{,}0}{20{,}0} = \dfrac{1}{2} \times 0{,}120 = \boxed{0{,}060\;\mathrm{mol\cdot L^{-1}}}\)</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip blue">Approfondir</span> Exercice 5 — Titrage et incertitude (20 min · APP · REA · VAL)</h4>
+          <p>Titrage de \(V_A = 20{,}0 \pm 0{,}04\;\mathrm{mL}\) d'acide éthanoïque par NaOH à \(C_B = 0{,}100 \pm 0{,}001\;\mathrm{mol\cdot L^{-1}}\). Virage pour \(V_E = 13{,}4 \pm 0{,}1\;\mathrm{mL}\).</p>
+          <p>Réaction 1:1.</p>
+          <p><strong>1.</strong> Calculer \(C_A\).</p>
+          <p><strong>2.</strong> Calculer l'incertitude relative \(u(C_A)/C_A\).</p>
+          <p><strong>3.</strong> En déduire \(u(C_A)\) et écrire le résultat avec son incertitude.</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> \(C_A = \dfrac{0{,}100 \times 13{,}4}{20{,}0} = 6{,}70 \times 10^{-2}\;\mathrm{mol\cdot L^{-1}}\)</p>
+          <p><strong>2.</strong> \(\dfrac{u(C_A)}{C_A} = \sqrt{\left(\dfrac{0{,}001}{0{,}100}\right)^2 + \left(\dfrac{0{,}1}{13{,}4}\right)^2 + \left(\dfrac{0{,}04}{20{,}0}\right)^2}\)</p>
+          <p>\(= \sqrt{(0{,}010)^2 + (0{,}0075)^2 + (0{,}002)^2} = \sqrt{1{,}00 \times 10^{-4} + 5{,}6 \times 10^{-5} + 4{,}0 \times 10^{-6}} \approx 0{,}013\) soit 1,3 %</p>
+          <p><strong>3.</strong> \(u(C_A) = 0{,}013 \times 6{,}70 \times 10^{-2} \approx 9 \times 10^{-4}\;\mathrm{mol\cdot L^{-1}}\)</p>
+          <p>Résultat : \(C_A = (6{,}7 \pm 0{,}1) \times 10^{-2}\;\mathrm{mol\cdot L^{-1}}\)</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip blue">Approfondir</span> Exercice 6 — Choix de l'indicateur (10 min · APP · ANA · COM)</h4>
+          <p>On réalise trois titrages :</p>
+          <p>A) HCl (acide fort) par NaOH (base forte) → pH_éq ≈ 7,0</p>
+          <p>B) CH₃COOH (acide faible) par NaOH → pH_éq ≈ 8,7</p>
+          <p>C) NH₃ (base faible) par HCl → pH_éq ≈ 5,3</p>
+          <p><strong>Pour chaque titrage, indiquer le meilleur indicateur coloré parmi hélianthine, BBT et phénolphtaléine. Justifier.</strong></p>
+          <details><summary>Correction</summary>
+          <p><strong>A)</strong> pH_éq ≈ 7,0 → BBT (zone 6,0–7,6 encadre 7,0). L'hélianthine (3,1–4,4) et la phénolphtaléine (8,2–10,0) ne conviennent pas.</p>
+          <p><strong>B)</strong> pH_éq ≈ 8,7 → Phénolphtaléine (zone 8,2–10,0 encadre 8,7). Le BBT et l'hélianthine sont trop bas.</p>
+          <p><strong>C)</strong> pH_éq ≈ 5,3 → Hélianthine (zone 3,1–4,4) est un peu basse. En fait, aucun des trois indicateurs classiques n'encadre parfaitement 5,3, mais l'hélianthine (trop basse) et le BBT (6,0–7,6, trop haute) sont tous deux imparfaits. En 1ère Spé, on accepte le BBT comme le choix le moins mauvais pour ce cas. En Terminale, on utilise un suivi pH-métrique.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== FLASHCARDS ====================== -->
+    <section class="panel" id="panel-flashcards">
+      <div class="content-card">
+        <h3>Flashcards — Titrage colorimétrique</h3>
+        <p style="color:var(--muted);margin-bottom:14px">15 cartes · Cliquez pour retourner · <button class="btn" onclick="shuffleFC()">Mélanger</button></p>
+        <div class="flashcard-grid" id="fcGrid"></div>
+      </div>
+    </section>
+
+    <!-- ====================== QUIZ & CHATBOT ====================== -->
+    <section class="panel" id="panel-quiz">
+      <div class="content-card">
+        <h3>Quiz — Titrage colorimétrique</h3>
+        <p style="color:var(--muted);margin-bottom:14px">Score : <strong id="quizScore">0 / 0</strong></p>
+        <div id="quizBox"></div>
+        <div id="quizEnd" style="display:none;text-align:center;padding:30px">
+          <p style="font-size:32px;font-weight:800;color:var(--active)" id="quizFinal"></p>
+          <button class="btn primary" onclick="startQuiz()">Recommencer</button>
+        </div>
+      </div>
+
+      <div class="content-card" style="margin-top:16px">
+        <h3>Chatbot IA — Titrage colorimétrique</h3>
+        <p style="color:var(--muted);margin-bottom:14px">Copie le prompt et ouvre l'IA de ton choix.</p>
+        <textarea class="prompt-box" id="promptBox">Tu es un professeur de physique-chimie de Première Spécialité. Aide-moi à comprendre le chapitre « Titrage colorimétrique ». Explique avec : définitions exactes, méthode en étapes, formules LaTeX (\frac{C_A V_A}{a} = \frac{C_B V_E}{b}), unités, exemples corrigés et pièges fréquents. Mon niveau est Première Spécialité.</textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="copyPrompt()">Copier le prompt</button>
+          <a class="btn" href="https://chat.openai.com" target="_blank">ChatGPT</a>
+          <a class="btn" href="https://claude.ai" target="_blank">Claude</a>
+          <a class="btn" href="https://copilot.microsoft.com" target="_blank">Copilot</a>
+          <a class="btn" href="https://gemini.google.com" target="_blank">Gemini</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== CARTE MENTALE ====================== -->
+    <section class="panel" id="panel-mindmap">
+      <div class="content-card">
+        <h3>Carte mentale — Titrage colorimétrique</h3>
+        <div class="mindmap">
+          <div class="map-center">TITRAGE COLORIMÉTRIQUE</div>
+          <div class="map-branches">
+            <div class="map-branch" style="border-left:4px solid var(--active)">
+              <h4 style="color:var(--active)">Principe</h4>
+              <ul>
+                <li>Solution titrée (C_A inconnue) dans l'erlenmeyer</li>
+                <li>Solution titrante (C_B connue) dans la burette</li>
+                <li>Réaction : totale + rapide + unique</li>
+                <li>On verse B goutte à goutte sur A</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #ffb86b">
+              <h4 style="color:#ffb86b">Équivalence</h4>
+              <ul>
+                <li>\(\frac{n_A}{a} = \frac{n_B}{b}\)</li>
+                <li>\(\frac{C_A V_A}{a} = \frac{C_B V_E}{b}\)</li>
+                <li>Avant éq. → A en excès</li>
+                <li>Après éq. → B en excès</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #a3ff5f">
+              <h4 style="color:#a3ff5f">Indicateurs</h4>
+              <ul>
+                <li>Hélianthine : 3,1–4,4 (R → J)</li>
+                <li>BBT : 6,0–7,6 (J → Bl)</li>
+                <li>Phénolphtaléine : 8,2–10 (∅ → Rose)</li>
+                <li>Zone de virage ↔ pH_éq</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #ff6bd6">
+              <h4 style="color:#ff6bd6">Calcul de C_A</h4>
+              <ul>
+                <li>Écrire l'équation (a, b)</li>
+                <li>Lire V_E au virage</li>
+                <li>\(C_A = \frac{a}{b}\frac{C_B V_E}{V_A}\)</li>
+                <li>Vérifier homogénéité</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #00ffb3">
+              <h4 style="color:#00ffb3">Incertitudes</h4>
+              <ul>
+                <li>Burette : ±0,05 mL</li>
+                <li>Pipette jaugée : ±0,02 mL</li>
+                <li>Repérage virage : ±0,1–0,5 mL</li>
+                <li>Propagation quadratique</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid var(--red)">
+              <h4 style="color:var(--red)">Applications</h4>
+              <ul>
+                <li>Vinaigre (degré d'acidité)</li>
+                <li>Destop (NaOH)</li>
+                <li>Eau de Javel (ClO⁻)</li>
+                <li>Contrôle qualité industriel</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== SIMULATIONS ====================== -->
+    <section class="panel" id="panel-simulations">
+      <div class="content-card">
+        <h3>Simulations PhET</h3>
+        <div class="sim-grid-2">
+          <div class="sim-card">
+            <iframe src="https://phet.colorado.edu/sims/html/acid-base-solutions/latest/acid-base-solutions_fr.html" allowfullscreen loading="lazy"></iframe>
+            <div class="sim-body">
+              <h4 style="margin:0 0 4px">Solutions acide-base</h4>
+              <p style="color:var(--muted);font-size:13px;margin:0">Explorer le pH, les indicateurs colorés et le virage à l'équivalence. Observer le comportement des acides forts et faibles.</p>
+            </div>
+          </div>
+          <div class="sim-card">
+            <iframe src="https://phet.colorado.edu/sims/html/reactants-products-and-leftovers/latest/reactants-products-and-leftovers_fr.html" allowfullscreen loading="lazy"></iframe>
+            <div class="sim-body">
+              <h4 style="margin:0 0 4px">Réactifs, Produits et Restes</h4>
+              <p style="color:var(--muted);font-size:13px;margin:0">Visualiser les proportions stœchiométriques. Comprendre la notion de réactif limitant appliquée au titrage.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card" style="margin-top:16px">
+        <h3>Simulateur interactif — Titrage colorimétrique</h3>
+        <div class="neon-sim">
+          <canvas id="simCanvas" height="350"></canvas>
+          <div class="sim-body">
+            <h4>Calculateur de titrage</h4>
+            <p>Entrez les paramètres du titrage. Le graphe montre n(A) et n(B) en fonction de V_B versé.</p>
+            <div class="sim-inputs">
+              <div><label class="neon-label">C_B (mol/L)</label><input class="neon-input" id="inCB" type="number" step="0.01" value="0.100"></div>
+              <div><label class="neon-label">V_A (mL)</label><input class="neon-input" id="inVA" type="number" step="0.1" value="20.0"></div>
+              <div><label class="neon-label">C_A (mol/L)</label><input class="neon-input" id="inCA" type="number" step="0.01" value="0.080"></div>
+            </div>
+            <div class="sim-inputs" style="grid-template-columns:repeat(2,1fr)">
+              <div><label class="neon-label">a (coeff. A)</label><input class="neon-input" id="inA" type="number" step="1" value="1" min="1"></div>
+              <div><label class="neon-label">b (coeff. B)</label><input class="neon-input" id="inB" type="number" step="1" value="1" min="1"></div>
+            </div>
+            <button class="btn primary" style="margin-top:10px" onclick="calcTitrage()">Calculer & Tracer</button>
+            <div class="neon-result" id="simResult"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== ECE ====================== -->
+    <section class="panel" id="panel-ece">
+      <div class="content-card">
+        <h3>ECE — Titrage de l'acide chlorhydrique par la soude</h3>
+
+        <div class="box def"><div class="box-label">Objectif</div>
+        <p>Déterminer la concentration \(C_A\) d'une solution d'acide chlorhydrique par titrage colorimétrique à l'aide d'une solution de soude de concentration connue \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\).</p>
+        </div>
+
+        <h3>Protocole</h3>
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Préparation</b><p>Rincer la burette avec la solution de NaOH (C_B = 0,100 mol/L). Remplir et ajuster le zéro. Prélever V_A = 20,0 mL de HCl à la pipette jaugée et verser dans l'erlenmeyer.</p></div>
+          <div class="ece-step"><b>2. Indicateur</b><p>Ajouter 2-3 gouttes de BBT dans l'erlenmeyer. La solution est jaune (milieu acide, pH < 6).</p></div>
+          <div class="ece-step"><b>3. Titrage</b><p>Verser NaOH goutte à goutte en agitant. Au voisinage de l'équivalence, les ajouts provoquent une coloration verte fugace. Ralentir les ajouts.</p></div>
+          <div class="ece-step"><b>4. Repérage V_E</b><p>Le virage est atteint lorsque la solution reste verte (BBT) de manière persistante (> 30 s). Noter V_E sur la burette.</p></div>
+          <div class="ece-step"><b>5. Calcul</b><p>Appliquer : \(C_A = \dfrac{C_B \times V_E}{V_A}\) (réaction 1:1).</p></div>
+          <div class="ece-step"><b>6. Validation</b><p>Répéter le titrage 2 à 3 fois. Calculer la moyenne des V_E obtenus. Calculer l'incertitude.</p></div>
+        </div>
+
+        <h3>Visualisation du titrage</h3>
+        <div class="neon-sim">
+          <canvas id="eceCanvas" height="300"></canvas>
+          <div class="sim-body">
+            <h4>Titrage HCl + NaOH — Animation</h4>
+            <p>Burette (NaOH) versant dans l'erlenmeyer (HCl + BBT). Couleur : jaune → vert → bleu.</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:18px">Tableau de résultats</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Essai</th><th>V_E (mL)</th><th>C_A calculé (mol/L)</th></tr></thead>
+        <tbody>
+        <tr><td>1</td><td>16,0</td><td>0,080</td></tr>
+        <tr><td>2</td><td>15,8</td><td>0,079</td></tr>
+        <tr><td>3</td><td>16,1</td><td>0,081</td></tr>
+        <tr><td><strong>Moyenne</strong></td><td><strong>16,0</strong></td><td><strong>0,080</strong></td></tr>
+        </tbody>
+        </table>
+        </div>
+
+        <div class="box ok"><div class="box-label">Conclusion</div>
+        <p>\(C_A = (8{,}0 \pm 0{,}1) \times 10^{-2}\;\mathrm{mol\cdot L^{-1}}\). L'incertitude provient principalement du repérage visuel du virage et de la précision de la burette.</p>
+        </div>
+      </div>
+
+      <div class="content-card" style="margin-top:16px">
+        <h3>ECE variante — Titrage du vinaigre par NaOH</h3>
+
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Dilution</b><p>Diluer le vinaigre 10 fois : prélever 10,0 mL à la pipette jaugée, compléter à 100,0 mL dans une fiole jaugée.</p></div>
+          <div class="ece-step"><b>2. Titrage</b><p>Prélever V_A = 10,0 mL du vinaigre dilué. Ajouter phénolphtaléine. Titrer par NaOH (C_B = 0,100 mol/L). Virage : apparition d'une couleur rose persistante.</p></div>
+          <div class="ece-step"><b>3. Calcul C_A</b><p>\(C_A = \dfrac{C_B \times V_E}{V_A}\) puis \(C_0 = 10 \times C_A\).</p></div>
+          <div class="ece-step"><b>4. Degré</b><p>Degré = \(C_0 \times M \times 0{,}100 = C_0 \times 60{,}0 \times 0{,}100\). Comparer à l'étiquette.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== VERS TERMINALE ====================== -->
+    <section class="panel" id="panel-terminale">
+      <div class="content-card">
+        <h3>Vers la Terminale — Ce qui vous attend</h3>
+
+        <div class="cards">
+          <div class="card"><h4 style="color:var(--active)">Titrage pH-métrique</h4>
+          <p>En Terminale, on suit le pH en continu avec un pH-mètre au lieu d'utiliser un indicateur coloré. On trace la courbe \(\mathrm{pH} = f(V_B)\) et on repère l'équivalence au <strong>point d'inflexion</strong> (méthode des tangentes ou de la dérivée).</p>
+          <p>Avantage : plus précis que le repérage colorimétrique, applicable même quand aucun indicateur ne convient.</p>
+          </div>
+          <div class="card"><h4 style="color:#ffb86b">Titrage conductimétrique</h4>
+          <p>On mesure la conductivité σ de la solution en fonction de \(V_B\). Le graphe présente deux segments de droite dont l'intersection donne \(V_E\). Utile quand la réaction n'implique pas de changement de pH net.</p>
+          <p>Relation : \(\sigma = \sum_i \lambda_i \times [X_i]\) avec \(\lambda_i\) conductivité molaire ionique.</p>
+          </div>
+        </div>
+
+        <div class="cards" style="margin-top:14px">
+          <div class="card"><h4 style="color:#a3ff5f">Titrage spectrophotométrique</h4>
+          <p>Si l'une des espèces absorbe la lumière, on suit l'absorbance A à une longueur d'onde choisie. À l'équivalence, le graphe \(A = f(V_B)\) change de pente. Loi de Beer-Lambert : \(A = \varepsilon \ell C\).</p>
+          </div>
+          <div class="card"><h4 style="color:#ff6bd6">Titrages d'oxydoréduction</h4>
+          <p>Même principe, mais la réaction support est une réaction redox. Exemple : titrage du diiode par le thiosulfate (iodométrie), titrage des ions fer(II) par le permanganate.</p>
+          <p>Indicateur : empois d'amidon (bleu → incolore) ou autoindicateur (KMnO₄ violet).</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:18px">Mini-défi — Vers la Terminale</h3>
+        <div class="exercise">
+          <h4>Titrage pH-métrique : exploitation de la courbe</h4>
+          <p>On titre \(V_A = 20{,}0\;\mathrm{mL}\) d'acide éthanoïque par NaOH à \(C_B = 0{,}100\;\mathrm{mol\cdot L^{-1}}\). La courbe pH = f(V_B) donne un point d'inflexion pour \(V_E = 13{,}4\;\mathrm{mL}\) avec un pH à l'équivalence de 8,7.</p>
+          <p><strong>1.</strong> Calculer \(C_A\).</p>
+          <p><strong>2.</strong> Pourquoi le pH à l'équivalence n'est-il pas 7 ?</p>
+          <p><strong>3.</strong> Quel indicateur coloré aurait convenu pour un repérage colorimétrique ?</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> \(C_A = \dfrac{C_B V_E}{V_A} = \dfrac{0{,}100 \times 13{,}4}{20{,}0} = 6{,}70 \times 10^{-2}\;\mathrm{mol\cdot L^{-1}}\)</p>
+          <p><strong>2.</strong> Car à l'équivalence, la solution contient de l'éthanoate de sodium \(\mathrm{CH_3COO^-}\), qui est une base faible. L'ion éthanoate réagit avec l'eau (hydrolyse) et rend le milieu basique → pH > 7.</p>
+          <p><strong>3.</strong> La phénolphtaléine (zone 8,2–10,0) encadre pH_éq = 8,7. C'est l'indicateur adapté.</p>
+          </details>
+        </div>
+
+        <h3 style="margin-top:18px">Liens entre chapitres</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Ce chapitre (1ère)</th><th>En Terminale</th></tr></thead>
+        <tbody>
+        <tr><td>Relation à l'équivalence \(\frac{n_A}{a} = \frac{n_B}{b}\)</td><td>Même relation, méthodes de repérage multiples (pH, conductimétrie, spectro)</td></tr>
+        <tr><td>Indicateur coloré</td><td>Comparaison avec suivi instrumental continu</td></tr>
+        <tr><td>Réaction support totale</td><td>Constante d'équilibre \(K\) : quantification de la « totalité »</td></tr>
+        <tr><td>Calcul de \(C_A\)</td><td>Incertitudes type A et B, écriture scientifique du résultat</td></tr>
+        </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- page -->
+
+    </main>
+  </div>
+</div>
+<script>
+
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>
