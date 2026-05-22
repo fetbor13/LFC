@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>5ᵉ · Chapitre 3 — Mélanges et séparation des constituants | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>5EME · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+    <div class="topbar"><div class="progress" id="progress"></div><button class="back" onclick="history.back()">← Retour</button><div class="crumb">5e / Chimie / <strong>Chapitre 3</strong></div><div class="pct" id="pct">0%</div></div>
+    <header class="header" id="top">
+      <div class="header-inner">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="badge">5e · Chapitre 3</div>
+            <div class="meta-row" style="margin-top:0;margin-bottom:10px"><span class="meta">M Borsali · Enseignant PC · LFC</span></div>
+            <h2><em>Les mélanges</em> et la séparation des constituants</h2>
+            <p class="intro">Distinguer les mélanges homogènes et hétérogènes, identifier les constituants d'un mélange, et maîtriser les techniques de séparation : filtration, décantation, distillation et chromotographie.</p>
+            <div class="hero-stats"><div class="hero-stat"><strong>7</strong><span>idées clés</span></div><div class="hero-stat"><strong>10</strong><span>exercices guidés</span></div><div class="hero-stat"><strong>4</strong><span>simulations utiles</span></div></div>
+          </div>
+          <div class="hero-media"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Filtration_diagram.svg/640px-Filtration_diagram.svg.png" alt="Schéma de filtration en chimie"></div>
+        </div>
+        <div class="missions"><article class="mission-card"><span class="mission-pill">Mission 01</span><h3>Identifier</h3><p>Reconnaître un mélange homogène d'un mélange hétérogène et nommer ses constituants.</p></article><article class="mission-card"><span class="mission-pill">Mission 02</span><h3>Séparer</h3><p>Choisir la bonne technique de séparation selon la nature du mélange et réaliser les manipulations.</p></article><article class="mission-card"><span class="mission-pill">Mission 03</span><h3>Appliquer</h3><p>Utiliser les techniques de séparation dans des situations de la vie quotidienne et en laboratoire.</p></article></div>
+      </div>
+    </header>
+
+    <!-- ════════════════════════ COURS ════════════════════════ -->
+    <section class="panel active" id="cours"><div class="section course-layout"><aside class="toc"><div class="toc-title">Plan du cours</div><a href="#melange">1. Corps purs et mélanges</a><a href="#types">2. Mélanges homogènes et hétérogènes</a><a href="#constituants">3. Constituants d'un mélange</a><a href="#separation">4. Techniques de séparation</a><a href="#applications">5. Applications quotidiennes</a><a href="#bilan">6. Bilan</a></aside><article class="content">
+
+      <h3 id="melange">1. Corps purs et mélanges</h3>
+      <p>Dans la vie quotidienne, nous rencontrons très rarement des substances pures. L'air que nous respirons, l'eau du robinet, le jus de fruit que nous buvons sont tous des <strong>mélanges</strong>. Un mélange est obtenu lorsqu'on assemble au moins deux substances différentes sans qu'elles réagissent chimiquement entre elles.</p>
+      <p>À l'inverse, un <strong>corps pur</strong> est une substance constituée d'un seul type de constituant. L'eau distillée, le fer, le dioxygène pur sont des corps purs. On distingue les corps purs simples (un seul élément chimique, comme le fer Fe ou le dioxygène O₂) et les corps purs composés (plusieurs éléments chimiques combinés, comme l'eau H₂O ou le dioxyde de carbone CO₂).</p>
+      <p>Il est essentiel de comprendre cette distinction car les techniques de séparation visent précisément à retrouver les corps purs qui composent un mélange. Par exemple, l'eau de mer est un mélange qui contient de l'eau (corps pur composé) et du sel (corps pur composé). La séparation permet d'isoler chacun de ces constituants.</p>
+      <div class="grid2"><div class="box def"><div class="label">Définition</div><h4>Mélange</h4><p>Un mélange est l'association de deux ou plusieurs corps purs qui ne réagissent pas chimiquement entre eux. On peut les séparer par des méthodes physiques.</p></div><div class="box def"><div class="label">Définition</div><h4>Corps pur</h4><p>Un corps pur est une substance formée d'un seul type de constituant. Il possède des caractéristiques physiques constantes (température d'ébullition fixe, masse volumique fixe, etc.).</p></div></div>
+      <div class="box warn"><div class="label">Attention</div><p>Ne pas confondre « corps pur » et « produit propre » ou « sain ». En chimie, un corps pur est simplement une substance d'un seul type. Le dioxyde de carbone CO₂ est un corps pur, bien qu'il soit un gaz polluant !</p></div>
+
+      <h3 id="types">2. Mélanges homogènes et hétérogènes</h3>
+      <p>Tous les mélanges ne se ressemblent pas. Selon l'aspect visuel, on distingue deux grandes catégories. Si, à l'œil nu, on ne peut pas distinguer les différents constituants, le mélange est dit <strong>homogène</strong>. Si, au contraire, on peut voir des parties différentes, le mélange est dit <strong>hétérogène</strong>.</p>
+      <p>L'eau salée est un mélange homogène : on ne peut pas voir le sel dissous dans l'eau, même en regardant de très près. L'eau boueuse, en revanche, est un mélange hétérogène : on observe des particules de boue en suspension dans l'eau. La distinction est fondamentale car elle détermine la technique de séparation à utiliser.</p>
+      <p>Il faut noter que l'aspect homogène ou hétérogène dépend de l'échelle d'observation. Un mélange qui semble homogène à l'œil nu peut révéler des hétérogénéités au microscope. Par exemple, le lait semble homogène à l'œil nu, mais au microscope, on distingue des globules de matière grasse en suspension : c'est en réalité un mélange hétérogène appelé <strong>émulsion</strong>.</p>
+      <div class="grid2"><div class="box def"><div class="label">Définition</div><h4>Mélange homogène</h4><p>Mélange dont les constituants ne sont pas distinguables à l'œil nu. L'ensemble a un aspect uniforme. Exemples : eau salée, air, sirop de menthe dilué.</p></div><div class="box def"><div class="label">Définition</div><h4>Mélange hétérogène</h4><p>Mélange dont on peut distinguer les constituants à l'œil nu. L'aspect n'est pas uniforme. Exemples : eau boueuse, vinaigrette, salade de fruits.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Type de mélange</th><th>Aspect visuel</th><th>Exemples</th><th>Technique de séparation</th></tr></thead><tbody><tr><td>Homogène</td><td>Uniforme</td><td>Eau salée, air, alliage métallique</td><td>Distillation, évaporation</td></tr><tr><td>Hétérogène (suspension)</td><td>Particules solides dans un liquide</td><td>Eau boueuse, eau trouble</td><td>Filtration, décantation</td></tr><tr><td>Hétérogène (émulsion)</td><td>Gouttelettes liquides dans un liquide</td><td>Lait, vinaigrette</td><td>Décantation, centrifugation</td></tr><tr><td>Hétérogène (solide-solide)</td><td>Grains différents visibles</td><td>Sel et poivre, salade de fruits</td><td>Tamisage, tri manuel</td></tr></tbody></table></div>
+      <div class="box ok"><div class="label">Astuce</div><p>Pour tester si un mélange liquide est homogène, on peut utiliser un faisceau de lumière (lampe de poche). Si la lumière traverse sans diffuser, le mélange est homogène. Si on voit le faisceau dans le liquide (effet Tyndall), c'est un mélange hétérogène avec des particules fines en suspension.</p></div>
+
+      <h3 id="constituants">3. Constituants d'un mélange</h3>
+      <p>Chaque mélange est formé de <strong>constituants</strong> (ou composants). Dans l'eau salée, les constituants sont l'eau et le sel. Dans l'air, les constituants sont le diazote (≈78 %), le dioxygène (≈21 %) et d'autres gaz en petites quantités (argon, dioxyde de carbone, etc.).</p>
+      <p>Identifier les constituants d'un mélange est la première étape avant de choisir une technique de séparation. Il faut se poser les bonnes questions : le constituant est-il solide, liquide ou gazeux ? Est-il soluble ou insoluble ? Sa température d'ébullition est-elle différente de celle des autres constituants ? Ces informations guident le choix de la méthode.</p>
+      <p>Dans un mélange hétérogène solide-liquide, on distingue le <strong>soluté</strong> (substance dissoute ou en suspension) du <strong>solvant</strong> (substance qui dissout, souvent l'eau). Quand le soluté est complètement dissous, on obtient une <strong>solution</strong> (mélange homogène). Quand le soluté n'est pas dissous et reste en particules visibles, on a une <strong>suspension</strong> (mélange hétérogène).</p>
+      <div class="grid2"><div class="box prop"><div class="label">Propriété</div><h4>Solubilité</h4><p>La solubilité est la quantité maximale de soluté que l'on peut dissoudre dans un volume donné de solvant à une température donnée. Le sel est très soluble dans l'eau, mais le sable est insoluble.</p></div><div class="box prop"><div class="label">Propriété</div><h4>Concentration</h4><p>La concentration indique la quantité de soluté dissous dans un volume de solution. Elle s'exprime souvent en g/L. Plus la concentration est élevée, plus le mélange est « chargé » en soluté.</p></div></div>
+      <div class="box method"><div class="label">Méthode</div><p>Pour identifier les constituants d'un mélange, procède ainsi : 1) Observe l'aspect visuel (homogène ou hétérogène). 2) Teste la solubilité de chaque constituant. 3) Cherche les différences de température d'ébullition. 4) Vérifie si certains constituants sont attirés par un aimant (propriété magnétique).</p></div>
+
+      <h3 id="separation">4. Techniques de séparation</h3>
+      <p>La séparation des constituants d'un mélange repose sur l'exploitation des différences de propriétés physiques entre les constituants. On n'utilise jamais de transformations chimiques : les constituants retrouvent leur état initial après séparation. C'est ce qu'on appelle une <strong>séparation physique</strong>.</p>
+      <p>Chaque technique de séparation est adaptée à un type de mélange précis. Choisir la mauvaise technique peut être inefficace voire dangereux. Par exemple, essayer de filtrer de l'eau salée ne donnera rien car le sel est dissous et les trous du filtre sont bien trop grands pour retenir les ions.</p>
+
+      <div class="grid2"><div class="box method"><div class="label">Méthode</div><h4>Filtration</h4><p>La filtration permet de séparer les constituants d'un mélange hétérogène solide-liquide. On verse le mélange sur un filtre : le liquide traverse (le <strong>filtrat</strong>) et le solide est retenu (le <strong>résidu</strong>). Exemple : filtrer de l'eau boueuse pour récupérer l'eau claire.</p><p>Le choix du filtre dépend de la taille des particules : papier filtre pour les particules fines, coton pour les particules plus grosses, grille métallique pour les gros débris.</p></div><div class="box method"><div class="label">Méthode</div><h4>Décantation</h4><p>La décantation exploite la différence de densité entre les constituants. On laisse le mélange au repos : le constituant le plus dense tombe au fond (dépôt), le moins dense reste en surface. Exemples : l'huile flotte sur l'eau, la boue se dépose au fond de l'eau.</p><p>La décantation peut être accélérée par <strong>centrifugation</strong> (rotation rapide qui augmente la gravité apparente) ou par ajout d'un <strong>floculant</strong> (substance qui agglomère les petites particules).</p></div></div>
+
+      <div class="grid2"><div class="box method"><div class="label">Méthode</div><h4>Distillation</h4><p>La distillation sépare les constituants d'un mélange homogène liquide en exploitant leurs différences de température d'ébullition. On chauffe le mélange : le constituant qui bout le premier se vaporise, puis se condense dans un réfrigérant et est recueilli (le <strong>distillat</strong>). Exemple : distiller l'eau salée pour récupérer l'eau pure.</p><p>Dans une distillation fractionnée, on utilise une colonne de fractionnement pour séparer plusieurs constituants ayant des températures d'ébullition proches. C'est ainsi qu'on sépare le pétrole brut en essence, kérosène, gasoil, etc.</p></div><div class="box method"><div class="label">Méthode</div><h4>Chromatographie</h4><p>La chromatographie sépare les constituants d'un mélange homogène en exploitant leur affinité différente pour deux phases : la <strong>phase fixe</strong> (le support, comme le papier) et la <strong>phase mobile</strong> (le solvant qui monte par capillarité). Les constituants miguent à des vitesses différentes et forment des taches séparées. Exemple : chromatographie sur couche mince pour identifier les colorants d'un sirop.</p><p>La chromatographie est très sensible et peut détecter des constituants en quantités infimes. C'est une technique utilisée en médecine, en police scientifique et dans le contrôle qualité alimentaire.</p></div></div>
+
+      <div class="grid2"><div class="box method"><div class="label">Méthode</div><h4>Évaporation</h4><p>L'évaporation consiste à chauffer un mélange homogène liquide pour en évaporer le solvant et récupérer le soluté solide. Exemple : chauffer de l'eau salée pour récupérer le sel. C'est une technique simple mais le solvant est perdu dans l'atmosphère.</p></div><div class="box method"><div class="label">Méthode</div><h4>Tamisage</h4><p>Le tamisage sépare les constituants solides d'un mélange hétérogène solide-solide selon la taille des grains. On utilise un tamis (ou crible) dont les trous laissent passer les petits grains et retiennent les gros. Exemple : séparer le sable du gravier.</p></div></div>
+
+      <div class="table-wrap"><table><thead><tr><th>Technique</th><th>Type de mélange</th><th>Principe physique</th><th>Exemple</th></tr></thead><tbody><tr><td>Filtration</td><td>Hétérogène solide-liquide</td><td>Taille des particules</td><td>Eau boueuse → eau claire + boue</td></tr><tr><td>Décantation</td><td>Hétérogène (densités différentes)</td><td>Densité / gravité</td><td>Huile + eau</td></tr><tr><td>Centrifugation</td><td>Hétérogène (particules fines)</td><td>Force centrifuge</td><td>Sang → plasma + globules</td></tr><tr><td>Distillation</td><td>Homogène liquide</td><td>Température d'ébullition</td><td>Eau salée → eau pure + sel</td></tr><tr><td>Chromatographie</td><td>Homogène (colorés)</td><td>Affinité phase fixe/mobile</td><td>Colorants d'un sirop</td></tr><tr><td>Évaporation</td><td>Homogène (soluté solide)</td><td>Passage liquide → gaz</td><td>Eau salée → sel</td></tr><tr><td>Tamisage</td><td>Hétérogène solide-solide</td><td>Taille des grains</td><td>Sable + gravier</td></tr></tbody></table></div>
+
+      <div class="box warn"><div class="label">Erreur fréquente</div><p>Croire que la filtration peut séparer les constituants d'un mélange homogène. C'est faux ! Les constituants d'un mélange homogène sont mélangés à l'échelle microscopique et passent à travers le filtre. Pour un mélange homogène, il faut utiliser la distillation ou la chromatographie.</p></div>
+
+      <h3 id="applications">5. Applications quotidiennes</h3>
+      <p>Les techniques de séparation sont omniprésentes dans notre quotidien. La <strong>station d'épuration</strong> utilise la décantation et la filtration pour nettoyer les eaux usées avant de les rejeter dans la nature. Le <strong>traitement de l'eau potable</strong> combine filtration sur sable, filtration sur charbon actif et chloration pour rendre l'eau propre à la consommation.</p>
+      <p>Dans l'<strong>industrie pétrolière</strong>, la distillation fractionnée du pétrole brut permet d'obtenir différents carburants (gaz, essence, kérosène, gasoil, fuel lourd) qui ont des températures d'ébullition différentes. C'est l'une des applications les plus importantes de la distillation à l'échelle industrielle.</p>
+      <p>En <strong>agroalimentaire</strong>, la centrifugation sépare la crème du lait pour produire du lait écrémé et de la crème fraîche. La chromatographie est utilisée pour vérifier la composition des colorants alimentaires et détecter les fraudes. L'évaporation est utilisée pour produire le sel marin à partir de l'eau de mer dans les marais salants.</p>
+      <p>En <strong>médecine</strong>, la centrifugation du sang permet de séparer le plasma (liquide jaune) des globules rouges et blancs (phase solide). Cette technique est indispensable pour réaliser des analyses sanguines précises.</p>
+      <div class="grid3"><div class="card"><h4>🐠 Aquarium</h4><p>Les filtres d'aquarium combinent filtration mécanique (rétention des déchets) et filtration biologique (bactéries décomposant les polluants dissous).</p></div><div class="card"><h4>☕ Café</h4><p>Le café est obtenu par filtration : l'eau chaude traverse le café moulu, dissout les arômes (mélange homogène) et le filtre retient le marc (résidu solide).</p></div><div class="card"><h4>🧂 Sel marin</h4><p>Dans les marais salants, l'eau de mer s'évapore naturellement sous l'action du soleil et du vent, laissant le sel cristalliser.</p></div></div>
+
+      <h3 id="bilan">6. Bilan essentiel</h3>
+      <div class="grid3"><div class="card"><h4>Corps purs et mélanges</h4><p>Un corps pur est constitué d'un seul type de substance. Un mélange associe au moins deux corps purs sans réaction chimique.</p></div><div class="card"><h4>Homogène vs Hétérogène</h4><p>Homogène : aspect uniforme (eau salée). Hétérogène : constituants visibles (eau boueuse, vinaigrette).</p></div><div class="card"><h4>Séparations physiques</h4><p>Filtration (solide/liquide), décantation (densités), distillation (ébullition), chromatographie (affinité), évaporation, tamisage.</p></div></div>
+      <div class="grid2" style="margin-top:14px"><div class="card"><h4>Clé du choix</h4><p>On choisit la technique en fonction du type de mélange et de la propriété physique qui différencie les constituants (taille, densité, température d'ébullition, solubilité).</p></div><div class="card"><h4>Règle d'or</h4><p>La filtration ne fonctionne que sur les mélanges hétérogènes solide-liquide. Pour un mélange homogène, il faut la distillation ou la chromatographie.</p></div></div>
+    </article></div></section>
+
+    <!-- ════════════════════════ SIMULATIONS ════════════════════════ -->
+    <section class="panel" id="sims">
+<h2 style="text-align:center;color:var(--accent);margin-bottom:1.2rem">🧪 Simulateurs — Mélanges &amp; Séparations</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Filtration</h3>
+    <canvas id="cvA3_5" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">Verser :</label>
+      <input type="range" id="slA3_5" min="0" max="100" value="0" style="flex:1;accent-color:var(--accent)">
+      <span id="lbA3_5" style="color:var(--accent);font-weight:bold;min-width:3rem">0%</span>
+    </div>
+  </div>
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Décantation</h3>
+    <canvas id="cvB3_5" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">Temps :</label>
+      <input type="range" id="slB3_5" min="0" max="100" value="0" style="flex:1;accent-color:var(--accent)">
+      <span id="lbB3_5" style="color:var(--accent);font-weight:bold;min-width:3rem">0%</span>
+    </div>
+  </div>
+</div>
+</section>
+
+    <!-- ════════════════════════ MATHS & UNITÉS ════════════════════════ -->
+    <section class="panel" id="maths"><div class="section content"><h3>Outils mathématiques et unités</h3>
+      <div class="grid2"><div class="box method"><div class="label">Concentration massique</div><div class="formula">$$C = \frac{m}{V}$$</div><p>La concentration massique \(C\) est le rapport de la masse \(m\) de soluté sur le volume \(V\) de solution. Elle s'exprime en g/L.</p><p>Exemple : si on dissout 5 g de sel dans 250 mL d'eau, alors \(C = \frac{5}{0{,}250} = 20\) g/L.</p></div><div class="box method"><div class="label">Conversions de volume</div><div class="formula">$$1\,\text{L}=1000\,\text{mL}\qquad 1\,\text{mL}=1\,\text{cm}^3$$</div><p>Exemple : \(250\,\text{mL}=0{,}250\,\text{L}\).</p></div></div>
+      <div class="grid2"><div class="box method"><div class="label">Pourcentage massique</div><div class="formula">$$\% = \frac{m_{\text{constituant}}}{m_{\text{total}}} \times 100$$</div><p>L'eau de mer contient environ 35 g de sel par kg d'eau de mer, soit un pourcentage massique de 3,5 %.</p></div><div class="box method"><div class="label">Masse volumique</div><div class="formula">$$\rho = \frac{m}{V}$$</div><p>La masse volumique ρ permet de prévoir la décantation : le constituant de plus faible masse volumique flotte sur celui de plus forte masse volumique. ρ(eau) = 1 g/cm³ ; ρ(huile) ≈ 0,92 g/cm³.</p></div></div>
+      <div class="box warn"><div class="label">Méthode de calcul</div><p>Avant d'effectuer un calcul de concentration, vérifie que toutes les grandeurs sont dans la même unité : masse en grammes, volume en litres pour obtenir des g/L. Si le volume est en mL, convertis-le en L en divisant par 1000.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité</th><th>Formule</th><th>Usage</th></tr></thead><tbody><tr><td>Concentration massique</td><td>\(C\)</td><td>g/L</td><td>\(C = m/V\)</td><td>Quantifier un soluté dissous</td></tr><tr><td>Masse volumique</td><td>\(\rho\)</td><td>g/cm³ ou kg/L</td><td>\(\rho = m/V\)</td><td>Prévoir la décantation</td></tr><tr><td>Volume</td><td>\(V\)</td><td>L ou mL</td><td>—</td><td>Mesurer un liquide</td></tr><tr><td>Masse</td><td>\(m\)</td><td>g ou kg</td><td>—</td><td>Peser un soluté</td></tr></tbody></table></div></div></section>
+
+    <!-- ════════════════════════ FLASHCARDS ════════════════════════ -->
+    <section class="panel" id="flash"><div class="section flash-wrap"><div class="center"><button class="clean-btn" onclick="prevFC()">←</button><span class="mini-muted" id="fcCount">Carte 1/20</span><button class="clean-btn" onclick="nextFC()">→</button><button class="clean-btn" onclick="shuffleFC()">Mélanger</button></div><div class="fc-card" onclick="flipFC()"><div class="fc-inner" id="fcInner"><div class="face front"><div><h3 id="fcQ">Question</h3><p class="mini-muted">Clique pour retourner</p></div></div><div class="face back"><div><h3>Réponse</h3><p id="fcA">Réponse</p></div></div></div></div></div></section>
+
+    <!-- ════════════════════════ EXERCICES ════════════════════════ -->
+    <section class="panel" id="exos"><div class="section content"><h3>Exercices progressifs</h3><div id="exoList"></div></div></section>
+
+    <!-- ════════════════════════ QUIZ ════════════════════════ -->
+    <section class="panel" id="quiz"><div class="section content"><h3>Quiz interactif</h3><p>Réponds aux questions puis lis la correction immédiate.</p><div id="quizList"></div><div class="center" style="margin-top:12px"><button class="clean-btn primary" onclick="resetQuiz()">Recommencer le quiz</button><span class="pill" id="quizScore">Score : 0/0</span></div></div></section>
+
+    <!-- ════════════════════════ TP ════════════════════════ -->
+    <section class="panel" id="tp"><div class="section content"><h3>TP / Activités expérimentales</h3>
+      <div class="grid2"><div class="box method"><div class="label">TP 1</div><h4>Filtration d'un mélange hétérogène</h4>
+        <div class="tp-steps">
+          <div class="tp-step"><p>Prépare un mélange hétérogène en ajoutant 2 cuillérées de terre dans un bécher contenant 100 mL d'eau. Agite vigoureusement avec une baguette en verre. Observe l'aspect : le mélange est trouble, on voit des particules en suspension → mélange hétérogène.</p></div>
+          <div class="tp-step"><p>Place un entonnoir muni d'un papier filtre replié en cône sur un bécher propre. Le papier filtre doit bien adhérer aux parois de l'entonnoir. Humidifie légèrement le filtre pour qu'il colle.</p></div>
+          <div class="tp-step"><p>Verse lentement le mélange trouble sur le filtre. Attention à ne pas dépasser le bord du papier filtre. Le liquide qui coule en dessous est le <strong>filtrat</strong> (eau claire). Le solide retenu dans le filtre est le <strong>résidu</strong> (terre).</p></div>
+          <div class="tp-step"><p>Observe le filtrat : il est plus clair mais peut encore être légèrement trouble (particules très fines). Si nécessaire, filtre une deuxième fois avec un papier filtre plus fin.</p></div>
+          <div class="tp-step"><p><strong>Conclusion :</strong> La filtration a permis de séparer partiellement les constituants du mélange hétérogène solide-liquide. Le résidu (solide) est retenu par le filtre, le filtrat (liquide) passe à travers.</p></div>
+        </div>
+        <div class="box warn" style="margin-top:10px"><div class="label">Sécurité</div><p>Porte des gants et des lunettes de protection. Ne boit jamais le filtrat obtenu en TP, même s'il paraît clair. Lave-toi les mains après la manipulation.</p></div>
+      </div>
+      <div class="box method"><div class="label">TP 2</div><h4>Chromatographie des colorants d'un sirop</h4>
+        <div class="tp-steps">
+          <div class="tp-step"><p>Découpe une bande de papier filtre (environ 2 cm de large et 12 cm de haut). Trace un trait au crayon à papier à 1,5 cm du bas. C'est la ligne de dépôt.</p></div>
+          <div class="tp-step"><p>Dépose une petite goutte de sirop de menthe sur la ligne de dépôt à l'aide d'un capillaire ou d'un cure-dent. Laisse sécher 2 minutes. Dépose une deuxième goutte au même endroit pour concentrer le colorant.</p></div>
+          <div class="tp-step"><p>Verse de l'eau dans un bécher (environ 0,5 cm de hauteur). Place la bande de papier dans le bécher en veillant à ce que le niveau de l'eau soit <strong>en dessous</strong> de la ligne de dépôt. Le papier ne doit pas toucher les parois du bécher.</p></div>
+          <div class="tp-step"><p>Observe l'eau monter par capillarité. Quand elle arrive près du haut du papier (environ 8-10 minutes), retire la bande et marque au crayon le front du solvant. Laisse sécher.</p></div>
+          <div class="tp-step"><p><strong>Conclusion :</strong> Le sirop de menthe contient plusieurs colorants qui ont migré à des hauteurs différentes. Chaque tache correspond à un colorant différent. Le sirop est un mélange homogène de plusieurs colorants que seule la chromatographie permet de séparer.</p></div>
+        </div>
+        <div class="box warn" style="margin-top:10px"><div class="label">Sécurité</div><p>Ne porte pas les mains à la bouche pendant la manipulation. Les colorants alimentaires ne sont pas dangereux mais les conditions de laboratoire exigent des précautions. Jette le papier usagé dans la poubelle prévue.</p></div>
+      </div></div>
+      <div class="grid2" style="margin-top:14px"><div class="box method"><div class="label">TP 3</div><h4>Décantation huile + eau</h4>
+        <div class="tp-steps">
+          <div class="tp-step"><p>Dans une éprouvette graduée, verse 50 mL d'eau puis ajoute doucement 20 mL d'huile alimentaire. Observe immédiatement : l'huile reste à la surface car sa masse volumique est plus faible que celle de l'eau.</p></div>
+          <div class="tp-step"><p>Bouche l'éprouvette et agite vigoureusement. Observe : le mélange devient trouble (émulsion). L'huile forme de petites gouttelettes en suspension dans l'eau.</p></div>
+          <div class="tp-step"><p>Laisse reposer 5 minutes. Observe : l'huile remonte progressivement à la surface. Les deux phases se séparent par décantation. L'huile (jaune) est au-dessus, l'eau (transparente) est en dessous.</p></div>
+          <div class="tp-step"><p><strong>Conclusion :</strong> La décantation sépare les constituants d'un mélange hétérogène de liquides non miscibles grâce à la différence de masse volumique. L'huile et l'eau sont non miscibles.</p></div>
+        </div>
+      </div>
+      <div class="box method"><div class="label">TP 4</div><h4>Obtention de sel par évaporation</h4>
+        <div class="tp-steps">
+          <div class="tp-step"><p>Prépare une solution d'eau salée en dissolvant 10 g de gros sel dans 100 mL d'eau chaude. Agite jusqu'à dissolution complète. Le mélange est homogène.</p></div>
+          <div class="tp-step"><p>Verse la solution dans une capsule en porcelaine et place-la sur un chauffage électrique (ou au bain-marie). Attention : ne surchauffe pas !</p></div>
+          <div class="tp-step"><p>Observe l'eau qui s'évapore progressivement. Au bout de quelques minutes, des cristaux de sel apparaissent sur les parois et au fond de la capsule.</p></div>
+          <div class="tp-step"><p><strong>Conclusion :</strong> L'évaporation a permis de récupérer le sel dissous dans l'eau salée. L'eau s'est évaporée (passage de l'état liquide à l'état gazeux) et le sel est resté sous forme solide. Attention : cette méthode ne récupère pas l'eau ! Pour cela, il faudrait utiliser la distillation.</p></div>
+        </div>
+        <div class="box warn" style="margin-top:10px"><div class="label">Sécurité</div><p>Attention surface chaude ! Utilise une pince pour manipuler la capsule. Ne jamais chauffer à sec (sans liquide) un récipient en verre.</p></div>
+      </div></div></div></section>
+
+    <!-- ════════════════════════ CHATBOTS ════════════════════════ -->
+    <section class="panel" id="chat"><div class="section content"><h3>Chatbots externes</h3><p>L'assistant est volontairement externe : l'élève choisit l'outil IA, copie le prompt du chapitre, puis vérifie la réponse avec le cours.</p><div class="assistant-grid"><div class="assistant-card"><h4>ChatGPT</h4><p>Pour demander une explication pas à pas ou une correction guidée.</p><a class="ext-link" href="https://chatgpt.com/" target="_blank">Ouvrir ChatGPT</a></div><div class="assistant-card"><h4>Gemini</h4><p>Pour reformuler le cours, créer des analogies et vérifier une méthode.</p><a class="ext-link" href="https://gemini.google.com/" target="_blank">Ouvrir Gemini</a></div><div class="assistant-card"><h4>Claude</h4><p>Pour obtenir une correction longue, structurée et très expliquée.</p><a class="ext-link" href="https://claude.ai/" target="_blank">Ouvrir Claude</a></div><div class="assistant-card"><h4>Copilot</h4><p>Pour chercher une aide rapide ou générer des exemples supplémentaires.</p><a class="ext-link" href="https://copilot.microsoft.com/" target="_blank">Ouvrir Copilot</a></div></div>
+      <div class="prompt-box" id="promptText"><strong>Prompt à copier :</strong><br>Tu es mon tuteur de physique-chimie niveau 5e. Aide-moi sur le chapitre « Les mélanges et la séparation des constituants ». Explique clairement : 1) La différence entre corps pur et mélange. 2) La distinction entre mélange homogène et hétérogène, avec au moins 3 exemples de chaque. 3) Les 6 techniques de séparation : filtration, décantation, centrifugation, distillation, chromatographie, évaporation — pour chacune, précise le type de mélange concerné et le principe physique utilisé. 4) Donne-moi un exercice corrigé : un mélange d'eau, de sable et d'huile, je dois proposer un protocole de séparation en plusieurs étapes. Explique chaque étape avec les bons termes scientifiques (filtrat, résidu, phase, miscible, etc.).</div><button class="clean-btn primary" onclick="copyPrompt()" style="margin-top:12px">Copier le prompt</button></div></section>
+
+    <!-- ════════════════════════ VERS LA 4e ════════════════════════ -->
+    <section class="panel" id="future"><div class="section content"><h3>Vers la 4e</h3>
+      <div class="future-grid"><div class="box def"><div class="label">Ce qui revient</div><p>En 4e, on réutilise la notion de mélange pour comprendre les <strong>solutions aqueuses</strong>, la concentration massique, et les transformations chimiques. Tu reverras la distinction homogène/hétérogène et les techniques de séparation, mais avec une approche plus quantitative (calculs de concentration, masses volumiques).</p></div><div class="box prop"><div class="label">Ce qui s'ajoute</div><p>En 4e, on découvre les <strong>transformations chimiques</strong> : les constituants d'un mélange peuvent réagir entre eux et former de nouvelles substances. On apprend aussi à écrire des équations chimiques et à distinguer transformation physique (séparation) et transformation chimique (réaction). La loi de conservation de la masse est au programme.</p></div><div class="box method"><div class="label">Pourquoi c'est important</div><p>Les techniques de séparation sont partout dans l'industrie : traitement des eaux, raffinage du pétrole, fabrication des médicaments, analyse médicale (centrifugation du sang), contrôle qualité alimentaire (chromatographie des colorants). Maîtriser ces techniques, c'est comprendre comment on purifie l'eau qu'on boit, comment on produit le sel de table, et comment on analyse les substances.</p></div></div>
+      <div class="grid2" style="margin-top:14px"><div class="box ok"><div class="label">Connexion avec la 3e</div><p>En 3e, tu étudieras les atomes et les molécules, ce qui te permettra de comprendre <strong>pourquoi</strong> certains constituants se mélangent et d'autres non. Tu découvriras que la solubilité dépend des interactions entre molécules et que la chromatographie sépare les constituants parce qu'ils n'ont pas la même affinité pour les deux phases.</p></div><div class="box warn"><div class="label">Piège à éviter</div><p>Ne confonds pas « séparation physique » (programme de 5e : on récupère les constituants sans les modifier) et « transformation chimique » (programme de 4e : les constituants réagissent et forment de nouvelles substances). La filtration, la décantation et la distillation sont des séparations physiques : les constituants ne changent pas de nature.</p></div></div></div></section>
+
+    </main>
+  </div>
+</div>
+<script>
+
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

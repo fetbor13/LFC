@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3ᵉ · Chapitre 1 — Constitution de l'atome et ions | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>3EME · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+    <div class="topbar"><a class="back" href="index.html">← Retour</a><div class="crumb">3e › Chapitre 1 › Constitution de l'atome et ions</div><div class="spacer"></div><button class="theme" onclick="toggleTheme()" id="themeBtn">🌙</button></div>
+    <header class="hero">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <span class="badge">3e · Chapitre 1</span>
+          <h2>Constitution de <em>l'atome</em> et ions</h2>
+          <p>Comprendre la structure d'un atome, expliquer la formation d'un ion et reconnaître quelques ions à partir de tests chimiques simples.</p>
+          <div class="meta"><span class="pill">Atome</span><span class="pill">Ion</span><span class="pill">Cation / anion</span><span class="pill">Tests caractéristiques</span><span class="pill">~50 min</span></div>
+        </div>
+        <div class="hero-img"><img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Atom_Diagram.svg" alt="Schéma d'un atome"></div>
+      </div>
+    </header>
+
+    <section class="panel active" id="cours"><div class="section layout-course">
+      <nav class="toc"><h3>Plan</h3><a href="#c1">1. Atome</a><a href="#c2">2. Compter</a><a href="#c3">3. Ions</a><a href="#c4">4. Tests</a><a href="#c5">5. Bilan</a></nav>
+      <article class="course">
+        <h2 id="c1">1. De quoi est constitué un atome ?</h2>
+        <p>Un atome est une entité chimique extrêmement petite — il faut environ un million d'atomes mis côte à côte pour obtenir l'épaisseur d'un cheveu ! Il est constitué d'un <strong>noyau</strong> autour duquel se déplacent des <strong>électrons</strong>. Le noyau, lui-même, contient des <strong>protons</strong>, chargés positivement, et des <strong>neutrons</strong>, électriquement neutres.</p>
+        <p>Le noyau est très petit par rapport à l'atome : si l'atome était une sphère de la taille d'un stade de football, le noyau serait de la taille d'une petite bille au centre. C'est dire que l'atome est surtout constitué de vide ! Les électrons tournent très rapidement autour du noyau, ce qui donne à l'atome son apparence « solide » bien qu'il soit principalement vide.</p>
+        <div class="box def"><strong>Définition.</strong> Un atome est électriquement neutre : il possède autant de protons positifs que d'électrons négatifs. La charge globale d'un atome est donc nulle.</div>
+        <p>Chaque élément chimique (hydrogène, carbone, oxygène, fer…) possède un nombre unique de protons dans son noyau. C'est ce nombre qui détermine l'identité de l'élément. Par exemple, tout atome qui possède 6 protons est un atome de carbone, qu'il ait 6, 7 ou 8 neutrons.</p>
+        <div class="table-wrap"><table><thead><tr><th>Particule</th><th>Position</th><th>Charge</th><th>Masse approximative</th><th>Rôle au collège</th></tr></thead><tbody><tr><td>Proton</td><td>Noyau</td><td>Positive (+1)</td><td>\(1{,}67\times10^{-27}\) kg</td><td>Détermine l'élément chimique</td></tr><tr><td>Neutron</td><td>Noyau</td><td>Nulle (0)</td><td>\(1{,}67\times10^{-27}\) kg</td><td>Participe à la masse du noyau</td></tr><tr><td>Électron</td><td>Autour du noyau</td><td>Négative (−1)</td><td>\(9{,}1\times10^{-31}\) kg</td><td>Peut être gagné ou perdu pour former un ion</td></tr></tbody></table></div>
+        <div class="box ok"><strong>Analogie.</strong> Imagine l'atome comme un terrain de jeu. Le noyau est le maître du jeu qui reste au centre. Les électrons sont les enfants qui courent autour. Si un enfant part (perte d'électron), le groupe n'est plus équilibré : il y a un « manque » et le groupe devient positif (cation). Si un enfant d'un autre groupe rejoint (gain d'électron), le groupe devient négatif (anion).</div>
+        <div class="box warn"><strong>Erreur fréquente.</strong> Un ion ne se forme pas en changeant le noyau. Le nombre de protons ne change pas dans une transformation chimique classique : seuls les électrons peuvent être gagnés ou perdus. Le noyau reste intact lors des réactions chimiques ordinaires.</div>
+        <div class="box method"><strong>Astuce de mémorisation.</strong> Pour retenir la charge des particules : <strong>P</strong>roton = <strong>P</strong>ositif ; <strong>N</strong>eutron = <strong>N</strong>eutre ; <strong>É</strong>lectron = charge opposée au proton (négative).</div>
+
+        <h2 id="c2">2. Compter les particules dans l'écriture conventionnelle</h2>
+        <p>On représente un atome par une écriture du type :</p><div class="formula">\[ ^A_ZX \]</div>
+        <p><strong>Z</strong> est le numéro atomique : il indique le nombre de protons dans le noyau. C'est la « carte d'identité » de l'élément chimique. <strong>A</strong> est le nombre de masse : il indique le nombre total de nucléons (protons + neutrons) dans le noyau.</p>
+        <p>Pour calculer le nombre de neutrons, il suffit de soustraire Z à A :</p>
+        <div class="formula">\[N_{neutrons}=A-Z\]</div>
+        <p>Par exemple, pour le carbone \(^{12}_{6}C\) : il y a 6 protons (Z=6), 6 électrons (car l'atome est neutre), et \(12-6=6\) neutrons. Pour le même élément carbone, il existe aussi l'isotope \(^{14}_{6}C\) qui possède toujours 6 protons mais \(14-6=8\) neutrons. C'est le principe des isotopes : même élément, même Z, mais A différent.</p>
+        <div class="box method"><strong>Méthode.</strong> Pour un atome neutre : protons = Z ; électrons = Z ; neutrons = A − Z. Toujours vérifier que l'atome est neutre avant de conclure que le nombre d'électrons est égal à Z.</div>
+        <div class="box ok"><strong>Exemple guidé 1.</strong> Pour le fluor \(^{19}_{9}F\) : il y a 9 protons, 9 électrons car l'atome est neutre, et \(19-9=10\) neutrons.</div>
+        <div class="box ok"><strong>Exemple guidé 2.</strong> Pour l'aluminium \(^{27}_{13}Al\) : il y a 13 protons, 13 électrons et \(27-13=14\) neutrons.</div>
+        <div class="box ok"><strong>Exemple guidé 3.</strong> Pour le chlore \(^{35}_{17}Cl\) : il y a 17 protons, 17 électrons et \(35-17=18\) neutrons.</div>
+        <div class="box warn"><strong>Attention.</strong> Ne pas confondre le nombre de masse A avec le numéro atomique Z. Z donne le nombre de protons (identité de l'élément), A donne le nombre total de nucléons (protons + neutrons). Pour trouver les neutrons, il faut TOUJOURS faire A − Z.</div>
+
+        <h2 id="c3">3. Comment se forme un ion ?</h2>
+        <p>Un ion est un atome ou un groupe d'atomes qui a gagné ou perdu un ou plusieurs électrons. Il n'est donc plus électriquement neutre. La transformation d'un atome en ion s'appelle l'ionisation. Attention : seuls les électrons sont concernés ; le noyau ne change jamais.</p>
+        <p>Pourquoi les atomes perdent-ils ou gagnent-ils des électrons ? C'est parce qu'ils cherchent à devenir plus stables, en acquérant la configuration électronique d'un gaz noble (un gaz très peu réactif comme le néon ou l'argon). Cette idée sera approfondie au lycée, mais au collège, il suffit de savoir que certains atomes perdent facilement des électrons et d'autres en gagnent facilement.</p>
+        <div class="grid">
+          <div class="card"><h3>Cation (ion positif)</h3><p>Il s'obtient par <strong>perte d'électrons</strong>. L'atome a moins d'électrons que de protons, d'où une charge globale positive. Exemple : \(Na^+\) (le sodium a perdu 1 électron), \(Cu^{2+}\) (le cuivre a perdu 2 électrons), \(Al^{3+}\) (l'aluminium a perdu 3 électrons).</p></div>
+          <div class="card"><h3>Anion (ion négatif)</h3><p>Il s'obtient par <strong>gain d'électrons</strong>. L'atome a plus d'électrons que de protons, d'où une charge globale négative. Exemple : \(Cl^-\) (le chlore a gagné 1 électron), \(O^{2-}\) (l'oxygène a gagné 2 électrons), \(N^{3-}\) (l'azote a gagné 3 électrons).</p></div>
+        </div>
+        <p>Un ion <strong>monoatomique</strong> est formé d'un seul atome : \(Na^+\), \(Cl^-\), \(Fe^{2+}\). Un ion <strong>polyatomique</strong> est formé de plusieurs atomes liés entre eux : \(SO_4^{2-}\) (ion sulfate), \(HO^-\) (ion hydroxyde), \(NO_3^-\) (ion nitrate), \(CO_3^{2-}\) (ion carbonate), \(NH_4^+\) (ion ammonium).</p>
+        <div class="box warn"><strong>À retenir.</strong> Le signe + signifie qu'il manque des électrons (l'ion est positif car il y a plus de protons que d'électrons) ; le signe − signifie qu'il y a des électrons en plus (l'ion est négatif car il y a plus d'électrons que de protons). Le chiffre devant le signe indique combien d'électrons ont été perdus ou gagnés.</div>
+        <div class="box method"><strong>Comment calculer le nombre d'électrons d'un ion ?</strong> Pour un cation \(X^{n+}\) : nombre d'électrons = Z − n. Pour un anion \(X^{n-}\) : nombre d'électrons = Z + n. Exemple : \(Fe^{3+}\) avec Z=26 : électrons = 26 − 3 = 23.</div>
+        <div class="box ok"><strong>Application quotidienne.</strong> Le sel de table (NaCl) est composé d'ions sodium \(Na^+\) et d'ions chlorure \(Cl^-\). Dans l'eau, ces ions se séparent et circulent librement, ce qui rend l'eau salée conductrice d'électricité. C'est aussi pour cela que l'eau de mer conduit le courant électrique.</div>
+
+        <h2 id="c4">4. Tests de reconnaissance des ions</h2>
+        <p>Pour identifier des ions dans une solution, on ajoute un réactif testeur. Si un précipité caractéristique apparaît (un solide insoluble qui se forme dans la solution), le test est positif. Un précipité est un solide qui apparaît quand on mélange deux solutions et qu'une réaction chimique produit une substance insoluble.</p>
+        <p>Il est important de comprendre que chaque test est spécifique : un réactif donné ne réagit qu'avec un ion particulier (ou une famille d'ions). La couleur du précipité est la clé de l'identification. Si aucun précipité ne se forme, l'ion recherché n'est pas présent dans la solution.</p>
+        <div class="table-wrap"><table><thead><tr><th>Ion recherché</th><th>Réactif testeur</th><th>Observation si test positif</th><th>Couleur du précipité</th></tr></thead><tbody><tr><td>\(Cu^{2+}\)</td><td>Soude (NaOH)</td><td>Précipité bleu</td><td>Bleu</td></tr><tr><td>\(Fe^{2+}\)</td><td>Soude (NaOH)</td><td>Précipité vert</td><td>Vert</td></tr><tr><td>\(Fe^{3+}\)</td><td>Soude (NaOH)</td><td>Précipité orange / rouille</td><td>Orange-rouille</td></tr><tr><td>\(Zn^{2+}\)</td><td>Soude (NaOH)</td><td>Précipité blanc</td><td>Blanc</td></tr><tr><td>\(Cl^-\)</td><td>Nitrate d'argent (AgNO₃)</td><td>Précipité blanc qui noircit à la lumière</td><td>Blanc → noir</td></tr><tr><td>\(SO_4^{2-}\)</td><td>Chlorure de baryum (BaCl₂)</td><td>Précipité blanc fin</td><td>Blanc</td></tr></tbody></table></div>
+        <div class="box method"><strong>Protocole type.</strong> 1) Verser un peu de solution inconnue dans un tube à essai propre. 2) Ajouter quelques gouttes de réactif testeur à l'aide d'une pipette. 3) Observer attentivement la formation (ou non) d'un précipité et sa couleur. 4) Conclure en citant l'ion identifié. Ne jamais ajouter la solution dans le réactif, toujours l'inverse.</div>
+        <div class="box warn"><strong>Précautions.</strong> Toujours utiliser des tubes à essai propres pour éviter les contaminations. Rincer la pipette entre chaque test. Un même précipité blanc peut correspondre à plusieurs ions : il faut parfois faire un second test pour confirmer.</div>
+        <div class="box ok"><strong>Exemple d'analyse complète.</strong> On teste une solution inconnue avec de la soude : un précipité bleu apparaît. Conclusion : la solution contient des ions cuivre II (\(Cu^{2+}\)). On teste la même solution avec du nitrate d'argent : aucun précipité. Conclusion : la solution ne contient pas d'ions chlorure (\(Cl^-\)).</div>
+
+        <h2 id="c5">5. Bilan express</h2>
+        <div class="grid3">
+          <div class="card"><h3>Atome</h3><p>Neutre : autant de protons que d'électrons. Caractérisé par Z et A.</p></div>
+          <div class="card"><h3>Ion</h3><p>Chargé : perte ou gain d'électrons. Cation (+) ou anion (−). Monoatomique ou polyatomique.</p></div>
+          <div class="card"><h3>Test</h3><p>Un précipité permet d'identifier certains ions. Chaque test est spécifique à un ion.</p></div>
+        </div>
+        <div class="box method"><strong>Résumé des formules clés.</strong> Pour un atome neutre \(^A_ZX\) : protons = Z, électrons = Z, neutrons = A − Z. Pour un ion \(X^{n+}\) : électrons = Z − n. Pour un ion \(X^{n-}\) : électrons = Z + n.</div>
+        <div class="box ok"><strong>Connexion avec la vie quotidienne.</strong> Les ions sont partout : dans l'eau du robinet (\(Ca^{2+}\), \(Mg^{2+}\), \(Cl^-\)), dans les boissons sportives (\(Na^+\), \(K^+\)), dans les batteries de téléphone (ions lithium \(Li^+\)), et même dans notre corps où les ions permettent la transmission des signaux nerveux.</div>
+      </article>
+    </div></section>
+
+    <section class="panel" id="sims">
+<h2 style="text-align:center;color:var(--accent);text-shadow:none;margin-bottom:1.2rem">⚛ Simulateurs — Atome &amp; Ions</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Modèle de Bohr</h3>
+    <canvas id="cvA1" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+      <label style="color:#bbb;font-size:.82rem">Z :</label>
+      <input type="range" id="slA1" min="1" max="18" value="6" style="flex:1;accent-color:var(--accent)">
+      <span id="lbA1" style="color:var(--accent);font-weight:bold;min-width:4rem;font-size:.85rem">6 (C)</span>
+    </div>
+  </div>
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Formation d'ions</h3>
+    <canvas id="cvB1" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:flex;gap:.4rem">
+      <button onclick="window._im1='n'" style="flex:1;padding:.35rem;background:#fff1;border:1px solid #666;border-radius:6px;color:#aaa;cursor:pointer;font-size:.8rem">Neutre</button>
+      <button onclick="window._im1='c'" style="flex:1;padding:.35rem;background:var(--accentBg);border:1px solid var(--accent);border-radius:6px;color:var(--accent);cursor:pointer;font-size:.8rem">Cation +</button>
+      <button onclick="window._im1='a'" style="flex:1;padding:.35rem;background:#3355ff1a;border:1px solid #5577ff;border-radius:6px;color:#aabbff;cursor:pointer;font-size:.8rem">Anion −</button>
+    </div>
+  </div>
+</div>
+</section>
+
+    <section class="panel" id="maths"><div class="section">
+      <h2 class="section-title">Outils mathématiques et unités</h2>
+      <div class="grid">
+        <div class="card"><h3>Compter avec A et Z</h3><p>Pour \(^A_ZX\), on utilise :</p><div class="formula">\[p^+ = Z \quad ; \quad e^- = Z \text{ si atome neutre} \quad ; \quad n = A-Z\]</div><div class="field"><label>A</label><input id="Acalc" type="number" value="19"></div><div class="field"><label>Z</label><input id="Zcalc" type="number" value="9"></div><button class="btn primary" onclick="calcAZ()">Calculer</button><div class="status" id="azStatus"></div></div>
+        <div class="card"><h3>Lire une charge ionique</h3><p>\(X^+\) : l'atome a perdu 1 électron. \(X^{2+}\) : il a perdu 2 électrons. \(X^{3+}\) : il a perdu 3 électrons. \(X^-\) : il a gagné 1 électron. \(X^{2-}\) : il a gagné 2 électrons.</p><div class="box method"><strong>Méthode rapide :</strong> signe + → moins d'électrons que de protons ; signe − → plus d'électrons que de protons. Le chiffre devant le signe = nombre d'électrons gagnés ou perdus.</div></div>
+        <div class="card"><h3>Calculer les électrons d'un ion</h3><div class="formula">\[\text{Cation } X^{n+} : e^- = Z - n\]\[\text{Anion } X^{n-} : e^- = Z + n\]</div><p>Exemple : \(Al^{3+}\) avec Z=13 → \(e^- = 13 - 3 = 10\). Exemple : \(O^{2-}\) avec Z=8 → \(e^- = 8 + 2 = 10\).</p></div>
+        <div class="card"><h3>Grandeurs utiles</h3><div class="table-wrap"><table><thead><tr><th>Symbole</th><th>Signification</th><th>Unité</th></tr></thead><tbody><tr><td>A</td><td>Nombre de masse</td><td>sans unité</td></tr><tr><td>Z</td><td>Numéro atomique</td><td>sans unité</td></tr><tr><td>n</td><td>Nombre de neutrons</td><td>sans unité</td></tr><tr><td>p⁺</td><td>Nombre de protons</td><td>sans unité</td></tr><tr><td>e⁻</td><td>Nombre d'électrons</td><td>sans unité</td></tr></tbody></table></div></div>
+        <div class="card"><h3>Erreur à éviter</h3><p>Ne pas confondre l'indice dans une formule chimique, comme \(O_2\) (2 atomes d'oxygène dans la molécule), avec la charge d'un ion, comme \(O^{2-}\) (l'ion oxyde porte une charge 2−). L'indice est en bas à droite, la charge est en haut à droite.</p></div>
+      </div>
+    </div></section>
+
+    <section class="panel" id="flashcards"><div class="section"><h2 class="section-title">Flashcards</h2><p style="color:var(--muted)">Clique sur la carte pour afficher la réponse.</p><div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flash-inner"><div class="face"><h3 id="fcQ">Qu'est-ce qu'un ion ?</h3></div><div class="face back"><p id="fcA">Un atome ou un groupe d'atomes qui a perdu ou gagné un ou plusieurs électrons.</p></div></div></div><button class="btn" onclick="prevFC()">← Précédente</button> <button class="btn primary" onclick="nextFC()">Suivante →</button><span class="pill" id="fcCount">1 / 15</span></div></section>
+
+    <section class="panel" id="exercices"><div class="section"><h2 class="section-title">Exercices progressifs</h2><div class="grid">
+      <div class="card"><h3>Niveau 1 — Compter les particules</h3><p>Le fluor s'écrit \(^{19}_{9}F\). Indique le nombre de protons, d'électrons et de neutrons.</p><details><summary>Correction</summary><p>9 protons, 9 électrons car l'atome est neutre, 10 neutrons car 19 − 9 = 10.</p></details></div>
+      <div class="card"><h3>Niveau 1 — Reconnaître les ions</h3><p>Dire si \(Na^+\), \(Cl^-\), \(SO_4^{2-}\), \(HO^-\), \(Al^{3+}\) sont des cations ou anions, monoatomiques ou polyatomiques.</p><details><summary>Correction</summary><p>Na⁺ : cation monoatomique. Cl⁻ : anion monoatomique. SO₄²⁻ : anion polyatomique. HO⁻ : anion polyatomique. Al³⁺ : cation monoatomique.</p></details></div>
+      <div class="card"><h3>Niveau 1 — Identifier à partir d'un test</h3><p>On ajoute du nitrate d'argent à une solution. Un précipité blanc qui noircit à la lumière apparaît. Quel ion est présent ?</p><details><summary>Correction</summary><p>L'ion chlorure Cl⁻ est présent, car le nitrate d'argent donne un précipité blanc qui noircit en sa présence.</p></details></div>
+      <div class="card"><h3>Niveau 2 — Interpréter un test</h3><p>Une solution donne un précipité bleu avec la soude. Quel ion contient-elle ? Justifie.</p><details><summary>Correction</summary><p>Elle contient l'ion cuivre II \(Cu^{2+}\), car la soude donne un précipité bleu en sa présence.</p></details></div>
+      <div class="card"><h3>Niveau 2 — Calculer les électrons d'un ion</h3><p>L'ion aluminium a pour symbole \(Al^{3+}\). Sachant que Z=13 pour l'aluminium, calcule le nombre d'électrons de cet ion.</p><details><summary>Correction</summary><p>Pour un cation \(X^{n+}\) : e⁻ = Z − n = 13 − 3 = 10 électrons.</p></details></div>
+      <div class="card"><h3>Niveau 2 — Compter avec A et Z</h3><p>L'azote s'écrit \(^{14}_{7}N\). Combien de protons, neutrons et électrons possède-t-il ?</p><details><summary>Correction</summary><p>7 protons, 7 électrons (atome neutre), 14 − 7 = 7 neutrons.</p></details></div>
+      <div class="card"><h3>Niveau 2 — Distinguer atome et ion</h3><p>Un atome de sodium (Z=11) perd un électron. Quel ion forme-t-il ? Combien d'électrons possède cet ion ?</p><details><summary>Correction</summary><p>Il forme l'ion sodium Na⁺. Électrons = 11 − 1 = 10.</p></details></div>
+      <div class="card"><h3>Niveau 3 — Solution inconnue (test multiple)</h3><p>Une solution donne un précipité orange avec la soude et un précipité blanc qui noircit avec le nitrate d'argent. Quels ions sont présents ?</p><details><summary>Correction</summary><p>Précipité orange/rouille avec la soude : \(Fe^{3+}\). Précipité blanc qui noircit avec le nitrate d'argent : \(Cl^-\). Les deux ions sont présents simultanément.</p></details></div>
+      <div class="card"><h3>Niveau 3 — Ion polyatomique et calcul</h3><p>L'ion sulfate \(SO_4^{2-}\) est un anion polyatomique. Combien d'atomes le composent ? Si le soufre a Z=16, combien d'électrons l'ion sulfate possède-t-il au total (indication : on ne peut pas répondre avec seulement Z, mais on sait que sa charge est 2−)?</p><details><summary>Correction</summary><p>5 atomes (1 soufre + 4 oxygènes). L'ion sulfate porte une charge 2−, ce qui signifie qu'il a 2 électrons de plus que le nombre total de protons de tous ses atomes. Au collège, on retient surtout que c'est un anion polyatomique de charge 2−.</p></details></div>
+      <div class="card"><h3>Niveau 3 — Synthèse</h3><p>On dispose de trois solutions A, B et C. Avec la soude : A donne un précipité vert, B donne un précipité bleu, C ne donne rien. Avec le nitrate d'argent : A ne donne rien, B ne donne rien, C donne un précipité blanc qui noircit. Identifie les ions dans chaque solution.</p><details><summary>Correction</summary><p>A contient \(Fe^{2+}\) (précipité vert avec la soude). B contient \(Cu^{2+}\) (précipité bleu avec la soude). C contient \(Cl^-\) (précipité blanc qui noircit avec le nitrate d'argent). C ne contient ni \(Cu^{2+}\), ni \(Fe^{2+}\), ni \(Fe^{3+}\), ni \(Zn^{2+}\) car la soude ne donne rien.</p></details></div>
+    </div></div></section>
+
+    <section class="panel" id="quiz"><div class="section"><h2 class="section-title">Quiz</h2><div id="quizBox"></div><div class="status">Score : <strong id="score">0</strong> / 10</div></div></section>
+
+    <section class="panel" id="tp"><div class="section"><h2 class="section-title">TP — Identifier des ions dans une solution inconnue</h2><div class="grid">
+      <div class="card"><h3>Objectif</h3><p>Utiliser des tests caractéristiques pour identifier les ions présents dans une solution inconnue. Ce TP permet de mettre en œuvre la démarche scientifique : observer, tester, conclure.</p></div>
+      <div class="card"><h3>Matériel</h3><p>Tubes à essai (au moins 4), porte-tubes, solution inconnue X, solution de soude (NaOH), solution de nitrate d'argent (AgNO₃), solution de chlorure de baryum (BaCl₂), lunettes de protection, gants, blouse, pipettes compte-gouttes, agitateur en verre, papier d'essuie-tout.</p></div>
+      <div class="card"><h3>Protocole détaillé</h3><ol><li>Porter les équipements de protection (lunettes, gants, blouse) avant de manipuler toute solution.</li><li>Numéroter 3 tubes à essai : tube 1, tube 2, tube 3.</li><li>Verser environ 2 mL de solution inconnue X dans chaque tube à l'aide d'une pipette propre.</li><li><strong>Test 1 (soude) :</strong> Ajouter 5 gouttes de soude dans le tube 1. Observer et noter la couleur du précipité éventuel.</li><li><strong>Test 2 (nitrate d'argent) :</strong> Ajouter 5 gouttes de nitrate d'argent dans le tube 2. Observer et noter.</li><li><strong>Test 3 (chlorure de baryum) :</strong> Ajouter 5 gouttes de chlorure de baryum dans le tube 3. Observer et noter.</li><li>Rincer la pipette entre chaque ajout de réactif.</li><li>Comparer les observations avec le tableau des tests caractéristiques.</li><li>Conclure en citant précisément les ions identifiés dans la solution X.</li></ol></div>
+      <div class="card"><h3>Sécurité — Points importants</h3><ul><li>La soude (NaOH) est corrosive : ne jamais la toucher à mains nues. En cas de contact avec la peau, rincer abondamment à l'eau.</li><li>Le nitrate d'argent tache la peau : manipuler avec précaution.</li><li>Ne jamais sentir directement un produit chimique (utiliser la technique du « flairage » en agitant la main au-dessus du tube).</li><li>Ne jamais mélanger les réactifs entre eux sans consigne du professeur.</li><li>Ne jamais goûter une solution chimique.</li><li>En fin de TP, verser les solutions dans le bac de récupération prévu, jamais dans l'évier sans autorisation.</li></ul></div>
+      <div class="card"><h3>Résultats attendus et interprétation</h3><p>Si la solution X contient des ions \(Cu^{2+}\) : précipité bleu avec la soude. Si elle contient des ions \(Fe^{3+}\) : précipité orange/rouille avec la soude. Si elle contient des ions \(Cl^-\) : précipité blanc qui noircit avec le nitrate d'argent. Si elle contient des ions \(SO_4^{2-}\) : précipité blanc avec le chlorure de baryum.</p><p>Un test négatif (pas de précipité) est aussi une information : il indique que l'ion testé n'est PAS présent dans la solution.</p></div>
+      <div class="card"><h3>Conclusion type</h3><p>« La solution X contient les ions [nommer les ions identifiés] car le test avec [nom du réactif] a donné un précipité [couleur]. Le test avec [autre réactif] étant négatif, l'ion [nom] n'est pas présent. »</p></div>
+    </div></div></section>
+
+    <section class="panel" id="chatbots"><div class="section"><h2 class="section-title">Chatbots externes</h2><div class="external-grid"><a class="external" href="https://chatgpt.com" target="_blank">💬<br><strong>ChatGPT</strong></a><a class="external" href="https://gemini.google.com" target="_blank">✨<br><strong>Gemini</strong></a><a class="external" href="https://claude.ai" target="_blank">🟣<br><strong>Claude</strong></a><a class="external" href="https://copilot.microsoft.com" target="_blank">🧭<br><strong>Copilot</strong></a></div><h3 style="margin-top:22px">Prompt à copier</h3><div class="prompt" id="promptText">Tu es mon assistant de physique-chimie niveau 3e. Aide-moi à réviser le chapitre "Constitution de l'atome et ions". Explique avec des mots simples et des analogies concrètes : 1) la structure de l'atome (noyau, protons, neutrons, électrons), 2) l'écriture conventionnelle \(^A_ZX\) et comment calculer protons, neutrons et électrons, 3) la différence entre cation et anion avec des exemples (Na⁺, Cl⁻, Cu²⁺, Fe²⁺, Fe³⁺, SO₄²⁻, HO⁻), 4) les ions monoatomiques et polyatomiques, 5) les tests de reconnaissance des ions (soude pour Cu²⁺, Fe²⁺, Fe³⁺, Zn²⁺ ; nitrate d'argent pour Cl⁻ ; chlorure de baryum pour SO₄²⁻). Pose-moi ensuite 5 questions progressives (de la plus simple à la plus difficile) et corrige mes réponses avec des explications détaillées.</div><button class="btn primary copy" onclick="copyPrompt()">Copier le prompt</button><div class="status" id="copyStatus"></div></div></section>
+
+    <section class="panel" id="superieure"><div class="section"><h2 class="section-title">Vers la 2nde</h2><div class="grid">
+      <div class="card"><h3>Ce qui revient au lycée</h3><p>Les ions, les formules chimiques et la conservation des éléments seront réutilisés pour écrire des équations de réaction plus rigoureuses, avec des coefficients stœchiométriques. Tu apprendras à équilibrer des équations chimiques.</p></div>
+      <div class="card"><h3>Ce qui devient plus précis</h3><p>On reliera les ions aux solutions aqueuses, aux transformations chimiques et aux quantités de matière (la mole). Le modèle de l'atome sera affiné avec les couches électroniques et la configuration électronique.</p></div>
+      <div class="card"><h3>Les isotopes</h3><p>Au lycée, tu étudieras les isotopes : des atomes qui ont le même nombre de protons mais un nombre différent de neutrons. Par exemple, le carbone 12 et le carbone 14 sont des isotopes du carbone. Le carbone 14 est utilisé en archéologie pour dater les objets anciens.</p></div>
+      <div class="card"><h3>Pourquoi c'est important</h3><p>Comprendre les ions permet d'expliquer l'eau salée, les tests médicaux (analyse sanguine), la corrosion, les batteries de téléphone (ions lithium), la conductibilité de l'eau et de nombreux phénomènes du quotidien. Les ions sont aussi essentiels pour comprendre la chimie du vivant.</p></div>
+      <div class="card"><h3>Les couches électroniques</h3><p>Au lycée, tu découvriras que les électrons ne sont pas répartis au hasard autour du noyau, mais qu'ils occupent des « couches » (K, L, M…). C'est cette organisation qui explique pourquoi certains atomes perdent ou gagnent des électrons pour devenir plus stables.</p></div>
+      <div class="card"><h3>Défi</h3><p>Explique pourquoi \(Fe^{2+}\) et \(Fe^{3+}\) sont deux ions du même élément, mais avec des charges différentes. Quel ion possède le plus d'électrons ? Pourquoi l'ion fer III est-il plus stable que l'ion fer II dans certaines conditions ?</p></div>
+    </div></div></section>
+
+    </main>
+  </div>
+</div>
+<script>
+
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

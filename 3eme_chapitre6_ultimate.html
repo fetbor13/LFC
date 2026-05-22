@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3ᵉ · Chapitre 6 — La masse volumique | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>3EME · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="breadcrumb">Collège › 3e › <strong>Chapitre 6 · Masse volumique</strong></div>
+    <div class="top-actions"><button class="chip-btn" onclick="showSection('outils')">Relations clés</button><button class="chip-btn" onclick="toggleTheme()" id="themeBtn">🌙</button></div>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-text">
+        <span class="eyebrow">3e · Chapitre 6</span>
+        <h2>La <em>masse volumique</em></h2>
+        <p class="lead">Mesurer une masse et un volume, calculer une masse volumique, identifier une matière et expliquer pourquoi certains objets flottent ou coulent.</p>
+      </div>
+      <div class="hero-visual">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Density_column.JPG" alt="Colonne de liquides de masses volumiques différentes">
+        <div class="caption">Image web — colonne de densités : les liquides se placent selon leur masse volumique.</div>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <div class="mini-card"><strong>\(m\)</strong><span>masse en kilogramme ou gramme, mesurée avec une balance.</span></div>
+      <div class="mini-card"><strong>\(V\)</strong><span>volume en \(m^3\), \(L\), \(mL\) ou \(cm^3\), mesuré avec verrerie graduée.</span></div>
+      <div class="mini-card"><strong>\(\rho\)</strong><span>\(\rho=\frac{m}{V}\), masse volumique d'une matière.</span></div>
+    </div>
+
+    <section id="accueil" class="active">
+      <h2 class="section-title">Entrée dans le chapitre</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Ce qu'on observe</h3><p>Un cube de bois flotte, un morceau de fer coule, l'huile reste au-dessus de l'eau : les matières n'occupent pas le même volume pour une même masse.</p></div>
+        <div class="card"><h3>Ce qu'on mesure</h3><p>La masse se mesure avec une balance ; le volume se mesure avec une éprouvette graduée ou par déplacement d'eau pour un solide irrégulier.</p></div>
+        <div class="card"><h3>Ce qu'on calcule</h3><p>La masse volumique permet d'identifier une matière et de prévoir si elle est plus ou moins "dense" qu'une autre.</p></div>
+      </div>
+    </section>
+
+    <section id="cours">
+      <h2 class="section-title">Cours enrichi</h2>
+      <div class="course-layout">
+        <aside class="toc">
+          <a href="#c1">I. Masse</a>
+          <a href="#c2">II. Volume</a>
+          <a href="#c3">III. Masse volumique</a>
+          <a href="#c4">IV. Mesurer</a>
+          <a href="#c5">V. Flotte/coule</a>
+        </aside>
+        <div class="article">
+          <h3 id="c1">I. Masse : quantité de matière</h3>
+          <p>La masse mesure la quantité de matière d'un objet. Elle ne dépend pas du lieu : un objet a la même masse sur Terre, sur la Lune ou dans l'espace. C'est une grandeur fondamentale en physique, notée \(m\), dont l'unité du Système international est le kilogramme (\(kg\)).</p>
+          <p>Au laboratoire, on utilise le plus souvent le gramme (\(g\)) pour les petits échantillons. Les sous-multiples courants sont le décagramme (\(dag = 10\,g\)) et le milligramme (\(mg = 0{,}001\,g\)). Pour les grandes masses, on utilise la tonne (\(t = 1000\,kg\)).</p>
+          <p>La masse se mesure avec une balance. Il existe différents types de balances : la balance de Roberval (precise pour les solides), la balance électronique (rapide et précise) et le trébuchet (pour les faibles masses au laboratoire de chimie).</p>
+          <div class="note"><b>Définition.</b> La masse se note \(m\). Son unité dans le Système international est le kilogramme, symbole \(kg\). Au laboratoire, on utilise souvent le gramme \(g\).</div>
+          <table class="table"><tr><th>Grandeur</th><th>Symbole</th><th>Unités fréquentes</th><th>Appareil</th></tr><tr><td>Masse</td><td>\(m\)</td><td>\(kg\), \(g\)</td><td>balance</td></tr><tr><td>Volume</td><td>\(V\)</td><td>\(m^3\), \(L\), \(mL\), \(cm^3\)</td><td>éprouvette, pipette, fiole</td></tr></table>
+          <div class="note"><b>Conversions utiles.</b> \(1\,kg = 1000\,g\), \(1\,g = 1000\,mg\), \(1\,t = 1000\,kg\). Pour passer de \(g\) à \(kg\), on divise par 1000. Par exemple, \(350\,g = 0{,}350\,kg\).</div>
+
+          <h3 id="c2">II. Volume : place occupée</h3>
+          <p>Le volume mesure l'espace occupé par un corps. Pour un liquide, on lit le volume dans une éprouvette graduée. Pour un solide régulier, on utilise une formule géométrique. Pour un solide irrégulier, on peut utiliser la méthode du déplacement d'eau.</p>
+          <p>La lecture du volume sur une éprouvette graduée demande une attention particulière : la surface du liquide forme un ménisque (une courbure). Il faut lire le volume au niveau du bas du ménisque, en plaçant son œil à la hauteur de la surface du liquide. Une lecture par-dessus ou par-dessous entraîne une erreur de parallaxe.</p>
+          <p>Pour les solides réguliers, on utilise les formules géométriques classiques : le volume d'un cube de côté \(a\) vaut \(V = a^3\), le volume d'un pavé droit de dimensions \(L \times l \times h\) vaut \(V = L \times l \times h\), et le volume d'un cylindre de rayon \(r\) et de hauteur \(h\) vaut \(V = \pi r^2 h\).</p>
+          <div class="note"><b>Méthode du déplacement d'eau.</b> On note le volume initial d'eau, on immerge totalement le solide, puis on note le volume final. Le volume du solide vaut \(V_{\text{solide}}=V_f-V_i\).</div>
+          <div class="formula">\[V_{\text{solide}}=V_f-V_i\]</div>
+          <p>Les équivalences utiles : \(1\,mL=1\,cm^3\), \(1\,L=1000\,mL=1000\,cm^3\), \(1\,m^3=1000\,L\).</p>
+          <div class="note"><b>Volume d'un cube.</b> Un cube de côté \(a = 3\,cm\) a un volume \(V = 3^3 = 27\,cm^3\). En millilitres, cela correspond à \(27\,mL\).</div>
+          <div class="note warning"><b>Erreur fréquente.</b> Confondre \(cm^3\) et \(m^3\). Rappelons que \(1\,m = 100\,cm\), donc \(1\,m^3 = (100)^3\,cm^3 = 1\,000\,000\,cm^3\). C'est un facteur d'un million, pas cent !</div>
+
+          <h3 id="c3">III. Masse volumique</h3>
+          <p>La masse volumique d'une substance indique la masse contenue dans une unité de volume. Elle permet de comparer des matières indépendamment de la taille de l'échantillon. Deux objets de même volume mais de matières différentes auront des masses différentes : c'est précisément ce que traduit la masse volumique.</p>
+          <p>Par exemple, un cube d'or de \(1\,cm^3\) pèse \(19{,}3\,g\) alors qu'un cube d'eau de même volume ne pèse que \(1\,g\). L'or est donc beaucoup plus "compact" que l'eau : sa masse volumique est 19,3 fois plus élevée.</p>
+          <p>La masse volumique est une propriété caractéristique d'une matière à température et pression données. Cela signifie qu'elle peut servir d'"empreinte digitale" pour identifier un matériau inconnu. C'est pourquoi les joaillers peuvent distinguer un vrai diamant d'une imitation en mesurant simplement la masse volumique.</p>
+          <div class="formula">\[\rho=\frac{m}{V}\]</div>
+          <table class="table"><tr><th>Grandeur</th><th>Symbole</th><th>Unité SI</th><th>Unité pratique</th></tr><tr><td>Masse volumique</td><td>\(\rho\)</td><td>\(kg\cdot m^{-3}\)</td><td>\(g\cdot cm^{-3}\) ou \(g\cdot mL^{-1}\)</td></tr></table>
+          <div class="note"><b>Triangle des relations.</b> À partir de \(\rho = m/V\), on obtient : \(m = \rho \times V\) et \(V = m / \rho\). Ce triangle permet de retrouver facilement la formule dont on a besoin.</div>
+          <div class="note warning"><b>Erreur fréquente.</b> Ne pas mélanger les unités : si la masse est en g et le volume en \(cm^3\), alors \(\rho\) est en \(g\cdot cm^{-3}\). Si la masse est en kg et le volume en \(m^3\), alors \(\rho\) est en \(kg\cdot m^{-3}\). Toujours vérifier la cohérence des unités !</div>
+
+          <h3 id="c4">IV. Identifier une matière</h3>
+          <p>Chaque matière possède une masse volumique caractéristique, dans des conditions données. On peut donc calculer \(\rho\), puis comparer à un tableau de valeurs. C'est une méthode d'identification rapide et non destructive.</p>
+          <p>Pour identifier un métal inconnu, on procède ainsi : on mesure la masse avec une balance, on mesure le volume par déplacement d'eau, on calcule \(\rho = m/V\), puis on compare avec le tableau de référence. Si les valeurs correspondent, on peut conclure avec une bonne probabilité.</p>
+          <div class="note"><b>Attention aux mélanges !</b> Les alliages (comme l'acier ou le laiton) ont des masses volumiques différentes des métaux purs qui les composent. Par exemple, le laiton (cuivre + zinc) a une masse volumique d'environ \(8{,}4\,g\cdot cm^{-3}\), comprise entre celle du cuivre pur et du zinc pur.</div>
+          <table class="table"><tr><th>Matière</th><th>Masse volumique approchée</th></tr><tr><td>Air</td><td>\(1{,}2\,kg\cdot m^{-3}\)</td></tr><tr><td>Bois léger (pin)</td><td>\(0{,}4\) à \(0{,}6\,g\cdot cm^{-3}\)</td></tr><tr><td>Huile végétale</td><td>\(0{,}92\,g\cdot cm^{-3}\)</td></tr><tr><td>Eau pure</td><td>\(1{,}0\,g\cdot cm^{-3}=1000\,kg\cdot m^{-3}\)</td></tr><tr><td>Verre</td><td>\(2{,}5\,g\cdot cm^{-3}\)</td></tr><tr><td>Aluminium</td><td>\(2{,}7\,g\cdot cm^{-3}\)</td></tr><tr><td>Acier</td><td>\(7{,}8\,g\cdot cm^{-3}\)</td></tr><tr><td>Fer</td><td>\(7{,}9\,g\cdot cm^{-3}\)</td></tr><tr><td>Cuivre</td><td>\(8{,}9\,g\cdot cm^{-3}\)</td></tr><tr><td>Plomb</td><td>\(11{,}3\,g\cdot cm^{-3}\)</td></tr><tr><td>Or</td><td>\(19{,}3\,g\cdot cm^{-3}\)</td></tr></table>
+          <div class="note"><b>Exemple guidé.</b> Un objet a une masse de \(54\,g\) et un volume de \(20\,cm^3\). \(\rho=\frac{54}{20}=2{,}7\,g\cdot cm^{-3}\). La matière peut être de l'aluminium.</div>
+          <div class="note"><b>Application : la couronne de Hiéron.</b> Le roi Hiéron voulait vérifier que sa couronne était en or pur. Archimède a utilisé la masse volumique : si la couronne contient de l'argent (moins dense), sa masse volumique sera inférieure à celle de l'or pur (\(19{,}3\,g/cm^3\)). C'est en prenant son bain qu'il aurait eu son célèbre « Eurêka ! » en comprenant comment mesurer le volume par déplacement d'eau.</div>
+
+          <h3 id="c5">V. Flotter ou couler</h3>
+          <p>Dans un liquide, un objet a tendance à couler si sa masse volumique est supérieure à celle du liquide. Il flotte si sa masse volumique est inférieure. Ce critère simple permet de prévoir le comportement d'un objet dans un liquide sans faire d'expérience.</p>
+          <p>L'explication est la suivante : quand un objet est plongé dans un liquide, le liquide exerce sur lui une force vers le haut appelée poussée d'Archimède. Si l'objet est moins dense que le liquide, cette poussée est suffisante pour le soutenir et il flotte. Si l'objet est plus dense, la poussée ne suffit pas et il coule.</p>
+          <p>Ce principe explique de nombreux phénomènes du quotidien : l'huile flotte sur l'eau, un bateau en acier flotte car sa forme lui donne une masse volumique apparente inférieure à celle de l'eau, et un glaçon flotte car la glace (\(0{,}92\,g/cm^3\)) est moins dense que l'eau liquide (\(1{,}0\,g/cm^3\)). C'est aussi pourquoi la mer Morte, très salée, permet de flotter facilement : l'eau salée a une masse volumique supérieure à celle de l'eau douce.</p>
+          <div class="formula">\[\rho_{\text{objet}}>\rho_{\text{liquide}}\Rightarrow \text{l'objet coule}\qquad;\qquad \rho_{\text{objet}}<\rho_{\text{liquide}}\Rightarrow \text{l'objet flotte}\]</div>
+          <p>Ce critère explique pourquoi l'huile flotte sur l'eau : la masse volumique de l'huile est inférieure à celle de l'eau.</p>
+          <div class="note"><b>Et si les masses volumiques sont égales ?</b> Si \(\rho_{\text{objet}} = \rho_{\text{liquide}}\), l'objet reste en suspension dans le liquide, ni au fond ni à la surface. C'est le cas d'un œuf dans de l'eau très salée : on peut le faire « léviter » en ajustant la salinité.</div>
+          <div class="note"><b>Pourquoi un bateau en acier flotte-t-il ?</b> L'acier est plus dense que l'eau, mais le bateau contient beaucoup d'air. La masse volumique moyenne du bateau (acier + air) est inférieure à celle de l'eau. C'est la forme qui permet la flottaison, pas uniquement la matière !</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="outils">
+      <h2 class="section-title">Outils mathématiques & unités</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Triangle des relations</h3><p>\(\rho=\frac{m}{V}\), donc \(m=\rho V\) et \(V=\frac{m}{\rho}\). Le triangle permet de retrouver la formule facilement en cachant la grandeur cherchée.</p></div>
+        <div class="card"><h3>Conversions indispensables</h3><p>\(1\,mL=1\,cm^3\), \(1\,L=1000\,mL\), \(1\,m^3=1000\,L\), \(1\,g=0{,}001\,kg\).</p></div>
+        <div class="card"><h3>Passage d'unités</h3><p>\(1\,g\cdot cm^{-3}=1000\,kg\cdot m^{-3}\). Donc l'eau vaut \(1\,g\cdot cm^{-3}\) ou \(1000\,kg\cdot m^{-3}\). Pour convertir, multiplier par 1000 quand on passe de \(g/cm^3\) à \(kg/m^3\).</p></div>
+        <div class="card"><h3>Méthode 5C</h3><p>On cherche la grandeur, on note les données, on choisit la relation, on calcule, on conclut avec l'unité. Toujours vérifier la cohérence des unités avant le calcul.</p></div>
+        <div class="card"><h3>Volume d'un pavé</h3><p>\(V = L \times l \times h\). Si \(L = 5\,cm\), \(l = 3\,cm\), \(h = 2\,cm\), alors \(V = 30\,cm^3\).</p></div>
+        <div class="card"><h3>Volume d'un cube</h3><p>\(V = a^3\). Si le côté vaut \(4\,cm\), alors \(V = 64\,cm^3 = 64\,mL\).</p></div>
+      </div>
+    </section>
+
+    <section id="simulations"><h2 style="text-align:center;color:var(--accent);text-shadow:none;margin-bottom:1.2rem">🔬 Simulateurs — Masse Volumique</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.2rem">
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Flottaison</h3>
+    <canvas id="cvA6" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <div style="margin-top:.5rem;display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">ρ objet :</label><input type="range" id="slA6o" min="200" max="2000" value="800" style="flex:1;accent-color:var(--accent)"><span id="lbA6o" style="color:var(--accent);font-size:.78rem;min-width:4rem">800</span></div>
+      <div style="display:flex;align-items:center;gap:.3rem"><label style="color:#bbb;font-size:.78rem">ρ liquide :</label><input type="range" id="slA6l" min="500" max="2000" value="1000" style="flex:1;accent-color:#00ccff"><span id="lbA6l" style="color:#00ccff;font-size:.78rem;min-width:4rem">1000</span></div>
+    </div>
+  </div>
+  <div class="card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem">
+    <h3 style="color:var(--accent);margin-bottom:.5rem">Masse volumique — Comparaison</h3>
+    <canvas id="cvB6" width="460" height="280" style="width:100%;border-radius:8px;display:block;background:var(--bg2)"></canvas>
+    <p style="color:#888;font-size:.8rem;margin-top:.4rem;text-align:center">Densités de matériaux courants (kg/m³)</p>
+  </div>
+</div></section>
+
+    <section id="flashcards">
+      <h2 class="section-title">Flashcards</h2>
+      <div class="flash-grid">
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Relation de la masse volumique ?</b></div><div class="face back">\(\rho=\frac{m}{V}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Unité SI de \(\rho\) ?</b></div><div class="face back">\(kg\cdot m^{-3}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Unité pratique au labo ?</b></div><div class="face back">\(g\cdot cm^{-3}\) ou \(g\cdot mL^{-1}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>\(1\,mL\) vaut ?</b></div><div class="face back">\(1\,cm^3\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Un objet flotte si…</b></div><div class="face back">\(\rho_{\text{objet}}<\rho_{\text{liquide}}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Volume par déplacement d'eau ?</b></div><div class="face back">\(V_{\text{objet}}=V_f-V_i\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Masse volumique de l'eau ?</b></div><div class="face back">\(1{,}0\,g\cdot cm^{-3}\) ou \(1000\,kg\cdot m^{-3}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Conversion \(g/cm^3\) vers \(kg/m^3\) ?</b></div><div class="face back">Multiplier par 1000. Exemple : \(2{,}7\,g/cm^3 = 2700\,kg/m^3\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Un objet coule si…</b></div><div class="face back">\(\rho_{\text{objet}}>\rho_{\text{liquide}}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Volume d'un cube de côté \(a\) ?</b></div><div class="face back">\(V = a^3\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Comment lire un ménisque ?</b></div><div class="face back">On lit au bas du ménisque, l'œil à la hauteur du liquide.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Pourquoi l'huile flotte sur l'eau ?</b></div><div class="face back">Car \(\rho_{\text{huile}} \approx 0{,}92 < 1{,}0 = \rho_{\text{eau}}\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>La masse volumique est-elle caractéristique ?</b></div><div class="face back">Oui, chaque matière pure a une masse volumique propre à température et pression données.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Retrouver \(m\) à partir de \(\rho\) et \(V\) ?</b></div><div class="face back">\(m = \rho \times V\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Retrouver \(V\) à partir de \(m\) et \(\rho\) ?</b></div><div class="face back">\(V = m / \rho\).</div></div></div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2 class="section-title">Exercices progressifs</h2>
+      <div class="exo-grid">
+        <div class="card"><h3>Niveau 1 — Calculer</h3><p>Un objet a une masse de \(30\,g\) et un volume de \(10\,cm^3\). Calculer \(\rho\).</p><details><summary>Correction</summary>\(\rho=30/10=3{,}0\,g\cdot cm^{-3}\).</details></div>
+        <div class="card"><h3>Niveau 1 — Convertir</h3><p>Convertir \(25\,mL\) en \(cm^3\) puis \(2{,}5\,L\) en \(mL\).</p><details><summary>Correction</summary>\(25\,mL=25\,cm^3\). \(2{,}5\,L=2500\,mL\).</details></div>
+        <div class="card"><h3>Niveau 1 — Vrai ou faux</h3><p>« La masse volumique de l'eau vaut \(1\,kg \cdot m^{-3}\). » Vrai ou faux ?</p><details><summary>Correction</summary>Faux. Elle vaut \(1000\,kg \cdot m^{-3}\) (ou \(1\,g \cdot cm^{-3}\)). \(1\,kg/m^3\) est la masse volumique de l'air !</details></div>
+        <div class="card"><h3>Niveau 2 — Identifier</h3><p>Un objet de \(54\,g\) a un volume de \(20\,cm^3\). Quelle matière possible ?</p><details><summary>Correction</summary>\(\rho=2{,}7\,g\cdot cm^{-3}\), cela correspond à l'aluminium.</details></div>
+        <div class="card"><h3>Niveau 2 — Déplacement d'eau</h3><p>Dans une éprouvette, \(V_i=60\,mL\). Après immersion, \(V_f=78\,mL\). Calculer le volume du solide.</p><details><summary>Correction</summary>\(V=78-60=18\,mL=18\,cm^3\).</details></div>
+        <div class="card"><h3>Niveau 2 — Calculer une masse</h3><p>Un cylindre d'aluminium a un volume de \(50\,cm^3\). Calculer sa masse (\(\rho_{Al}=2{,}7\,g \cdot cm^{-3}\)).</p><details><summary>Correction</summary>\(m=\rho \times V = 2{,}7 \times 50 = 135\,g\).</details></div>
+        <div class="card"><h3>Niveau 2 — Calculer un volume</h3><p>Un morceau de fer pèse \(158\,g\). Calculer son volume (\(\rho_{Fe}=7{,}9\,g \cdot cm^{-3}\)).</p><details><summary>Correction</summary>\(V = m / \rho = 158 / 7{,}9 = 20\,cm^3\).</details></div>
+        <div class="card"><h3>Niveau 3 — Flottabilité</h3><p>Un objet de masse volumique \(0{,}85\,g\cdot cm^{-3}\) est placé dans l'eau. Flotte ou coule ? Et dans l'huile (\(\rho = 0{,}80\,g/cm^3\)) ?</p><details><summary>Correction</summary>Dans l'eau : il flotte car \(0{,}85 < 1{,}0\). Dans l'huile : il coule car \(0{,}85 > 0{,}80\). Le même objet peut flotter ou couler selon le liquide !</details></div>
+        <div class="card"><h3>Niveau 3 — Volume d'un cube</h3><p>Un cube d'acier de côté \(5\,cm\) pèse \(975\,g\). Vérifier que la masse volumique correspond bien à celle de l'acier (\(\rho \approx 7{,}8\,g/cm^3\)).</p><details><summary>Correction</summary>\(V = 5^3 = 125\,cm^3\). \(\rho = 975 / 125 = 7{,}8\,g/cm^3\). Cela correspond bien à l'acier.</details></div>
+        <div class="card"><h3>Niveau 3 — Défi : la couronne</h3><p>Une couronne a une masse de \(965\,g\) et un volume de \(60\,cm^3\). Est-elle en or pur (\(\rho_{or} = 19{,}3\,g/cm^3\)) ? Si non, est-elle plutôt en alliage or-argent ?</p><details><summary>Correction</summary>\(\rho = 965/60 = 16{,}1\,g/cm^3\). Ce n'est pas de l'or pur (19,3). C'est probablement un alliage contenant de l'argent (\(\rho_{Ag} = 10{,}5\,g/cm^3\)), qui abaisse la masse volumique moyenne.</details></div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <h2 class="section-title">Quiz interactif</h2>
+      <div id="quizBox"></div>
+      <div class="readout" id="quizScore">Score : 0/0</div>
+    </section>
+
+    <section id="tp">
+      <h2 class="section-title">TP / activités expérimentales</h2>
+      <div class="grid-2">
+        <div class="card"><h3>TP réel — Identifier un métal</h3><p><b>Objectif :</b> déterminer la masse volumique d'un échantillon métallique et l'identifier.</p><p><b>Matériel :</b> balance électronique (précision 0,1 g), éprouvette graduée de 100 mL, eau, fil fin, échantillon métallique inconnu, tableau de masses volumiques.</p><p><b>Protocole détaillé :</b></p><p>1. Peser l'échantillon avec la balance et noter \(m\) en grammes.</p><p>2. Verser environ 50 mL d'eau dans l'éprouvette. Noter le volume initial \(V_i\) avec précision (lecture au bas du ménisque).</p><p>3. Attacher l'échantillon au fil fin et l'immerger complètement dans l'eau. Noter le volume final \(V_f\).</p><p>4. Calculer \(V = V_f - V_i\).</p><p>5. Calculer \(\rho = m / V\).</p><p>6. Comparer avec le tableau de référence.</p><p><b>Sécurité :</b> ne pas laisser tomber l'échantillon dans l'éprouvette (risque de casse). Ne pas goûter les métaux. Se laver les mains après manipulation.</p><p><b>Conclusion attendue :</b> la valeur de \(\rho\) permet d'identifier le métal. En cas de doute, discuter des sources d'erreur (précision de l'éprouvette, bulles d'air sur l'échantillon).</p></div>
+        <div class="card"><h3>TP maison — Colonne de densités</h3><p><b>Objectif :</b> visualiser le classement des liquides selon leur masse volumique.</p><p><b>Matériel maison :</b> miel, eau colorée (avec du sirop ou du colorant alimentaire), huile végétale, verre haut et étroit.</p><p><b>Protocole :</b></p><p>1. Verser délicatement le miel au fond du verre (environ 2 cm).</p><p>2. Ajouter très lentement l'eau colorée par la paroi du verre (environ 2 cm).</p><p>3. Ajouter très lentement l'huile par la paroi (environ 2 cm).</p><p>4. Observer : les trois liquides ne se mélangent pas et se superposent.</p><p><b>Sécurité :</b> ne pas goûter les produits du TP. Se laver les mains après.</p><p><b>Explication :</b> le miel (le plus dense) reste au fond, l'eau au milieu, l'huile (la moins dense) au-dessus. L'ordre reflète les masses volumiques croissantes de haut en bas.</p></div>
+        <div class="card"><h3>Activité — L'œuf qui flotte</h3><p><b>Objectif :</b> faire flotter un œuf en augmentant la masse volumique de l'eau.</p><p><b>Protocole :</b> plonger un œuf frais dans un verre d'eau douce (il coule). Ajouter progressivement du sel en remuant. Observer quand l'œuf se met à flotter.</p><p><b>Explication :</b> le sel augmente la masse volumique de l'eau. Quand \(\rho_{\text{eau salée}} > \rho_{\text{œuf}}\), l'œuf flotte !</p></div>
+      </div>
+    </section>
+
+    <section id="chatbots">
+      <h2 class="section-title">Chatbots externes</h2>
+      <p class="lead">L'élève choisit son assistant IA et colle le prompt ci-dessous.</p>
+      <div class="ai-grid">
+        <div class="ai-card"><h3>ChatGPT</h3><p>Aide aux explications, exercices et méthodes.</p><a href="https://chatgpt.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Gemini</h3><p>Reformulation et entraînement.</p><a href="https://gemini.google.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Claude</h3><p>Explications longues et vérification du raisonnement.</p><a href="https://claude.ai/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Copilot</h3><p>Recherche, synthèse et questions rapides.</p><a href="https://copilot.microsoft.com/" target="_blank">Ouvrir ↗</a></div>
+      </div>
+      <h3>Prompt prêt à copier</h3>
+      <textarea id="aiPrompt" class="prompt-box">Tu es mon tuteur de physique-chimie niveau 3e. Chapitre : La masse volumique. Explique-moi en détail : 1) La masse : définition, unités (kg, g, t), appareil de mesure, conversions. 2) Le volume : définition, unités (m³, L, mL, cm³), méthode du déplacement d'eau, lecture du ménisque, formules pour les solides réguliers (cube, pavé, cylindre). 3) La relation rho = m / V : unités SI (kg/m³) et pratiques (g/cm³), le triangle des relations, les conversions entre unités. 4) L'identification d'une matière grâce à la masse volumique : méthode, tableau de valeurs (air, bois, eau, aluminium, fer, cuivre, or), l'histoire d'Archimède et la couronne de Hiéron. 5) Le critère flotte/coule : rho(objet) < rho(liquide) = flotte, pourquoi l'huile flotte sur l'eau, pourquoi un bateau en acier flotte, l'expérience de l'œuf salé. Pose-moi ensuite 8 questions progressives (2 faciles, 3 moyennes, 3 difficiles) avec correction détaillée incluant le raisonnement complet et les calculs.</textarea><br><br>
+      <button class="copy" onclick="copyPrompt()">Copier le prompt</button>
+    </section>
+
+    <section id="suite">
+      <h2 class="section-title">Vers la classe supérieure</h2>
+      <div class="grid-2">
+        <div class="card"><h3>En 2nde</h3><p>Tu utiliseras la masse volumique pour caractériser une espèce chimique, préparer des solutions et exploiter des mesures expérimentales. Tu apprendras la concentration massique \(c = m/V\), qui est une application directe de la masse volumique. Les tableaux d'avancement nécessiteront aussi de calculer des masses à partir de volumes et de masses volumiques.</p></div>
+        <div class="card"><h3>Au lycée</h3><p>La masse volumique intervient dans les fluides, la poussée d'Archimède, la pression hydrostatique et les bilans de matière. Tu étudieras la flottaison en détail avec le principe d'Archimède et la condition de flottabilité. En chimie, la masse volumique permet de convertir entre volume et masse pour les réactifs liquides.</p></div>
+        <div class="card"><h3>Connexions avec d'autres sciences</h3><p>En géologie, la masse volumique explique la structure en couches de la Terre (noyau de fer dense, croûte légère). En météorologie, les masses d'air de masses volumiques différentes créent les fronts et les nuages. En ingénierie, le choix des matériaux dépend de leur masse volumique : aéronautique (aluminium, titane), construction (béton, acier).</p></div>
+        <div class="card"><h3>Pour aller plus loin</h3><p>La densité est le rapport entre la masse volumique d'une substance et celle de l'eau : \(d = \rho/\rho_{eau}\). C'est une grandeur sans unité. L'eau a une densité de 1, l'or de 19,3. Attention : pour les gaz, la référence est l'air, pas l'eau ! La densité est pratique mais la masse volumique reste la grandeur physique fondamentale.</p></div>
+      </div>
+    </section>
+  </div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+// Auto-trigger initSims on sims panel activation (any id variant)
+(function(){
+  function tryInit(id){
+    if(window._simsInited)return;
+    if(!id)return;
+    var sims=['sims','simulations','panel-simulations','tab-simulations'];
+    if(sims.indexOf(id)>=0){window._simsInited=true;if(typeof initSims==='function')initSims();}
+  }
+  // Hook into switchTab (already defined by patch or original)
+  var _orig=window.switchTab;
+  window.switchTab=function(id){if(_orig)_orig(id);tryInit(id);};
+  // Hook data-target buttons
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('[data-target]').forEach(function(b){
+      b.addEventListener('click',function(){tryInit(b.getAttribute('data-target'));});
+    });
+    // If sims panel is already active on load
+    var ap=document.querySelector('#sims.active,#simulations.active,#panel-simulations.active,#tab-simulations.active');
+    if(ap&&typeof initSims==='function'){window._simsInited=true;initSims();}
+  });
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

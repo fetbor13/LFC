@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3e · Chapitre 4 — Acides, bases et pH · PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>3EME · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="breadcrumb">Collège › 3e › <strong>Chapitre 4 · Acides, bases et pH</strong></div>
+    <div class="top-actions"><button class="chip-btn" onclick="showSection('outils')">Relations clés</button><button class="chip-btn" onclick="toggleTheme()" id="themeBtn">🌙</button></div>
+  </div>
+  <div class="content">
+    <div class="hero">
+      <div class="hero-text">
+        <span class="eyebrow">3e · Chapitre 4</span>
+        <h2>Acides, bases <em>et pH</em></h2>
+        <p class="lead">Classer une solution, mesurer son pH, comprendre l'effet d'une dilution et reconnaître une réaction entre un acide et un métal.</p>
+      </div>
+      <div class="hero-visual">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/PH_Scale.svg" alt="Échelle de pH">
+        <div class="caption">Image web — échelle de pH.</div>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <div class="mini-card"><strong>pH &lt; 7</strong><span>solution acide : les ions \(H^+\) prédominent.</span></div>
+      <div class="mini-card"><strong>pH = 7</strong><span>solution neutre : autant de \(H^+\) que de \(HO^-\).</span></div>
+      <div class="mini-card"><strong>pH &gt; 7</strong><span>solution basique : les ions \(HO^-\) prédominent.</span></div>
+    </div>
+
+    <section id="accueil" class="active">
+      <h2 class="section-title">Entrée dans le chapitre</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Observer</h3><p>Citron, vinaigre, soda, eau minérale, lessive ou eau de Javel : des solutions courantes n'ont pas la même acidité. Certaines piquent la langue, d'autres sont glissantes au toucher.</p></div>
+        <div class="card"><h3>Mesurer</h3><p>On utilise du papier pH ou un pH-mètre. Le papier donne une estimation rapide, le pH-mètre donne une mesure plus précise au dixième près.</p></div>
+        <div class="card"><h3>Interpréter</h3><p>Le pH renseigne sur les proportions d'ions hydrogène \(H^+\) et d'ions hydroxyde \(HO^-\) dans la solution. Ces proportions déterminent le caractère acide, neutre ou basique.</p></div>
+      </div>
+    </section>
+
+    <section id="cours">
+      <h2 class="section-title">Cours enrichi</h2>
+      <div class="course-layout">
+        <aside class="toc">
+          <a href="#c1">I. Acidité</a>
+          <a href="#c2">II. Échelle de pH</a>
+          <a href="#c3">III. Mesurer</a>
+          <a href="#c4">IV. Diluer</a>
+          <a href="#c5">V. Acide + métal</a>
+        </aside>
+        <div class="article">
+          <h3 id="c1">I. Solutions acides, neutres et basiques</h3>
+          <p>Une solution aqueuse contient de l'eau et une ou plusieurs espèces dissoutes. Son caractère acide, neutre ou basique dépend des ions présents. Toutes les solutions aqueuses contiennent à la fois des ions \(H^+\) et des ions \(HO^-\), mais c'est leur proportion relative qui détermine le caractère de la solution.</p>
+          <div class="note"><b>Solution acide.</b> Elle contient plus d'ions hydrogène \(H^+\) que d'ions hydroxyde \(HO^-\). Les solutions acides ont un goût amer et piquant (comme le citron), elles peuvent corroder les métaux et irritent la peau. Exemples : jus de citron (pH ≈ 2,4), vinaigre (pH ≈ 2,6), coca-cola (pH ≈ 2,5), acide chlorhydrique (pH très bas).</div>
+          <div class="note"><b>Solution basique.</b> Elle contient plus d'ions hydroxyde \(HO^-\) que d'ions hydrogène \(H^+\). Les solutions basiques ont un goût âcre, sont glissantes au toucher (comme le savon) et peuvent aussi être corrosives. Exemples : eau de Javel (pH ≈ 12), solution de bicarbonate (pH ≈ 8,3), soude (pH très élevé), ammoniaque.</div>
+          <div class="note"><b>Solution neutre.</b> Elle contient autant d'ions \(H^+\) que d'ions \(HO^-\). L'eau pure est neutre (pH = 7 à 25°C). Le sang humain est quasi-neutre (pH ≈ 7,4).</div>
+          <div class="note"><b>Analogie.</b> Imagine une balance : d'un côté les ions \(H^+\), de l'autre les ions \(HO^-\). Si les \(H^+\) sont plus lourds (plus nombreux), la solution est acide. Si les \(HO^-\) sont plus lourds, elle est basique. Si c'est équilibré, elle est neutre.</div>
+
+          <h3 id="c2">II. L'échelle de pH</h3>
+          <p>Le pH est une grandeur sans unité. En 3e, on l'utilise surtout pour classer une solution sur une échelle allant de 0 à 14. Plus le pH est petit, plus la solution est acide ; plus le pH est grand, plus elle est basique. Un pH de 0 correspond à une solution extrêmement acide, un pH de 14 à une solution extrêmement basique.</p>
+          <div class="formula">\[
+          \begin{cases}
+          pH < 7 &\Rightarrow \text{solution acide}\\
+          pH = 7 &\Rightarrow \text{solution neutre}\\
+          pH > 7 &\Rightarrow \text{solution basique}
+          \end{cases}
+          \]</div>
+          <table class="table"><tr><th>Zone</th><th>pH</th><th>Ions prédominants</th><th>Exemples</th></tr><tr><td>Très acide</td><td>0-2</td><td>\(H^+\) en grande quantité</td><td>acide chlorhydrique, acide sulfurique</td></tr><tr><td>Acide</td><td>3-6</td><td>\(H^+\)</td><td>citron, vinaigre, soda</td></tr><tr><td>Neutre</td><td>7</td><td>\(H^+\) et \(HO^-\) en proportions comparables</td><td>eau pure</td></tr><tr><td>Basique</td><td>8-11</td><td>\(HO^-\)</td><td>bicarbonate, savon, ammoniaque</td></tr><tr><td>Très basique</td><td>12-14</td><td>\(HO^-\) en grande quantité</td><td>eau de Javel, soude</td></tr></table>
+          <div class="note warning"><b>Attention.</b> Plus le pH est petit, plus la solution est acide. Plus le pH est grand, plus la solution est basique. Ne pas confondre : un pH de 2 est PLUS acide qu'un pH de 5 ! De même, un pH de 12 est PLUS basique qu'un pH de 9.</div>
+
+          <h3 id="c3">III. Comment mesurer un pH ?</h3>
+          <p>Il existe deux méthodes principales pour mesurer le pH d'une solution. Le choix dépend de la précision recherchée et du matériel disponible.</p>
+          <p>Le papier pH (ou papier tournesol) change de couleur selon le pH de la solution. On dépose une goutte de solution sur le papier et on compare la couleur obtenue avec l'échelle de référence fournie. C'est simple, rapide et peu coûteux, mais la précision est limitée à environ ±1 unité de pH.</p>
+          <p>Le pH-mètre est un appareil électronique qui fournit une valeur numérique du pH, souvent au dixième près. Il nécessite un étalonnage préalable avec des solutions de pH connu (solutions tampons) et un rinçage soigneux entre chaque mesure pour éviter la contamination.</p>
+          <table class="table"><tr><th>Technique</th><th>Avantage</th><th>Limite</th><th>Précision</th></tr><tr><td>Papier pH</td><td>rapide, peu coûteux, facile d'utilisation</td><td>mesure approximative, lecture subjective des couleurs</td><td>±1 unité</td></tr><tr><td>pH-mètre</td><td>mesure précise, valeur numérique</td><td>nécessite étalonnage et rinçage, plus cher</td><td>±0,1 unité</td></tr></table>
+          <div class="note"><b>Protocole de mesure au pH-mètre.</b> 1) Étalonner l'appareil avec deux solutions tampons (pH 4 et pH 7 par exemple). 2) Rincer l'électrode avec de l'eau distillée. 3) Plonger l'électrode dans la solution à tester. 4) Attendre la stabilisation de la valeur. 5) Noter le pH affiché. 6) Rincer l'électrode après chaque mesure.</div>
+          <div class="note warning"><b>Sécurité.</b> Pour une solution très acide (pH < 2) ou très basique (pH > 12) : obligatoirement lunettes, gants et blouse. On évite tout contact avec la peau et les yeux. En cas de contact, rincer abondamment à l'eau pendant au moins 15 minutes.</div>
+
+          <h3 id="c4">IV. Effet d'une dilution</h3>
+          <p>Diluer une solution signifie ajouter de l'eau. La solution devient moins concentrée et son pH se rapproche de 7. C'est un phénomène très important en chimie et dans la vie quotidienne.</p>
+          <div class="formula">\[
+          \text{solution acide diluée} : pH \nearrow \text{ vers } 7
+          \qquad
+          \text{solution basique diluée} : pH \searrow \text{ vers } 7
+          \]</div>
+          <p>Exemple : si on dilue une solution de pH 3 avec de l'eau, le pH augmente (par exemple vers 4, puis 5, puis 6) mais reste toujours inférieur à 7 tant que la solution reste acide. De même, une solution basique de pH 12 diluée voit son pH diminuer vers 7 sans jamais passer en dessous de 7.</p>
+          <div class="note"><b>Analogie.</b> La dilution, c'est comme ajouter de l'eau à un jus de fruit trop concentré : le goût devient moins fort. De même, l'acidité (ou la basicité) d'une solution diminue quand on ajoute de l'eau.</div>
+          <div class="note warning"><b>Erreur fréquente.</b> Diluer un acide ne le transforme PAS en base ! Son pH augmente mais reste inférieur à 7. De même, diluer une base ne la transforme pas en acide. La dilation rapproche toujours le pH de 7, sans jamais le dépasser dans le sens contraire.</div>
+
+          <h3 id="c5">V. Réaction entre un acide et un métal</h3>
+          <p>Certains métaux réagissent avec un acide. C'est une transformation chimique qui produit un gaz et des ions métalliques en solution. Cette réaction est à l'origine de la corrosion des métaux par les acides.</p>
+          <p>Par exemple, le fer réagit avec l'acide chlorhydrique : il se forme du dihydrogène et des ions fer. Le métal semble « se dissoudre » dans l'acide, et on observe des bulles de gaz qui se dégagent.</p>
+          <div class="formula">\[
+          Fe(s)+2H^+(aq)\longrightarrow Fe^{2+}(aq)+H_2(g)
+          \]</div>
+          <p>Le gaz dihydrogène est reconnaissable par une petite détonation au contact d'une flamme (le gaz explose avec un petit « pop » caractéristique). Les ions fer \(Fe^{2+}\) peuvent être identifiés avec de la soude par apparition d'un précipité vert.</p>
+          <p>Tous les métaux ne réagissent pas de la même manière avec les acides : le fer et le zinc réagissent facilement, le cuivre ne réagit pratiquement pas avec l'acide chlorhydrique dilué. L'aluminium réagit mais se protège rapidement par une couche d'oxyde en surface.</p>
+          <div class="note warning"><b>Corrosion.</b> Une attaque acide peut dégrader un métal : c'est une transformation chimique qui modifie la matière. C'est pour cette raison qu'on ne stocke pas les aliments acides (comme le vinaigre) dans des récipients en fer, et que les canalisations peuvent se corroder si l'eau est trop acide.</div>
+          <div class="note"><b>Application.</b> Pour vérifier la conservation des charges dans l'équation : à gauche, \(2 \times (+1) = +2\) (les deux ions \(H^+\)). À droite, \(+2\) (l'ion \(Fe^{2+}\)) + 0 (le gaz \(H_2\) est neutre) = \(+2\). Les charges sont bien conservées !</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="outils">
+      <h2 class="section-title">Outils mathématiques & unités</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Lire une valeur de pH</h3><p>Le pH n'a pas d'unité. On ne dit pas "7 unités de pH" dans un calcul de collège : on écrit simplement \(pH=7\). Le pH est une grandeur sans dimension.</p></div>
+        <div class="card"><h3>Classer des solutions</h3><p>Pour classer par acidité décroissante, on place d'abord les plus petits pH. Exemple : pH 2 est plus acide que pH 5. Pour classer par basicité décroissante, on place d'abord les plus grands pH. Exemple : pH 12 est plus basique que pH 9.</p></div>
+        <div class="card"><h3>Dilution</h3><p>Une dilution rapproche le pH de 7 : un acide devient moins acide, une base devient moins basique. La dilution ne change JAMAIS le caractère acide ou basique d'une solution.</p></div>
+        <div class="card"><h3>Équation chimique et conservation</h3><p>On vérifie que les éléments et la charge électrique sont conservés. Exemple : \(Fe+2H^+\rightarrow Fe^{2+}+H_2\). Charge à gauche : +2. Charge à droite : +2. Conservation vérifiée !</p></div>
+        <div class="card wide"><h3>Tableau récapitulatif des pH courants</h3><table class="table"><tr><th>Solution</th><th>pH approximatif</th><th>Caractère</th></tr><tr><td>Acide chlorhydrique concentré</td><td>0-1</td><td>Très acide</td></tr><tr><td>Jus de citron</td><td>2,4</td><td>Acide</td></tr><tr><td>Vinaigre</td><td>2,6</td><td>Acide</td></tr><tr><td>Coca-cola</td><td>2,5</td><td>Acide</td></tr><tr><td>Café</td><td>5,0</td><td>Légèrement acide</td></tr><tr><td>Lait</td><td>6,5</td><td>Légèrement acide</td></tr><tr><td>Eau pure</td><td>7,0</td><td>Neutre</td></tr><tr><td>Sang humain</td><td>7,4</td><td>Légèrement basique</td></tr><tr><td>Bicarbonate</td><td>8,3</td><td>Basique</td></tr><tr><td>Savon</td><td>10</td><td>Basique</td></tr><tr><td>Eau de Javel</td><td>12</td><td>Très basique</td></tr><tr><td>Soude</td><td>14</td><td>Extrêmement basique</td></tr></table></div>
+      </div>
+    </section>
+
+    <section id="simulations">
+      <h2 class="section-title">Simulations dynamiques</h2>
+      <p class="lead">Manipule les paramètres pour comprendre comment le pH, la dilution et les réactions acide-métal fonctionnent.</p>
+
+      <h3>Simulation 1 — Échelle de pH interactive</h3>
+      <p style="color:var(--muted);margin-bottom:12px">Déplace le curseur ou choisis une solution prédéfinie pour voir où elle se situe sur l'échelle de pH. Observe la couleur et les ions prédominants.</p>
+      <div class="sim-layout">
+        <div class="sim-card"><canvas id="phCanvas" width="720" height="360"></canvas></div>
+        <div class="sim-card"><div class="controls">
+          <div class="control"><label>pH mesuré <span id="phV">7.0</span></label><input id="phSlider" type="range" min="0" max="14" step="0.1" value="7"></div>
+          <div class="control"><label>Solution testée</label><select id="solution"><option value="2.4">Vinaigre (pH ≈ 2,4)</option><option value="2.6">Coca-cola (pH ≈ 2,5)</option><option value="5">Café (pH ≈ 5)</option><option value="7">Eau pure (pH = 7)</option><option value="8.3">Bicarbonate (pH ≈ 8,3)</option><option value="10">Savon (pH ≈ 10)</option><option value="13">Soude (pH ≈ 13)</option></select></div>
+        </div><div class="readout" id="phRead"></div></div>
+      </div>
+
+      <h3>Simulation 2 — Effet de la dilution</h3>
+      <p style="color:var(--muted);margin-bottom:12px">Observe comment l'ajout d'eau modifie le pH d'une solution. Le pH se rapproche toujours de 7, sans jamais le dépasser.</p>
+      <div class="sim-layout">
+        <div class="sim-card"><canvas id="dilCanvas" width="720" height="360"></canvas></div>
+        <div class="sim-card"><div class="controls">
+          <div class="control"><label>pH initial <span id="phInitV">3.0</span></label><input id="phInit" type="range" min="1" max="13" step="0.1" value="3"></div>
+          <div class="control"><label>Quantité d'eau ajoutée <span id="waterV">50%</span></label><input id="water" type="range" min="0" max="100" step="1" value="50"></div>
+        </div><div class="readout" id="dilRead"></div></div>
+      </div>
+
+      <h3>Simulation 3 — Réaction acide + métal</h3>
+      <p style="color:var(--muted);margin-bottom:12px">Observe la réaction entre un acide et différents métaux. Certains métaux réagissent (fer, zinc), d'autres non (cuivre). L'acidité influence la vitesse de la réaction.</p>
+      <div class="sim-layout">
+        <div class="sim-card"><canvas id="metalCanvas" width="720" height="360"></canvas></div>
+        <div class="sim-card"><div class="controls">
+          <div class="control"><label>Acidité de la solution <span id="acidPowerV">pH 2.0</span></label><input id="acidPower" type="range" min="1" max="6" step="0.1" value="2"></div>
+          <div class="control"><label>Métal</label><select id="metal"><option value="fer">Fer (réactif)</option><option value="zinc">Zinc (réactif)</option><option value="cuivre">Cuivre (peu réactif)</option><option value="aluminium">Aluminium (protégé)</option></select></div>
+        </div><div class="readout" id="metalRead"></div></div>
+      </div>
+
+      <h3>PhET — Échelle de pH</h3>
+      <div class="sim-card">
+        <p style="color:var(--muted);margin-bottom:12px">Simulation PhET pour explorer l'échelle de pH, tester des solutions courantes et comprendre la concentration en ions.</p>
+        <div style="position:relative;padding-bottom:58%;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--card2)">
+          <iframe src="https://phet.colorado.edu/sims/html/ph-scale/latest/ph-scale_fr.html" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section id="flashcards">
+      <h2 class="section-title">Flashcards</h2>
+      <div class="flash-grid">
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Solution acide ?</b></div><div class="face back">Elle contient plus d'ions \(H^+\) que d'ions \(HO^-\). Son pH est inférieur à 7.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Solution basique ?</b></div><div class="face back">Elle contient plus d'ions \(HO^-\) que d'ions \(H^+\). Son pH est supérieur à 7.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>pH neutre ?</b></div><div class="face back">\(pH=7\). Autant de \(H^+\) que de \(HO^-\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Diluer un acide ?</b></div><div class="face back">Son pH augmente et se rapproche de 7. Il reste toujours < 7.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Diluer une base ?</b></div><div class="face back">Son pH diminue et se rapproche de 7. Il reste toujours > 7.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Gaz formé avec un acide et le fer ?</b></div><div class="face back">Le dihydrogène \(H_2\). Il se détecte par une détonation à la flamme.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Test des ions \(Fe^{2+}\) ?</b></div><div class="face back">Avec la soude : précipité vert.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Papier pH ou pH-mètre ?</b></div><div class="face back">Papier pH : rapide mais approximatif (±1). pH-mètre : précis (±0,1) mais nécessite étalonnage.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Le pH a-t-il une unité ?</b></div><div class="face back">Non, le pH est une grandeur sans unité.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>pH du sang humain ?</b></div><div class="face back">Environ 7,4 (légèrement basique, quasi-neutre).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Métaux qui réagissent avec les acides ?</b></div><div class="face back">Fer et zinc réagissent facilement. Le cuivre ne réagit pratiquement pas.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Équation fer + acide ?</b></div><div class="face back">\(Fe + 2H^+ \rightarrow Fe^{2+} + H_2\).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Plus le pH est petit…</b></div><div class="face back">Plus la solution est acide. pH 1 est plus acide que pH 5.</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>Exemple de solution très basique ?</b></div><div class="face back">La soude (pH ≈ 14) ou l'eau de Javel (pH ≈ 12).</div></div></div>
+        <div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><b>La dilution peut-elle transformer un acide en base ?</b></div><div class="face back">Non ! La dilution rapproche le pH de 7 mais ne change jamais le caractère acide ou basique.</div></div></div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2 class="section-title">Exercices progressifs</h2>
+      <div class="exo-grid">
+        <div class="card"><h3>Niveau 1 — Classer</h3><p>Classer par acidité décroissante : citron pH 2, eau pH 7, savon pH 10, vinaigre pH 3.</p><details><summary>Correction</summary>Citron (pH 2, le plus acide) > vinaigre (pH 3) > eau (pH 7, neutre) > savon (pH 10, basique).</details></div>
+        <div class="card"><h3>Niveau 1 — Ions</h3><p>Quel ion prédomine dans une solution de pH 3 ? Et dans une solution de pH 11 ?</p><details><summary>Correction</summary>pH 3 (acide) : les ions \(H^+\) prédominent. pH 11 (basique) : les ions \(HO^-\) prédominent.</details></div>
+        <div class="card"><h3>Niveau 1 — Identifier</h3><p>Une solution a un pH de 7. Est-elle acide, neutre ou basique ?</p><details><summary>Correction</summary>Elle est neutre : pH = 7 signifie autant de \(H^+\) que de \(HO^-\).</details></div>
+        <div class="card"><h3>Niveau 2 — Dilution</h3><p>On dilue une solution de pH 2. Le pH peut-il devenir 1 ? Peut-il devenir 6 ?</p><details><summary>Correction</summary>Non pour pH 1 : la dilution augmente le pH d'un acide, jamais le contraire. Oui pour pH 6 : c'est possible si on dilue suffisamment, le pH se rapproche de 7 en restant inférieur.</details></div>
+        <div class="card"><h3>Niveau 2 — Mesure</h3><p>Une valeur mesurée est pH = 6,5. Papier pH ou pH-mètre ? Justifier.</p><details><summary>Correction</summary>Plutôt pH-mètre, car la valeur est donnée au dixième (0,5). Le papier pH ne permet pas cette précision (il donne une valeur à ±1 unité près).</details></div>
+        <div class="card"><h3>Niveau 2 — Réaction acide-métal</h3><p>On plonge un clou en fer dans de l'acide chlorhydrique. Qu'observe-t-on ? Écrire l'équation.</p><details><summary>Correction</summary>On observe des bulles de gaz (dihydrogène \(H_2\)) et le fer se dissout progressivement. Équation : \(Fe + 2H^+ \rightarrow Fe^{2+} + H_2\).</details></div>
+        <div class="card"><h3>Niveau 2 — Dilution d'une base</h3><p>On dilue une solution de soude de pH 12. Que devient le pH ? Peut-il passer en dessous de 7 ?</p><details><summary>Correction</summary>Le pH diminue et se rapproche de 7, mais reste toujours supérieur à 7. La solution reste basique, même très diluée.</details></div>
+        <div class="card"><h3>Niveau 3 — Équation et conservation</h3><p>Vérifier que \(Fe+2H^+\rightarrow Fe^{2+}+H_2\) conserve les charges ET les éléments chimiques.</p><details><summary>Correction</summary>Charges : gauche = \(2\times(+1)=+2\), droite = \(+2+0=+2\). ✓ Éléments : 1 Fe à gauche et à droite ✓ ; 2 H à gauche et à droite ✓. Tout est conservé.</details></div>
+        <div class="card"><h3>Niveau 3 — Sécurité et interprétation</h3><p>Pourquoi faut-il porter lunettes et gants avec une solution de pH 1 ? Que se passe-t-il si on la dilue beaucoup ?</p><details><summary>Correction</summary>pH 1 = solution très acide et corrosive : risque de brûlure chimique grave. En la diluant beaucoup, le pH augmente vers 7 : la solution devient moins dangereuse, mais reste acide tant que pH < 7.</details></div>
+        <div class="card"><h3>Niveau 3 — Problème de synthèse</h3><p>On dispose de trois solutions : A (pH 3), B (pH 7), C (pH 11). 1) Identifier le caractère de chaque solution. 2) Quel ion prédomine dans A et C ? 3) On dilue A : vers quelle valeur de pH se dirige-t-on ? 4) On plonge du fer dans A : écrire l'équation. 5) Le fer réagit-il dans B ? Dans C ?</p><details><summary>Correction</summary>1) A = acide, B = neutre, C = basique. 2) A : \(H^+\) ; C : \(HO^-\). 3) Le pH de A augmente vers 7. 4) \(Fe + 2H^+ \rightarrow Fe^{2+} + H_2\). 5) Non pour B (neutre, pas d'excès de \(H^+\)). Non pour C (basique, pas d'ions \(H^+\) en excès).</details></div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <h2 class="section-title">Quiz interactif</h2>
+      <div id="quizBox"></div>
+      <div class="readout" id="quizScore">Score : 0/0</div>
+    </section>
+
+    <section id="tp">
+      <h2 class="section-title">TP / activités expérimentales</h2>
+      <div class="grid-2">
+        <div class="card"><h3>TP réel — Mesurer le pH de solutions courantes</h3><p><b>Objectif :</b> classer différentes solutions selon leur pH et identifier leur caractère acide, neutre ou basique.</p><p><b>Matériel :</b> papier pH, coupelles, agitateur, eau distillée, vinaigre, jus de citron, eau savonneuse, eau minérale, bicarbonate, solution de soude diluée.</p><p><b>Protocole détaillé :</b></p><ol><li>Étiqueter les coupelles avec le nom de chaque solution.</li><li>Verser un peu de chaque solution dans sa coupelle.</li><li>Déposer une goutte de chaque solution sur un morceau de papier pH.</li><li>Comparer la couleur obtenue avec l'échelle de référence du papier pH.</li><li>Noter le pH estimé pour chaque solution.</li><li>Classer les solutions par pH croissant.</li><li>Identifier le caractère (acide, neutre, basique) de chaque solution.</li></ol><p><b>Sécurité :</b> lunettes et gants pour les solutions corrosives (soude) ; ne jamais goûter une solution chimique ; se laver les mains après le TP.</p><p><b>Conclusion attendue :</b> les solutions du quotidien ont des pH très variés. Les aliments sont souvent acides (citron, vinaigre), les produits d'entretien souvent basiques (savon, Javel).</p></div>
+        <div class="card"><h3>TP réel — Réaction acide et métal</h3><p><b>Objectif :</b> observer la formation de dihydrogène lors de la réaction d'un métal avec un acide et identifier les produits de la réaction.</p><p><b>Matériel :</b> acide chlorhydrique dilué, clous en fer, lames de zinc, lames de cuivre, tubes à essai, allumette, soude (pour test complémentaire).</p><p><b>Protocole détaillé :</b></p><ol><li>Porter lunettes et gants obligatoirement.</li><li>Verser environ 3 mL d'acide chlorhydrique dans 3 tubes à essai numérotés.</li><li>Dans le tube 1, plonger un clou en fer.</li><li>Dans le tube 2, plonger une lame de zinc.</li><li>Dans le tube 3, plonger une lame de cuivre.</li><li>Observer attentivement chaque tube : formation de bulles ? Changement de couleur du métal ?</li><li>Pour le tube 1, approcher une allumette enflammée de l'ouverture du tube : écouter le « pop » caractéristique du dihydrogène.</li><li>Ajouter quelques gouttes de soude dans le tube 1 : observer la couleur du précipité (test de \(Fe^{2+}\)).</li></ol><p><b>Conclusion attendue :</b> le fer et le zinc réagissent avec l'acide chlorhydrique en produisant du dihydrogène (bulles + détonation) et des ions métalliques (précipité vert avec la soude pour le fer). Le cuivre ne réagit pas.</p></div>
+        <div class="card"><h3>TP — Effet de la dilution</h3><p><b>Objectif :</b> vérifier que la dilution d'un acide augmente le pH vers 7.</p><p><b>Matériel :</b> solution d'acide chlorhydrique dilué (pH ≈ 2), éprouvette, pipette, pH-mètre ou papier pH, eau distillée.</p><p><b>Protocole :</b></p><ol><li>Mesurer le pH de la solution initiale.</li><li>Ajouter un volume égal d'eau distillée (dilution par 2). Mesurer le pH.</li><li>Ajouter à nouveau le même volume d'eau (dilution par 4). Mesurer le pH.</li><li>Continuer et noter les valeurs de pH.</li><li>Vérifier que le pH se rapproche de 7 sans le dépasser.</li></ol><p><b>Conclusion attendue :</b> la dilution d'un acide augmente le pH vers 7. Le pH ne dépasse jamais 7 : la solution reste acide, même très diluée.</p></div>
+        <div class="card"><h3>Sécurité — Rappel important</h3><p>Toujours verser l'acide dans l'eau et jamais l'inverse (risque de projections). Porter les EPI (lunettes, gants, blouse). En cas de contact avec la peau, rincer abondamment à l'eau. Ne jamais goûter une solution chimique. Ranger le matériel et nettoyer le plan de travail après le TP.</p></div>
+      </div>
+    </section>
+
+    <section id="chatbots">
+      <h2 class="section-title">Chatbots externes</h2>
+      <p class="lead">L'élève choisit son assistant IA et colle le prompt ci-dessous.</p>
+      <div class="ai-grid">
+        <div class="ai-card"><h3>ChatGPT</h3><p>Aide aux explications, exercices et méthodes.</p><a href="https://chatgpt.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Gemini</h3><p>Reformulation et entraînement.</p><a href="https://gemini.google.com/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Claude</h3><p>Explications longues et vérification du raisonnement.</p><a href="https://claude.ai/" target="_blank">Ouvrir ↗</a></div>
+        <div class="ai-card"><h3>Copilot</h3><p>Recherche, synthèse et questions rapides.</p><a href="https://copilot.microsoft.com/" target="_blank">Ouvrir ↗</a></div>
+      </div>
+      <h3>Prompt prêt à copier</h3>
+      <textarea id="aiPrompt" class="prompt-box">Tu es mon tuteur de physique-chimie niveau 3e. Chapitre : Acides, bases et pH. Explique-moi simplement et avec des exemples concrets du quotidien : 1) les solutions acides, basiques et neutres et les ions H+ et HO-, 2) l'échelle de pH de 0 à 14 et comment classer les solutions, 3) les deux méthodes de mesure (papier pH et pH-mètre) avec leurs avantages et limites, 4) l'effet de la dilution sur le pH (un acide dilué reste acide !), 5) la réaction entre un acide et un métal (fer, zinc, cuivre), l'équation chimique et la conservation des charges, 6) les consignes de sécurité avec les solutions corrosives. Pose-moi ensuite 5 questions progressives avec correction détaillée.</textarea><br><br>
+      <button class="copy" onclick="copyPrompt()">Copier le prompt</button>
+    </section>
+
+    <section id="suite">
+      <h2 class="section-title">Vers la classe supérieure</h2>
+      <div class="grid-2">
+        <div class="card"><h3>En 2nde</h3><p>Tu reprendras les transformations chimiques, les ions en solution, l'équilibrage des équations chimiques et les tests d'identification des ions. Les acides et les bases seront étudiés de manière plus quantitative.</p></div>
+        <div class="card"><h3>Au lycée</h3><p>Le pH sera relié à la concentration en ions oxonium \(H_3O^+\), aux acides et bases de Brønsted (couples acide/base) et aux titrages pH-métriques. Tu découvriras la relation \(pH = -\log[H_3O^+]\) et les réactions acido-basiques.</p></div>
+        <div class="card"><h3>Les indicateurs colorés</h3><p>Au lycée, tu découvriras les indicateurs colorés acido-basiques (phénolphtaléine, hélianthine, bleu de bromothymol) qui changent de couleur à un pH précis. Ils permettent de repérer l'équivalence lors d'un titrage.</p></div>
+        <div class="card"><h3>Les réactions de neutralisation</h3><p>Au lycée, tu étudieras les réactions entre un acide et une base : la neutralisation. Quand on mélange un acide fort et une base forte, le pH se rapproche de 7. C'est ce qui se passe quand on prend un antiacide pour soulager des brûlures d'estomac.</p></div>
+        <div class="card"><h3>Pourquoi c'est important</h3><p>Le pH est essentiel en médecine (sang, urine), dans l'industrie agroalimentaire (conservation des aliments), en agriculture (pH du sol), dans l'industrie (traitement des eaux, métallurgie) et en environnement (pluies acides, acidification des océans).</p></div>
+        <div class="card"><h3>Défi</h3><p>L'eau de pluie « pure » a un pH d'environ 5,6. Pourquoi n'est-elle pas neutre (pH 7) ? Que se passe-t-il quand le pH de la pluie descend à 4 ou moins ? Quels sont les effets sur l'environnement ?</p></div>
+      </div>
+    </section>
+  </div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+const sections=[...document.querySelectorAll('main section')];
+const buttons=[...document.querySelectorAll('#sideNav button')];
+function showSection(id){
+  sections.forEach(s=>s.classList.toggle('active',s.id===id));
+  buttons.forEach(b=>b.classList.toggle('active',b.dataset.target===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='simulations') setTimeout(drawAll,80);
+  if(id==='quiz') renderQuiz();
+  const idx=Math.max(0,buttons.findIndex(b=>b.dataset.target===id));
+  const pct=Math.round((idx)/(buttons.length-1)*100);
+  document.getElementById('sideProgress').style.width=pct+'%';
+  document.getElementById('progressText').textContent=pct+'% du chapitre exploré';
+}
+buttons.forEach(btn=>btn.addEventListener('click',()=>showSection(btn.dataset.target)));
+function toggleTheme(){const h=document.documentElement;const n=h.dataset.theme==='dark'?'light':'dark';h.dataset.theme=n;document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';setTimeout(drawAll,80)}
+function copyPrompt(){navigator.clipboard?.writeText(document.getElementById('aiPrompt').value); alert('Prompt copié.');}
+if(window.CanvasRenderingContext2D&&!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this}}
+const phS=document.getElementById('phSlider'), sol=document.getElementById('solution'), phI=document.getElementById('phInit'), water=document.getElementById('water'), acidPower=document.getElementById('acidPower'), metal=document.getElementById('metal');
+[phS,sol,phI,water,acidPower,metal].forEach(e=>e&&e.addEventListener('input',drawAll));
+sol.addEventListener('change',()=>{phS.value=sol.value;drawAll()});
+function fmt(n,d=1){return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:d}).format(n)}
+function phColor(p){const hue=260-p*12;return `hsl(${Math.max(0,hue)},75%,65%)`}
+function statusPH(p){return p<7?'acide':p>7?'basique':'neutre'}
+function drawPH(){
+  const c=document.getElementById('phCanvas'),x=c.getContext('2d'),p=+phS.value;
+  document.getElementById('phV').textContent=fmt(p,1);
+  x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+  x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 24px Instrument Sans';x.fillText('Échelle de pH',45,55);
+  const grad=x.createLinearGradient(60,130,660,130);grad.addColorStop(0,'#D9507A');grad.addColorStop(.5,'#8BD2B6');grad.addColorStop(1,'#7D70E8');
+  x.fillStyle=grad;x.beginPath();x.roundRect(60,130,600,46,23);x.fill();
+  for(let i=0;i<=14;i++){let xx=60+i/14*600;x.strokeStyle='rgba(36,30,51,.28)';x.beginPath();x.moveTo(xx,125);x.lineTo(xx,184);x.stroke();x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');x.font='600 12px Instrument Sans';x.fillText(i,xx-5,205)}
+  const px=60+p/14*600;x.fillStyle='#fff';x.strokeStyle='#241E33';x.lineWidth=3;x.beginPath();x.arc(px,153,18,0,Math.PI*2);x.fill();x.stroke();
+  x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 20px Instrument Sans';x.fillText(`pH ${fmt(p,1)} : ${statusPH(p)}`,45,260);
+  x.font='500 15px Instrument Sans';x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');
+  x.fillText(p<7?'Les ions H⁺ prédominent.':p>7?'Les ions HO⁻ prédominent.':'Autant de H⁺ que de HO⁻.',45,290);
+  document.getElementById('phRead').innerHTML=`<strong>Diagnostic :</strong> pH ${fmt(p,1)} → solution <strong>${statusPH(p)}</strong>. ${p<7?'Plus le pH est petit, plus la solution est acide. Les ions H⁺ dominent.':p>7?'Plus le pH est grand, plus la solution est basique. Les ions HO⁻ dominent.':'La solution est neutre : autant de H⁺ que de HO⁻.'}`;
+}
+function drawDil(){
+  const c=document.getElementById('dilCanvas'),x=c.getContext('2d'),p0=+phI.value,w=+water.value, target=7, p=p0+(target-p0)*(w/100)*0.78;
+  document.getElementById('phInitV').textContent=fmt(p0,1);document.getElementById('waterV').textContent=w+'%';
+  x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+  x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 22px Instrument Sans';x.fillText('Effet d\'une dilution',45,55);
+  function beaker(x0,p,label){x.fillStyle='rgba(255,255,255,.78)';x.strokeStyle='rgba(125,93,180,.25)';x.lineWidth=2;x.beginPath();x.roundRect(x0,90,170,210,22);x.fill();x.stroke();x.fillStyle=phColor(p);x.fillRect(x0+16,160,138,120);x.fillStyle='#241E33';x.font='700 18px Instrument Sans';x.fillText(label,x0+18,125);x.fillText('pH '+fmt(p,1),x0+46,240)}
+  beaker(110,p0,'Départ');beaker(440,p,'Après dilution');
+  x.strokeStyle='#A78BFA';x.lineWidth=5;x.beginPath();x.moveTo(310,190);x.lineTo(400,190);x.stroke();x.fillStyle='#A78BFA';x.beginPath();x.moveTo(400,190);x.lineTo(382,180);x.lineTo(382,200);x.fill();
+  document.getElementById('dilRead').innerHTML=`<strong>pH après dilution :</strong> ${fmt(p,1)}. ${p0<7?'L\'acide devient moins acide : le pH augmente vers 7, mais reste < 7.':p0>7?'La base devient moins basique : le pH diminue vers 7, mais reste > 7.':'Une solution neutre reste proche de 7.'} Le pH ne dépasse jamais 7 dans le sens contraire.`;
+}
+function drawMetal(){
+  const c=document.getElementById('metalCanvas'),x=c.getContext('2d'),p=+acidPower.value,m=metal.value;
+  document.getElementById('acidPowerV').textContent='pH '+fmt(p,1);
+  const reactive=m!=='cuivre';
+  const fast=m==='zinc';
+  x.clearRect(0,0,c.width,c.height);x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card2');x.fillRect(0,0,c.width,c.height);
+  x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--ink');x.font='700 22px Instrument Sans';x.fillText('Réaction acide + métal',45,55);
+  x.fillStyle='rgba(255,255,255,.78)';x.strokeStyle='rgba(125,93,180,.25)';x.lineWidth=2;x.beginPath();x.roundRect(220,80,280,240,24);x.fill();x.stroke();x.fillStyle=phColor(p);x.globalAlpha=.55;x.fillRect(242,145,236,145);x.globalAlpha=1;
+  x.fillStyle='#777';x.fillRect(285,235,150,24);x.fillStyle='#444';x.font='700 15px Instrument Sans';x.fillText(metal.options[metal.selectedIndex].text,320,252);
+  if(reactive){const nb=fast?24:18;for(let i=0;i<nb;i++){const bx=280+(i*37)%150, by=225-((i*23)%120);x.fillStyle='rgba(255,255,255,.92)';x.beginPath();x.arc(bx,by,5+(i%3),0,Math.PI*2);x.fill()}}
+  const metalInfo={fer:'Le fer réagit avec l\'acide chlorhydrique : formation de \(H_2\) et d\'ions \(Fe^{2+}\).',zinc:'Le zinc réagit rapidement avec l\'acide : formation de \(H_2\) et d\'ions \(Zn^{2+}\).',cuivre:'Le cuivre ne réagit pratiquement pas avec l\'acide chlorhydrique dilué.',aluminium:'L\'aluminium réagit mais se protège rapidement par une couche d\'oxyde (passivation).'};
+  document.getElementById('metalRead').innerHTML=reactive?`<strong>Observation :</strong> des bulles de dihydrogène \(H_2\) apparaissent. Le métal réagit avec les ions \(H^+\). ${metalInfo[m]}`:`<strong>Observation :</strong> ${metalInfo[m]}`;
+}
+function drawAll(){drawPH();drawDil();drawMetal()}
+const qs=[
+  ['Une solution de pH 3 est…',['acide','neutre','basique','un métal'],'acide','pH < 7 : solution acide.'],
+  ['Dans une solution basique, l\'ion qui prédomine est…',['H+','HO-','Fe2+','H2'],'HO-','Une base contient plus d\'ions hydroxyde HO-.'],
+  ['Que fait la dilution d\'un acide ?',['elle diminue toujours le pH','elle augmente le pH vers 7','elle rend toujours pH=14','elle produit du fer'],'elle augmente le pH vers 7','Ajouter de l\'eau rend l\'acide moins acide.'],
+  ['Le pH a-t-il une unité ?',['oui : le joule','oui : le volt','non','oui : le mètre'],'non','Le pH est une grandeur sans unité.'],
+  ['La réaction fer + acide peut produire…',['du dioxygène','du dihydrogène','du dioxyde de carbone','de l\'eau pure uniquement'],'du dihydrogène','Le gaz \(H_2\) est caractéristique de la réaction acide + métal.'],
+  ['Un pH de 2 est… un pH de 5.',['moins acide que','aussi acide que','plus acide que','sans rapport avec'],'plus acide que','Plus le pH est petit, plus la solution est acide.'],
+  ['Pour mesurer un pH au dixième près, on utilise…',['le papier pH','le pH-mètre','une règle','un thermomètre'],'le pH-mètre','Le pH-mètre est précis au dixième.'],
+  ['La dilution d\'une base fait…',['augmenter le pH vers 14','diminuer le pH vers 7','ne rien changer','passer le pH en dessous de 7'],'diminuer le pH vers 7','La dilution rapproche le pH de 7.'],
+  ['Quel métal ne réagit pas avec l\'acide chlorhydrique dilué ?',['le fer','le zinc','le cuivre','l\'aluminium'],'le cuivre','Le cuivre est peu réactif face à l\'acide chlorhydrique dilué.'],
+  ['L\'eau pure a un pH de…',['0','7','14','3'],'7','L\'eau pure est neutre : pH = 7.']
+];let qDone=false;
+function renderQuiz(){if(qDone)return;qDone=true;let score=0,done=0;const box=document.getElementById('quizBox');box.innerHTML=qs.map((q,i)=>`<div class="quiz-card"><h3>Question ${i+1}</h3><p>${q[0]}</p><div class="answers">${q[1].map(a=>`<button onclick="answer(this,'${a.replace(/'/g,"\\'")}','${q[2].replace(/'/g,"\\'")}',${i})">${a}</button>`).join('')}</div><div class="readout" id="explain${i}" style="display:none">${q[3]}</div></div>`).join('');window.answer=(btn,a,good,i)=>{const parent=btn.closest('.answers');if(parent.dataset.done)return;parent.dataset.done=1;done++;if(a===good){score++;btn.classList.add('good')}else{btn.classList.add('bad');[...parent.children].find(b=>b.textContent===good)?.classList.add('good')}document.getElementById('explain'+i).style.display='block';document.getElementById('quizScore').textContent=`Score : ${score}/${done}`}}
+drawAll();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>
