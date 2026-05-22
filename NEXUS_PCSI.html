@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEXUS · PCSI — Cercle El Abili</title>
+<script>MathJax={tex:{inlineMath:[['\\(','\\)']]},options:{skipHtmlTags:['script','noscript','style','textarea']},startup:{typeset:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+/* ── THEME ───────────────────────────────────────────── */
+:root {
+  --accent: #00ffb3;
+  --ar: 0,255,179;
+  --glow: 0 0 24px rgba(0,255,179,0.4);
+  --bg: #080810;
+  --surf: rgba(255,255,255,0.04);
+  --ink: #e8e8f0;
+  --muted: #7070a0;
+  --border: rgba(255,255,255,0.08);
+  --tglass: rgba(8,8,16,0.82);
+  --ease: cubic-bezier(.22,1,.36,1);
+  --fast: 200ms cubic-bezier(.22,1,.36,1);
+  --mid: 340ms cubic-bezier(.22,1,.36,1);
+}
+[data-theme="light"] {
+  --bg: #f0f0f8;
+  --surf: rgba(0,0,0,0.04);
+  --ink: #1a1a2e;
+  --muted: #606080;
+  --border: rgba(0,0,0,0.08);
+  --tglass: rgba(240,240,248,0.88);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  min-height:100vh;
+  font-family:'Segoe UI', Inter, ui-sans-serif, system-ui, sans-serif;
+  background:var(--bg); color:var(--ink);
+  transition:background .4s, color .4s;
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+button,input { font:inherit; }
+
+/* ── MESH CANVAS ─────────────────────────────────────── */
+#mesh {
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; opacity:.5;
+  transition:opacity .4s;
+}
+[data-theme="light"] #mesh { opacity:.18; }
+
+/* grid overlay */
+body::before {
+  content:""; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%, black, transparent);
+}
+[data-theme="light"] body::before {
+  background:
+    linear-gradient(rgba(0,0,0,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.025) 1px, transparent 1px);
+  background-size:44px 44px;
+}
+
+/* ── APP SHELL ───────────────────────────────────────── */
+#app { position:relative; z-index:10; min-height:100vh; }
+
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar {
+  display:flex; align-items:center; gap:11px; padding:9px 20px;
+  border-bottom:1px solid var(--border);
+  background:var(--tglass);
+  backdrop-filter:blur(28px) saturate(155%);
+  position:sticky; top:0; z-index:90;
+}
+.back-link {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  height:36px; padding:0 14px; border-radius:999px;
+  background:var(--surf); border:1px solid var(--border); color:var(--muted);
+  font-size:.78rem; cursor:pointer; transition:var(--fast); white-space:nowrap;
+}
+.back-link:hover { border-color:rgba(var(--ar),.4); color:var(--accent); }
+.psi-disc {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg, #00ffb3, #0088ff);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:700; color:#080810;
+  box-shadow:var(--glow);
+}
+.topbar-title {
+  font-size:.82rem; font-weight:600; color:var(--ink); flex-shrink:0;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.search-wrap { flex:1; max-width:380px; margin:0 auto; position:relative; }
+.s-ico { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--accent); pointer-events:none; font-size:.85rem; }
+.s-inp {
+  width:100%; height:36px; border-radius:999px;
+  background:var(--surf); border:1px solid var(--border);
+  padding:0 72px 0 36px; color:var(--ink); outline:none; font-size:.82rem;
+  transition:border-color .2s, box-shadow .2s;
+}
+.s-inp:focus { border-color:rgba(var(--ar),.5); box-shadow:0 0 0 3px rgba(var(--ar),.08); }
+.s-inp::placeholder { color:var(--muted); font-size:.78rem; }
+.s-clear {
+  position:absolute; right:40px; top:50%; transform:translateY(-50%);
+  display:none; background:none; border:none; color:var(--muted); cursor:pointer;
+  font-size:.85rem; padding:2px 4px;
+}
+.s-clear.visible { display:block; }
+.s-kbd {
+  position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  font-size:.58rem; color:var(--muted); background:var(--surf);
+  border:1px solid var(--border); border-radius:4px; padding:1px 5px; pointer-events:none;
+}
+.top-right { display:flex; gap:7px; flex-shrink:0; align-items:center; }
+.ib {
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+  background:var(--surf); border:1px solid var(--border); color:var(--muted);
+  cursor:pointer; transition:var(--fast); font-size:.88rem;
+}
+.ib:hover { border-color:rgba(var(--ar),.4); color:var(--accent); box-shadow:var(--glow); }
+
+/* ── TRACK TABS ──────────────────────────────────────── */
+.track-bar {
+  display:flex; align-items:center; gap:6px; padding:10px 20px;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,8,16,.6);
+  backdrop-filter:blur(16px);
+  position:sticky; top:57px; z-index:80;
+  overflow-x:auto; scrollbar-width:none;
+}
+.track-bar::-webkit-scrollbar { display:none; }
+.track-tab {
+  display:flex; align-items:center; gap:7px; flex-shrink:0;
+  height:34px; padding:0 16px; border-radius:999px;
+  background:var(--surf); border:1px solid var(--border);
+  color:var(--muted); font-size:.76rem; font-weight:500;
+  cursor:pointer; transition:var(--fast); white-space:nowrap; position:relative;
+}
+.track-tab:hover { border-color:rgba(var(--ar),.3); color:var(--ink); }
+.track-tab.active {
+  background:rgba(var(--ar),.12); border-color:rgba(var(--ar),.4); color:var(--accent);
+  font-weight:600; box-shadow:var(--glow);
+}
+.track-count {
+  font-size:.64rem; background:var(--surf); border:1px solid var(--border);
+  border-radius:99px; padding:1px 7px; color:var(--muted);
+}
+.track-tab.active .track-count { background:rgba(var(--ar),.15); border-color:rgba(var(--ar),.3); color:var(--accent); }
+
+/* ── SUBJECT BAR ─────────────────────────────────────── */
+.subject-bar {
+  display:flex; align-items:center; gap:7px; padding:9px 20px;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,8,16,.4);
+  overflow-x:auto; scrollbar-width:none;
+}
+.subject-bar::-webkit-scrollbar { display:none; }
+.sbar-label { font-size:.6rem; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; flex-shrink:0; margin-right:2px; }
+.sj {
+  display:flex; align-items:center; gap:5px; flex-shrink:0;
+  height:28px; padding:0 11px; border-radius:999px;
+  background:var(--surf); border:1px solid var(--border); color:var(--muted);
+  font-size:.7rem; cursor:pointer; transition:var(--fast); white-space:nowrap;
+}
+.sj:hover { border-color:rgba(var(--ar),.35); color:var(--ink); }
+.sj.active { background:rgba(var(--ar),.12); border-color:rgba(var(--ar),.38); color:var(--accent); font-weight:560; }
+
+/* ── HERO ────────────────────────────────────────────── */
+.hero {
+  padding:36px 20px 28px; border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(var(--ar),.028) 0%, transparent 100%);
+  overflow:hidden; position:relative;
+}
+.hero-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:40px; }
+.hero-left { flex:1; min-width:0; }
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:.66rem; color:var(--accent); letter-spacing:.2em; text-transform:uppercase;
+  background:rgba(var(--ar),.08); border:1px solid rgba(var(--ar),.22); border-radius:99px;
+  padding:3px 12px; margin-bottom:16px;
+}
+.hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+.hero-title {
+  font-size:clamp(1.5rem,3.5vw,2.4rem); font-weight:800; line-height:1.15;
+  background:linear-gradient(135deg, #00ffb3, #0088ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:6px;
+}
+.hero-sub {
+  font-size:.95rem; color:var(--muted); margin-bottom:14px; font-weight:400;
+}
+.hero-quote {
+  font-style:italic; font-size:.82rem; color:var(--muted); border-left:2px solid rgba(var(--ar),.4);
+  padding-left:14px; margin-bottom:18px; line-height:1.55;
+}
+.ticker-wrap {
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--surf); border:1px solid var(--border); border-radius:10px;
+  padding:9px 16px; margin-bottom:18px; min-width:280px;
+}
+.ticker-label { font-size:.58rem; color:var(--accent); letter-spacing:.15em; text-transform:uppercase; flex-shrink:0; }
+#ticker {
+  font-family:'Courier New', monospace; font-size:.84rem; color:var(--ink);
+  transition:opacity .4s;
+}
+.hero-stats { display:flex; gap:18px; flex-wrap:wrap; }
+.stat-chip {
+  display:flex; align-items:center; gap:6px;
+  background:var(--surf); border:1px solid var(--border); border-radius:8px;
+  padding:6px 13px; font-size:.74rem; color:var(--muted);
+}
+.stat-val { color:var(--accent); font-weight:700; font-size:.86rem; }
+.hero-right { flex-shrink:0; }
+
+/* Rotating seal */
+.seal-wrap { position:relative; width:140px; height:140px; }
+.seal-svg { animation:spin 28s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.seal-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:70px; height:70px; border-radius:50%;
+  background:linear-gradient(135deg, rgba(0,255,179,.2), rgba(0,136,255,.2));
+  border:1.5px solid rgba(var(--ar),.4); display:flex; align-items:center; justify-content:center;
+  font-size:2rem; font-weight:700; color:var(--accent);
+  box-shadow:var(--glow);
+}
+
+/* ── CONTENT AREA ────────────────────────────────────── */
+.content-wrap { max-width:1200px; margin:0 auto; padding:28px 20px 60px; }
+.section-header {
+  display:flex; align-items:baseline; gap:12px; margin-bottom:18px;
+}
+.section-kicker {
+  font-size:.62rem; color:var(--accent); letter-spacing:.18em; text-transform:uppercase;
+  font-weight:600;
+}
+.section-title { font-size:1rem; font-weight:600; color:var(--ink); }
+.section-count { font-size:.72rem; color:var(--muted); background:var(--surf); border:1px solid var(--border); border-radius:99px; padding:2px 9px; }
+
+/* ── CARD GRID ───────────────────────────────────────── */
+.card-grid {
+  display:grid; gap:16px;
+  grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* ── CHAPTER CARD ────────────────────────────────────── */
+.ch-card {
+  background:var(--surf); border:1px solid var(--border); border-radius:16px;
+  padding:20px; position:relative; overflow:hidden;
+  cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .1s;
+  transform-style:preserve-3d; perspective:700px;
+  opacity:0; transform:translateY(20px);
+  animation:cardIn .5s var(--ease) forwards;
+}
+@keyframes cardIn { to { opacity:1; transform:translateY(0); } }
+.ch-card:hover { box-shadow:var(--glow); }
+
+/* track-specific border accents */
+.ch-card[data-track="maths"] { border-color:rgba(255,215,0,.15); }
+.ch-card[data-track="maths"]:hover { border-color:rgba(255,215,0,.4); box-shadow:0 0 24px rgba(255,215,0,.22); }
+.ch-card[data-track="physique"] { border-color:rgba(0,179,255,.15); }
+.ch-card[data-track="physique"]:hover { border-color:rgba(0,179,255,.4); box-shadow:0 0 24px rgba(0,179,255,.22); }
+.ch-card[data-track="chimie"] { border-color:rgba(0,255,179,.15); }
+.ch-card[data-track="chimie"]:hover { border-color:rgba(0,255,179,.4); box-shadow:0 0 24px rgba(0,255,179,.22); }
+
+.card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.card-icon {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; background:var(--surf); border:1px solid var(--border);
+}
+.card-badges { display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+.track-badge {
+  font-size:.6rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 9px; border-radius:99px; border:1px solid;
+}
+.track-badge.maths { color:#ffd700; border-color:rgba(255,215,0,.4); background:rgba(255,215,0,.08); }
+.track-badge.physique { color:#00b3ff; border-color:rgba(0,179,255,.4); background:rgba(0,179,255,.08); }
+.track-badge.chimie { color:#00ffb3; border-color:rgba(0,255,179,.4); background:rgba(0,255,179,.08); }
+.card-num { font-size:.66rem; color:var(--muted); background:var(--surf); border:1px solid var(--border); border-radius:99px; padding:2px 9px; }
+
+.card-title { font-size:1rem; font-weight:650; margin-bottom:5px; color:var(--ink); }
+.card-desc { font-size:.78rem; color:var(--muted); line-height:1.55; margin-bottom:12px; }
+.card-tags { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+.tag {
+  font-size:.62rem; padding:2px 8px; border-radius:99px;
+  background:var(--surf); border:1px solid var(--border); color:var(--muted);
+}
+
+/* formula strip */
+.formula-strip {
+  height:0; overflow:hidden; transition:height .3s var(--ease);
+  border-top:0px solid var(--border);
+}
+.ch-card:hover .formula-strip { height:56px; border-top:1px solid var(--border); }
+.formula-inner {
+  padding:10px 4px 4px; font-family:'Courier New', monospace;
+  font-size:.76rem; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+.card-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:.72rem; color:var(--accent); background:rgba(var(--ar),.08);
+  border:1px solid rgba(var(--ar),.22); border-radius:99px;
+  padding:4px 12px; transition:var(--fast);
+}
+.card-link:hover { background:rgba(var(--ar),.18); }
+
+/* ── EMPTY STATE ─────────────────────────────────────── */
+.empty-state {
+  text-align:center; padding:60px 20px; color:var(--muted);
+  display:none;
+}
+.empty-state.visible { display:block; }
+.empty-icon { font-size:3rem; margin-bottom:16px; }
+
+/* ── COMMAND PALETTE ─────────────────────────────────── */
+.cmd-overlay {
+  position:fixed; inset:0; z-index:999; display:none;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(6px);
+  align-items:flex-start; justify-content:center; padding-top:12vh;
+}
+.cmd-overlay.open { display:flex; }
+.cmd-panel {
+  width:100%; max-width:600px; border-radius:18px;
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border:1px solid var(--border); backdrop-filter:blur(28px);
+  overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,.5);
+}
+.cmd-head { display:flex; align-items:center; gap:10px; padding:16px; border-bottom:1px solid var(--border); }
+.cmd-icon { color:var(--accent); font-size:1.1rem; }
+.cmd-inp {
+  flex:1; background:none; border:none; outline:none; color:var(--ink);
+  font-size:1rem; font-weight:500;
+}
+.cmd-inp::placeholder { color:var(--muted); }
+.cmd-esc { font-size:.62rem; color:var(--muted); background:var(--surf); border:1px solid var(--border); border-radius:5px; padding:2px 8px; }
+.cmd-list { max-height:380px; overflow-y:auto; padding:8px; scrollbar-width:thin; }
+.cmd-item {
+  display:flex; align-items:center; gap:12px; padding:10px 12px;
+  border-radius:10px; cursor:pointer; transition:background .15s;
+}
+.cmd-item:hover, .cmd-item.selected { background:rgba(var(--ar),.1); }
+.cmd-item-icon { font-size:1.1rem; flex-shrink:0; }
+.cmd-item-info { flex:1; min-width:0; }
+.cmd-item-title { font-size:.86rem; font-weight:550; color:var(--ink); }
+.cmd-item-sub { font-size:.71rem; color:var(--muted); margin-top:1px; }
+.cmd-item-badge { font-size:.62rem; color:var(--muted); flex-shrink:0; }
+.cmd-empty { padding:32px; text-align:center; color:var(--muted); font-size:.85rem; }
+
+/* ── SCROLL TOP ──────────────────────────────────────── */
+#scrollTop {
+  position:fixed; bottom:28px; right:24px; z-index:80;
+  width:42px; height:42px; border-radius:14px;
+  background:rgba(var(--ar),.15); border:1px solid rgba(var(--ar),.3); color:var(--accent);
+  display:none; align-items:center; justify-content:center;
+  cursor:pointer; font-size:1.1rem; transition:var(--fast);
+  box-shadow:var(--glow);
+}
+#scrollTop.show { display:flex; }
+#scrollTop:hover { background:rgba(var(--ar),.28); }
+
+/* ── FOOTER ──────────────────────────────────────────── */
+footer {
+  border-top:1px solid var(--border); padding:20px; text-align:center;
+  color:var(--muted); font-size:.75rem; background:var(--surf);
+}
+footer a { color:var(--accent); }
+
+/* ── RESULTS BAR ─────────────────────────────────────── */
+.results-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 20px 0; max-width:1200px; margin:0 auto;
+}
+.results-count { font-size:.75rem; color:var(--muted); }
+.results-count span { color:var(--accent); font-weight:600; }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width:700px) {
+  .hero-inner { flex-direction:column; align-items:flex-start; gap:24px; }
+  .hero-right { display:none; }
+  .topbar-title { display:none; }
+  .card-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<canvas id="mesh"></canvas>
+<div id="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a class="back-link" href="NEXUS_Cercle_El_Abili.html">&#8592; Portail</a>
+    <div class="psi-disc">&#968;</div>
+    <div class="topbar-title">Cercle El Abili &mdash; PCSI</div>
+    <div class="search-wrap">
+      <span class="s-ico">&#128269;</span>
+      <input class="s-inp" id="searchInput" type="text" placeholder="Rechercher un chapitre…" autocomplete="off" />
+      <button class="s-clear" id="searchClear" title="Effacer">&#10005;</button>
+      <span class="s-kbd">Ctrl+K</span>
+    </div>
+    <div class="top-right">
+      <button class="ib" id="themeBtn" title="Thème (T)">&#9788;</button>
+      <button class="ib" id="cmdBtn" title="Palette (Ctrl+K)">&#9776;</button>
+    </div>
+  </header>
+
+  <!-- TRACK TABS -->
+  <nav class="track-bar" id="trackBar"></nav>
+
+  <!-- SUBJECT FILTER -->
+  <div class="subject-bar" id="subjectBar"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          Classe Pr&eacute;paratoire aux Grandes &Eacute;coles
+        </div>
+        <h1 class="hero-title">PCSI &mdash; Physique Chimie Sciences de l&rsquo;Ing&eacute;nieur</h1>
+        <p class="hero-sub">Classe Pr&eacute;paratoire aux Grandes &Eacute;coles</p>
+        <blockquote class="hero-quote">
+          &ldquo;Les math&eacute;matiques sont le langage dans lequel Dieu a &eacute;crit l&rsquo;univers.&rdquo; &mdash; Galil&eacute;e
+        </blockquote>
+        <div class="ticker-wrap">
+          <span class="ticker-label">Formule</span>
+          <span id="ticker">\(\vec{F} = m\vec{a}\)</span>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-chip"><span class="stat-val">22</span>&nbsp;chapitres</div>
+          <div class="stat-chip"><span class="stat-val">3</span>&nbsp;p&ocirc;les</div>
+          <div class="stat-chip"><span class="stat-val">Pr&eacute;pa</span>&nbsp;PCSI</div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="seal-wrap">
+          <svg class="seal-svg" width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(0,255,179,0.25)" stroke-width="1" stroke-dasharray="4 5"/>
+            <circle cx="70" cy="70" r="52" fill="none" stroke="rgba(0,255,179,0.15)" stroke-width="1" stroke-dasharray="2 8"/>
+            <circle cx="70" cy="70" r="42" fill="none" stroke="rgba(0,136,255,0.2)" stroke-width="1"/>
+            <text x="70" y="28" fill="rgba(0,255,179,0.6)" font-size="7" text-anchor="middle" letter-spacing="3" font-family="monospace">CERCLE EL ABILI</text>
+            <text x="70" y="118" fill="rgba(0,255,179,0.6)" font-size="7" text-anchor="middle" letter-spacing="3" font-family="monospace">PCSI · &#968;</text>
+          </svg>
+          <div class="seal-center">&#968;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS BAR -->
+  <div class="results-bar">
+    <div class="results-count" id="resultsCount"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <main class="content-wrap" id="contentWrap"></main>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="NEXUS_Cercle_El_Abili.html">&#8592; Retour au portail NEXUS</a>
+    &nbsp;&middot;&nbsp; Cercle El Abili &middot; PCSI &nbsp;&middot;&nbsp;
+    <span style="color:rgba(var(--ar),.6)">&#968;</span>
+  </footer>
+
+</div><!-- #app -->
+
+<!-- SCROLL TOP -->
+<button id="scrollTop" title="Haut de page">&#8679;</button>
+
+<!-- COMMAND PALETTE -->
+<div class="cmd-overlay" id="cmdOverlay" role="dialog" aria-modal="true" aria-label="Palette de commandes">
+  <div class="cmd-panel">
+    <div class="cmd-head">
+      <span class="cmd-icon">&#9084;</span>
+      <input class="cmd-inp" id="cmdInput" placeholder="Rechercher un chapitre PCSI…" autocomplete="off" />
+      <span class="cmd-esc">Esc</span>
+    </div>
+    <div class="cmd-list" id="cmdList"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════════ */
+const TRACKS = [
+  { id:"all",     label:"Tout",            icon:"∞",  color:"#00ffb3", ar:"0,255,179",  count:22 },
+  { id:"maths",   label:"Outils Maths",   icon:"⚙️", color:"#ffd700", ar:"255,215,0",  count:3  },
+  { id:"physique",label:"Physique",        icon:"🚀", color:"#00b3ff", ar:"0,179,255",  count:11 },
+  { id:"chimie",  label:"Chimie",          icon:"⚗️", color:"#00ffb3", ar:"0,255,179",  count:8  },
+];
+
+const SUBJECTS = [
+  {id:"all",        icon:"∞",  label:"Tout"},
+  {id:"chimie",     icon:"⚗️", label:"Chimie",          tags:["Chimie","Organique","pH","PCSI"]},
+  {id:"mecanique",  icon:"⚙️", label:"Mécanique",       tags:["Mécanique","Newton","Vecteurs","Forces"]},
+  {id:"optique",    icon:"🔭", label:"Optique",          tags:["Optique","Michelson","Lentilles"]},
+  {id:"electricite",icon:"⚡", label:"Électricité",      tags:["Électricité","Faraday","RC","RLC"]},
+  {id:"ondes",      icon:"〰️", label:"Ondes",            tags:["Ondes"]},
+  {id:"thermo",     icon:"🌡️", label:"Thermodynamique",  tags:["Thermo","Carnot","Entropie"]},
+  {id:"maths",      icon:"📐", label:"Mathématiques",    tags:["Maths"]},
+];
+
+const CHAPTERS = [
+  /* ── Outils Maths ────────────────────────── */
+  {
+    num:"PCSI-M00", icon:"∑", track:"maths",
+    title:"Outils mathématiques",
+    desc:"Équations différentielles, complexes, intégrales, développements limités, transformée de Laplace.",
+    tags:["Maths","PCSI"],
+    href:"pcsi_outils_mathematiques.html",
+    formulas:["\\(\\mathcal{L}\\{f'\\} = p\\,F(p) - f(0)\\)"]
+  },
+  {
+    num:"PCSI-M01", icon:"D", track:"maths",
+    title:"Analyse dimensionnelle",
+    desc:"Théorème de Buckingham-Pi, similitude, vérification d'homogénéité des relations.",
+    tags:["Maths","PCSI"],
+    href:"pcsi_analyse_dimensionnelle.html",
+    formulas:["\\([\\text{grandeur}] = M^a \\cdot L^b \\cdot T^c\\)"]
+  },
+  {
+    num:"PCSI-M02", icon:"u", track:"maths",
+    title:"Mesures et incertitudes",
+    desc:"Guide GUM, incertitudes de type A/B, propagation des incertitudes, incertitude élargie.",
+    tags:["Maths","PCSI"],
+    href:"pcsi_mesures_incertitudes.html",
+    formulas:["\\(U = k \\cdot u_c \\quad (k=2 \\text{ à } 95\\%)\\)"]
+  },
+  /* ── Physique ─────────────────────────────── */
+  {
+    num:"PCSI-P01", icon:"⚡", track:"physique",
+    title:"Électrocinétique",
+    desc:"Lois de Kirchhoff, composants R L C, impédances complexes, régime transitoire RC et RL.",
+    tags:["Électricité","PCSI"],
+    href:"pcsi_chapitre1.html",
+    formulas:["\\(Z_R=R,\\; Z_L=jL\\omega,\\; Z_C=\\frac{1}{jC\\omega}\\)"]
+  },
+  {
+    num:"PCSI-P02", icon:"Ω", track:"physique",
+    title:"Oscillateurs",
+    desc:"Oscillateur libre, amortissement, résonance en fréquence, facteur de qualité Q.",
+    tags:["Mécanique","Ondes","PCSI"],
+    href:"pcsi_chapitre2.html",
+    formulas:["\\(\\ddot{x} + \\frac{\\omega_0}{Q}\\dot{x} + \\omega_0^2 x = \\frac{F}{m}\\)"]
+  },
+  {
+    num:"PCSI-P03", icon:"∿", track:"physique",
+    title:"Ondes électromagnétiques",
+    desc:"Équations de Maxwell, propagation dans le vide, polarisation, énergie transportée.",
+    tags:["Ondes","PCSI"],
+    href:"pcsi_chapitre3.html",
+    formulas:["\\(\\vec{\\nabla}\\times\\vec{B} = \\mu_0\\varepsilon_0\\frac{\\partial\\vec{E}}{\\partial t}\\)"]
+  },
+  {
+    num:"PCSI-P04", icon:"λ", track:"physique",
+    title:"Optique ondulatoire avancée",
+    desc:"Cohérence temporelle et spatiale, interférences à deux ondes, Michelson, réseaux de diffraction.",
+    tags:["Optique","PCSI"],
+    href:"pcsi_chapitre4.html",
+    formulas:["\\(\\delta = (n_2 - n_1)\\,e, \\quad \\Delta y = \\frac{\\lambda D}{a}\\)"]
+  },
+  {
+    num:"PCSI-P05", icon:"r", track:"physique",
+    title:"Cinématique & repères",
+    desc:"Repères cartésien, polaire, cylindrique et sphérique, dérivation vectorielle, accélération.",
+    tags:["Mécanique","PCSI"],
+    href:"pcsi_chapitre5.html",
+    formulas:["\\(\\vec{a} = (\\ddot{r}-r\\dot{\\theta}^2)\\,\\vec{e}_r + (r\\ddot{\\theta}+2\\dot{r}\\dot{\\theta})\\,\\vec{e}_\\theta\\)"]
+  },
+  {
+    num:"PCSI-P06", icon:"F", track:"physique",
+    title:"Dynamique — Théorèmes",
+    desc:"2e loi de Newton, théorème de l'énergie cinétique, théorème du moment cinétique.",
+    tags:["Mécanique","PCSI"],
+    href:"pcsi_chapitre6.html",
+    formulas:["\\(\\sum\\vec{F} = m\\vec{a}, \\quad \\frac{dE_c}{dt} = \\sum \\mathcal{P}_{\\text{forces}}\\)"]
+  },
+  {
+    num:"PCSI-P07", icon:"S", track:"physique",
+    title:"Thermodynamique",
+    desc:"Entropie, second principe, machines thermiques, cycle de Carnot, rendement.",
+    tags:["Thermo","PCSI"],
+    href:"pcsi_chapitre7.html",
+    formulas:["\\(dS \\geq \\frac{\\delta Q}{T}, \\quad \\eta_{\\text{Carnot}} = 1 - \\frac{T_c}{T_f}\\)"]
+  },
+  {
+    num:"PCSI-P08", icon:"L", track:"physique",
+    title:"Optique géométrique",
+    desc:"Convention de Descartes, lentilles minces, instruments d'optique, grossissement.",
+    tags:["Optique","PCSI"],
+    href:"pcsi_chapitre8.html",
+    formulas:["\\(\\frac{1}{\\overline{OA'}} - \\frac{1}{\\overline{OA}} = \\frac{1}{f'}\\)"]
+  },
+  {
+    num:"PCSI-P09", icon:"B", track:"physique",
+    title:"Induction électromagnétique",
+    desc:"Flux magnétique, loi de Faraday-Lenz, auto-inductance, transformateur.",
+    tags:["Électricité","PCSI"],
+    href:"pcsi_chapitre9.html",
+    formulas:["\\(e = -\\frac{d\\Phi}{dt} \\quad (\\text{Faraday}), \\quad \\varepsilon = L\\frac{di}{dt}\\)"]
+  },
+  {
+    num:"PCSI-P10", icon:"ρ", track:"physique",
+    title:"Statique des fluides",
+    desc:"Équation de la statique des fluides, poussée d'Archimède, diagrammes de phases.",
+    tags:["Mécanique","PCSI"],
+    href:"pcsi_chapitre10.html",
+    formulas:["\\(P(z) = P_0 - \\rho g z, \\quad \\Pi = \\rho_f V_{\\text{immergé}}\\, g\\)"]
+  },
+  {
+    num:"PCSI-P11", icon:"M", track:"physique",
+    title:"Moment cinétique & solide",
+    desc:"Moment cinétique, forces centrales, mouvement de rotation d'un solide.",
+    tags:["Mécanique","PCSI"],
+    href:"pcsi_chapitre11.html",
+    formulas:["\\(\\frac{d\\vec{L}_O}{dt} = \\vec{\\mathcal{M}}_O(\\vec{F})\\)"]
+  },
+  /* ── Chimie ───────────────────────────────── */
+  {
+    num:"PCSI-C01", icon:"ψ", track:"chimie",
+    title:"Structure électronique",
+    desc:"Nombres quantiques, orbitales atomiques, configurations électroniques, règle de Klechkowski.",
+    tags:["Chimie","PCSI"],
+    href:"pcsi_chimie1.html",
+    formulas:["\\(n,\\, l,\\, m_l,\\, m_s\\)"]
+  },
+  {
+    num:"PCSI-C02", icon:"σ", track:"chimie",
+    title:"Liaison chimique & solides",
+    desc:"Lewis, théorie des OM, liaisons σ/π, cristaux ioniques, moléculaires et covalents.",
+    tags:["Chimie","PCSI"],
+    href:"pcsi_chimie2.html",
+    formulas:["\\(E_{\\text{liaison}\\,\\sigma} > E_{\\text{liaison}\\,\\pi}\\)"]
+  },
+  {
+    num:"PCSI-C03", icon:"K", track:"chimie",
+    title:"Équilibres approfondis",
+    desc:"Activités thermodynamiques, équation de Nernst, diagrammes potentiel-pH (Pourbaix).",
+    tags:["Chimie","Électricité","PCSI"],
+    href:"pcsi_chimie3.html",
+    formulas:["\\(E = E^\\circ + \\frac{RT}{nF}\\ln Q\\)"]
+  },
+  {
+    num:"PCSI-C04", icon:"C", track:"chimie",
+    title:"Chimie organique",
+    desc:"Stéréochimie, mécanismes réactionnels, substitution nucléophile SN1/SN2, élimination.",
+    tags:["Chimie","Organique","PCSI"],
+    href:"pcsi_chimie4.html",
+    formulas:["\\(\\text{SN2 : inversion de Walden}\\)"]
+  },
+  {
+    num:"PCSI-C05", icon:"pH", track:"chimie",
+    title:"Acido-basicité et dosages",
+    desc:"Calcul de pH, domaines de prédominance, solutions tampons, courbes de dosage.",
+    tags:["Chimie","pH","PCSI"],
+    href:"pcsi_chimie5.html",
+    formulas:["\\(\\text{pH} = \\text{p}K_a + \\log\\frac{[A^-]}{[HA]}\\)"]
+  },
+  {
+    num:"PCSI-C06", icon:"Ks", track:"chimie",
+    title:"Précipitation et complexation",
+    desc:"Produit de solubilité Ks, complexes, effets de couplage des équilibres.",
+    tags:["Chimie","PCSI"],
+    href:"pcsi_chimie6.html",
+    formulas:["\\(K_s = [M^{n+}]^a \\cdot [X^{p-}]^b\\)"]
+  },
+  {
+    num:"PCSI-C07", icon:"E", track:"chimie",
+    title:"Oxydoréduction",
+    desc:"Équation de Nernst, piles électrochimiques, électrolyse, relation ΔrG° et E°.",
+    tags:["Chimie","Électricité","PCSI"],
+    href:"pcsi_chimie7.html",
+    formulas:["\\(\\Delta_r G^\\circ = -nFE^\\circ\\)"]
+  },
+  {
+    num:"PCSI-C08", icon:"k", track:"chimie",
+    title:"Cinétique & thermochimie",
+    desc:"Ordres de réaction, loi d'Arrhenius, loi de Hess, enthalpies de formation.",
+    tags:["Chimie","Thermo","PCSI"],
+    href:"pcsi_chimie8.html",
+    formulas:["\\(k = A\\,e^{-E_a/RT}, \\quad \\Delta_r H^\\circ = \\sum \\Delta_f H^\\circ(\\text{prod}) - \\sum \\Delta_f H^\\circ(\\text{réact})\\)"]
+  },
+];
+
+const TICKER_FORMULAS = [
+  "\\(\\vec{F} = m\\vec{a}\\)",
+  "\\(\\Delta G = \\Delta H - T\\Delta S\\)",
+  "\\(\\hat{H}\\psi = E\\psi\\)",
+  "\\(\\oint \\vec{B}\\cdot d\\vec{l} = \\mu_0 I\\)",
+  "\\(pV = nRT\\)",
+  "\\(e = -\\frac{d\\Phi}{dt}\\)",
+  "\\(E = E^\\circ + \\frac{RT}{nF}\\ln Q\\)",
+  "\\(\\eta_{\\text{Carnot}} = 1 - \\frac{T_c}{T_f}\\)",
+];
+
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+let activeTrack   = "all";
+let activeSubject = "all";
+let searchQuery   = "";
+let isDark        = true;
+let cmdIdx        = -1;
+let cmdOpen       = false;
+
+/* ══════════════════════════════════════════════════════
+   NEURAL MESH CANVAS
+══════════════════════════════════════════════════════ */
+function initMesh() {
+  const canvas = document.getElementById("mesh");
+  const ctx = canvas.getContext("2d");
+  let W, H, particles = [], mouse = {x:-999, y:-999};
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - .5) * .6,
+      vy: (Math.random() - .5) * .6,
+      r: Math.random() * 1.8 + .6,
+    };
+  }
+
+  function init() {
+    resize();
+    particles = [];
+    for (let i = 0; i < 70; i++) particles.push(makeParticle());
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const dark = document.documentElement.getAttribute("data-theme") !== "light";
+    const nodeColor = dark ? "rgba(0,255,179," : "rgba(0,120,100,";
+    const lineColor = dark ? "rgba(0,255,179," : "rgba(0,120,100,";
+
+    // repel from mouse
+    particles.forEach(p => {
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 100 && d > 0) {
+        const f = (100 - d) / 100 * .015;
+        p.vx += dx / d * f;
+        p.vy += dy / d * f;
+      }
+      p.vx *= .98; p.vy *= .98;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    });
+
+    // lines
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = lineColor + (1 - d/120) * .4 + ")";
+          ctx.lineWidth = .6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // nodes
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = nodeColor + ".7)";
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", init);
+  window.addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  init(); draw();
+}
+
+/* ══════════════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════════════ */
+function initTicker() {
+  let idx = 0;
+  const el = document.getElementById("ticker");
+
+  function show() {
+    el.style.opacity = "0";
+    setTimeout(() => {
+      el.innerHTML = TICKER_FORMULAS[idx];
+      el.style.opacity = "1";
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(()=>{});
+      }
+      idx = (idx + 1) % TICKER_FORMULAS.length;
+    }, 400);
+  }
+  show();
+  setInterval(show, 3000);
+}
+
+/* ══════════════════════════════════════════════════════
+   TRACK TABS
+══════════════════════════════════════════════════════ */
+function renderTabs() {
+  const bar = document.getElementById("trackBar");
+  bar.innerHTML = "";
+  TRACKS.forEach(t => {
+    const btn = document.createElement("button");
+    btn.className = "track-tab" + (activeTrack === t.id ? " active" : "");
+    btn.innerHTML = `<span>${t.icon}</span><span>${t.label}</span><span class="track-count">${t.count}</span>`;
+    btn.onclick = () => selectTrack(t.id);
+    bar.appendChild(btn);
+  });
+}
+
+function selectTrack(id) {
+  activeTrack = id;
+  const t = TRACKS.find(x => x.id === id) || TRACKS[0];
+  document.documentElement.style.setProperty("--accent", t.color);
+  document.documentElement.style.setProperty("--ar", t.ar);
+  document.documentElement.style.setProperty("--glow", `0 0 24px rgba(${t.ar},.4)`);
+  renderTabs();
+  renderContent();
+}
+
+/* ══════════════════════════════════════════════════════
+   SUBJECT FILTER
+══════════════════════════════════════════════════════ */
+function renderSubjectBar() {
+  const bar = document.getElementById("subjectBar");
+  bar.innerHTML = `<span class="sbar-label">Matière</span>`;
+  SUBJECTS.forEach(s => {
+    const btn = document.createElement("button");
+    btn.className = "sj" + (activeSubject === s.id ? " active" : "");
+    btn.textContent = `${s.icon} ${s.label}`;
+    btn.onclick = () => selectSubject(s.id);
+    bar.appendChild(btn);
+  });
+}
+
+function selectSubject(id) {
+  activeSubject = id;
+  renderSubjectBar();
+  renderContent();
+}
+
+/* ══════════════════════════════════════════════════════
+   CONTENT RENDER
+══════════════════════════════════════════════════════ */
+function filterChapters() {
+  return CHAPTERS.filter(ch => {
+    // track filter
+    if (activeTrack !== "all" && ch.track !== activeTrack) return false;
+    // subject filter
+    if (activeSubject !== "all") {
+      const subj = SUBJECTS.find(s => s.id === activeSubject);
+      if (subj && subj.tags && !ch.tags.some(t => subj.tags.includes(t))) return false;
+    }
+    // search filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return (
+        ch.title.toLowerCase().includes(q) ||
+        ch.desc.toLowerCase().includes(q) ||
+        ch.tags.some(t => t.toLowerCase().includes(q)) ||
+        ch.num.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+}
+
+function renderContent() {
+  const wrap = document.getElementById("contentWrap");
+  const filtered = filterChapters();
+
+  // Update results count
+  const rc = document.getElementById("resultsCount");
+  if (searchQuery || activeTrack !== "all" || activeSubject !== "all") {
+    rc.innerHTML = `<span>${filtered.length}</span> chapitre${filtered.length !== 1 ? "s" : ""} affiché${filtered.length !== 1 ? "s" : ""}`;
+  } else {
+    rc.innerHTML = "";
+  }
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = `
+      <div class="empty-state visible">
+        <div class="empty-icon">🔍</div>
+        <div>Aucun chapitre trouvé</div>
+        <div style="font-size:.75rem;margin-top:8px">Essayez un autre filtre ou une autre recherche.</div>
+      </div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="card-grid" id="cardGrid"></div>`;
+  const grid = document.getElementById("cardGrid");
+
+  filtered.forEach((ch, i) => {
+    const card = document.createElement("div");
+    card.className = "ch-card";
+    card.setAttribute("data-track", ch.track);
+    card.style.animationDelay = `${i * 32}ms`;
+
+    const trackBadgeLabel = ch.track === "maths" ? "⚙️ Maths" : ch.track === "physique" ? "🚀 Physique" : "⚗️ Chimie";
+    const formula = ch.formulas && ch.formulas[0] ? ch.formulas[0] : "";
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-icon">${ch.icon}</div>
+        <div class="card-badges">
+          <span class="track-badge ${ch.track}">${trackBadgeLabel}</span>
+          <span class="card-num">${ch.num}</span>
+        </div>
+      </div>
+      <div class="card-title">${ch.title}</div>
+      <div class="card-desc">${ch.desc}</div>
+      <div class="card-tags">${ch.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      <a class="card-link" href="${ch.href}">Ouvrir le chapitre &#8594;</a>
+      ${formula ? `<div class="formula-strip"><div class="formula-inner">${formula}</div></div>` : ""}
+    `;
+
+    // 3D magnetic tilt
+    card.addEventListener("mousemove", e => {
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / (r.width / 2);
+      const dy = (e.clientY - cy) / (r.height / 2);
+      card.style.transform = `perspective(700px) rotateX(${-dy*14}deg) rotateY(${dx*14}deg) translateY(-2px)`;
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "";
+    });
+
+    grid.appendChild(card);
+  });
+
+  // Typeset MathJax for formula strips
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([wrap]).catch(()=>{});
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════════════ */
+function initSearch() {
+  const inp = document.getElementById("searchInput");
+  const clr = document.getElementById("searchClear");
+
+  inp.addEventListener("input", () => {
+    searchQuery = inp.value.trim();
+    clr.classList.toggle("visible", searchQuery.length > 0);
+    renderContent();
+  });
+
+  clr.addEventListener("click", () => {
+    inp.value = ""; searchQuery = "";
+    clr.classList.remove("visible");
+    inp.focus();
+    renderContent();
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   COMMAND PALETTE
+══════════════════════════════════════════════════════ */
+function buildCmd() {
+  const overlay = document.getElementById("cmdOverlay");
+  const inp = document.getElementById("cmdInput");
+  const list = document.getElementById("cmdList");
+  cmdIdx = -1;
+
+  function openCmd() {
+    overlay.classList.add("open");
+    inp.value = ""; cmdIdx = -1;
+    renderCmdList("");
+    setTimeout(() => inp.focus(), 50);
+    cmdOpen = true;
+  }
+
+  function closeCmd() {
+    overlay.classList.remove("open");
+    cmdOpen = false;
+    cmdIdx = -1;
+  }
+
+  function renderCmdList(q) {
+    const results = CHAPTERS.filter(ch =>
+      !q ||
+      ch.title.toLowerCase().includes(q.toLowerCase()) ||
+      ch.desc.toLowerCase().includes(q.toLowerCase()) ||
+      ch.num.toLowerCase().includes(q.toLowerCase()) ||
+      ch.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))
+    );
+
+    if (results.length === 0) {
+      list.innerHTML = `<div class="cmd-empty">Aucun résultat pour « ${q} »</div>`;
+      return;
+    }
+
+    list.innerHTML = results.map((ch, i) => `
+      <div class="cmd-item${cmdIdx === i ? " selected" : ""}" data-href="${ch.href}" data-i="${i}">
+        <span class="cmd-item-icon">${ch.icon}</span>
+        <div class="cmd-item-info">
+          <div class="cmd-item-title">${ch.title}</div>
+          <div class="cmd-item-sub">${ch.desc.substring(0,80)}…</div>
+        </div>
+        <span class="cmd-item-badge">${ch.num}</span>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".cmd-item").forEach(el => {
+      el.addEventListener("click", () => { execCmd(el.dataset.href); closeCmd(); });
+    });
+  }
+
+  inp.addEventListener("input", () => { cmdIdx = -1; renderCmdList(inp.value); });
+
+  inp.addEventListener("keydown", e => {
+    const items = list.querySelectorAll(".cmd-item");
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      cmdIdx = Math.min(cmdIdx + 1, items.length - 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      cmdIdx = Math.max(cmdIdx - 1, 0);
+    } else if (e.key === "Enter") {
+      if (cmdIdx >= 0 && items[cmdIdx]) {
+        execCmd(items[cmdIdx].dataset.href);
+        closeCmd();
+      }
+    } else if (e.key === "Escape") {
+      closeCmd();
+    }
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") renderCmdList(inp.value);
+  });
+
+  overlay.addEventListener("click", e => { if (e.target === overlay) closeCmd(); });
+  document.getElementById("cmdBtn").addEventListener("click", openCmd);
+
+  window._openCmd = openCmd;
+  window._closeCmd = closeCmd;
+}
+
+function execCmd(href) {
+  if (href) window.location.href = href;
+}
+
+/* ══════════════════════════════════════════════════════
+   THEME
+══════════════════════════════════════════════════════ */
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  document.getElementById("themeBtn").innerHTML = isDark ? "&#9788;" : "&#9790;";
+}
+
+/* ══════════════════════════════════════════════════════
+   SCROLL TOP
+══════════════════════════════════════════════════════ */
+function initScrollTop() {
+  const btn = document.getElementById("scrollTop");
+  window.addEventListener("scroll", () => {
+    btn.classList.toggle("show", window.scrollY > 400);
+  });
+  btn.addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
+}
+
+/* ══════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+══════════════════════════════════════════════════════ */
+function initKeyboard() {
+  document.addEventListener("keydown", e => {
+    // Ctrl+K — command palette
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      if (cmdOpen) window._closeCmd(); else window._openCmd();
+      return;
+    }
+    // Ignore when focus is in an input
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "t" || e.key === "T") toggleTheme();
+    if (e.key === "Escape" && cmdOpen) window._closeCmd();
+    // Number keys 1-4 for track tabs
+    if (e.key === "1") selectTrack("all");
+    if (e.key === "2") selectTrack("maths");
+    if (e.key === "3") selectTrack("physique");
+    if (e.key === "4") selectTrack("chimie");
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+(function init() {
+  initMesh();
+  renderTabs();
+  renderSubjectBar();
+  renderContent();
+  initSearch();
+  buildCmd();
+  initScrollTop();
+  initKeyboard();
+
+  // Theme button
+  document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+
+  // Ticker after a short delay to let MathJax load
+  setTimeout(initTicker, 800);
+
+  // MathJax typeset when ready
+  window.addEventListener("load", () => {
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise().catch(()=>{});
+    }
+  });
+})();
+</script>
+</body>
+</html>

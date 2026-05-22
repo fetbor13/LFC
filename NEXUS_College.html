@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEXUS · Collège — Cercle El Abili</title>
+<script>MathJax={tex:{inlineMath:[['\\(','\\)']]},startup:{typeset:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+/* ── THEME ───────────────────────────────────────────────── */
+:root {
+  --accent: #b77cff;
+  --ar: 183,124,255;
+  --glow: rgba(183,124,255,.28);
+  --ease: cubic-bezier(.22,1,.36,1);
+  --fast: 200ms cubic-bezier(.22,1,.36,1);
+  --mid:  340ms cubic-bezier(.22,1,.36,1);
+}
+[data-theme="dark"] {
+  --bg:     #080810;
+  --bg1:    #0d0d1a;
+  --bg2:    rgba(255,255,255,.046);
+  --bg3:    rgba(255,255,255,.022);
+  --line:   rgba(255,255,255,.085);
+  --line2:  rgba(255,255,255,.165);
+  --ink:    #e8e8f0;
+  --muted:  #7070a0;
+  --soft:   #b0b0d0;
+  --tglass: rgba(8,8,16,.78);
+}
+[data-theme="light"] {
+  --bg:     #f0f0f8;
+  --bg1:    #ffffff;
+  --bg2:    rgba(0,0,0,.040);
+  --bg3:    rgba(0,0,0,.018);
+  --line:   rgba(0,0,0,.085);
+  --line2:  rgba(0,0,0,.165);
+  --ink:    #1a1a2e;
+  --muted:  #606080;
+  --soft:   #3a3a58;
+  --tglass: rgba(240,240,248,.82);
+}
+
+/* ── RESET ───────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  min-height:100vh;
+  font-family:'Segoe UI', Inter, ui-sans-serif, system-ui, sans-serif;
+  background:var(--bg); color:var(--ink);
+  transition:background .4s,color .4s;
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+button,input { font:inherit; }
+
+/* ── NEURAL MESH ─────────────────────────────────────────── */
+#mesh {
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; opacity:.52;
+  transition:opacity .4s;
+}
+[data-theme="light"] #mesh { opacity:.20; }
+
+/* Grid overlay */
+body::before {
+  content:""; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%, black, transparent);
+}
+[data-theme="light"] body::before {
+  background:
+    linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+  background-size:44px 44px;
+}
+
+/* ── APP SHELL ───────────────────────────────────────────── */
+#app { position:relative; z-index:10; min-height:100vh; }
+
+/* ── TOPBAR ──────────────────────────────────────────────── */
+.topbar {
+  display:flex; align-items:center; gap:10px; padding:9px 20px;
+  border-bottom:1px solid var(--line);
+  background:var(--tglass);
+  backdrop-filter:blur(28px) saturate(155%);
+  position:sticky; top:0; z-index:90;
+}
+.back-pill {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  height:34px; padding:0 14px; border-radius:999px;
+  background:rgba(183,124,255,.10); border:1px solid rgba(183,124,255,.26);
+  color:var(--accent); font-size:.75rem; font-weight:520;
+  cursor:pointer; transition:var(--fast);
+  text-decoration:none;
+}
+.back-pill:hover { background:rgba(183,124,255,.20); box-shadow:0 0 14px var(--glow); }
+.ea-disc {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  background:conic-gradient(#ff7aa2, #a3ff5f, #7c8cff, #ff7aa2);
+  box-shadow:0 0 16px rgba(183,124,255,.35);
+}
+.brand-label {
+  font-size:.82rem; font-weight:560; letter-spacing:.01em; flex-shrink:0;
+}
+.brand-label small { display:block; font-size:.57rem; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; }
+.search-wrap { flex:1; max-width:400px; margin:0 auto; position:relative; }
+.s-ico { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--accent); pointer-events:none; font-size:.9rem; }
+.s-inp {
+  width:100%; height:36px; border-radius:999px;
+  background:var(--bg2); border:1px solid var(--line);
+  padding:0 68px 0 36px; color:var(--ink); outline:none; font-size:.83rem;
+  transition:border-color .2s,box-shadow .2s;
+}
+.s-inp:focus { border-color:rgba(183,124,255,.55); box-shadow:0 0 0 3px rgba(183,124,255,.10); }
+.s-inp::placeholder { color:var(--muted); font-size:.80rem; }
+.s-kbd { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:.59rem; color:var(--muted); background:var(--bg2); border:1px solid var(--line); border-radius:5px; padding:1px 6px; pointer-events:none; }
+.top-right { display:flex; gap:7px; flex-shrink:0; align-items:center; }
+.ib {
+  width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
+  background:var(--bg2); border:1px solid var(--line); color:var(--soft);
+  cursor:pointer; transition:var(--fast); font-size:.90rem; user-select:none;
+}
+.ib:hover { border-color:rgba(183,124,255,.45); color:var(--accent); box-shadow:0 0 10px var(--glow); }
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero {
+  padding:32px 24px 26px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(183,124,255,.045) 0%, transparent 100%);
+  overflow:hidden; position:relative;
+}
+.hero-inner { display:flex; align-items:center; gap:36px; max-width:1400px; margin:0 auto; }
+.hero-left { flex:1; min-width:0; }
+.eyebrow {
+  display:flex; align-items:center; gap:8px; margin-bottom:9px;
+  font-size:.62rem; color:var(--muted); letter-spacing:.18em; text-transform:uppercase;
+}
+.ey-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:blink 2.6s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.28;transform:scale(.65)} }
+.hero h1 {
+  font-size:clamp(2rem,3.5vw,3.8rem); font-weight:260; letter-spacing:-.07em; line-height:.92; margin-bottom:10px;
+  background:linear-gradient(135deg, #ff7aa2 0%, #b77cff 50%, #7c8cff 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero-sub { font-size:clamp(.78rem,.9vw,.93rem); color:var(--muted); line-height:1.6; max-width:560px; margin-bottom:12px; }
+.hero-quote {
+  margin-bottom:14px; padding:10px 14px; max-width:580px;
+  border-left:2px solid rgba(183,124,255,.45);
+  background:rgba(183,124,255,.038); border-radius:0 12px 12px 0;
+  font-size:.77rem; color:var(--soft); line-height:1.55; font-style:italic;
+}
+
+/* Formula ticker */
+.ticker-wrap {
+  height:34px; overflow:hidden; border-radius:11px;
+  background:rgba(183,124,255,.055); border:1px solid rgba(183,124,255,.19);
+  padding:0 14px; max-width:480px; display:flex; align-items:center;
+  margin-bottom:14px;
+}
+.ticker-inner { display:flex; flex-direction:column; transition:transform .52s var(--ease); }
+.ticker-line {
+  height:34px; display:flex; align-items:center;
+  font-family:"Courier New",Courier,monospace; font-size:.82rem; color:var(--accent);
+  white-space:nowrap; flex-shrink:0;
+}
+
+/* Stats */
+.hero-stats { display:flex; gap:24px; flex-wrap:wrap; }
+.hs { display:flex; flex-direction:column; gap:1px; }
+.hs-num { font-size:1.4rem; font-weight:240; letter-spacing:-.04em; color:var(--ink); }
+.hs-num b { font-size:.9rem; font-weight:720; color:var(--accent); margin-left:2px; }
+.hs-label { font-size:.57rem; color:var(--muted); text-transform:uppercase; letter-spacing:.13em; }
+
+/* Seal */
+.hero-seal { flex-shrink:0; width:120px; height:120px; display:grid; place-items:center; position:relative; }
+.seal-outer {
+  position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 90deg, transparent, #b77cff 18%, transparent 38%, rgba(255,255,255,.13) 58%, transparent 78%, #b77cff 93%);
+  box-shadow:0 0 26px rgba(183,124,255,.22);
+  animation:spinR 26s linear infinite;
+}
+@keyframes spinR { to { transform:rotate(360deg); } }
+.seal-ring {
+  position:absolute; inset:7px; width:106px; height:106px; overflow:visible;
+  animation:spinR 33s linear infinite reverse; opacity:.76;
+  filter:drop-shadow(0 0 5px rgba(183,124,255,.4));
+}
+.seal-ring text { fill:rgba(220,180,255,.75); font-size:6.2px; font-weight:480; letter-spacing:2.5px; }
+.seal-glyph { position:relative; z-index:1; font-size:2.6rem; font-family:Georgia,serif; font-weight:420; color:#fff; text-shadow:0 0 22px rgba(183,124,255,.6); }
+
+/* ── TABS BAR ─────────────────────────────────────────────── */
+.tabs-bar {
+  display:flex; align-items:center; gap:6px; padding:10px 22px;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg1) 88%,transparent);
+  backdrop-filter:blur(16px);
+  position:sticky; top:57px; z-index:80;
+  overflow-x:auto; scrollbar-width:none;
+}
+.tabs-bar::-webkit-scrollbar { display:none; }
+.tab {
+  display:flex; align-items:center; gap:7px; flex-shrink:0;
+  height:32px; padding:0 14px; border-radius:999px;
+  background:var(--bg2); border:1px solid var(--line);
+  font-size:.77rem; font-weight:500; color:var(--muted);
+  cursor:pointer; transition:var(--fast); white-space:nowrap;
+}
+.tab:hover { border-color:rgba(183,124,255,.38); color:var(--soft); }
+.tab.active {
+  background:rgba(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255),.14);
+  border-color:rgba(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255),.40);
+  color:rgb(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255));
+  font-weight:580;
+  box-shadow:0 0 10px rgba(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255),.18);
+}
+.tab-badge {
+  font-size:.62rem; border-radius:99px; padding:1px 7px;
+  background:rgba(255,255,255,.08); border:1px solid var(--line);
+}
+.tab.active .tab-badge {
+  background:rgba(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255),.18);
+  border-color:rgba(var(--tab-r,183),var(--tab-g,124),var(--tab-b,255),.35);
+}
+
+/* ── SUBJECT BAR ─────────────────────────────────────────── */
+.subject-bar {
+  display:flex; align-items:center; gap:7px; padding:9px 22px;
+  border-bottom:1px solid var(--line);
+  background:var(--bg3);
+  overflow-x:auto; scrollbar-width:none;
+}
+.subject-bar::-webkit-scrollbar { display:none; }
+.sbar-label { font-size:.60rem; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; flex-shrink:0; margin-right:3px; }
+.sj {
+  display:flex; align-items:center; gap:5px; flex-shrink:0;
+  height:28px; padding:0 11px; border-radius:999px;
+  background:var(--bg2); border:1px solid var(--line); color:var(--muted);
+  font-size:.70rem; cursor:pointer; transition:var(--fast); white-space:nowrap; user-select:none;
+}
+.sj:hover { border-color:rgba(183,124,255,.38); color:var(--soft); }
+.sj.active {
+  background:rgba(183,124,255,.12); border-color:rgba(183,124,255,.36);
+  color:var(--accent); font-weight:540;
+}
+
+/* ── SEARCH INDICATOR ────────────────────────────────────── */
+.search-bar {
+  display:none; align-items:center; gap:10px; padding:9px 22px;
+  border-bottom:1px solid var(--line);
+  background:var(--bg3); font-size:.78rem; color:var(--soft);
+}
+.search-bar.visible { display:flex; }
+.search-tag { display:flex; align-items:center; gap:5px; padding:3px 10px; border-radius:99px; background:rgba(183,124,255,.10); border:1px solid rgba(183,124,255,.26); color:var(--accent); font-size:.72rem; }
+.search-clear { margin-left:auto; font-size:.72rem; color:var(--muted); cursor:pointer; padding:3px 9px; border-radius:99px; border:1px solid var(--line); background:var(--bg2); transition:var(--fast); }
+.search-clear:hover { border-color:var(--line2); color:var(--ink); }
+
+/* ── MAIN GRID ───────────────────────────────────────────── */
+.main { padding:22px; max-width:1440px; margin:0 auto; }
+.panel-head {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line);
+}
+.ph-title { font-size:.98rem; font-weight:540; display:flex; align-items:center; gap:10px; }
+.ph-badge {
+  font-size:.62rem; border-radius:99px; padding:2px 10px;
+  background:rgba(183,124,255,.10); border:1px solid rgba(183,124,255,.26); color:var(--accent);
+}
+.ph-info { font-size:.70rem; color:var(--muted); }
+.no-results {
+  grid-column:1/-1; text-align:center; padding:60px 20px;
+  color:var(--muted); font-size:.92rem;
+}
+
+/* Chapter grid */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+  gap:20px;
+}
+
+/* Card */
+.card {
+  background:var(--bg2);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px 18px 16px;
+  cursor:pointer;
+  position:relative; overflow:hidden;
+  transition:border-color .2s, box-shadow .2s, transform .1s;
+  transform-style:preserve-3d;
+  perspective:700px;
+  opacity:0; transform:translateY(20px);
+  animation:cardIn .4s var(--ease) forwards;
+  display:flex; flex-direction:column; gap:10px;
+}
+@keyframes cardIn { to { opacity:1; transform:translateY(0); } }
+.card::before {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.06) 0%, transparent 60%);
+  border-radius:inherit; pointer-events:none;
+}
+.card:hover {
+  border-color:rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.42);
+  box-shadow:0 8px 32px rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.18);
+}
+.card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.card-badge {
+  font-size:.60rem; font-weight:640; border-radius:99px; padding:2px 9px; flex-shrink:0;
+  letter-spacing:.04em;
+}
+.card-num { font-size:.65rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+.card-icon { font-size:1.35rem; line-height:1; }
+.card-title { font-size:.93rem; font-weight:580; line-height:1.3; color:var(--ink); }
+.card-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.card-tags span {
+  font-size:.62rem; padding:2px 8px; border-radius:99px;
+  background:var(--bg2); border:1px solid var(--line); color:var(--muted);
+}
+.card-link {
+  display:inline-flex; align-items:center; gap:5px; margin-top:4px;
+  font-size:.75rem; font-weight:520; color:rgb(var(--card-r,183),var(--card-g,124),var(--card-b,255));
+  border:1px solid rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.30);
+  border-radius:99px; padding:5px 13px; width:fit-content;
+  transition:var(--fast); background:rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.07);
+  text-decoration:none;
+}
+.card-link:hover {
+  background:rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.18);
+  box-shadow:0 0 12px rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.25);
+}
+
+/* Formula strip */
+.formula-strip {
+  height:0; overflow:hidden; border-radius:8px;
+  background:rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.07);
+  border:1px solid rgba(var(--card-r,183),var(--card-g,124),var(--card-b,255),.20);
+  transition:height .3s ease, padding .3s ease;
+  display:flex; align-items:center; padding:0 12px;
+}
+.card:hover .formula-strip { height:50px; padding:0 12px; }
+.formula-math {
+  font-size:.78rem; color:rgb(var(--card-r,183),var(--card-g,124),var(--card-b,255));
+  font-family:"Courier New",Courier,monospace;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* ── COMMAND PALETTE ─────────────────────────────────────── */
+.cmd-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
+  display:none; flex-direction:column; align-items:center; padding-top:18vh;
+}
+.cmd-overlay.open { display:flex; }
+.cmd-box {
+  width:min(600px,92vw); background:var(--bg1); border:1px solid var(--line2);
+  border-radius:18px; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,.55);
+}
+.cmd-inp-wrap { display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--line); }
+.cmd-ico { color:var(--accent); font-size:1rem; flex-shrink:0; }
+.cmd-inp {
+  flex:1; background:transparent; border:none; outline:none; font-size:.95rem;
+  color:var(--ink);
+}
+.cmd-list { max-height:360px; overflow-y:auto; scrollbar-width:thin; }
+.cmd-item {
+  display:flex; align-items:center; gap:12px; padding:11px 18px; cursor:pointer;
+  transition:background .12s; border-bottom:1px solid var(--line);
+}
+.cmd-item:last-child { border-bottom:none; }
+.cmd-item.focused, .cmd-item:hover { background:rgba(183,124,255,.10); }
+.cmd-item-num { font-size:.68rem; color:var(--muted); width:60px; flex-shrink:0; font-variant-numeric:tabular-nums; }
+.cmd-item-title { flex:1; font-size:.85rem; color:var(--ink); }
+.cmd-item-badge { font-size:.60rem; border-radius:99px; padding:2px 8px; font-weight:600; }
+.cmd-empty { text-align:center; padding:32px; color:var(--muted); font-size:.85rem; }
+
+/* ── SCROLL TOP ──────────────────────────────────────────── */
+.scroll-top {
+  position:fixed; bottom:28px; right:28px; z-index:88;
+  width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
+  background:rgba(183,124,255,.18); border:1px solid rgba(183,124,255,.38);
+  color:var(--accent); cursor:pointer; font-size:1.1rem;
+  box-shadow:0 4px 20px rgba(183,124,255,.22);
+  opacity:0; pointer-events:none; transform:translateY(12px);
+  transition:opacity .25s,transform .25s;
+}
+.scroll-top.visible { opacity:1; pointer-events:auto; transform:translateY(0); }
+.scroll-top:hover { background:rgba(183,124,255,.30); box-shadow:0 6px 28px rgba(183,124,255,.35); }
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+.footer {
+  text-align:center; padding:24px 20px;
+  border-top:1px solid var(--line); color:var(--muted);
+  font-size:.73rem; line-height:1.7;
+}
+.footer a { color:var(--accent); }
+
+/* ── KEYBOARD HINT ───────────────────────────────────────── */
+.kbd-hint {
+  display:none; align-items:center; gap:5px; font-size:.62rem;
+  color:var(--muted); padding:4px 10px; border-radius:99px;
+  background:var(--bg2); border:1px solid var(--line); flex-shrink:0;
+}
+@media (min-width:680px) { .kbd-hint { display:flex; } }
+.kbd { background:var(--bg2); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:.60rem; }
+</style>
+</head>
+<body>
+<canvas id="mesh"></canvas>
+
+<div id="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a class="back-pill" href="NEXUS_Cercle_El_Abili.html">← Portail</a>
+    <div class="ea-disc"></div>
+    <div class="brand-label">
+      <small>Cercle El Abili</small>
+      COLLÈGE
+    </div>
+    <div class="search-wrap">
+      <span class="s-ico">🔍</span>
+      <input class="s-inp" id="searchInp" type="search" placeholder="Rechercher un chapitre…" autocomplete="off" />
+      <span class="s-kbd">Ctrl+K</span>
+    </div>
+    <div class="top-right">
+      <div class="kbd-hint">
+        <span class="kbd">T</span> thème
+        <span class="kbd">1–4</span> niveaux
+      </div>
+      <div class="ib" id="themeBtn" title="Changer le thème (T)">☀️</div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="eyebrow"><div class="ey-dot"></div> Lycée Français du Caire · Cercle El Abili</div>
+        <h1>Collège<br>Sciences Physiques</h1>
+        <p class="hero-sub">Du concret à l'abstrait — de la 5<sup>e</sup> à la 3<sup>e</sup></p>
+        <div class="hero-quote">Observer c'est déjà comprendre la moitié du monde.</div>
+        <div class="ticker-wrap">
+          <div class="ticker-inner" id="ticker">
+            <div class="ticker-line">v = d/t</div>
+            <div class="ticker-line">P = U × I</div>
+            <div class="ticker-line">c = λ × f</div>
+            <div class="ticker-line">n = sin(i) / sin(r)</div>
+            <div class="ticker-line">E = P × t</div>
+            <div class="ticker-line">ρ = m / V</div>
+            <div class="ticker-line">P = m · g</div>
+            <div class="ticker-line">v = d/t</div>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hs"><div class="hs-num">20<b>ch.</b></div><div class="hs-label">Chapitres</div></div>
+          <div class="hs"><div class="hs-num">3<b>niv.</b></div><div class="hs-label">Niveaux</div></div>
+          <div class="hs"><div class="hs-num" id="visibleCount">20<b>vis.</b></div><div class="hs-label">Affichés</div></div>
+        </div>
+      </div>
+      <div class="hero-seal">
+        <div class="seal-outer"></div>
+        <svg class="seal-ring" viewBox="0 0 120 120">
+          <defs><path id="circle-path" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+          <text><textPath href="#circle-path">COLLÈGE · SCIENCES PHYSIQUES · EL ABILI · </textPath></text>
+        </svg>
+        <div class="seal-glyph">Σ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs-bar" id="tabsBar"></nav>
+
+  <!-- SUBJECT FILTER -->
+  <div class="subject-bar" id="subjectBar">
+    <span class="sbar-label">Matière</span>
+  </div>
+
+  <!-- SEARCH INDICATOR -->
+  <div class="search-bar" id="searchBar">
+    <span>Recherche :</span>
+    <span class="search-tag" id="searchTag"></span>
+    <span class="search-clear" id="searchClear">✕ Effacer</span>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="panel-head">
+      <div class="ph-title">
+        Chapitres Collège
+        <span class="ph-badge" id="phBadge">20 chapitres</span>
+      </div>
+      <div class="ph-info" id="phInfo">5e · 4e · 3e</div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <a href="NEXUS_Cercle_El_Abili.html">← Retour au portail NEXUS</a>
+    · Cercle El Abili · Collège · Sciences Physiques
+  </footer>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div class="cmd-overlay" id="cmdOverlay">
+  <div class="cmd-box">
+    <div class="cmd-inp-wrap">
+      <span class="cmd-ico">⌘</span>
+      <input class="cmd-inp" id="cmdInp" placeholder="Chercher un chapitre…" autocomplete="off" />
+    </div>
+    <div class="cmd-list" id="cmdList"></div>
+  </div>
+</div>
+
+<!-- SCROLL TOP -->
+<div class="scroll-top" id="scrollTop" title="Haut de page">↑</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════════════ */
+const CHAPTERS = [
+  /* ── 5e ─────────────────────────────────────────────── */
+  {
+    level:"5e", color:"#ff7aa2", cr:"255", cg:"122", cb:"162",
+    num:"Ch. 01", icon:"🔌",
+    title:"Les circuits électriques",
+    desc:"Courant, dipôles, série et parallèle.",
+    tags:["Électricité","Circuits"],
+    href:"5eme_chapitre1_v2.html",
+    formulas:["I_série = cte", "U_mailles = ΣU_dipôles"]
+  },
+  {
+    level:"5e", color:"#ff7aa2", cr:"255", cg:"122", cb:"162",
+    num:"Ch. 02", icon:"🔬",
+    title:"Corps purs et mélanges",
+    desc:"Espèces chimiques, mélanges homo/hétéro.",
+    tags:["Matière","Chimie"],
+    href:"5eme_chapitre2_v2.html",
+    formulas:[]
+  },
+  {
+    level:"5e", color:"#ff7aa2", cr:"255", cg:"122", cb:"162",
+    num:"Ch. 03", icon:"⚗️",
+    title:"Séparation des constituants",
+    desc:"Filtration, distillation, chromatographie.",
+    tags:["Matière","Chimie"],
+    href:"5eme_chapitre3_v2.html",
+    formulas:[]
+  },
+  {
+    level:"5e", color:"#ff7aa2", cr:"255", cg:"122", cb:"162",
+    num:"Ch. 04", icon:"❄️",
+    title:"États et changements d'état",
+    desc:"Solide, liquide, gaz, fusion, vaporisation.",
+    tags:["Matière","Thermo"],
+    href:"5eme_chapitre4_v2.html",
+    formulas:["T_fusion = T_solidification"]
+  },
+  {
+    level:"5e", color:"#ff7aa2", cr:"255", cg:"122", cb:"162",
+    num:"Ch. 05", icon:"🚀",
+    title:"Caractériser le mouvement",
+    desc:"Trajectoire, vitesse, MRU.",
+    tags:["Mécanique"],
+    href:"5eme_chapitre5_v2.html",
+    formulas:["v = d / Δt"]
+  },
+  /* ── 4e ─────────────────────────────────────────────── */
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 01", icon:"🔌",
+    title:"Électricité : rappels 5ème",
+    desc:"Circuits, courant continu, dipôles.",
+    tags:["Électricité","Circuits"],
+    href:"4eme_chapitre1_v2.html",
+    formulas:[]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 02", icon:"🌑",
+    title:"Ombre et lumière",
+    desc:"Sources lumineuses, propagation rectiligne, ombres.",
+    tags:["Optique","Lumière"],
+    href:"4eme_chapitre2_v2.html",
+    formulas:["Propagation rectiligne de la lumière"]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 03", icon:"🧬",
+    title:"Matière et molécules",
+    desc:"Atomes, molécules, formules chimiques.",
+    tags:["Matière","Chimie"],
+    href:"4eme_chapitre3_v2.html",
+    formulas:[]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 04", icon:"⚡",
+    title:"Lois intensité & tensions",
+    desc:"Loi des nœuds, loi des mailles.",
+    tags:["Électricité"],
+    href:"4eme_chapitre4_v2.html",
+    formulas:["ΣU = 0  (mailles)", "ΣI = 0  (nœuds)"]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 05", icon:"🌌",
+    title:"Vitesse de la lumière",
+    desc:"c = 3×10⁸ m/s, année-lumière.",
+    tags:["Optique","Lumière"],
+    href:"4eme_chapitre5_v2.html",
+    formulas:["c = 3×10⁸ m·s⁻¹"]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 06", icon:"🔥",
+    title:"Combustions et pollution",
+    desc:"Réaction de combustion, produits.",
+    tags:["Chimie","Thermo"],
+    href:"4eme_chapitre6_v2.html",
+    formulas:["CH₄ + 2O₂ → CO₂ + 2H₂O"]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 07", icon:"🔧",
+    title:"Loi d'Ohm et sécurité",
+    desc:"Résistance, loi d'Ohm, puissance.",
+    tags:["Électricité"],
+    href:"4eme_chapitre7_v2.html",
+    formulas:["U = R·I", "P = U·I"]
+  },
+  {
+    level:"4e", color:"#a3ff5f", cr:"163", cg:"255", cb:"95",
+    num:"Ch. 08", icon:"🎵",
+    title:"Signaux sonores",
+    desc:"Son, fréquence, hauteur, timbre, dB.",
+    tags:["Ondes","Son"],
+    href:"4eme_chapitre8_v2.html",
+    formulas:["L = 10·log(I/I₀)  (dB)"]
+  },
+  /* ── 3e ─────────────────────────────────────────────── */
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 01", icon:"⚛️",
+    title:"Constitution de l'atome",
+    desc:"Protons, neutrons, électrons, ions.",
+    tags:["Matière","Chimie"],
+    href:"3eme_chapitre1_v2.html",
+    formulas:["Z protons, N neutrons, A = Z + N"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 02", icon:"🚀",
+    title:"Mouvement et vitesse",
+    desc:"Trajectoire, vitesse moyenne.",
+    tags:["Mécanique"],
+    href:"3eme_chapitre2_v2.html",
+    formulas:["v_moy = d/Δt  (km/h → m/s : ÷3,6)"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 03", icon:"⚡",
+    title:"Énergie : transferts",
+    desc:"Formes, transferts, conservation.",
+    tags:["Énergie","Thermo"],
+    href:"3eme_chapitre3_v2.html",
+    formulas:["E_totale = cte  (conservation)"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 04", icon:"🧪",
+    title:"Acides, bases et pH",
+    desc:"Solutions acides, basiques, neutres.",
+    tags:["Chimie","pH"],
+    href:"3eme_chapitre4_v2.html",
+    formulas:["pH < 7 acide · pH = 7 neutre · pH > 7 base"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 05", icon:"🌍",
+    title:"Forces et gravitation",
+    desc:"Forces, poids, gravitation.",
+    tags:["Mécanique","Physique"],
+    href:"3eme_chapitre5_v2.html",
+    formulas:["P = m·g", "F = G·m₁·m₂/r²"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 06", icon:"⚖️",
+    title:"La masse volumique",
+    desc:"Définition, calcul, flottabilité.",
+    tags:["Mécanique","Matière"],
+    href:"3eme_chapitre6_v2.html",
+    formulas:["ρ = m/V  (kg/m³)"]
+  },
+  {
+    level:"3e", color:"#7c8cff", cr:"124", cg:"140", cb:"255",
+    num:"Ch. 07", icon:"💡",
+    title:"Puissance et électricité",
+    desc:"Puissance, énergie, développement durable.",
+    tags:["Électricité","Énergie"],
+    href:"3eme_chapitre7_v2.html",
+    formulas:["P = U·I  (W)", "E = P·Δt  (J ou Wh)"]
+  }
+];
+
+const TABS = [
+  { id:"all", label:"Tout",  badge: CHAPTERS.length, tabR:183, tabG:124, tabB:255 },
+  { id:"5e",  label:"5ème", badge: CHAPTERS.filter(c=>c.level==="5e").length, tabR:255, tabG:122, tabB:162 },
+  { id:"4e",  label:"4ème", badge: CHAPTERS.filter(c=>c.level==="4e").length, tabR:163, tabG:255, tabB:95  },
+  { id:"3e",  label:"3ème", badge: CHAPTERS.filter(c=>c.level==="3e").length, tabR:124, tabG:140, tabB:255 },
+];
+
+const SUBJECTS = [
+  { id:"all",         icon:"∞",  label:"Tout",        tags:[] },
+  { id:"chimie",      icon:"⚗️", label:"Chimie",       tags:["chimie","matiere","matière","ph"] },
+  { id:"electricite", icon:"💡", label:"Électricité",  tags:["electricite","électricité","circuits","courant","ohm","tension"] },
+  { id:"optique",     icon:"🔭", label:"Optique",      tags:["optique","lumiere","lumière"] },
+  { id:"ondes",       icon:"🌊", label:"Ondes & Son",  tags:["ondes","son"] },
+  { id:"mecanique",   icon:"⚙️", label:"Mécanique",    tags:["mecanique","mécanique","physique","forces","gravitation"] },
+  { id:"energie",     icon:"⚡", label:"Énergie",      tags:["energie","énergie","thermo"] },
+];
+
+/* ══════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════ */
+let activeLevel   = "all";
+let activeSubject = "all";
+let searchQuery   = "";
+let isDark        = true;
+let cmdIdx        = -1;
+
+/* ══════════════════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════════════════ */
+function norm(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+function esc(s) {
+  return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+/* ══════════════════════════════════════════════════════════
+   NEURAL MESH CANVAS
+══════════════════════════════════════════════════════════ */
+function initMesh() {
+  const canvas = document.getElementById('mesh');
+  const ctx = canvas.getContext('2d');
+  let W, H, pts;
+  const N = 70, CONN = 120, REPEL = 100;
+  let mx = -999, my = -999;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makePts() {
+    pts = Array.from({length:N}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random()-.5)*.6, vy: (Math.random()-.5)*.6
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0,0,W,H);
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b77cff';
+
+    for (let i=0; i<N; i++) {
+      const p = pts[i];
+      // repulsion
+      const dx = p.x - mx, dy = p.y - my, dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < REPEL && dist > 0) {
+        p.vx += (dx/dist) * .6;
+        p.vy += (dy/dist) * .6;
+      }
+      // dampen
+      p.vx *= .98; p.vy *= .98;
+      // clamp speed
+      const spd = Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+      if (spd > 1.5) { p.vx = p.vx/spd*1.5; p.vy = p.vy/spd*1.5; }
+      // move
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) { p.x=0; p.vx*=-1; }
+      if (p.x > W) { p.x=W; p.vx*=-1; }
+      if (p.y < 0) { p.y=0; p.vy*=-1; }
+      if (p.y > H) { p.y=H; p.vy*=-1; }
+    }
+
+    // connections
+    for (let i=0; i<N; i++) {
+      for (let j=i+1; j<N; j++) {
+        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < CONN) {
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = `rgba(183,124,255,${(1-d/CONN)*.35})`;
+          ctx.lineWidth = .7;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // dots
+    for (let i=0; i<N; i++) {
+      ctx.beginPath();
+      ctx.arc(pts[i].x, pts[i].y, 1.8, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(183,124,255,.7)';
+      ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  resize(); makePts(); frame();
+}
+
+/* ══════════════════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════════════════ */
+function initTicker() {
+  const inner = document.getElementById('ticker');
+  if (!inner) return;
+  const lines = inner.querySelectorAll('.ticker-line');
+  const total = lines.length - 1; // last is duplicate of first
+  let idx = 0;
+  setInterval(() => {
+    idx = (idx + 1) % total;
+    inner.style.transform = `translateY(-${idx * 34}px)`;
+  }, 3000);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER TABS
+══════════════════════════════════════════════════════════ */
+function renderTabs() {
+  const bar = document.getElementById('tabsBar');
+  bar.innerHTML = TABS.map(t => `
+    <div class="tab ${activeLevel===t.id?'active':''}"
+         style="--tab-r:${t.tabR};--tab-g:${t.tabG};--tab-b:${t.tabB};"
+         data-id="${t.id}" onclick="selectLevel('${t.id}')">
+      ${t.label}
+      <span class="tab-badge">${t.badge}</span>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER SUBJECT BAR
+══════════════════════════════════════════════════════════ */
+function renderSubjectBar() {
+  const bar = document.getElementById('subjectBar');
+  const label = bar.querySelector('.sbar-label');
+  bar.innerHTML = '';
+  bar.appendChild(label);
+  SUBJECTS.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'sj' + (activeSubject===s.id ? ' active' : '');
+    el.dataset.id = s.id;
+    el.innerHTML = `${s.icon} ${s.label}`;
+    el.onclick = () => selectSubject(s.id);
+    bar.appendChild(el);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   FILTER & RENDER CARDS
+══════════════════════════════════════════════════════════ */
+function getFiltered() {
+  return CHAPTERS.filter(ch => {
+    // level filter
+    if (activeLevel !== "all" && ch.level !== activeLevel) return false;
+    // subject filter
+    if (activeSubject !== "all") {
+      const sub = SUBJECTS.find(s => s.id === activeSubject);
+      if (sub && sub.tags.length) {
+        const allTags = ch.tags.map(t => norm(t)).join(' ');
+        const match = sub.tags.some(t => allTags.includes(t));
+        if (!match) return false;
+      }
+    }
+    // search filter
+    if (searchQuery) {
+      const q = norm(searchQuery);
+      const haystack = norm(ch.title + ' ' + ch.num + ' ' + ch.tags.join(' ') + ' ' + ch.formulas.join(' '));
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderContent() {
+  const grid = document.getElementById('grid');
+  const filtered = getFiltered();
+
+  // update counts
+  document.getElementById('phBadge').textContent = `${filtered.length} chapitre${filtered.length!==1?'s':''}`;
+  document.getElementById('visibleCount').innerHTML = `${filtered.length}<b>vis.</b>`;
+
+  // update panel info
+  const lvlMap = {all:'5e · 4e · 3e', '5e':'Cinquième', '4e':'Quatrième', '3e':'Troisième'};
+  document.getElementById('phInfo').textContent = lvlMap[activeLevel] || '';
+
+  // search bar
+  const sbar = document.getElementById('searchBar');
+  const stag = document.getElementById('searchTag');
+  if (searchQuery) {
+    sbar.classList.add('visible');
+    stag.textContent = `"${searchQuery}"`;
+  } else {
+    sbar.classList.remove('visible');
+  }
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="no-results">Aucun chapitre ne correspond à cette sélection.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((ch, i) => {
+    const formula = ch.formulas && ch.formulas.length ? ch.formulas[0] : '';
+    return `
+    <div class="card"
+         style="animation-delay:${i*32}ms;--card-r:${ch.cr};--card-g:${ch.cg};--card-b:${ch.cb};"
+         data-level="${esc(ch.level)}"
+         data-tags="${esc(ch.tags.join(','))}">
+      <div class="card-top">
+        <div>
+          <div class="card-badge" style="background:${ch.color}22;border:1px solid ${ch.color}55;color:${ch.color};">${esc(ch.level)}</div>
+          <div class="card-num">${esc(ch.num)}</div>
+        </div>
+        <div class="card-icon">${ch.icon}</div>
+      </div>
+      <div class="card-title">${esc(ch.title)}</div>
+      <div class="card-tags">${ch.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>
+      <a class="card-link" href="${esc(ch.href)}">Ouvrir →</a>
+      ${formula ? `<div class="formula-strip"><div class="formula-math">${esc(formula)}</div></div>` : ''}
+    </div>`;
+  }).join('');
+
+  initMagnetic();
+
+  // MathJax typeset
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([grid]).catch(()=>{});
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   3D MAGNETIC CARD HOVER
+══════════════════════════════════════════════════════════ */
+function initMagnetic() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const dx = (e.clientX - cx) / (r.width/2);
+      const dy = (e.clientY - cy) / (r.height/2);
+      card.style.transform = `perspective(700px) rotateX(${-dy*14}deg) rotateY(${dx*14}deg) translateY(-2px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   SELECT LEVEL TAB
+══════════════════════════════════════════════════════════ */
+function selectLevel(id) {
+  activeLevel = id;
+  // update accent
+  const colorMap = { all:'#b77cff', '5e':'#ff7aa2', '4e':'#a3ff5f', '3e':'#7c8cff' };
+  const rgbMap   = { all:'183,124,255', '5e':'255,122,162', '4e':'163,255,95', '3e':'124,140,255' };
+  const glowMap  = { all:'rgba(183,124,255,.28)', '5e':'rgba(255,122,162,.28)', '4e':'rgba(163,255,95,.28)', '3e':'rgba(124,140,255,.28)' };
+  document.documentElement.style.setProperty('--accent', colorMap[id]);
+  document.documentElement.style.setProperty('--ar', rgbMap[id]);
+  document.documentElement.style.setProperty('--glow', glowMap[id]);
+  renderTabs();
+  renderContent();
+}
+
+/* ══════════════════════════════════════════════════════════
+   SELECT SUBJECT
+══════════════════════════════════════════════════════════ */
+function selectSubject(id) {
+  activeSubject = id;
+  renderSubjectBar();
+  renderContent();
+}
+
+/* ══════════════════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════════════════ */
+function doSearch(q) {
+  searchQuery = q.trim();
+  renderContent();
+  buildCmd();
+}
+
+/* ══════════════════════════════════════════════════════════
+   COMMAND PALETTE
+══════════════════════════════════════════════════════════ */
+function buildCmd() {
+  const list = document.getElementById('cmdList');
+  const q = norm(document.getElementById('cmdInp').value.trim());
+  const results = CHAPTERS.filter(ch => {
+    if (!q) return true;
+    return norm(ch.title+' '+ch.num+' '+ch.tags.join(' ')+' '+ch.formulas.join(' ')).includes(q);
+  });
+  if (!results.length) {
+    list.innerHTML = '<div class="cmd-empty">Aucun résultat</div>';
+    cmdIdx = -1; return;
+  }
+  list.innerHTML = results.map((ch, i) => `
+    <div class="cmd-item ${i===cmdIdx?'focused':''}" data-idx="${i}" data-href="${esc(ch.href)}" onclick="execCmd('${esc(ch.href)}')">
+      <span class="cmd-item-num">${esc(ch.num)}</span>
+      <span class="cmd-item-title">${esc(ch.title)}</span>
+      <span class="cmd-item-badge" style="background:${ch.color}22;color:${ch.color};border:1px solid ${ch.color}44;">${esc(ch.level)}</span>
+    </div>
+  `).join('');
+}
+
+function execCmd(href) {
+  closeCmd();
+  if (href) window.location.href = href;
+}
+
+function openCmd() {
+  document.getElementById('cmdOverlay').classList.add('open');
+  document.getElementById('cmdInp').value = '';
+  cmdIdx = -1;
+  buildCmd();
+  setTimeout(() => document.getElementById('cmdInp').focus(), 50);
+}
+
+function closeCmd() {
+  document.getElementById('cmdOverlay').classList.remove('open');
+  cmdIdx = -1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   THEME
+══════════════════════════════════════════════════════════ */
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCROLL TOP
+══════════════════════════════════════════════════════════ */
+function initScrollTop() {
+  const btn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  });
+  btn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+}
+
+/* ══════════════════════════════════════════════════════════
+   KEYBOARD
+══════════════════════════════════════════════════════════ */
+function initKeyboard() {
+  document.addEventListener('keydown', e => {
+    const tag = document.activeElement.tagName;
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA';
+
+    // Ctrl+K → palette
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      openCmd();
+      return;
+    }
+
+    // Esc → close palette
+    if (e.key === 'Escape') { closeCmd(); return; }
+
+    if (!typing) {
+      if (e.key === 't' || e.key === 'T') { toggleTheme(); return; }
+      if (e.key === '1') { selectLevel('all'); return; }
+      if (e.key === '2') { selectLevel('5e');  return; }
+      if (e.key === '3') { selectLevel('4e');  return; }
+      if (e.key === '4') { selectLevel('3e');  return; }
+    }
+
+    // Arrow keys in palette
+    if (document.getElementById('cmdOverlay').classList.contains('open')) {
+      const items = document.querySelectorAll('.cmd-item');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        cmdIdx = Math.min(cmdIdx+1, items.length-1);
+        buildCmd();
+        items[cmdIdx]?.scrollIntoView({block:'nearest'});
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        cmdIdx = Math.max(cmdIdx-1, 0);
+        buildCmd();
+        items[cmdIdx]?.scrollIntoView({block:'nearest'});
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const focused = document.querySelector('.cmd-item.focused');
+        if (focused) execCmd(focused.dataset.href);
+        else if (items[0]) execCmd(items[0].dataset.href);
+      }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   EVENT WIRING
+══════════════════════════════════════════════════════════ */
+function wireEvents() {
+  // inline search
+  const sinp = document.getElementById('searchInp');
+  sinp.addEventListener('input', e => doSearch(e.target.value));
+  sinp.addEventListener('focus', () => {
+    // Ctrl+K shortcut hint in search → open palette instead
+  });
+
+  // search clear
+  document.getElementById('searchClear').addEventListener('click', () => {
+    searchQuery = '';
+    document.getElementById('searchInp').value = '';
+    renderContent();
+  });
+
+  // theme button
+  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+  // cmd overlay backdrop click
+  document.getElementById('cmdOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeCmd();
+  });
+
+  // cmd input
+  document.getElementById('cmdInp').addEventListener('input', e => {
+    cmdIdx = -1;
+    buildCmd();
+  });
+
+  // Ctrl+K on search input
+  document.getElementById('searchInp').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      openCmd();
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
+(function init() {
+  initMesh();
+  initTicker();
+  renderTabs();
+  renderSubjectBar();
+  renderContent();
+  initScrollTop();
+  initKeyboard();
+  wireEvents();
+})();
+</script>
+</body>
+</html>

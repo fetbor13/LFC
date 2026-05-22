@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NEXUS · Terminale Spécialité Physique-Chimie</title>
+<script>
+// MathJax config before load
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']] },
+  svg: { fontCache: 'global' },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+/* ─── CSS VARIABLES ─── */
+:root{
+  --accent:#00eaff;
+  --ar:0,229,255;
+  --glow:rgba(0,229,255,.28);
+  --bg:#030b18;
+  --bg1:#07101f;
+  --bg2:#0d1a30;
+  --ink:#eaf0ff;
+  --muted:#7080a0;
+  --soft:#b0c0dc;
+  --glass:rgba(7,16,31,.72);
+  --glass2:rgba(0,234,255,.06);
+  --border:rgba(0,234,255,.14);
+  --card-bg:rgba(7,16,31,.82);
+  --radius:14px;
+  --shadow:0 8px 32px rgba(0,0,0,.45);
+  --transition:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{
+  --bg:#f2f5fc;
+  --bg1:#fff;
+  --bg2:#e8eef8;
+  --ink:#0c1526;
+  --muted:#5a6a88;
+  --soft:#3a4a68;
+  --glass:rgba(255,255,255,.82);
+  --glass2:rgba(0,180,200,.06);
+  --border:rgba(0,180,200,.22);
+  --card-bg:rgba(255,255,255,.9);
+  --shadow:0 8px 32px rgba(0,50,100,.12);
+}
+
+/* ─── RESET & BASE ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background var(--transition),color var(--transition);
+}
+
+/* ─── MESH CANVAS ─── */
+#mesh{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+  opacity:.52;
+  pointer-events:none;
+}
+
+/* ─── LAYOUT WRAPPER ─── */
+.page-wrap{
+  position:relative;
+  z-index:1;
+}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 24px;
+  background:var(--glass);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 2px 20px rgba(0,0,0,.3);
+}
+.topbar-back{
+  display:flex;align-items:center;gap:6px;
+  color:var(--accent);
+  text-decoration:none;
+  font-size:.82rem;
+  font-weight:600;
+  letter-spacing:.04em;
+  padding:6px 12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--glass2);
+  white-space:nowrap;
+  transition:all var(--transition);
+}
+.topbar-back:hover{
+  background:rgba(var(--ar),.12);
+  border-color:rgba(var(--ar),.4);
+  box-shadow:0 0 12px var(--glow);
+}
+.topbar-brand{
+  display:flex;align-items:center;gap:10px;
+  flex:0 0 auto;
+}
+.brand-disc{
+  width:38px;height:38px;border-radius:50%;
+  background:conic-gradient(from 180deg,#00eaff,#0066ff,#8800ff,#ff0080,#00eaff);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:.9rem;color:#fff;
+  box-shadow:0 0 16px rgba(var(--ar),.5);
+  flex-shrink:0;
+}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-name{font-weight:700;font-size:.88rem;color:var(--ink)}
+.brand-sub{font-size:.72rem;color:var(--accent);letter-spacing:.06em}
+.topbar-search{
+  flex:1;max-width:320px;
+  display:flex;align-items:center;gap:8px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:7px 14px;
+  transition:all var(--transition);
+}
+.topbar-search:focus-within{
+  border-color:rgba(var(--ar),.5);
+  box-shadow:0 0 0 3px rgba(var(--ar),.1);
+}
+.topbar-search svg{color:var(--muted);flex-shrink:0}
+.topbar-search input{
+  border:none;background:transparent;
+  color:var(--ink);font-size:.85rem;width:100%;outline:none;
+}
+.topbar-search input::placeholder{color:var(--muted)}
+.topbar-actions{
+  display:flex;align-items:center;gap:8px;margin-left:auto;
+}
+.icon-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--glass2);
+  color:var(--ink);
+  cursor:pointer;font-size:1rem;
+  transition:all var(--transition);
+}
+.icon-btn:hover{
+  border-color:rgba(var(--ar),.4);
+  background:rgba(var(--ar),.1);
+  box-shadow:0 0 10px var(--glow);
+  color:var(--accent);
+}
+.cmd-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--glass2);
+  color:var(--muted);
+  cursor:pointer;font-size:.78rem;
+  transition:all var(--transition);white-space:nowrap;
+}
+.cmd-btn kbd{
+  background:rgba(var(--ar),.1);
+  border:1px solid var(--border);
+  border-radius:4px;padding:1px 5px;
+  font-family:monospace;font-size:.72rem;
+  color:var(--accent);
+}
+.cmd-btn:hover{color:var(--accent);border-color:rgba(var(--ar),.4)}
+
+/* ─── HERO ─── */
+.hero{
+  position:relative;
+  padding:64px 40px 48px;
+  overflow:hidden;
+  text-align:center;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(var(--ar),.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:760px;margin:0 auto;
+  position:relative;z-index:1;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  border-radius:30px;padding:6px 16px;
+  font-size:.78rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:24px;
+}
+h1.hero-title{
+  font-size:clamp(2rem,5vw,3.4rem);
+  font-weight:800;line-height:1.1;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  margin-bottom:18px;
+}
+h1.hero-title em{
+  font-style:normal;
+  background:linear-gradient(135deg,#00eaff 0%,#0099ff 50%,#8855ff 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-lead{
+  font-size:1.08rem;
+  color:var(--soft);
+  line-height:1.65;
+  max-width:600px;
+  margin:0 auto 22px;
+}
+.hero-quote{
+  margin:22px auto;
+  max-width:580px;
+  padding:16px 20px;
+  border-left:3px solid var(--accent);
+  background:var(--glass2);
+  border-radius:0 10px 10px 0;
+  text-align:left;
+  font-style:italic;
+  font-size:.9rem;
+  color:var(--soft);
+  line-height:1.6;
+}
+.hero-stats{
+  display:flex;align-items:center;justify-content:center;
+  gap:24px;margin:28px 0 32px;
+  flex-wrap:wrap;
+}
+.stat{
+  display:flex;align-items:center;gap:8px;
+  font-size:.85rem;color:var(--muted);
+}
+.stat-val{
+  font-weight:700;font-size:1.1rem;
+  color:var(--accent);
+}
+.stat-sep{color:var(--border);font-size:1.2rem}
+
+/* ─── FORMULA TICKER ─── */
+.ticker-wrap{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  border-radius:30px;padding:8px 20px;
+  margin-bottom:32px;
+  font-family:monospace;font-size:.82rem;
+  color:var(--accent);
+  min-height:36px;
+  position:relative;overflow:hidden;
+}
+.ticker-label{
+  color:var(--muted);font-family:inherit;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  border-right:1px solid var(--border);padding-right:12px;white-space:nowrap;
+}
+.ticker-formula{
+  transition:opacity .4s,transform .4s;
+}
+.ticker-formula.fade-out{opacity:0;transform:translateY(-8px)}
+.ticker-formula.fade-in{opacity:1;transform:translateY(0)}
+
+/* ─── SEAL ─── */
+.seal-wrap{
+  position:relative;width:110px;height:110px;
+  margin:0 auto 28px;
+}
+.seal-ring{
+  position:absolute;inset:0;
+  animation:sealSpin 14s linear infinite;
+}
+.seal-center{
+  position:absolute;inset:18px;
+  border-radius:50%;
+  background:var(--glass2);
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+  box-shadow:0 0 24px var(--glow);
+  color:var(--accent);
+}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+
+/* ─── TABS ─── */
+.tabs-section{
+  padding:0 24px 0;
+  position:sticky;top:61px;z-index:90;
+  background:var(--bg);
+}
+.tabs-inner{
+  max-width:1200px;margin:0 auto;
+  border-bottom:1px solid var(--border);
+}
+.tabs-nav{
+  display:flex;align-items:center;gap:2px;
+  overflow-x:auto;
+  scrollbar-width:none;padding-bottom:0;
+}
+.tabs-nav::-webkit-scrollbar{display:none}
+.tab-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:12px 18px;
+  border:none;background:transparent;
+  color:var(--muted);font-size:.82rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  transition:all var(--transition);
+  border-radius:8px 8px 0 0;
+}
+.tab-btn:hover{color:var(--ink);background:var(--glass2)}
+.tab-btn.active{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+  background:rgba(var(--ar),.06);
+}
+.tab-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:10px;
+  background:rgba(var(--ar),.15);
+  color:var(--accent);font-size:.68rem;
+  font-weight:700;
+}
+
+/* ─── SUBJECT FILTER ─── */
+.filter-section{
+  padding:16px 24px;
+  max-width:1200px;margin:0 auto;
+}
+.filter-pills{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.pill-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 16px;border-radius:30px;
+  border:1px solid var(--border);
+  background:var(--glass2);
+  color:var(--muted);font-size:.8rem;font-weight:600;
+  cursor:pointer;
+  transition:all var(--transition);
+}
+.pill-btn:hover{color:var(--ink);border-color:rgba(var(--ar),.3)}
+.pill-btn.active{
+  background:rgba(var(--ar),.14);
+  border-color:rgba(var(--ar),.5);
+  color:var(--accent);
+  box-shadow:0 0 10px rgba(var(--ar),.15);
+}
+
+/* ─── MAIN GRID ─── */
+.main-section{
+  padding:12px 24px 60px;
+}
+.main-inner{max-width:1200px;margin:0 auto}
+.chapter-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:20px;
+}
+
+/* ─── CHAPTER CARD ─── */
+.chapter-card{
+  position:relative;
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  cursor:pointer;
+  transform-style:preserve-3d;
+  perspective:700px;
+  transition:border-color .2s,box-shadow .2s;
+  animation:cardAppear .4s both;
+  text-decoration:none;
+  display:block;
+  color:var(--ink);
+}
+@keyframes cardAppear{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.chapter-card:hover{
+  border-color:rgba(var(--ar),.45);
+  box-shadow:0 0 0 1px rgba(var(--ar),.2),0 0 24px rgba(var(--ar),.18),var(--shadow);
+}
+/* shimmer border on hover */
+.chapter-card::before{
+  content:'';
+  position:absolute;inset:0;
+  border-radius:var(--radius);
+  padding:1px;
+  background:linear-gradient(130deg,transparent 40%,rgba(var(--ar),.5) 50%,transparent 60%);
+  background-size:200% 200%;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;
+  transition:opacity .3s;
+  pointer-events:none;
+}
+.chapter-card:hover::before{
+  opacity:1;
+  animation:shimmerBorder 1.5s ease infinite;
+}
+@keyframes shimmerBorder{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+.card-inner{
+  padding:22px 20px 52px;
+}
+.card-header{
+  display:flex;align-items:flex-start;gap:12px;
+  margin-bottom:12px;
+}
+.card-icon{
+  font-size:1.8rem;line-height:1;flex-shrink:0;
+  margin-top:2px;
+}
+.card-meta{flex:1}
+.card-num{
+  font-size:.7rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:4px;
+}
+.card-title{
+  font-size:1rem;font-weight:700;
+  color:var(--ink);line-height:1.25;
+}
+.card-desc{
+  font-size:.83rem;color:var(--soft);
+  line-height:1.55;margin-bottom:12px;
+}
+.card-tags{
+  display:flex;flex-wrap:wrap;gap:5px;
+}
+.tag{
+  font-size:.68rem;font-weight:600;
+  padding:3px 9px;border-radius:20px;
+  background:rgba(var(--ar),.09);
+  border:1px solid rgba(var(--ar),.18);
+  color:var(--accent);
+  letter-spacing:.04em;
+}
+
+/* ─── FORMULA STRIP ─── */
+.formula-strip{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(3,11,24,.92);
+  backdrop-filter:blur(8px);
+  padding:10px 16px;
+  transform:translateY(100%);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  border-top:1px solid rgba(var(--ar),.2);
+  min-height:50px;
+}
+[data-theme="light"] .formula-strip{background:rgba(240,244,252,.95)}
+.chapter-card:hover .formula-strip{transform:translateY(0)}
+.formula-list{
+  display:flex;flex-direction:column;gap:4px;
+}
+.formula-item{
+  font-family:'Courier New',monospace;
+  font-size:.75rem;
+  color:var(--accent);
+  line-height:1.4;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ─── HIDDEN / EMPTY STATE ─── */
+.chapter-card.hidden{display:none}
+.empty-state{
+  text-align:center;padding:60px 20px;
+  color:var(--muted);
+  grid-column:1/-1;
+}
+.empty-state .big{font-size:2.5rem;margin-bottom:12px}
+
+/* ─── COMMAND PALETTE ─── */
+.cmd-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  align-items:flex-start;justify-content:center;
+  padding-top:120px;
+}
+.cmd-overlay.open{display:flex}
+.cmd-box{
+  width:min(600px,92vw);
+  background:var(--bg1);
+  border:1px solid rgba(var(--ar),.35);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.5),0 0 0 1px rgba(var(--ar),.15);
+}
+.cmd-search-row{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+}
+.cmd-search-row svg{color:var(--accent)}
+.cmd-input{
+  flex:1;border:none;background:transparent;
+  color:var(--ink);font-size:1rem;outline:none;
+}
+.cmd-input::placeholder{color:var(--muted)}
+.cmd-esc{
+  font-size:.72rem;color:var(--muted);
+  background:rgba(var(--ar),.08);
+  border:1px solid var(--border);
+  border-radius:5px;padding:2px 7px;font-family:monospace;
+}
+.cmd-results{
+  max-height:380px;overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(var(--ar),.3) transparent;
+}
+.cmd-result-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;
+  cursor:pointer;
+  border-bottom:1px solid rgba(var(--ar),.05);
+  transition:background .15s;
+  text-decoration:none;color:var(--ink);
+}
+.cmd-result-item:hover,
+.cmd-result-item.selected{
+  background:rgba(var(--ar),.1);
+}
+.cmd-result-icon{font-size:1.3rem;flex-shrink:0}
+.cmd-result-info{flex:1;min-width:0}
+.cmd-result-num{font-size:.7rem;color:var(--accent);font-weight:700}
+.cmd-result-title{font-size:.9rem;font-weight:600}
+.cmd-result-tags{font-size:.72rem;color:var(--muted);margin-top:2px}
+.cmd-enter-hint{
+  font-size:.72rem;color:var(--muted);
+  background:rgba(var(--ar),.08);
+  border:1px solid var(--border);
+  border-radius:5px;padding:2px 7px;
+  font-family:monospace;flex-shrink:0;
+}
+.cmd-empty{
+  padding:32px;text-align:center;color:var(--muted);font-size:.9rem;
+}
+
+/* ─── FOOTER ─── */
+.footer{
+  text-align:center;padding:24px;
+  border-top:1px solid var(--border);
+  font-size:.82rem;color:var(--muted);
+}
+.footer a{
+  color:var(--accent);text-decoration:none;
+  transition:opacity var(--transition);
+}
+.footer a:hover{opacity:.7}
+
+/* ─── SECTION HEADING ─── */
+.section-heading{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 0 12px;
+  font-size:.82rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);
+}
+.section-heading::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,var(--border),transparent);
+}
+
+/* ─── SCROLL INDICATOR ─── */
+.results-count{
+  font-size:.8rem;color:var(--muted);
+  padding:8px 0 4px;
+}
+span.accent{color:var(--accent)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  .topbar{padding:8px 12px;gap:8px}
+  .brand-text{display:none}
+  .topbar-search{max-width:none}
+  .hero{padding:40px 20px 32px}
+  .main-section{padding:12px 14px 40px}
+  .filter-section{padding:12px 14px}
+  .tabs-section{padding:0 14px 0}
+  .chapter-grid{grid-template-columns:1fr}
+  .cmd-btn .cmd-label{display:none}
+}
+
+/* ─── SCROLL TO TOP ─── */
+.scroll-top{
+  position:fixed;bottom:24px;right:24px;z-index:50;
+  width:42px;height:42px;border-radius:50%;
+  background:var(--glass);
+  border:1px solid var(--border);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.1rem;
+  backdrop-filter:blur(10px);
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+  transition:all var(--transition);
+  opacity:0;pointer-events:none;
+}
+.scroll-top.visible{opacity:1;pointer-events:auto}
+.scroll-top:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(var(--ar),.2)}
+</style>
+</head>
+<body>
+
+<!-- NEURAL MESH CANVAS -->
+<canvas id="mesh"></canvas>
+
+<div class="page-wrap">
+
+<!-- ─── TOPBAR ─── -->
+<header class="topbar">
+  <a href="NEXUS_Cercle_El_Abili.html" class="topbar-back">
+    ← <span>Retour portail</span>
+  </a>
+
+  <div class="topbar-brand">
+    <div class="brand-disc">EA</div>
+    <div class="brand-text">
+      <span class="brand-name">Le Cercle d'El-Abili</span>
+      <span class="brand-sub">Terminale Spécialité</span>
+    </div>
+  </div>
+
+  <div class="topbar-search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="topbar-search-input" type="search" placeholder="Rechercher un chapitre…" autocomplete="off" aria-label="Rechercher"/>
+  </div>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" id="theme-btn" title="Thème (T)" aria-label="Basculer le thème">🌙</button>
+    <button class="cmd-btn" id="cmd-open-btn" title="Ctrl+K" aria-label="Palette de commandes">
+      <span>⌘</span>
+      <span class="cmd-label">Ctrl+K</span>
+    </button>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      ⚛️ &nbsp; Programme officiel · 2025-2026
+    </div>
+
+    <h1 class="hero-title">Terminale <em>Spécialité</em></h1>
+
+    <p class="hero-lead">
+      Dans l'esprit d'El-Abili de Tlemcen, la formule devient un raisonnement&nbsp;:
+      observer, modéliser, démontrer.
+    </p>
+
+    <blockquote class="hero-quote">
+      « À ce niveau, une équation n'est plus une réponse&nbsp;: c'est une architecture de pensée
+      qui relie l'expérience, le calcul et la preuve. »
+    </blockquote>
+
+    <!-- Formula ticker -->
+    <div class="ticker-wrap" id="ticker">
+      <span class="ticker-label">Formule du moment</span>
+      <span class="ticker-formula" id="ticker-text">pH = –log[H₃O⁺]</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-val">19</span> chapitres</div>
+      <span class="stat-sep">·</span>
+      <div class="stat"><span class="stat-val">5</span> thèmes</div>
+      <span class="stat-sep">·</span>
+      <div class="stat"><span class="stat-val">El-Abili</span> · Tlemcen</div>
+    </div>
+
+    <!-- Rotating seal -->
+    <div class="seal-wrap" aria-hidden="true">
+      <svg class="seal-ring" viewBox="0 0 110 110" width="110" height="110">
+        <defs>
+          <path id="sealCircle" d="M55,55 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0"/>
+          <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00eaff"/>
+            <stop offset="50%" stop-color="#0066ff"/>
+            <stop offset="100%" stop-color="#8855ff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="55" cy="55" r="52" fill="none" stroke="url(#sg)" stroke-width="2" stroke-dasharray="4 3" opacity=".6"/>
+        <text font-size="8.5" font-family="'Segoe UI',sans-serif" font-weight="600" fill="#00eaff" letter-spacing="2.2">
+          <textPath href="#sealCircle">observer · mesurer · comprendre · démontrer ·&nbsp;</textPath>
+        </text>
+      </svg>
+      <div class="seal-center">λ</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── THEME TABS ─── -->
+<div class="tabs-section" id="tabs-section">
+  <div class="tabs-inner">
+    <nav class="tabs-nav" role="tablist" aria-label="Thèmes">
+      <button class="tab-btn active" data-theme-id="-1" role="tab" aria-selected="true">
+        Tout <span class="tab-count">19</span>
+      </button>
+      <!-- theme tabs injected by JS -->
+    </nav>
+  </div>
+</div>
+
+<!-- ─── SUBJECT FILTER ─── -->
+<div class="filter-section">
+  <div class="filter-pills" id="filter-pills" role="group" aria-label="Filtres par matière">
+    <button class="pill-btn active" data-subject="all">Tout</button>
+    <button class="pill-btn" data-subject="chimie">⚗️ Chimie</button>
+    <button class="pill-btn" data-subject="mecanique">⚙️ Mécanique</button>
+    <button class="pill-btn" data-subject="thermodynamique">🌡️ Thermodynamique</button>
+    <button class="pill-btn" data-subject="ondes">〰️ Ondes</button>
+    <button class="pill-btn" data-subject="electricite">⚡ Électricité</button>
+  </div>
+</div>
+
+<!-- ─── MAIN GRID ─── -->
+<main class="main-section" id="main">
+  <div class="main-inner">
+    <div class="results-count" id="results-count"></div>
+    <div class="chapter-grid" id="chapter-grid">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+</main>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <a href="NEXUS_Cercle_El_Abili.html">← Retour au portail NEXUS</a>
+  &nbsp;·&nbsp; Le Cercle d'El-Abili · Terminale Spécialité Physique-Chimie
+</footer>
+
+</div><!-- .page-wrap -->
+
+<!-- ─── COMMAND PALETTE ─── -->
+<div class="cmd-overlay" id="cmd-overlay" role="dialog" aria-modal="true" aria-label="Palette de commandes">
+  <div class="cmd-box">
+    <div class="cmd-search-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input class="cmd-input" id="cmd-input" placeholder="Rechercher un chapitre, tag, formule…" autocomplete="off"/>
+      <kbd class="cmd-esc">Esc</kbd>
+    </div>
+    <div class="cmd-results" id="cmd-results" role="listbox"></div>
+  </div>
+</div>
+
+<!-- ─── SCROLL TO TOP ─── -->
+<button class="scroll-top" id="scroll-top" aria-label="Retour en haut">↑</button>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════ */
+const THEMES = [
+  {id:0, icon:"⚗️", label:"Constitution & transformations", chapters:[
+    {num:"Ch. 01", icon:"🧪", title:"Réactions acido-basiques", desc:"pH, Ka, Henderson-Hasselbalch, solutions tampon.", tags:["pH","Ka","Tampon","Chimie"], href:"Term_chapitre1.html", formulas:["pH = –log[H₃O⁺]","Ka = [A⁻][H₃O⁺] / [HA]","pH = pKa + log([A⁻]/[HA])"]},
+    {num:"Ch. 02", icon:"🔬", title:"Analyse spectrale", desc:"Spectres UV-visible, IR, RMN, identification.", tags:["UV-Vis","IR","RMN","Chimie"], href:"Term_chapitre2.html", formulas:["A = ε·l·C  (Beer-Lambert)","IR → liaisons, UV → conjugaison"]},
+    {num:"Ch. 03", icon:"⚖️", title:"Les dosages", desc:"Étalonnage, titrage pH-métrique et conductimétrique.", tags:["Titrage","Étalonnage","Chimie"], href:"Term_chapitre3.html", formulas:["nA/a = nB/b  (équivalence)","Ceq = n / Veq"]},
+    {num:"Ch. 04", icon:"⏱️", title:"Cinétique chimique", desc:"Vitesse, ordre 1, t½, catalyse.", tags:["Vitesse","Ordre 1","Chimie"], href:"Term_chapitre4.html", formulas:["v = –(1/a)·d[A]/dt","[A](t) = [A]₀·e^(–kt)","t½ = ln2 / k"]},
+    {num:"Ch. 05", icon:"☢️", title:"La radioactivité", desc:"Noyaux, α β γ, loi de décroissance, datation.", tags:["α β γ","Datation","Chimie"], href:"Term_chapitre5.html", formulas:["N(t) = N₀·e^(–λt)","t½ = ln2 / λ","A = λ·N"]},
+    {num:"Ch. 06", icon:"⚡", title:"Évolution spontanée", desc:"Quotient Qr, constante K, sens d'évolution.", tags:["Qr","Équilibre","Chimie"], href:"Term_chapitre6.html", formulas:["ΔrG = ΔrG° + RT·ln(Q)","K = exp(–ΔrG°/RT)"]},
+    {num:"Ch. 07", icon:"🔋", title:"Transformations forcées", desc:"Piles, électrolyse, oxydoréduction.", tags:["Piles","Électrolyse","Chimie"], href:"Term_chapitre7.html", formulas:["E = Eox – Ered","ΔrG° = –n·F·E°"]},
+    {num:"Ch. 08", icon:"🧬", title:"Synthèse organique", desc:"Stratégies, protection/déprotection, chimie verte.", tags:["Synthèse","Organique","Chimie"], href:"Term_chapitre8.html", formulas:["η = m_obtenu / m_théorique × 100"]}
+  ]},
+  {id:1, icon:"🚀", label:"Mouvement & interactions", chapters:[
+    {num:"Ch. 09", icon:"📐", title:"Cinématique du point", desc:"Position, vitesse, accélération, quantité de mouvement.", tags:["Vecteurs","Newton","Mécanique"], href:"Term_chapitre9.html", formulas:["p⃗ = m·v⃗","ΣF⃗ = dp⃗/dt  (2e loi Newton)"]},
+    {num:"Ch. 10", icon:"🌍", title:"Champ de forces", desc:"Gravitation, pesanteur, champ électrique.", tags:["Gravitation","Champ E","Mécanique"], href:"Term_chapitre10.html", formulas:["F = G·m₁·m₂/r²","E⃗ = F⃗/q  (champ électrique)"]},
+    {num:"Ch. 11", icon:"🪐", title:"Planètes & Satellites", desc:"Lois de Kepler, MCU, satellites.", tags:["Kepler","Orbite","Mécanique"], href:"Term_chapitre11.html", formulas:["T² = (4π²/GM)·a³","v_orb = √(GM/R)"]},
+    {num:"Ch. 12", icon:"💧", title:"Mécanique des fluides", desc:"Pression, Archimède, Bernoulli.", tags:["Bernoulli","Fluides","Mécanique"], href:"Term_chapitre12.html", formulas:["P + ½ρv² + ρgh = cte  (Bernoulli)","Π = ρ_f·V_imm·g  (Archimède)"]}
+  ]},
+  {id:2, icon:"🔥", label:"Énergie & thermodynamique", chapters:[
+    {num:"Ch. 13", icon:"🌡️", title:"Énergie interne", desc:"1er principe, échanges Q et W, enthalpie.", tags:["1er principe","Enthalpie","Thermodynamique"], href:"Term_chapitre13.html", formulas:["ΔU = Q + W  (1er principe)","ΔH = ΔU + p·ΔV"]},
+    {num:"Ch. 14", icon:"♨️", title:"Transferts thermiques", desc:"Conduction, convection, rayonnement.", tags:["Conduction","Rayonnement","Thermodynamique"], href:"Term_chapitre14.html", formulas:["P = λ·S·ΔT/e  (Fourier)","φ = σ·T⁴  (Stefan-Boltzmann)"]}
+  ]},
+  {id:3, icon:"🌊", label:"Ondes & signaux", chapters:[
+    {num:"Ch. 15", icon:"〰️", title:"Ondes dans la matière", desc:"Ondes progressives, célérité, périodicité.", tags:["Célérité","Période","Ondes"], href:"Term_chapitre15.html", formulas:["v = λ·f","Δt = d / v  (retard)"]},
+    {num:"Ch. 16", icon:"🌈", title:"Propriétés des ondes", desc:"Diffraction, interférences, effet Doppler.", tags:["Diffraction","Doppler","Ondes"], href:"Term_chapitre16.html", formulas:["Δy = λD/a  (fentes Young)","Δf/f ≈ v_source/v_onde  (Doppler)"]},
+    {num:"Ch. 17", icon:"🔭", title:"Lunette astronomique", desc:"Vergence, grossissement, construction.", tags:["Optique","Lentilles"], href:"Term_chapitre17.html", formulas:["G = –f'_obj / f'_oculaire","V = 1/f'  (vergence en δ)"]},
+    {num:"Ch. 18", icon:"💡", title:"Interaction lumière-matière", desc:"Photoélectrique, photon, dualité onde-corpuscule.", tags:["Photon","Quantum","Ondes"], href:"Term_chapitre18.html", formulas:["E = hf = hc/λ","hf = Wext + Ec_max  (photoélectrique)"]}
+  ]},
+  {id:4, icon:"🔌", label:"Électricité", chapters:[
+    {num:"Ch. 19", icon:"🔌", title:"Circuit capacitif RC", desc:"Condensateur, charge/décharge RC.", tags:["RC","Condensateur","Électricité"], href:"Term_chapitre19.html", formulas:["uC(t) = E(1–e^(–t/RC))","τ = RC  (constante de temps)"]}
+  ]}
+];
+
+const ALL_CHAPTERS = THEMES.flatMap(t => t.chapters.map(ch => ({...ch, themeId: t.id})));
+
+/* Subject matching */
+const SUBJECT_TAGS = {
+  chimie:["Chimie","pH","Ka","Tampon","Titrage","Étalonnage","UV-Vis","IR","RMN","Équilibre","Piles","Électrolyse","Synthèse","Organique","Qr","Vitesse","Ordre 1","α β γ","Datation"],
+  mecanique:["Mécanique","Newton","Vecteurs","Gravitation","Kepler","Orbite","Bernoulli","Fluides","Champ E"],
+  thermodynamique:["Thermodynamique","1er principe","Enthalpie","Conduction","Rayonnement"],
+  ondes:["Ondes","Célérité","Période","Diffraction","Doppler","Photon","Quantum"],
+  electricite:["Électricité","RC","Condensateur","Optique","Lentilles"]
+};
+
+function getChapterSubject(ch){
+  for(const [subj,tags] of Object.entries(SUBJECT_TAGS)){
+    if(ch.tags.some(t=>tags.includes(t))) return subj;
+  }
+  return null;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NEURAL MESH CANVAS
+═══════════════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('mesh');
+  const ctx = canvas.getContext('2d');
+  const N = 70, DIST = 165, REPEL_R = 130, REPEL_FORCE = 3.5;
+  let W, H, mouse = {x:-9999,y:-9999};
+  const particles = [];
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkParticle(){
+    return {
+      x: Math.random()*W, y: Math.random()*H,
+      vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4
+    };
+  }
+
+  resize();
+  for(let i=0;i<N;i++) particles.push(mkParticle());
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+  window.addEventListener('mouseleave',()=>{mouse.x=-9999;mouse.y=-9999});
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const dotColor = isDark ? '0,229,255' : '0,120,200';
+    const lineColor = isDark ? '0,229,255' : '0,100,180';
+
+    particles.forEach(p=>{
+      /* repulsion */
+      const dx = p.x-mouse.x, dy = p.y-mouse.y;
+      const dist2 = dx*dx+dy*dy;
+      if(dist2 < REPEL_R*REPEL_R && dist2 > 0){
+        const d = Math.sqrt(dist2);
+        const force = (REPEL_R-d)/REPEL_R*REPEL_FORCE;
+        p.vx += dx/d*force*.05;
+        p.vy += dy/d*force*.05;
+      }
+      /* damping */
+      p.vx *= .98; p.vy *= .98;
+      /* clamp speed */
+      const spd = Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+      if(spd>1.2){p.vx=p.vx/spd*1.2;p.vy=p.vy/spd*1.2}
+      /* move */
+      p.x += p.vx; p.y += p.vy;
+      /* wrap */
+      if(p.x<-20) p.x=W+20; if(p.x>W+20) p.x=-20;
+      if(p.y<-20) p.y=H+20; if(p.y>H+20) p.y=-20;
+      /* dot */
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${dotColor},.7)`;
+      ctx.fill();
+    });
+
+    /* lines */
+    for(let i=0;i<N;i++){
+      for(let j=i+1;j<N;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<DIST){
+          const alpha=(1-d/DIST)*.55;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(${lineColor},${alpha})`;
+          ctx.lineWidth=.8;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════════════════════════════════════════════════
+   FORMULA TICKER
+═══════════════════════════════════════════════════════ */
+const TICKER_FORMULAS = [
+  "pH = –log[H₃O⁺]",
+  "ΔU = Q + W  (1er principe)",
+  "T² = (4π²/GM)·a³  (Kepler III)",
+  "N(t) = N₀·e^(–λt)  (décroissance)",
+  "E = hf = hc/λ  (photon)"
+];
+let tickerIdx = 0;
+const tickerEl = document.getElementById('ticker-text');
+setInterval(()=>{
+  tickerEl.classList.add('fade-out');
+  setTimeout(()=>{
+    tickerIdx = (tickerIdx+1) % TICKER_FORMULAS.length;
+    tickerEl.textContent = TICKER_FORMULAS[tickerIdx];
+    tickerEl.classList.remove('fade-out');
+  },400);
+},3000);
+
+/* ═══════════════════════════════════════════════════════
+   TABS INJECTION
+═══════════════════════════════════════════════════════ */
+const tabsNav = document.querySelector('.tabs-nav');
+THEMES.forEach(theme=>{
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.dataset.themeId = theme.id;
+  btn.setAttribute('role','tab');
+  btn.setAttribute('aria-selected','false');
+  btn.innerHTML = `${theme.icon} ${theme.label} <span class="tab-count">${theme.chapters.length}</span>`;
+  tabsNav.appendChild(btn);
+});
+
+/* ═══════════════════════════════════════════════════════
+   CARD RENDERING
+═══════════════════════════════════════════════════════ */
+function buildCard(ch, delay){
+  const a = document.createElement('a');
+  a.className = 'chapter-card';
+  a.href = ch.href;
+  a.style.animationDelay = delay+'ms';
+  a.dataset.themeId = ch.themeId;
+  a.dataset.subject = getChapterSubject(ch) || '';
+
+  const formulaItems = ch.formulas.map(f=>
+    `<div class="formula-item">${escHtml(f)}</div>`
+  ).join('');
+
+  const tagItems = ch.tags.map(t=>`<span class="tag">${escHtml(t)}</span>`).join('');
+
+  a.innerHTML = `
+    <div class="card-inner">
+      <div class="card-header">
+        <div class="card-icon">${ch.icon}</div>
+        <div class="card-meta">
+          <div class="card-num">${escHtml(ch.num)}</div>
+          <div class="card-title">${escHtml(ch.title)}</div>
+        </div>
+      </div>
+      <p class="card-desc">${escHtml(ch.desc)}</p>
+      <div class="card-tags">${tagItems}</div>
+    </div>
+    <div class="formula-strip">
+      <div class="formula-list">${formulaItems}</div>
+    </div>`;
+
+  /* 3D magnetic tilt */
+  a.addEventListener('mousemove', e=>{
+    const rect = a.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const rx = -(e.clientY-cy)/rect.height*28;
+    const ry = (e.clientX-cx)/rect.width*28;
+    a.style.transform = `perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px) scale(1.02)`;
+  });
+  a.addEventListener('mouseleave', ()=>{
+    a.style.transform = '';
+  });
+
+  return a;
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATE & FILTER LOGIC
+═══════════════════════════════════════════════════════ */
+let activeTheme = -1; // -1 = all
+let activeSubject = 'all';
+let searchQuery = '';
+
+const grid = document.getElementById('chapter-grid');
+const resultsCount = document.getElementById('results-count');
+
+/* Initial render */
+function renderCards(){
+  grid.innerHTML = '';
+  let visible = 0, ci = 0;
+
+  ALL_CHAPTERS.forEach(ch=>{
+    const themeMatch = activeTheme === -1 || ch.themeId === activeTheme;
+    const subjectMatch = activeSubject === 'all' || getChapterSubject(ch) === activeSubject;
+    const q = searchQuery.toLowerCase();
+    const searchMatch = !q ||
+      ch.title.toLowerCase().includes(q) ||
+      ch.num.toLowerCase().includes(q) ||
+      ch.desc.toLowerCase().includes(q) ||
+      ch.tags.some(t=>t.toLowerCase().includes(q)) ||
+      ch.formulas.some(f=>f.toLowerCase().includes(q));
+
+    if(themeMatch && subjectMatch && searchMatch){
+      const card = buildCard(ch, ci*32);
+      grid.appendChild(card);
+      ci++; visible++;
+    }
+  });
+
+  if(visible === 0){
+    grid.innerHTML = `<div class="empty-state"><div class="big">🔍</div>Aucun chapitre trouvé pour cette combinaison de filtres.</div>`;
+  }
+
+  resultsCount.innerHTML = visible < ALL_CHAPTERS.length
+    ? `<span class="accent">${visible}</span> chapitre${visible>1?'s':''} affiché${visible>1?'s':''}`
+    : '';
+}
+
+renderCards();
+
+/* ═══════════════════════════════════════════════════════
+   TAB EVENTS
+═══════════════════════════════════════════════════════ */
+tabsNav.addEventListener('click', e=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.remove('active');
+    b.setAttribute('aria-selected','false');
+  });
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+  activeTheme = parseInt(btn.dataset.themeId);
+  renderCards();
+});
+
+/* ═══════════════════════════════════════════════════════
+   SUBJECT FILTER EVENTS
+═══════════════════════════════════════════════════════ */
+document.getElementById('filter-pills').addEventListener('click', e=>{
+  const btn = e.target.closest('.pill-btn');
+  if(!btn) return;
+  document.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeSubject = btn.dataset.subject;
+  renderCards();
+});
+
+/* ═══════════════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════════════ */
+document.getElementById('topbar-search-input').addEventListener('input', e=>{
+  searchQuery = e.target.value;
+  renderCards();
+});
+
+/* ═══════════════════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════════════════ */
+const themeBtn = document.getElementById('theme-btn');
+function toggleTheme(){
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', isDark?'light':'dark');
+  themeBtn.textContent = isDark ? '🌙' : '☀️';
+}
+themeBtn.addEventListener('click', toggleTheme);
+
+/* ═══════════════════════════════════════════════════════
+   COMMAND PALETTE
+═══════════════════════════════════════════════════════ */
+const cmdOverlay = document.getElementById('cmd-overlay');
+const cmdInput = document.getElementById('cmd-input');
+const cmdResults = document.getElementById('cmd-results');
+let cmdSelectedIdx = -1;
+let cmdItems = [];
+
+function openCmd(){
+  cmdOverlay.classList.add('open');
+  cmdInput.value = '';
+  cmdSelectedIdx = -1;
+  renderCmd('');
+  setTimeout(()=>cmdInput.focus(),50);
+}
+function closeCmd(){
+  cmdOverlay.classList.remove('open');
+}
+
+document.getElementById('cmd-open-btn').addEventListener('click', openCmd);
+cmdOverlay.addEventListener('click', e=>{if(e.target===cmdOverlay) closeCmd()});
+
+cmdInput.addEventListener('input', ()=>{
+  cmdSelectedIdx = -1;
+  renderCmd(cmdInput.value.toLowerCase());
+});
+
+function renderCmd(q){
+  cmdItems = ALL_CHAPTERS.filter(ch=>
+    !q ||
+    ch.title.toLowerCase().includes(q) ||
+    ch.num.toLowerCase().includes(q) ||
+    ch.tags.some(t=>t.toLowerCase().includes(q)) ||
+    ch.formulas.some(f=>f.toLowerCase().includes(q))
+  );
+
+  if(cmdItems.length===0){
+    cmdResults.innerHTML = `<div class="cmd-empty">Aucun résultat pour « ${escHtml(q)} »</div>`;
+    return;
+  }
+
+  cmdResults.innerHTML = cmdItems.map((ch,i)=>`
+    <a class="cmd-result-item" href="${escHtml(ch.href)}" data-idx="${i}" role="option">
+      <span class="cmd-result-icon">${ch.icon}</span>
+      <span class="cmd-result-info">
+        <span class="cmd-result-num">${escHtml(ch.num)}</span>
+        <div class="cmd-result-title">${escHtml(ch.title)}</div>
+        <div class="cmd-result-tags">${ch.tags.join(' · ')}</div>
+      </span>
+      <kbd class="cmd-enter-hint">↵</kbd>
+    </a>`
+  ).join('');
+}
+
+cmdInput.addEventListener('keydown', e=>{
+  const items = cmdResults.querySelectorAll('.cmd-result-item');
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    cmdSelectedIdx = Math.min(cmdSelectedIdx+1, items.length-1);
+    updateCmdSelection(items);
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    cmdSelectedIdx = Math.max(cmdSelectedIdx-1, 0);
+    updateCmdSelection(items);
+  } else if(e.key==='Enter'){
+    if(cmdSelectedIdx>=0 && items[cmdSelectedIdx]){
+      items[cmdSelectedIdx].click();
+    } else if(items.length>0){
+      items[0].click();
+    }
+  }
+});
+
+function updateCmdSelection(items){
+  items.forEach((item,i)=>{
+    item.classList.toggle('selected', i===cmdSelectedIdx);
+    if(i===cmdSelectedIdx) item.scrollIntoView({block:'nearest'});
+  });
+}
+
+renderCmd('');
+
+/* ═══════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e=>{
+  const tag = document.activeElement.tagName;
+  const typing = ['INPUT','TEXTAREA'].includes(tag);
+
+  if(e.key==='Escape'){
+    closeCmd();
+    return;
+  }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+    e.preventDefault();
+    cmdOverlay.classList.contains('open') ? closeCmd() : openCmd();
+    return;
+  }
+  if(typing) return;
+
+  if(e.key.toLowerCase()==='t') toggleTheme();
+
+  /* 1-5 for theme tabs */
+  const n = parseInt(e.key);
+  if(n>=1 && n<=5){
+    const tabs = document.querySelectorAll('.tab-btn');
+    if(tabs[n]) tabs[n].click(); // index 0 is "Tout"
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   SCROLL TO TOP
+═══════════════════════════════════════════════════════ */
+const scrollTopBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll',()=>{
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+},{passive:true});
+scrollTopBtn.addEventListener('click',()=>{
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

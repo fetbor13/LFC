@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEXUS — Première Spécialité Physique-Chimie</title>
+<script>
+MathJax = { tex:{ inlineMath:[['$','$'],['\\(','\\)']] }, svg:{ fontCache:'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root{
+  --accent:#ff6bd6; --ar:255,107,214; --glow:rgba(255,107,214,.28);
+  --bg:#030b18; --bg1:#07101f; --ink:#eaf0ff; --muted:#7080a0; --soft:#b0c0dc;
+  --border:rgba(255,107,214,.18); --glass:rgba(7,16,31,.72);
+  --card:#0b1829; --card2:#0f2035;
+  --grad1:#ff6bd6; --grad2:#c084ff; --grad3:#60a5fa;
+  --radius:14px; --radius-sm:8px;
+  --shadow:0 8px 32px rgba(0,0,0,.55);
+  --transition:.22s cubic-bezier(.4,0,.2,1);
+  font-size:16px;
+}
+[data-theme="light"]{
+  --bg:#f2f5fc; --bg1:#fff; --ink:#0c1526; --muted:#5a6a88; --soft:#3a4a6a;
+  --border:rgba(200,120,220,.22); --glass:rgba(242,245,252,.85);
+  --card:#fff; --card2:#f8f0ff;
+  --shadow:0 4px 24px rgba(100,80,140,.13);
+}
+
+/* ─── RESET ───────────────────────────────────────────────────────────────── */
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  background:var(--bg); color:var(--ink);
+  min-height:100vh; overflow-x:hidden;
+  transition:background var(--transition),color var(--transition);
+}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+
+/* ─── CANVAS ──────────────────────────────────────────────────────────────── */
+#neural-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.45;transition:opacity .5s;
+}
+[data-theme="light"] #neural-canvas{opacity:.18}
+
+/* ─── TOPBAR ──────────────────────────────────────────────────────────────── */
+#topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:10px;
+  padding:0 24px;height:56px;
+  background:var(--glass);
+  backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid var(--border);
+}
+.tb-back{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  background:rgba(var(--ar),.06);
+  color:var(--soft);font-size:.82rem;
+  transition:all var(--transition);white-space:nowrap;
+}
+.tb-back:hover{background:rgba(var(--ar),.16);color:var(--accent);border-color:var(--accent)}
+.tb-brand{
+  display:flex;align-items:center;gap:9px;
+  font-weight:700;font-size:.95rem;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;white-space:nowrap;
+}
+.tb-brand .mark{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  display:grid;place-items:center;
+  font-weight:900;font-size:.95rem;color:#fff;
+  -webkit-text-fill-color:#fff;flex-shrink:0;
+}
+#tb-search{
+  flex:1;max-width:340px;margin-left:auto;
+  position:relative;
+}
+#tb-search input{
+  width:100%;padding:7px 14px 7px 36px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:rgba(var(--ar),.05);
+  color:var(--ink);font-size:.85rem;
+  outline:none;transition:all var(--transition);
+}
+#tb-search input:focus{border-color:var(--accent);background:rgba(var(--ar),.1)}
+#tb-search .icon{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  font-size:.9rem;opacity:.45;pointer-events:none;
+}
+#tb-search input::placeholder{color:var(--muted)}
+.tb-btn{
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  display:grid;place-items:center;font-size:1rem;
+  border:1px solid var(--border);
+  background:rgba(var(--ar),.06);
+  transition:all var(--transition);flex-shrink:0;
+}
+.tb-btn:hover{background:rgba(var(--ar),.18);border-color:var(--accent);color:var(--accent)}
+
+/* ─── HERO ────────────────────────────────────────────────────────────────── */
+#hero{
+  position:relative;z-index:1;
+  padding:64px 40px 56px;text-align:center;
+  overflow:hidden;
+}
+#hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(var(--ar),.12),transparent 70%);
+  pointer-events:none;
+}
+.hero-h1{
+  font-size:clamp(2.4rem,6vw,4.4rem);
+  font-weight:900;letter-spacing:-.03em;line-height:1.1;
+  margin-bottom:20px;
+}
+.hero-h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#fff 0%,var(--grad1) 45%,var(--grad2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+[data-theme="light"] .hero-h1 em{
+  background:linear-gradient(135deg,#1a0530 0%,var(--grad1) 45%,var(--grad2) 100%);
+  -webkit-background-clip:text;background-clip:text;
+}
+.hero-lead{
+  font-size:1.05rem;color:var(--soft);max-width:620px;
+  margin:0 auto 24px;line-height:1.65;
+}
+.hero-quote{
+  max-width:560px;margin:0 auto 32px;
+  padding:14px 20px;text-align:left;
+  border-left:3px solid var(--accent);
+  background:rgba(var(--ar),.07);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-size:.88rem;color:var(--soft);line-height:1.6;
+}
+.hero-quote em{display:block;margin-top:6px;color:var(--muted);font-style:italic;font-size:.82rem}
+.hero-stats{
+  display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.hero-stat{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.hero-stat .val{
+  font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--grad1),var(--grad2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1;
+}
+.hero-stat .lbl{font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+
+/* Seal */
+.hero-seal{
+  width:82px;height:82px;border-radius:50%;
+  border:2px solid var(--accent);
+  display:grid;place-items:center;
+  font-size:2.6rem;font-weight:900;
+  background:linear-gradient(135deg,rgba(var(--ar),.15),rgba(192,132,255,.1));
+  margin:0 auto 30px;
+  animation:spinSeal 18s linear infinite;
+  box-shadow:0 0 28px var(--glow),inset 0 0 18px rgba(var(--ar),.1);
+  color:var(--accent);
+}
+@keyframes spinSeal{to{transform:rotate(360deg)}}
+
+/* Ticker */
+.ticker-wrap{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 22px;border-radius:99px;
+  border:1px solid var(--border);
+  background:rgba(var(--ar),.06);
+  margin-bottom:8px;
+}
+.ticker-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+#ticker-formula{
+  font-family:'Courier New',monospace;color:var(--accent);
+  font-size:.92rem;font-weight:600;
+  min-width:200px;text-align:left;
+  transition:opacity .4s,transform .4s;
+}
+.ticker-fade-out{opacity:0!important;transform:translateY(-8px)!important}
+.ticker-fade-in{opacity:1!important;transform:translateY(0)!important}
+
+/* ─── TABS ────────────────────────────────────────────────────────────────── */
+#theme-tabs{
+  position:sticky;top:56px;z-index:90;
+  display:flex;gap:0;overflow-x:auto;padding:0 24px;
+  background:var(--glass);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);scrollbar-width:none;
+}
+#theme-tabs::-webkit-scrollbar{display:none}
+.tab-btn{
+  flex-shrink:0;padding:14px 20px;
+  font-size:.85rem;font-weight:600;
+  color:var(--muted);border-bottom:2px solid transparent;
+  transition:all var(--transition);white-space:nowrap;
+}
+.tab-btn:hover{color:var(--soft);background:rgba(var(--ar),.06)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ─── SUBJECT PILLS ───────────────────────────────────────────────────────── */
+#subject-bar{
+  display:flex;gap:8px;flex-wrap:wrap;
+  padding:20px 28px 8px;position:relative;z-index:1;
+}
+.subj-btn{
+  padding:6px 16px;border-radius:99px;font-size:.8rem;font-weight:600;
+  border:1px solid var(--border);background:rgba(var(--ar),.05);
+  color:var(--muted);transition:all var(--transition);
+}
+.subj-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(var(--ar),.12)}
+.subj-btn.active{background:rgba(var(--ar),.18);border-color:var(--accent);color:var(--accent)}
+
+/* ─── GRID ────────────────────────────────────────────────────────────────── */
+#grid-wrap{
+  position:relative;z-index:1;
+  padding:24px 28px 80px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(295px,1fr));
+  gap:20px;
+}
+
+/* ─── CHAPTER CARD ────────────────────────────────────────────────────────── */
+.chapter-card{
+  position:relative;min-height:170px;
+  border-radius:var(--radius);
+  background:var(--card);
+  border:1px solid rgba(255,107,214,.12);
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color var(--transition),box-shadow var(--transition),transform var(--transition);
+  transform-style:preserve-3d;
+  will-change:transform;
+  opacity:0;transform:translateY(14px);
+}
+.chapter-card.appeared{
+  opacity:1;transform:translateY(0);
+  transition:opacity .4s,transform .4s,border-color var(--transition),box-shadow var(--transition);
+}
+.chapter-card:hover{
+  border-color:rgba(var(--ar),.55);
+  box-shadow:0 0 0 1px rgba(var(--ar),.35),0 8px 40px rgba(var(--ar),.25),var(--shadow);
+}
+
+/* accent bar */
+.card-accent{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--grad1),var(--grad2),var(--grad3));
+}
+
+/* badge */
+.card-badge{
+  position:absolute;top:14px;right:14px;
+  padding:2px 10px;border-radius:99px;font-size:.68rem;font-weight:700;
+  background:rgba(var(--ar),.15);border:1px solid rgba(var(--ar),.3);
+  color:var(--accent);letter-spacing:.05em;
+}
+
+/* body */
+.card-body{padding:22px 18px 18px}
+.card-num{font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.card-icon{font-size:1.6rem;margin-bottom:8px;display:block}
+.card-title{font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.3}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px}
+.card-tag{
+  padding:2px 9px;border-radius:99px;font-size:.68rem;font-weight:600;
+  background:rgba(var(--ar),.08);border:1px solid rgba(var(--ar),.18);
+  color:var(--soft);
+}
+
+/* formula strip */
+.card-formula{
+  position:absolute;bottom:0;left:0;right:0;
+  transform:translateY(100%);
+  background:rgba(5,12,28,.92);
+  backdrop-filter:blur(10px);
+  border-top:1px solid rgba(var(--ar),.3);
+  padding:12px 16px;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:2;
+}
+.chapter-card:hover .card-formula{transform:translateY(0)}
+.formula-line{
+  font-family:'Courier New',monospace;font-size:.78rem;
+  color:var(--accent);line-height:1.7;
+}
+[data-theme="light"] .card-formula{background:rgba(248,240,255,.97)}
+
+/* ─── COMMAND PALETTE ─────────────────────────────────────────────────────── */
+#cmd-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+  display:none;align-items:flex-start;justify-content:center;
+  padding-top:12vh;
+}
+#cmd-overlay.open{display:flex}
+#cmd-box{
+  width:min(620px,95vw);
+  border-radius:var(--radius);
+  background:var(--bg1);
+  border:1px solid rgba(var(--ar),.35);
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 0 1px rgba(var(--ar),.15);
+  overflow:hidden;
+  animation:cmdIn .22s cubic-bezier(.4,0,.2,1);
+}
+@keyframes cmdIn{from{opacity:0;transform:scale(.96) translateY(-10px)}to{opacity:1;transform:none}}
+#cmd-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+}
+#cmd-input-wrap .icon{font-size:1rem;color:var(--muted)}
+#cmd-input{
+  flex:1;background:none;border:none;outline:none;
+  font-size:1rem;color:var(--ink);caret-color:var(--accent);
+}
+#cmd-results{max-height:360px;overflow-y:auto}
+.cmd-result{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;cursor:pointer;
+  transition:background var(--transition);
+}
+.cmd-result:hover,.cmd-result.active{background:rgba(var(--ar),.1)}
+.cmd-result .r-icon{font-size:1.2rem;flex-shrink:0}
+.cmd-result .r-body .r-title{font-size:.9rem;font-weight:600}
+.cmd-result .r-body .r-sub{font-size:.75rem;color:var(--muted)}
+.cmd-hint{
+  padding:10px 20px;font-size:.75rem;color:var(--muted);
+  border-top:1px solid var(--border);
+  display:flex;gap:16px;
+}
+.cmd-hint kbd{
+  display:inline-flex;align-items:center;
+  padding:1px 6px;border-radius:4px;
+  background:rgba(var(--ar),.12);border:1px solid rgba(var(--ar),.25);
+  font-size:.7rem;color:var(--soft);font-family:inherit;
+}
+
+/* ─── SECTION HEADING ─────────────────────────────────────────────────────── */
+.section-heading{
+  position:relative;z-index:1;
+  padding:28px 28px 4px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-heading h2{font-size:1.25rem;font-weight:800}
+.section-heading .count{
+  padding:2px 12px;border-radius:99px;font-size:.75rem;font-weight:700;
+  background:rgba(var(--ar),.12);color:var(--accent);border:1px solid rgba(var(--ar),.25);
+}
+.section-divider{
+  height:1px;margin:4px 28px;
+  background:linear-gradient(90deg,rgba(var(--ar),.4),transparent);
+}
+
+/* ─── SCROLLBAR ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(var(--ar),.25);border-radius:99px}
+
+/* ─── EMPTY STATE ─────────────────────────────────────────────────────────── */
+#empty-state{
+  display:none;text-align:center;padding:80px 20px;
+  position:relative;z-index:1;grid-column:1/-1;
+}
+#empty-state .big{font-size:3rem;margin-bottom:16px}
+#empty-state p{color:var(--muted)}
+
+/* ─── FOOTER ──────────────────────────────────────────────────────────────── */
+#footer{
+  position:relative;z-index:1;text-align:center;
+  padding:28px;font-size:.78rem;color:var(--muted);
+  border-top:1px solid var(--border);
+}
+#footer a{color:var(--accent);margin:0 6px}
+
+/* ─── UTIL ────────────────────────────────────────────────────────────────── */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* ─── SHIMMER ─────────────────────────────────────────────────────────────── */
+@keyframes shimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.chapter-card::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 40%,rgba(var(--ar),.08) 50%,transparent 60%);
+  background-size:200% 100%;opacity:0;
+  transition:opacity .3s;border-radius:var(--radius);
+}
+.chapter-card:hover::after{
+  opacity:1;animation:shimmer 1.6s linear infinite;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────────────────── */
+@media(max-width:600px){
+  #hero{padding:40px 20px 36px}
+  #grid-wrap{padding:16px 14px 60px;grid-template-columns:1fr}
+  .hero-h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Neural Canvas -->
+<canvas id="neural-canvas"></canvas>
+
+<!-- ─── TOPBAR ──────────────────────────────────────────────────────────── -->
+<header id="topbar">
+  <a href="NEXUS_Cercle_El_Abili.html" class="tb-back">← NEXUS</a>
+  <div class="tb-brand">
+    <div class="mark">EA</div>
+    Première Spécialité
+  </div>
+  <div id="tb-search">
+    <span class="icon">🔍</span>
+    <input type="search" id="search-input" placeholder="Rechercher un chapitre…" aria-label="Rechercher">
+  </div>
+  <button class="tb-btn" id="theme-btn" title="Changer de thème (T)">☀</button>
+  <button class="tb-btn" id="cmd-btn" title="Palette (Ctrl+K)">⌘</button>
+</header>
+
+<!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-seal" aria-hidden="true">χ</div>
+  <h1 class="hero-h1">Première <em>Spécialité</em></h1>
+  <p class="hero-lead">Avec l'esprit d'Al-Khwarizmi, les grandeurs s'organisent en méthodes et les problèmes deviennent des démarches.</p>
+  <blockquote class="hero-quote">
+    « Le calcul n'est puissant que lorsqu'il ordonne le réel : une grandeur bien choisie éclaire déjà la moitié du problème. »
+    <em>— Hommage à Al-Khwarizmi</em>
+  </blockquote>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="val">18</span><span class="lbl">Chapitres</span></div>
+    <div class="hero-stat"><span class="val">4</span><span class="lbl">Thèmes</span></div>
+  </div>
+  <div class="ticker-wrap" aria-live="polite">
+    <span class="ticker-label">Formule</span>
+    <span id="ticker-formula"></span>
+  </div>
+</section>
+
+<!-- ─── THEME TABS ─────────────────────────────────────────────────────────── -->
+<nav id="theme-tabs" role="tablist" aria-label="Thèmes"></nav>
+
+<!-- ─── SUBJECT BAR ───────────────────────────────────────────────────────── -->
+<div id="subject-bar" role="group" aria-label="Filtrer par matière"></div>
+
+<!-- ─── GRID ─────────────────────────────────────────────────────────────── -->
+<main id="main-content">
+  <div id="section-header" class="section-heading"></div>
+  <div class="section-divider"></div>
+  <div id="grid-wrap" role="list"></div>
+</main>
+
+<!-- ─── COMMAND PALETTE ───────────────────────────────────────────────────── -->
+<div id="cmd-overlay" role="dialog" aria-modal="true" aria-label="Palette de commandes">
+  <div id="cmd-box">
+    <div id="cmd-input-wrap">
+      <span class="icon">🔍</span>
+      <input id="cmd-input" type="text" placeholder="Rechercher un chapitre, thème…" autocomplete="off">
+    </div>
+    <div id="cmd-results"></div>
+    <div class="cmd-hint">
+      <span><kbd>↑↓</kbd> Naviguer</span>
+      <span><kbd>↵</kbd> Ouvrir</span>
+      <span><kbd>Esc</kbd> Fermer</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer id="footer">
+  NEXUS Première Spécialité · Physique-Chimie · 2025–2026 ·
+  <a href="NEXUS_Cercle_El_Abili.html">← Retour accueil</a>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════════════════════════ */
+const THEMES = [
+  {id:0, icon:"⚗️", label:"Constitution & transformations", chapters:[
+    {num:"Ch. 01", icon:"🧪", title:"La mole et la spectroscopie", desc:"Masse molaire, quantité de matière, concentrations.", tags:["Chimie","Matière"], href:"1ere_chapitre1_v2.html", formulas:["n = m / M","C = n / V  (mol/L)","N = n × Nₐ"]},
+    {num:"Ch. 02", icon:"⚡", title:"Réactions d'oxydoréduction", desc:"Couples oxydant/réducteur, demi-équations électroniques.", tags:["Chimie"], href:"1ere_chapitre2_v2.html", formulas:["Ox + n·e⁻ → Red","Réactif limitant : rapport n/a minimum"]},
+    {num:"Ch. 03", icon:"⚖️", title:"Tableau d'avancement", desc:"Transformation chimique, avancement maximal x_max.", tags:["Chimie"], href:"1ere_chapitre3_v2.html", formulas:["x_max = n_limitant / a","τ = x_final / x_max  (taux d'avancement)"]},
+    {num:"Ch. 04", icon:"⚖️", title:"Titrage colorimétrique", desc:"Principe, équivalence, repérage colorimétrique.", tags:["Chimie","Titrage"], href:"1ere_chapitre4_v2.html", formulas:["C_A·V_A / a = C_B·V_B / b  (équivalence)"]},
+    {num:"Ch. 05", icon:"⚛️", title:"Structure et polarité des molécules", desc:"Lewis, VSEPR, électronégativité χ.", tags:["Chimie","Matière"], href:"1ere_chapitre5_v2.html", formulas:["Règle de l'octet : N_e = 8","VSEPR : forme déduite des doublets"]},
+    {num:"Ch. 06", icon:"💧", title:"Cohésion de la matière", desc:"Interactions intermoléculaires, dissolution, solubilité.", tags:["Chimie","Matière"], href:"1ere_chapitre6_v2.html", formulas:["VdW < liaisons H < ions-dipôles","Similia similibus solvuntur"]},
+    {num:"Ch. 07", icon:"⚛️", title:"Structure des entités organiques", desc:"Molécules organiques, groupes fonctionnels, familles.", tags:["Chimie","Organique"], href:"1ere_chapitre7_v2.html", formulas:["CₙH₂ₙ₊₂ : alcane","–OH : alcool, –COOH : acide carboxylique"]},
+    {num:"Ch. 08", icon:"🧬", title:"Synthèse organique", desc:"Protocole de synthèse, rendement.", tags:["Chimie","Organique"], href:"1ere_chapitre8_v2.html", formulas:["η = m_obtenu / m_théorique × 100  (%)"]},
+    {num:"Ch. 09", icon:"🔥", title:"Réactions de combustion", desc:"Combustion complète et incomplète.", tags:["Chimie"], href:"1ere_chapitre9_v2.html", formulas:["CₙH₂ₙ₊₂ + (3n+1)/2 O₂ → nCO₂ + (n+1)H₂O"]}
+  ]},
+  {id:1, icon:"🚀", label:"Mouvement & interactions", chapters:[
+    {num:"Ch. 10", icon:"🚀", title:"Interactions fondamentales et champs", desc:"Gravitation universelle, interaction électrostatique, Coulomb.", tags:["Mécanique","Physique"], href:"1ere_chapitre10_v2.html", formulas:["F_g = G·m₁·m₂/r²","F_e = k·|q₁·q₂|/r²  (Coulomb)"]},
+    {num:"Ch. 11", icon:"💧", title:"Description d'un fluide au repos", desc:"Pression, statique des fluides, loi de Mariotte.", tags:["Mécanique","Fluides"], href:"1ere_chapitre11_v2.html", formulas:["P = F/S  (Pa)","P = P₀ + ρ·g·h  (loi fondamentale)","pV = nRT  (Mariotte isotherme)"]},
+    {num:"Ch. 12", icon:"🚀", title:"Mouvement d'un système", desc:"Vecteur vitesse par méthode des milieux, vecteur Δv⃗.", tags:["Mécanique","Physique"], href:"1ere_chapitre12_v2.html", formulas:["v⃗ᵢ = M_{i-1}M_{i+1}⃗ / (2Δt)","Δv⃗ᵢ = v⃗_{i+1} – v⃗_{i-1}"]}
+  ]},
+  {id:2, icon:"🔥", label:"Énergie", chapters:[
+    {num:"Ch. 13", icon:"🔥", title:"Aspects énergétiques des phénomènes électriques", desc:"Courant, puissance, énergie électrique, effet Joule.", tags:["Énergie","Électricité"], href:"1ere_chapitre13_v2.html", formulas:["P = U·I  (W)","E = P·Δt  (J)","P_Joule = R·I²"]},
+    {num:"Ch. 14", icon:"🔥", title:"Aspects énergétiques des systèmes mécaniques", desc:"Travail d'une force, Ec, Ep, théorème de l'énergie cinétique.", tags:["Énergie","Mécanique"], href:"1ere_chapitre14_v2.html", formulas:["W = F·d·cosθ","TEC : ΔEc = ΣW_forces","Em = Ec + Ep  (conservation si frottements nuls)"]}
+  ]},
+  {id:3, icon:"🌊", label:"Ondes & signaux", chapters:[
+    {num:"Ch. 15", icon:"〰️", title:"Ondes mécaniques", desc:"Onde mécanique progressive, célérité, retard, périodicité.", tags:["Ondes"], href:"1ere_chapitre15_v2.html", formulas:["v = λ·f","Δt = d/v  (retard)","T = 1/f"]},
+    {num:"Ch. 16", icon:"〰️", title:"Lentilles minces convergentes", desc:"Images réelle et virtuelle, relation de conjugaison.", tags:["Optique","Lentilles"], href:"1ere_chapitre16_v2.html", formulas:["1/v – 1/u = 1/f'  (conjugaison)","G = OA'/OA = v/u  (grandissement)"]},
+    {num:"Ch. 17", icon:"〰️", title:"Couleurs et lumière", desc:"Trichromie, synthèse additive, synthèse soustractive.", tags:["Optique","Lumière"], href:"1ere_chapitre17_v2.html", formulas:["R+V+B = Blanc  (additive)","C+M+J = Noir  (soustractive)"]},
+    {num:"Ch. 18", icon:"〰️", title:"Optique ondulatoire", desc:"Ondes électromagnétiques, photon, interaction onde-matière.", tags:["Optique","Ondes"], href:"1ere_chapitre18_v2.html", formulas:["E_photon = h·f = h·c/λ","c = λ·f  (c = 3×10⁸ m/s)"]}
+  ]}
+];
+
+const ALL_CHAPTERS = THEMES.flatMap(t => t.chapters.map(c => ({...c, theme:t.id, themeLabel:t.label, themeIcon:t.icon})));
+
+const SUBJECTS = [
+  {label:"Tout", tags:null},
+  {label:"⚗️ Chimie", tags:["Chimie","Matière","Organique","Titrage"]},
+  {label:"⚙️ Mécanique", tags:["Mécanique","Physique","Fluides"]},
+  {label:"🔥 Énergie", tags:["Énergie","Électricité"]},
+  {label:"🌊 Ondes & Optique", tags:["Ondes","Optique","Lentilles","Lumière"]}
+];
+
+const TICKER_FORMULAS = ["n = m / M","U = R · I","v⃗ᵢ = M(i-1)M(i+1)⃗ / 2Δt","F = G·m₁·m₂/r²","E = h·f"];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════════════ */
+let activeTab = -1;   // -1 = Tout
+let activeSubj = 0;
+let searchQuery = '';
+let cmdIdx = -1;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEURAL CANVAS
+═══════════════════════════════════════════════════════════════════════════ */
+function initMesh(){
+  const canvas = document.getElementById('neural-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], mouse = {x:-9999,y:-9999};
+  const N = 70, MAX_DIST = 165;
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', e => { mouse.x=e.clientX; mouse.y=e.clientY; });
+
+  for(let i=0;i<N;i++){
+    nodes.push({
+      x: Math.random()*window.innerWidth,
+      y: Math.random()*window.innerHeight,
+      vx:(Math.random()-.5)*.35,
+      vy:(Math.random()-.5)*.35,
+      r: 1.5+Math.random()*2
+    });
+  }
+
+  const ACCENT = [255,107,214];
+  const BLUE   = [96,165,250];
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // mouse attraction
+    nodes.forEach(n=>{
+      const dx=mouse.x-n.x, dy=mouse.y-n.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<180){ n.vx+=dx/dist*.04; n.vy+=dy/dist*.04; }
+      n.vx*=.97; n.vy*=.97;
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+    });
+    // edges
+    for(let i=0;i<N;i++){
+      for(let j=i+1;j<N;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<MAX_DIST){
+          const a=(1-d/MAX_DIST)*.6;
+          const t=i/(N-1);
+          const r=Math.round(ACCENT[0]*t+BLUE[0]*(1-t));
+          const g=Math.round(ACCENT[1]*t+BLUE[1]*(1-t));
+          const b=Math.round(ACCENT[2]*t+BLUE[2]*(1-t));
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=`rgba(${r},${g},${b},${a})`;
+          ctx.lineWidth=.8;
+          ctx.stroke();
+        }
+      }
+    }
+    // dots
+    nodes.forEach((n,i)=>{
+      const t=i/(N-1);
+      const r=Math.round(ACCENT[0]*t+BLUE[0]*(1-t));
+      const g=Math.round(ACCENT[1]*t+BLUE[1]*(1-t));
+      const b=Math.round(ACCENT[2]*t+BLUE[2]*(1-t));
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},.85)`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════════════════════════════════════ */
+function initTicker(){
+  const el = document.getElementById('ticker-formula');
+  let idx = 0;
+  el.textContent = TICKER_FORMULAS[0];
+  setInterval(()=>{
+    el.classList.add('ticker-fade-out');
+    setTimeout(()=>{
+      idx=(idx+1)%TICKER_FORMULAS.length;
+      el.textContent=TICKER_FORMULAS[idx];
+      el.classList.remove('ticker-fade-out');
+    },400);
+  },3000);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════════════════════ */
+function renderTabs(){
+  const nav = document.getElementById('theme-tabs');
+  nav.innerHTML='';
+  // All tab
+  const all = document.createElement('button');
+  all.className='tab-btn'+(activeTab===-1?' active':'');
+  all.textContent='✨ Tout';
+  all.setAttribute('role','tab');
+  all.setAttribute('aria-selected', activeTab===-1);
+  all.onclick=()=>{ activeTab=-1; renderTabs(); renderGrid(); updateHeader(); };
+  nav.appendChild(all);
+  THEMES.forEach((t,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(activeTab===i?' active':'');
+    btn.textContent=`${t.icon} ${t.label} (${t.chapters.length})`;
+    btn.setAttribute('role','tab');
+    btn.setAttribute('aria-selected',activeTab===i);
+    btn.onclick=()=>{ activeTab=i; renderTabs(); renderGrid(); updateHeader(); };
+    nav.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SUBJECTS
+═══════════════════════════════════════════════════════════════════════════ */
+function renderSubjects(){
+  const bar = document.getElementById('subject-bar');
+  bar.innerHTML='';
+  SUBJECTS.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='subj-btn'+(activeSubj===i?' active':'');
+    btn.textContent=s.label;
+    btn.onclick=()=>{ activeSubj=i; renderSubjects(); renderGrid(); updateHeader(); };
+    bar.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FILTERING
+═══════════════════════════════════════════════════════════════════════════ */
+function getFiltered(){
+  let list = ALL_CHAPTERS;
+  if(activeTab>=0) list=list.filter(c=>c.theme===activeTab);
+  if(activeSubj>0){
+    const tags=SUBJECTS[activeSubj].tags;
+    list=list.filter(c=>c.tags.some(t=>tags.includes(t)));
+  }
+  if(searchQuery.trim()){
+    const q=searchQuery.toLowerCase();
+    list=list.filter(c=>
+      c.title.toLowerCase().includes(q)||
+      c.desc.toLowerCase().includes(q)||
+      c.num.toLowerCase().includes(q)||
+      c.tags.some(t=>t.toLowerCase().includes(q))
+    );
+  }
+  return list;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════════════════════════ */
+function updateHeader(){
+  const h=document.getElementById('section-header');
+  const filtered=getFiltered();
+  let title = activeTab>=0 ? `${THEMES[activeTab].icon} ${THEMES[activeTab].label}` : '✨ Tous les chapitres';
+  if(searchQuery) title=`🔍 Résultats pour « ${searchQuery} »`;
+  h.innerHTML=`<h2>${title}</h2><span class="count">${filtered.length} chapitre${filtered.length>1?'s':''}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GRID
+═══════════════════════════════════════════════════════════════════════════ */
+function renderGrid(){
+  const grid=document.getElementById('grid-wrap');
+  grid.innerHTML='';
+  const list=getFiltered();
+  if(!list.length){
+    grid.innerHTML=`<div id="empty-state" style="display:block;grid-column:1/-1;text-align:center;padding:80px 20px">
+      <div style="font-size:3rem;margin-bottom:16px">🔭</div>
+      <p style="color:var(--muted)">Aucun chapitre trouvé. Essayez un autre filtre.</p>
+    </div>`;
+    return;
+  }
+  list.forEach((ch,i)=>{
+    const card=createCard(ch,i);
+    grid.appendChild(card);
+    setTimeout(()=>card.classList.add('appeared'), i*32+16);
+  });
+  initMagnetic();
+  updateHeader();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════════════════════════════════════ */
+function createCard(ch, idx){
+  const div=document.createElement('div');
+  div.className='chapter-card';
+  div.setAttribute('role','listitem');
+  div.style.perspective='700px';
+
+  const formulaLines=ch.formulas.map(f=>`<div class="formula-line">${escHtml(f)}</div>`).join('');
+
+  div.innerHTML=`
+    <div class="card-accent"></div>
+    <span class="card-badge">χ Première</span>
+    <div class="card-body">
+      <div class="card-num">${escHtml(ch.num)}</div>
+      <span class="card-icon" aria-hidden="true">${ch.icon}</span>
+      <h3 class="card-title">${escHtml(ch.title)}</h3>
+      <p class="card-desc">${escHtml(ch.desc)}</p>
+      <div class="card-tags">${ch.tags.map(t=>`<span class="card-tag">${escHtml(t)}</span>`).join('')}</div>
+    </div>
+    <div class="card-formula">${formulaLines}</div>
+  `;
+
+  div.addEventListener('click',()=>{ if(ch.href) window.location.href=ch.href; });
+  div.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') window.location.href=ch.href; });
+  div.tabIndex=0;
+  return div;
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAGNETIC / 3D TILT
+═══════════════════════════════════════════════════════════════════════════ */
+function initMagnetic(){
+  document.querySelectorAll('.chapter-card').forEach(card=>{
+    card.addEventListener('mousemove', e=>{
+      const r=card.getBoundingClientRect();
+      const cx=r.left+r.width/2, cy=r.top+r.height/2;
+      const dx=(e.clientX-cx)/(r.width/2);
+      const dy=(e.clientY-cy)/(r.height/2);
+      const rx = -dy*14, ry = dx*14;
+      card.style.transform=`perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(0) scale(1.025)`;
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform='perspective(700px) rotateX(0) rotateY(0) scale(1)';
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════════════════════════════════ */
+function doSearch(q){
+  searchQuery=q;
+  renderGrid();
+  updateHeader();
+}
+
+document.getElementById('search-input').addEventListener('input',e=>doSearch(e.target.value));
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMMAND PALETTE
+═══════════════════════════════════════════════════════════════════════════ */
+const overlay=document.getElementById('cmd-overlay');
+const cmdInput=document.getElementById('cmd-input');
+const cmdResults=document.getElementById('cmd-results');
+
+function openCmd(){
+  overlay.classList.add('open');
+  cmdInput.value='';
+  cmdIdx=-1;
+  renderCmdResults('');
+  setTimeout(()=>cmdInput.focus(),50);
+}
+function closeCmd(){
+  overlay.classList.remove('open');
+  cmdIdx=-1;
+}
+
+function renderCmdResults(q){
+  cmdResults.innerHTML='';
+  let list=ALL_CHAPTERS;
+  if(q.trim()){
+    const ql=q.toLowerCase();
+    list=list.filter(c=>
+      c.title.toLowerCase().includes(ql)||
+      c.num.toLowerCase().includes(ql)||
+      c.desc.toLowerCase().includes(ql)||
+      c.themeLabel.toLowerCase().includes(ql)
+    );
+  }
+  list.slice(0,12).forEach((ch,i)=>{
+    const div=document.createElement('div');
+    div.className='cmd-result'+(i===cmdIdx?' active':'');
+    div.innerHTML=`
+      <span class="r-icon">${ch.icon}</span>
+      <div class="r-body">
+        <div class="r-title">${escHtml(ch.num)} — ${escHtml(ch.title)}</div>
+        <div class="r-sub">${ch.themeIcon} ${escHtml(ch.themeLabel)}</div>
+      </div>
+    `;
+    div.addEventListener('click',()=>{ window.location.href=ch.href; closeCmd(); });
+    cmdResults.appendChild(div);
+  });
+  if(!list.length){
+    cmdResults.innerHTML=`<div style="padding:24px;text-align:center;color:var(--muted)">Aucun résultat</div>`;
+  }
+}
+
+cmdInput.addEventListener('input',e=>{ cmdIdx=-1; renderCmdResults(e.target.value); });
+
+cmdInput.addEventListener('keydown',e=>{
+  const items=cmdResults.querySelectorAll('.cmd-result');
+  if(e.key==='ArrowDown'){ e.preventDefault(); cmdIdx=Math.min(cmdIdx+1,items.length-1); highlightCmd(items); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); cmdIdx=Math.max(cmdIdx-1,0); highlightCmd(items); }
+  else if(e.key==='Enter'){
+    if(cmdIdx>=0 && items[cmdIdx]){ items[cmdIdx].click(); }
+  }
+  else if(e.key==='Escape') closeCmd();
+});
+
+function highlightCmd(items){
+  items.forEach((it,i)=>it.classList.toggle('active',i===cmdIdx));
+  if(items[cmdIdx]) items[cmdIdx].scrollIntoView({block:'nearest'});
+}
+
+overlay.addEventListener('click',e=>{ if(e.target===overlay) closeCmd(); });
+
+document.getElementById('cmd-btn').addEventListener('click',openCmd);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════════════════════════════════════ */
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.dataset.theme==='dark';
+  html.dataset.theme=isDark?'light':'dark';
+  document.getElementById('theme-btn').textContent=isDark?'🌙':'☀';
+}
+document.getElementById('theme-btn').addEventListener('click',toggleTheme);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  const tag=document.activeElement?.tagName;
+  const isInput=tag==='INPUT'||tag==='TEXTAREA';
+
+  if(e.ctrlKey && e.key==='k'){ e.preventDefault(); overlay.classList.contains('open')?closeCmd():openCmd(); return; }
+  if(e.key==='Escape'){ if(overlay.classList.contains('open')) closeCmd(); return; }
+  if(isInput) return;
+
+  if(e.key==='t'||e.key==='T'){ toggleTheme(); return; }
+  if(e.key>='1'&&e.key<='4'){
+    const idx=parseInt(e.key)-1;
+    if(idx<THEMES.length){ activeTab=idx; renderTabs(); renderGrid(); updateHeader(); }
+    return;
+  }
+  if(e.key==='0'){ activeTab=-1; renderTabs(); renderGrid(); updateHeader(); }
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════════════════ */
+(function init(){
+  initMesh();
+  initTicker();
+  renderTabs();
+  renderSubjects();
+  renderGrid();
+  updateHeader();
+})();
+</script>
+</body>
+</html>

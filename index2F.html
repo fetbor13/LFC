@@ -1,0 +1,3369 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Cercle d'El-Abili · Sciences Physiques & Chimiques</title>
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea']
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            document.dispatchEvent(new CustomEvent('mathjax-loaded'));
+          });
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <style>
+    /* ============================================================
+       VARIABLES & CORE SYSTEM
+       ============================================================ */
+    :root {
+      --bg-dark: #030712;
+      --bg-light: #f8fafc;
+      --surface-dark: rgba(8, 14, 36, 0.65);
+      --surface-light: rgba(255, 255, 255, 0.75);
+      
+      --bg: var(--bg-dark);
+      --surface: var(--surface-dark);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(255, 255, 255, 0.15);
+      
+      --ink-dark: #f1f5f9;
+      --ink-light: #0f172a;
+      --ink: var(--ink-dark);
+      
+      --muted-dark: #64748b;
+      --muted-light: #94a3b8;
+      --muted: var(--muted-dark);
+      
+      --accent: #00e5ff;
+      --accent-rgb: 0, 229, 255;
+      --accent-glow: rgba(0, 229, 255, 0.25);
+      
+      /* Level Colors */
+      --color-pcsi: #00ffb3;
+      --color-terminale: #00e5ff;
+      --color-premiere: #ff6bd6;
+      --color-seconde: #ffb86b;
+      --color-college3: #7c8cff;
+      --color-college4: #a3ff5f;
+      --color-college5: #ff7aa2;
+      
+      --dock-w: 240px;
+      --dock-collapsed-w: 68px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --trans: 400ms var(--ease);
+    }
+
+    [data-theme="light"] {
+      --bg: var(--bg-light);
+      --surface: var(--surface-light);
+      --border: rgba(15, 23, 42, 0.08);
+      --border-glow: rgba(15, 23, 42, 0.12);
+      --ink: var(--ink-light);
+      --muted: var(--muted-light);
+      --accent-glow: rgba(0, 229, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      transition: background-color var(--trans), color var(--trans);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* ============================================================
+       AMBIENT BACKGROUNDS
+       ============================================================ */
+    #background-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.45;
+      mix-blend-mode: screen;
+      filter: blur(100px);
+    }
+    [data-theme="light"] #aurora {
+      opacity: 0.15;
+      mix-blend-mode: multiply;
+    }
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      animation: drift 25s ease-in-out infinite alternate;
+    }
+    .ab1 { width: 800px; height: 600px; top: -10%; left: -10%; background: radial-gradient(circle, rgba(0,229,255,0.3) 0%, transparent 70%); }
+    .ab2 { width: 700px; height: 700px; bottom: -20%; right: -10%; background: radial-gradient(circle, rgba(124,140,255,0.25) 0%, transparent 70%); animation-delay: -5s; }
+    .ab3 { width: 600px; height: 500px; top: 30%; left: 40%; background: radial-gradient(circle, rgba(255,107,214,0.2) 0%, transparent 70%); animation-delay: -10s; }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(100px, 80px) scale(1.1) rotate(180deg); }
+      100% { transform: translate(-50px, 120px) scale(0.9) rotate(360deg); }
+    }
+
+    /* Grid overlay (holographic grid) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: 
+        linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 95%);
+    }
+    [data-theme="light"] body::before {
+      background: 
+        linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
+    }
+
+    /* ============================================================
+       APPLICATION SHELL
+       ============================================================ */
+    #app {
+      position: relative;
+      z-index: 10;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 64px 1fr;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(8, 14, 36, 0.4);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 100;
+    }
+    [data-theme="light"] .topbar {
+      background: rgba(248, 250, 252, 0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: conic-gradient(from 180deg, var(--accent), #fff, var(--color-premiere), var(--accent));
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: #030712;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+    }
+    .brand-title span {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* Search bar wrapper */
+    .search-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 6px 16px;
+      width: 320px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .search-trigger:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-glow);
+    }
+    .search-trigger kbd {
+      margin-left: auto;
+      font-family: inherit;
+      font-size: 0.65rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    /* Mode Switching Buttons */
+    .view-modes {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .mode-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .mode-btn.active {
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.15);
+      box-shadow: inset 0 0 10px rgba(var(--accent-rgb), 0.1);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ctrl-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .ctrl-icon-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    /* ============================================================
+       WORKSPACE CONTENT CONTAINER
+       ============================================================ */
+    .workspace {
+      display: grid;
+      grid-template-columns: var(--dock-w) 1fr;
+      transition: grid-template-columns var(--trans);
+      height: 100%;
+      min-height: 0;
+    }
+    .workspace.dock-collapsed {
+      grid-template-columns: var(--dock-collapsed-w) 1fr;
+    }
+
+    /* ============================================================
+       SIDEBAR DOCK
+       ============================================================ */
+    .dock {
+      background: rgba(8, 14, 36, 0.55);
+      backdrop-filter: blur(25px);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 10px;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      z-index: 50;
+    }
+    [data-theme="light"] .dock {
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .dock-section-title {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-left: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .level-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .level-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      color: var(--muted);
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .level-link:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ink);
+    }
+    .level-link.active {
+      background: linear-gradient(135deg, rgba(var(--lvl-rgb), 0.12), rgba(255, 255, 255, 0.02));
+      border-color: rgba(var(--lvl-rgb), 0.35);
+      color: var(--ink);
+      box-shadow: 0 4px 15px rgba(var(--lvl-rgb), 0.08);
+    }
+    .level-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--lvl-color), #fff);
+      color: #030712;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 0 10px rgba(var(--lvl-rgb), 0.3);
+    }
+    .level-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.2;
+    }
+    .level-meta strong {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .level-meta span {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    /* Collapsed mode styles */
+    .workspace.dock-collapsed .level-link {
+      padding: 10px 8px;
+      justify-content: center;
+    }
+    .workspace.dock-collapsed .level-meta,
+    .workspace.dock-collapsed .dock-section-title span,
+    .workspace.dock-collapsed .dock-shortcuts,
+    .workspace.dock-collapsed .dock-motto {
+      display: none;
+    }
+
+    .dock-motto {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.4;
+      font-style: italic;
+    }
+    .dock-motto cite {
+      display: block;
+      margin-top: 6px;
+      font-weight: 600;
+      color: var(--accent);
+      font-style: normal;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+    }
+
+    .dock-shortcuts {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      padding: 8px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.65rem;
+    }
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+    .shortcut-row kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 4px;
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    /* ============================================================
+       MAIN CONTENT AND PANELS
+       ============================================================ */
+    .main-panel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-view {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s var(--ease);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+    .panel-view.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 20;
+    }
+
+    /* ============================================================
+       ASTROLABE (ORRERY) MODE
+       ============================================================ */
+    .astrolabe-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      height: 100%;
+      position: relative;
+    }
+    .astrolabe-viewport {
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    .astrolabe-canvas-underlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Concentric rings wrapper */
+    .orrery {
+      width: 600px;
+      height: 600px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      z-index: 5;
+    }
+    
+    .orrery-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.07);
+      display: grid;
+      place-items: center;
+      transition: border-color 0.3s;
+      cursor: grab;
+    }
+    .orrery-ring:active {
+      cursor: grabbing;
+    }
+    .orrery-ring.hovered {
+      border-color: rgba(var(--ring-rgb), 0.4);
+      border-style: solid;
+      box-shadow: 0 0 15px rgba(var(--ring-rgb), 0.05);
+    }
+    .orrery-ring.active {
+      border-color: var(--ring-color);
+      border-style: solid;
+      box-shadow: 0 0 25px rgba(var(--ring-rgb), 0.1);
+    }
+
+    /* Central hub - golden seal */
+    .orrery-seal {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffd700, #b8860b);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.5);
+      display: grid;
+      place-items: center;
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+      position: relative;
+      cursor: pointer;
+      z-index: 50;
+      animation: seal-rotate 25s linear infinite;
+    }
+    @keyframes seal-rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Star node in the rings */
+    .orrery-node {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px #fff;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 30;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+    .orrery-node:hover {
+      transform: translate(-50%, -50%) scale(1.6);
+      background-color: var(--node-color);
+      box-shadow: 0 0 18px var(--node-color), 0 0 30px var(--node-color);
+    }
+    .orrery-node.active {
+      background-color: var(--node-color);
+      box-shadow: 0 0 20px var(--node-color);
+      transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    /* Orrery HUD Dashboard info */
+    .astrolabe-hud {
+      border-left: 1px solid var(--border);
+      background: rgba(8, 14, 36, 0.7);
+      backdrop-filter: blur(30px);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    [data-theme="light"] .astrolabe-hud {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .hud-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .hud-quote {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .hud-quote cite {
+      display: block;
+      margin-top: 8px;
+      font-weight: 600;
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    /* Interactive subject tag chips */
+    .subject-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .subject-chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .subject-chip:hover {
+      border-color: var(--border-glow);
+      color: var(--ink);
+    }
+    .subject-chip.active {
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       CONSTELLATION VIEW (SPACE NETWORK)
+       ============================================================ */
+    .constellation-viewport {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    #constellation-canvas {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    #constellation-canvas:active {
+      cursor: grabbing;
+    }
+    .constellation-hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(8, 14, 36, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 20px;
+      pointer-events: none;
+      z-index: 50;
+      max-width: 320px;
+    }
+
+    /* ============================================================
+       BUREAU (WEBOS DESKTOP) VIEW
+       ============================================================ */
+    .desktop {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background-size: 30px 30px;
+    }
+    .desktop-window {
+      position: absolute;
+      width: 780px;
+      height: 480px;
+      min-width: 400px;
+      min-height: 300px;
+      background: rgba(8, 14, 38, 0.65);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.02);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+      z-index: 10;
+    }
+    [data-theme="light"] .desktop-window {
+      background: rgba(255, 255, 255, 0.7);
+      border-color: rgba(15, 23, 42, 0.08);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+    }
+    .desktop-window.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+    .desktop-window.active {
+      border-color: var(--window-accent);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(var(--window-rgb), 0.15);
+      z-index: 40;
+    }
+    
+    /* Window Title Bar */
+    .window-header {
+      height: 42px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      cursor: move;
+      user-select: none;
+    }
+    .window-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .window-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .win-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+    }
+    .win-close { background-color: #ff5f56; }
+    .win-min { background-color: #ffbd2e; }
+    .win-max { background-color: #27c93f; }
+
+    /* Window Content Body */
+    .window-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .window-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .window-body::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 99px;
+    }
+
+    /* Window Resize Handle */
+    .window-resize {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 16px;
+      height: 16px;
+      cursor: se-resize;
+      background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.2) 50%);
+    }
+
+    /* Desktop Dock (WebOS style Taskbar) */
+    .desktop-dock {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 68px;
+      background: rgba(8, 14, 38, 0.5);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 90;
+    }
+    .dock-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #030712;
+      font-weight: 700;
+      font-size: 1.3rem;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dock-icon:hover {
+      transform: scale(1.2) translateY(-6px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .dock-icon.active::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--lvl-color);
+      box-shadow: 0 0 8px var(--lvl-color);
+    }
+
+    /* ============================================================
+       CHAPTER CARD GRID
+       ============================================================ */
+    .theme-block {
+      margin-bottom: 28px;
+    }
+    .theme-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      min-height: 140px;
+    }
+    .card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--level-color);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(var(--level-rgb), 0.1);
+      transform: translateY(-2px);
+    }
+    .card-num {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: 0.74rem;
+      color: var(--muted);
+      line-height: 1.4;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 10px;
+    }
+    .card-tag {
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       DETAILS SIDEBAR (SLIDE-IN INFOBAR)
+       ============================================================ */
+    .details-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 400px;
+      background: rgba(8, 14, 38, 0.8);
+      backdrop-filter: blur(40px);
+      border-left: 1px solid var(--border);
+      z-index: 150;
+      transform: translateX(100%);
+      transition: transform 0.4s var(--ease);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      box-shadow: -15px 0 40px rgba(0, 0, 0, 0.4);
+    }
+    .details-sidebar.open {
+      transform: translateX(0);
+    }
+    .details-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: grid;
+      place-items: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .details-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: #ff5f56;
+    }
+
+    .details-header {
+      margin-top: 20px;
+    }
+    .details-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--lvl-color);
+      font-weight: 700;
+    }
+    .details-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+    .details-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .details-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .doc-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      margin-bottom: 8px;
+    }
+    .doc-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--lvl-color);
+      transform: translateX(4px);
+    }
+    .doc-icon {
+      font-size: 1.3rem;
+      color: var(--lvl-color);
+    }
+    .doc-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.3;
+    }
+    .doc-text strong {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .doc-text span {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+    .doc-btn {
+      margin-left: auto;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    .doc-link:hover .doc-btn {
+      color: var(--lvl-color);
+    }
+
+    /* Equation formula layout */
+    .formula-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .formula-box {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      border-left: 3px solid var(--lvl-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+    }
+
+    /* ============================================================
+       COMMAND PALETTE (CTRL+K OVERLAY)
+       ============================================================ */
+    .cmd-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 500;
+      display: none;
+      place-items: start center;
+      padding-top: 10vh;
+    }
+    .cmd-overlay.open {
+      display: grid;
+    }
+    .cmd-box {
+      width: 600px;
+      max-width: 95vw;
+      background: rgba(8, 14, 38, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.02), 0 0 30px var(--accent-glow);
+      overflow: hidden;
+      animation: slide-down 0.2s var(--ease);
+    }
+    @keyframes slide-down {
+      from { transform: translateY(-20px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .cmd-search-input-wrap {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 12px;
+    }
+    .cmd-search-input-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .cmd-search-input-wrap input::placeholder {
+      color: var(--muted);
+    }
+    .cmd-results {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .cmd-group-title {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 8px 12px 4px;
+    }
+    .cmd-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .cmd-item:hover, .cmd-item.selected {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .cmd-item-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #000;
+    }
+    .cmd-item-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .cmd-item-text strong {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .cmd-item-text span {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+    .cmd-item-badge {
+      margin-left: auto;
+      font-size: 0.6rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--muted);
+    }
+    .cmd-footer {
+      display: flex;
+      gap: 16px;
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .cmd-footer kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 4px;
+    }
+
+    /* ============================================================
+       FORMULA TOOLTIP
+       ============================================================ */
+    .ftip {
+      position: fixed;
+      z-index: 400;
+      pointer-events: none;
+      background: rgba(8, 16, 44, 0.95);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 10px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--accent-glow);
+      font-size: 0.78rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      backdrop-filter: blur(10px);
+      max-width: 250px;
+    }
+    .ftip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .ftip-title {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    /* ============================================================
+       FORMULA TICKER
+       ============================================================ */
+    .ticker-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: rgba(8, 14, 36, 0.85);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .ticker-title {
+      background: var(--accent);
+      color: #030712;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      z-index: 10;
+    }
+    .ticker-content {
+      display: flex;
+      animation: ticker 40s linear infinite;
+      white-space: nowrap;
+      padding-left: 20px;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 40px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: var(--ink);
+    }
+    .ticker-item strong {
+      color: var(--accent);
+      margin-left: 8px;
+      font-size: 0.65rem;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ============================================================
+       RESPONSIVE & MOBILE
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .orrery {
+        width: 450px;
+        height: 450px;
+      }
+      .astrolabe-container {
+        grid-template-columns: 1fr;
+      }
+      .astrolabe-hud {
+        display: none;
+      }
+    }
+    @media (max-width: 768px) {
+      .workspace {
+        grid-template-columns: 1fr !important;
+      }
+      .dock {
+        display: none;
+      }
+      .search-trigger {
+        width: 180px;
+      }
+      .search-trigger kbd {
+        display: none;
+      }
+      .orrery {
+        width: 320px;
+        height: 320px;
+      }
+      .orrery-ring {
+        border-style: solid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Backgrounds -->
+  <div id="aurora">
+    <div class="aurora-blob ab1"></div>
+    <div class="aurora-blob ab2"></div>
+    <div class="aurora-blob ab3"></div>
+  </div>
+  <canvas id="background-canvas"></canvas>
+
+  <!-- Main Shell -->
+  <div id="app">
+    
+    <!-- Topbar Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">EA</div>
+        <div class="brand-title">
+          Le Cercle d'El-Abili
+          <span>Collège · Lycée · CPSI · M. Borsali</span>
+        </div>
+      </div>
+
+      <!-- View Selector -->
+      <div class="view-modes">
+        <button class="mode-btn active" data-view="astrolabe">
+          🛸 Orrery
+        </button>
+        <button class="mode-btn" data-view="constellation">
+          ✦ Constellation
+        </button>
+        <button class="mode-btn" data-view="bureau">
+          🖥️ Bureau
+        </button>
+      </div>
+
+      <!-- Search Trigger -->
+      <button class="search-trigger" id="search-trigger-btn">
+        <span>Rechercher formule, notion...</span>
+        <kbd>Ctrl+K</kbd>
+      </button>
+
+      <div class="top-controls">
+        <button class="ctrl-icon-btn" id="heritage-toggle-btn" style="width:auto; padding: 0 12px; font-size: 0.8rem; font-weight:600; display:flex; align-items:center; gap:6px; color:#ffd700; border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.05);" title="L'Héritage Scientifique d'El-Abili & des Savants Arabes">✨ Héritage</button>
+        <button class="ctrl-icon-btn" id="theme-toggle-btn" title="Changer de thème (T)">🌙</button>
+        <button class="ctrl-icon-btn" id="dock-toggle-btn" title="Réduire la barre latérale (D)">☰</button>
+      </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="workspace" id="workspace-container">
+      
+      <!-- Collapsible Dock (Sidebar) -->
+      <aside class="dock" id="sidebar-dock">
+        <div>
+          <div class="dock-section-title">
+            <span>Niveaux Scolaires</span>
+            <span style="font-size:0.6rem;opacity:0.6;">(1-7)</span>
+          </div>
+          <nav class="level-nav" id="dock-level-nav"></nav>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <!-- Citation de niveau dynamique -->
+          <div class="dock-motto" id="dock-motto-box">
+            "Le premier geste du savant est d'observer, puis de mesurer avec rigueur."
+            <cite>Inspiration tlemcénienne</cite>
+          </div>
+          <div class="dock-shortcuts">
+            <div class="shortcut-row"><span>Raccourci Palette</span><kbd>Ctrl+K</kbd></div>
+            <div class="shortcut-row"><span>Changer Thème</span><kbd>T</kbd></div>
+            <div class="shortcut-row"><span>Réduire Dock</span><kbd>D</kbd></div>
+            <div class="shortcut-row"><span>Niveaux direct</span><kbd>1 - 7</kbd></div>
+          </div>
+          <div style="font-size: 0.65rem; color: var(--muted); text-align: center; margin-top: 10px; opacity: 0.75; letter-spacing: 0.05em; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif;">
+            Physique Chimie au LFC · M. Borsali
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Panel area with interactive views -->
+      <main class="main-panel">
+        
+        <!-- View 1: Orrery / Astrolabe Mode -->
+        <section class="panel-view active" id="view-astrolabe">
+          <div class="astrolabe-container">
+            <div class="astrolabe-viewport" id="orrery-viewport">
+              <canvas class="astrolabe-canvas-underlay" id="orrery-lines-canvas"></canvas>
+              <!-- Center of Astrolabe -->
+              <div class="orrery" id="orrery-wrapper">
+                <div class="orrery-seal" id="orrery-center-seal">λ</div>
+              </div>
+            </div>
+            
+            <!-- Sidebar HUD inside Astrolabe -->
+            <div class="astrolabe-hud">
+              <div class="hud-title" id="hud-level-name">Terminale Spécialité</div>
+              <div class="hud-quote" id="hud-level-quote">
+                "À ce niveau, une équation n'est plus une réponse : c'est une architecture de pensée qui relie l'expérience, le calcul et la preuve."
+                <cite>El-Abili</cite>
+              </div>
+              
+              <div class="details-section-title">Filtres transversaux</div>
+              <div class="subject-filters" id="subject-filter-box"></div>
+
+              <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;">
+                <div class="details-section-title">Documents du niveau</div>
+                <a class="doc-link" id="hud-level-notebook-link" href="#" target="_blank">
+                  <span class="doc-icon">📓</span>
+                  <div class="doc-text">
+                    <strong>Cahier d'activités complet</strong>
+                    <span id="hud-notebook-filename">livretSecondesPC_vEleve2026.pdf</span>
+                  </div>
+                  <span class="doc-btn">↓</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- View 2: Constellation Graph Mode -->
+        <section class="panel-view" id="view-constellation">
+          <div class="constellation-viewport">
+            <div class="constellation-hud">
+              <h3 style="font-family:'Cinzel',serif;font-size:0.95rem;margin-bottom:4px;" id="const-hud-title">Constellation de Physique</h3>
+              <p style="font-size:0.75rem;color:var(--muted);" id="const-hud-desc">Faites glisser pour explorer le ciel des notions. Survolez une étoile pour charger sa formule.</p>
+            </div>
+            <canvas id="constellation-canvas"></canvas>
+          </div>
+        </section>
+
+        <!-- View 3: WebOS Glass Desktop Mode -->
+        <section class="panel-view" id="view-bureau">
+          <div class="desktop" id="desktop-viewport">
+            <!-- Floating school level windows will be rendered here dynamically -->
+            
+            <!-- Taskbar/Dock -->
+            <div class="desktop-dock" id="desktop-dock-icons"></div>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- Scrolling Equation Ticker at Bottom -->
+    <div class="ticker-bar">
+      <div class="ticker-title">Défilé des formules</div>
+      <div class="ticker-content" id="equation-ticker-list"></div>
+    </div>
+
+  </div>
+
+  <!-- Sliding Details Sidebar for selected chapters -->
+  <div class="details-sidebar" id="chapter-details-sidebar">
+    <button class="details-close" id="details-sidebar-close-btn">✕</button>
+    <div class="details-header">
+      <span class="details-label" id="det-level-label">Terminale Spécialité</span>
+      <h2 class="details-title" id="det-chapter-title">Réactions acido-basiques</h2>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;" id="det-chapter-num">Chapitre 01</div>
+    </div>
+    
+    <p class="details-desc" id="det-chapter-desc">pH, Ka, Henderson-Hasselbalch, solutions tampon.</p>
+    
+    <div class="card-tags" id="det-chapter-tags">
+      <span class="card-tag">pH</span>
+      <span class="card-tag">Ka</span>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="details-section-title">Formules Clés</div>
+      <div class="formula-list" id="det-formula-list">
+        <div class="formula-box">$\text{pH} = -\log[\text{H}_3\text{O}^+]$</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;margin-bottom:30px;">
+      <div class="details-section-title">Ressources d'Étude</div>
+      <div id="det-resource-list">
+        <!-- Interactive html or completed pdf links -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette Search Overlay -->
+  <div class="cmd-overlay" id="cmd-search-overlay">
+    <div class="cmd-box">
+      <div class="cmd-search-input-wrap">
+        <span style="font-size:1.2rem;color:var(--accent);">⌕</span>
+        <input type="text" id="cmd-search-input" placeholder="Taper une notion, formule ou chapitre (ex: pH, Kepler, Mariotte)..." autocomplete="off">
+      </div>
+      <div class="cmd-results" id="cmd-search-results"></div>
+      <div class="cmd-footer">
+        <span><kbd>↑↓</kbd> Naviguer</span>
+        <span><kbd>↵</kbd> Ouvrir</span>
+        <span><kbd>Esc</kbd> Fermer</span>
+        <span>Raccourcis direct : <kbd>1-7</kbd> pour les niveaux</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Héritage Scientifique d'El-Abili & Savants Arabes -->
+  <div class="cmd-overlay" id="heritage-modal">
+    <div class="cmd-box" style="width: 720px; border-color: rgba(255, 215, 0, 0.3); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.15);">
+      <div class="cmd-search-input-wrap" style="justify-content: space-between; background: linear-gradient(90deg, rgba(255, 215, 0, 0.05), transparent); border-bottom: 1px solid rgba(255, 215, 0, 0.15);">
+        <span style="font-family: 'Cinzel', serif; font-size: 1.1rem; color: #ffd700; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          ✨ L'Héritage d'El-Abili & des Savants Arabes
+        </span>
+        <button onclick="closeHeritageModal()" style="font-size: 1rem; color: var(--muted); cursor: pointer;">✕</button>
+      </div>
+      
+      <div class="cmd-results" style="max-height: 480px; padding: 24px; color: var(--ink); overflow-y: auto; font-size: 0.85rem; line-height: 1.6; display: flex; flex-direction: column; gap: 20px;">
+        
+        <div style="background: rgba(255, 215, 0, 0.02); border: 1px solid rgba(255, 215, 0, 0.1); border-radius: 12px; padding: 16px; position: relative;">
+          <h4 style="font-family: 'Cinzel', serif; color: #ffd700; font-size: 0.95rem; margin-bottom: 6px;">Abu Abdallah El-Abili (Tlemcen, 1269–1356)</h4>
+          <p style="font-style: italic; color: var(--muted); margin-bottom: 8px;">Le Maître de la Logique et de la Rigueur Scientifique</p>
+          <p>Né à Tlemcen, <strong>El-Abili</strong> fut l'un des plus grands mathématiciens, logiciens et astronomes de son époque. Il a marqué l'histoire de la pensée en devenant le maître à penser et le professeur du célèbre historien et sociologue <strong>Ibn Khaldun</strong>. Dans l'esprit d'El-Abili, la science n'est pas une simple accumulation de faits, mais une <em>architecture de logique pure et de démonstration rigoureuse</em>. Il enseignait qu'une vérité scientifique doit toujours être soumise à la preuve géométrique et mathématique.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+            <h5 style="font-weight: 700; color: var(--accent); margin-bottom: 6px;">Ibn al-Haytham (Alhazen)</h5>
+            <p style="font-size: 0.8rem; color: var(--muted);">Père de l'optique moderne et inventeur de la méthode scientifique expérimentale basée sur la répétabilité et le doute critique.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+            <h5 style="font-weight: 700; color: var(--accent); margin-bottom: 6px;">Al-Biruni</h5>
+            <p style="font-size: 0.8rem; color: var(--muted);">Maître astronome et physicien, pionnier de la géodésie, ayant calculé le rayon de la Terre avec une précision inégalée grâce à la trigonométrie.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+            <h5 style="font-weight: 700; color: var(--accent); margin-bottom: 6px;">Al-Khwarizmi</h5>
+            <p style="font-size: 0.8rem; color: var(--muted);">Fondateur de l'algèbre moderne et de l'algorithmique (dont le mot dérive directement de son nom), unifiant le calcul numérique.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+            <h5 style="font-weight: 700; color: var(--accent); margin-bottom: 6px;">Ibn al-Habbak (Tlemcen)</h5>
+            <p style="font-size: 0.8rem; color: var(--muted);">Brillant astronome tlemcénien, auteur de traités majeurs sur la construction et le maniement de l'astrolabe.</p>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 12px;">Citations Inspirantes</div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <blockquote style="border-left: 3px solid #ffd700; padding-left: 12px; font-style: italic; color: var(--muted);">
+              "Le chercheur de vérité n’est pas celui qui étudie les écrits des anciens en s'y fiant aveuglément, mais plutôt celui qui suspecte sa foi en eux et s'interroge sur ce qu’il en retient."
+              <cite style="display:block; margin-top:4px; font-size: 0.75rem; font-weight:600; color:#ffd700; font-style:normal;">— Ibn al-Haytham, Al-Shukuk 'ala Batlamyus</cite>
+            </blockquote>
+            
+            <blockquote style="border-left: 3px solid #ffd700; padding-left: 12px; font-style: italic; color: var(--muted);">
+              "La science consiste à relier les phénomènes que nous observons dans le ciel et sur la Terre à des lois mesurables, géométriques et mathématiques précises."
+              <cite style="display:block; margin-top:4px; font-size: 0.75rem; font-weight:600; color:#ffd700; font-style:normal;">— Al-Biruni</cite>
+            </blockquote>
+
+            <blockquote style="border-left: 3px solid #ffd700; padding-left: 12px; font-style: italic; color: var(--muted);">
+              "La logique est la balance dans laquelle se pèsent les preuves de la science, et celui qui ne l'étudie pas ne peut distinguer le vrai du faux dans ses propres calculs."
+              <cite style="display:block; margin-top:4px; font-size: 0.75rem; font-weight:600; color:#ffd700; font-style:normal;">— Abu Abdallah El-Abili</cite>
+            </blockquote>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cmd-footer" style="background: rgba(0, 0, 0, 0.2); justify-content: space-between;">
+        <span>Physique Chimie au LFC · M. Borsali</span>
+        <span><kbd>Esc</kbd> pour fermer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula Hover Tooltip -->
+  <div class="ftip" id="formula-hover-tip">
+    <div class="ftip-title" id="ftip-title">Formule</div>
+    <div id="ftip-formula-render">$$E = hf$$</div>
+  </div>
+
+  <!-- Course Data Base -->
+  <script>
+    const DATA = {
+      terminale: {
+        label: "Terminale Spécialité",
+        lead: "Dans l'esprit d'El-Abili de Tlemcen, la formule devient un raisonnement : observer, modéliser, démontrer.",
+        quote: "À ce niveau, une équation n'est plus une réponse : c'est une architecture de pensée qui relie l'expérience, le calcul et la preuve.",
+        quoteAuthor: "El-Abili",
+        notebook: "Livre TSp%C3%A92026.pdf",
+        color: "#00e5ff",
+        rgb: "0, 229, 255",
+        icon: "λ",
+        themes: [
+          {
+            kicker: "Thème 1",
+            title: "⚗️ Constitution & transformations de la matière",
+            chapters: [
+              { num: "Ch. 01", icon: "🧪", title: "Réactions acido-basiques", desc: "pH, Ka, Henderson-Hasselbalch, solutions tampon, réactions acido-basiques.", tags: ["pH", "Ka", "Tampon"], href: "Term_chapitre1_v2_v2.html", formulas: ["pH = -\\log[H_3O^+]", "pH = pK_a + \\log\\frac{[A^-]}{[HA]}"] },
+              { num: "Ch. 02", icon: "🔬", title: "Méthodes physiques d'analyse", desc: "Spectres UV-visible, IR, RMN — identification des structures moléculaires.", tags: ["UV-Vis", "IR", "RMN"], href: "Term_chapitre2_v2_v2.html", formulas: ["A = \\varepsilon \\cdot l \\cdot C"] },
+              { num: "Ch. 03", icon: "⚖️", title: "Dosages par titrage", desc: "Titrage direct, pH-métrique, conductimétrique. Équivalence et dosage par étalonnage.", tags: ["Titrage", "Étalonnage"], href: "Term_chapitre3_v2_v2.html", formulas: ["\\frac{C_A V_E}{a} = \\frac{C_B V_B}{b}"] },
+              { num: "Ch. 08", icon: "🧬", title: "Synthèse organique", desc: "Stratégies de synthèse, rendement, chimie verte, protection de fonctions organiques.", tags: ["Synthèse", "Organique"], href: "Term_chapitre8_v2_v2.html", formulas: ["\\eta = \\frac{m_{obtenu}}{m_{th}}"] }
+            ]
+          },
+          {
+            kicker: "Thème 2",
+            title: "🚀 Mouvement & interactions",
+            chapters: [
+              { num: "Ch. 04", icon: "📐", title: "Description d'un mouvement", desc: "Référentiels, vecteur position, vitesse, accélération. Chronophotographie.", tags: ["Mouvement", "Vecteurs"], href: "Term_chapitre4_v2_v2.html", formulas: ["\\vec{v} = \\frac{d\\vec{OM}}{dt}", "\\vec{a} = \\frac{d\\vec{v}}{dt}"] },
+              { num: "Ch. 05", icon: "⚙️", title: "Deuxième loi de Newton", desc: "Principe fondamental de la dynamique, forces et mouvements, applications.", tags: ["Newton", "Forces"], href: "Term_chapitre5_v2_v2.html", formulas: ["\\sum \\vec{F} = m\\vec{a}", "\\vec{p} = m\\vec{v}"] },
+              { num: "Ch. 06", icon: "🌍", title: "Mouvement dans un champ uniforme", desc: "Champ gravitationnel et électrique uniformes, trajectoire parabolique.", tags: ["Gravitation", "Champ E"], href: "Term_chapitre6_v2_v2.html", formulas: ["\\vec{F}_g = m\\vec{g}", "\\vec{F}_e = q\\vec{E}"] },
+              { num: "Ch. 07", icon: "🪐", title: "Satellites et planètes", desc: "Lois de Kepler, vitesse de satellisation, orbite géostationnaire, énergie.", tags: ["Kepler", "Orbite"], href: "Term_chapitre7_v2_v2.html", formulas: ["T^2 = \\frac{4\\pi^2}{GM}a^3", "v = \\sqrt{\\frac{GM}{r}}"] },
+              { num: "Ch. 09", icon: "🔬", title: "Cinématique du point", desc: "Vecteurs cinématiques en coordonnées cartésiennes et polaires. Référentiels.", tags: ["Cinématique", "Polaire"], href: "Term_chapitre9_v2_v2.html", formulas: ["\\vec{v} = \\dot{r}\\vec{u}_r + r\\dot{\\theta}\\vec{u}_\\theta"] },
+              { num: "Ch. 10", icon: "⚙️", title: "Dynamique du point", desc: "Théorèmes de la dynamique, travail et énergie, conservation de l'énergie.", tags: ["Dynamique", "Énergie"], href: "Term_chapitre10_v2_v2.html", formulas: ["\\Delta E_c = W(\\vec{F})"] },
+              { num: "Ch. 11", icon: "🛰️", title: "Mouvements des planètes et satellites", desc: "Approfondissement des lois de Kepler, énergie mécanique en orbite, transfert.", tags: ["Kepler", "Satellisation"], href: "Term_chapitre11_v2_v2.html", formulas: ["E_m = -\\frac{GMm}{2a}"] },
+              { num: "Ch. 12", icon: "💧", title: "Mécanique des fluides", desc: "Statique, poussée d'Archimède, équation de Bernoulli, débit volumique.", tags: ["Bernoulli", "Fluides"], href: "Term_chapitre12_v2_v2.html", formulas: ["P + \\frac{1}{2}\\rho v^2 + \\rho gz = cte"] }
+            ]
+          },
+          {
+            kicker: "Thème 3",
+            title: "🌊 Ondes & signaux",
+            chapters: [
+              { num: "Ch. 13", icon: "〰️", title: "Oscillations mécaniques", desc: "Oscillateur harmonique, amortissement, résonance, énergie des oscillateurs.", tags: ["Oscillations", "Résonance"], href: "Term_chapitre13_v2_v2.html", formulas: ["\\ddot{x} + \\omega_0^2 x = 0", "\\omega_0 = \\sqrt{\\frac{k}{m}}"] },
+              { num: "Ch. 14", icon: "🔊", title: "Ondes mécaniques et sonores", desc: "Propagation, retard, célérité, double périodicité, sons et interférences.", tags: ["Ondes", "Son"], href: "Term_chapitre14_v2_v2.html", formulas: ["\\lambda = v \\cdot T", "v_{son} = 340 \\text{ m/s}"] },
+              { num: "Ch. 15", icon: "🌈", title: "Ondes dans la matière", desc: "Diffraction, interférences, effet Doppler, propriétés des ondes lumineuses.", tags: ["Diffraction", "Doppler"], href: "Term_chapitre15_v2_v2.html", formulas: ["\\theta = \\frac{\\lambda}{a}", "\\Delta = k\\lambda"] },
+              { num: "Ch. 16", icon: "☢️", title: "Noyaux, masse et énergie", desc: "Radioactivité, désintégrations, loi de décroissance, défaut de masse, E = mc².", tags: ["Radioactivité", "Nucléaire"], href: "Term_chapitre16_v2_v2.html", formulas: ["N(t) = N_0 e^{-\\lambda t}", "E = \\Delta m \\cdot c^2"] },
+              { num: "Ch. 17", icon: "🔭", title: "Lunette astronomique", desc: "Modèle afocal, grossissement, construction de marche des rayons lumineux.", tags: ["Optique", "Lentilles"], href: "Term_chapitre17_v2_v2.html", formulas: ["G = -\\frac{f'_1}{f'_2}"] },
+              { num: "Ch. 18", icon: "💡", title: "Interaction lumière-matière", desc: "Effet photoélectrique, photon, spectre atomique, dualité onde-corpuscule.", tags: ["Photon", "Quantum"], href: "Term_chapitre18_v2_v2.html", formulas: ["E = hf = \\frac{hc}{\\lambda}", "E_c = hf - W"] },
+              { num: "Ch. 19", icon: "⚡", title: "Circuit capacitif RC", desc: "Comportement d'un dipôle RC, constante de temps, charge et décharge d'un condensateur.", tags: ["RC", "Condensateur"], href: "Term_chapitre19_v2_v2.html", formulas: ["\\tau = RC", "u_C(t) = E(1 - e^{-t/\\tau})"] }
+            ]
+          }
+        ]
+      },
+      premiere: {
+        label: "Première Spécialité",
+        lead: "Sur les traces d'Al-Khwarizmi, les grandeurs s'organisent en méthodes et les problèmes deviennent des démarches.",
+        quote: "Le calcul n'est puissant que lorsqu'il ordonne le réel.",
+        quoteAuthor: "Al-Khwarizmi",
+        notebook: "livret1ereSpePC_vEleve2025.pdf",
+        color: "#ff6bd6",
+        rgb: "255, 107, 214",
+        icon: "χ",
+        themes: [
+          {
+            kicker: "Thème 1",
+            title: "⚗️ Constitution & transformations de la matière",
+            chapters: [
+              { num: "Ch. 01", icon: "🧪", title: "La mole et la spectroscopie", desc: "Quantité de matière, concentration molaire, spectres d'absorption et d'émission.", tags: ["Matière", "Mole"], href: "1ere_chapitre1_v2.html", formulas: ["n = \\frac{m}{M}", "C = \\frac{n}{V}"] },
+              { num: "Ch. 02", icon: "⚡", title: "Réactions d'oxydoréduction", desc: "Couples oxydant/réducteur, demi-équations électroniques, transfert d'électrons.", tags: ["Redox", "Oxydant"], href: "1ere_chapitre2_v2.html", formulas: ["\\text{Ox} + n e^- \\rightleftharpoons \\text{Red}"] },
+              { num: "Ch. 03", icon: "⚖️", title: "Tableau d'avancement", desc: "Avancement chimique, réactif limitant, bilan de matière et taux d'avancement.", tags: ["Avancement", "Bilan"], href: "1ere_chapitre3_v2.html", formulas: ["x_{max} = \\min\\frac{n_i}{s_i}"] },
+              { num: "Ch. 04", icon: "🔬", title: "Titrage colorimétrique", desc: "Réaction support, équivalence, changement de couleur de l'indicateur.", tags: ["Titrage", "Dosage"], href: "1ere_chapitre4_v2.html", formulas: ["\\frac{C_A V_E}{a} = \\frac{C_B V_B}{b}"] },
+              { num: "Ch. 05", icon: "⚛️", title: "Structure et polarité des molécules", desc: "Lewis, VSEPR, géométrie moléculaire, moment dipolaire et polarité.", tags: ["Lewis", "Polarité"], href: "1ere_chapitre5_v2.html", formulas: ["\\vec{\\mu} = q\\vec{d}"] },
+              { num: "Ch. 06", icon: "💧", title: "Cohésion et solubilité des espèces", desc: "Interactions de Van der Waals, liaisons hydrogène, règle similia similibus.", tags: ["Cohésion", "Solubilité"], href: "1ere_chapitre6_v2.html" },
+              { num: "Ch. 07", icon: "🧬", title: "Structure des entités organiques", desc: "Formules brutes, développées, semi-développées. Groupes fonctionnels et isomères.", tags: ["Organique", "Formules"], href: "1ere_chapitre7_v2.html" },
+              { num: "Ch. 08", icon: "🔨", title: "Synthèse organique", desc: "Stratégie de synthèse, techniques d'extraction, purification et rendement.", tags: ["Synthèse", "Rendement"], href: "1ere_chapitre8_v2.html", formulas: ["\\eta = \\frac{m_{exp}}{m_{th}} \\times 100\\%"] },
+              { num: "Ch. 09", icon: "🔥", title: "Réactions de combustion", desc: "Combustion complète et incomplète. Bilan énergétique, enjeux écologiques.", tags: ["Combustion", "CO2"], href: "1ere_chapitre9_v2.html" }
+            ]
+          },
+          {
+            kicker: "Thème 2",
+            title: "🚀 Mouvement & interactions",
+            chapters: [
+              { num: "Ch. 10", icon: "🌌", title: "Interactions fondamentales et champs", desc: "Gravitation universelle, loi de Coulomb, champ gravitationnel et électrostatique.", tags: ["Gravitation", "Coulomb"], href: "1ere_chapitre10_v2.html", formulas: ["F_g = G\\frac{m_1m_2}{r^2}", "F_e = k\\frac{|q_1q_2|}{r^2}"] },
+              { num: "Ch. 11", icon: "💧", title: "Description d'un fluide au repos", desc: "Pression, statique des fluides, poussée d'Archimède, loi de Mariotte.", tags: ["Fluides", "Pression"], href: "1ere_chapitre11_v2.html", formulas: ["P = P_0 + \\rho g h"] },
+              { num: "Ch. 12", icon: "🚀", title: "Mouvement d'un système", desc: "Chronophotographie, vecteurs vitesse et accélération, principe fondamental.", tags: ["Cinématique", "Newton"], href: "1ere_chapitre12_v2.html", formulas: ["\\vec{v}_i = \\frac{\\overrightarrow{M_{i-1}M_{i+1}}}{2\\Delta t}"] }
+            ]
+          },
+          {
+            kicker: "Thème 3",
+            title: "⚡ Énergie & électricité",
+            chapters: [
+              { num: "Ch. 13", icon: "🔋", title: "Aspects énergétiques — Électricité", desc: "Puissance et énergie électrique, effet Joule, bilan énergétique des circuits.", tags: ["Énergie", "Électricité"], href: "1ere_chapitre13_v2.html", formulas: ["P = U \\cdot I", "E = P \\cdot t"] },
+              { num: "Ch. 14", icon: "🌍", title: "Aspects énergétiques — Mécanique", desc: "Énergie cinétique, potentielle, mécanique. Travail des forces et conservation.", tags: ["Énergie", "Mécanique"], href: "1ere_chapitre14_v2.html", formulas: ["E_c = \\frac{1}{2}mv^2", "W = F \\cdot d \\cdot \\cos\\theta"] }
+            ]
+          },
+          {
+            kicker: "Thème 4",
+            title: "🌊 Ondes & optique",
+            chapters: [
+              { num: "Ch. 15", icon: "〰️", title: "Ondes mécaniques", desc: "Ondes transversales et longitudinales, célérité, retard temporel et déphasage.", tags: ["Ondes", "Célérité"], href: "1ere_chapitre15_v2.html", formulas: ["\\tau = \\frac{d}{v}", "\\lambda = vT"] },
+              { num: "Ch. 16", icon: "🔭", title: "Lentilles minces convergentes", desc: "Vergence, relations conjugaison, grandissement, construction des images.", tags: ["Optique", "Lentilles"], href: "1ere_chapitre16_v2.html", formulas: ["\\frac{1}{f'} = \\frac{1}{\\overline{OA'}} - \\frac{1}{\\overline{OA}}"] },
+              { num: "Ch. 17", icon: "🌈", title: "Couleurs et lumière", desc: "Dispersion, spectres d'émission et d'absorption, synthèses additive et soustractive.", tags: ["Couleurs", "Spectre"], href: "1ere_chapitre17_v2.html" },
+              { num: "Ch. 18", icon: "💡", title: "Optique ondulatoire", desc: "Diffraction, interférences, conditions constructives/destructives, réseau.", tags: ["Diffraction", "Interférences"], href: "1ere_chapitre18_v2.html", formulas: ["a\\sin\\theta = k\\lambda"] }
+            ]
+          }
+        ]
+      },
+      seconde: {
+        label: "Seconde Lycée",
+        lead: "Dans l'esprit d'Ibn al-Haytham, l'observation devient expérience, puis mesure, puis preuve.",
+        quote: "Une expérience bien pensée vaut mieux qu'une intuition brillante.",
+        quoteAuthor: "Ibn al-Haytham",
+        notebook: "livretSecondesPC_vEleve2026.pdf",
+        color: "#ffb86b",
+        rgb: "255, 184, 107",
+        icon: "θ",
+        themes: [
+          {
+            kicker: "Thème 0",
+            title: "🛠️ Outils & méthodes",
+            chapters: [
+              { num: "Ch. 00", icon: "🛠️", title: "Les outils en Physique-Chimie", desc: "Unités SI, chiffres significatifs, mesures, incertitudes, calcul littéral.", tags: ["Outils", "Unités"], href: "2nde_chapitre0_v2.html", formulas: ["[X] = M^a L^b T^c"] }
+            ]
+          },
+          {
+            kicker: "Thème 1",
+            title: "🧪 Constitution & transformations de la matière",
+            chapters: [
+              { num: "Ch. 01", icon: "📙", title: "Les corps purs et les mélanges", desc: "Espèces chimiques, corps purs, mélanges homogènes et hétérogènes, identification.", tags: ["Matière", "Chimie"], href: "2nde_chapitre1_v2.html" },
+              { num: "Ch. 03", icon: "🧪", title: "Les solutions aqueuses", desc: "Soluté, solvant, concentration en masse et molaire, préparation, dilution.", tags: ["Solutions", "Dilution"], href: "2nde_chapitre3_v2.html", formulas: ["C = \\frac{n}{V}", "C_1V_1 = C_2V_2"] },
+              { num: "Ch. 06", icon: "⚛️", title: "La matière à l'échelle microscopique", desc: "Modèle de l'atome, nuage électronique, tableau périodique, liaisons chimiques.", tags: ["Atome", "Électrons"], href: "2nde_chapitre6_v2.html", formulas: ["A = Z + N"] },
+              { num: "Ch. 07", icon: "🔬", title: "La stabilité des éléments chimiques", desc: "Règles du duet et de l'octet, ions monoatomiques, molécules stables.", tags: ["Stabilité", "Ions"], href: "2nde_chapitre7_v2.html" },
+              { num: "Ch. 10", icon: "🧮", title: "La quantité de matière", desc: "La mole, constante d'Avogadro, volume molaire, applications.", tags: ["Mole", "Avogadro"], href: "2nde_chapitre10_v2.html", formulas: ["n = \\frac{m}{M} = \\frac{N}{N_A}"] },
+              { num: "Ch. 11", icon: "🔥", title: "La transformation chimique", desc: "Réactifs, produits, équation-bilan, tableau d'avancement, réactif limitant.", tags: ["Réaction", "Avancement"], href: "2nde_chapitre11_v2.html" },
+              { num: "Ch. 15", icon: "☢️", title: "La transformation nucléaire", desc: "Noyaux, désintégrations radioactives, fission, fusion, conservation.", tags: ["Nucléaire", "Radioactivité"], href: "2nde_chapitre15_v2.html", formulas: ["E = \\Delta m \\cdot c^2"] },
+              { num: "Ch. 16", icon: "❄️", title: "La transformation physique", desc: "Changements d'état, courbes de chauffage, paliers de température.", tags: ["États", "Changement d'état"], href: "2nde_chapitre16_v2.html" }
+            ]
+          },
+          {
+            kicker: "Thème 2",
+            title: "🌊 Ondes & optique",
+            chapters: [
+              { num: "Ch. 02", icon: "🔊", title: "Émission et perception d'un son", desc: "Vibrations, fréquence, longueur d'onde, hauteur, timbre et niveau sonore.", tags: ["Son", "Fréquence"], href: "2nde_chapitre2_v2.html", formulas: ["\\lambda = \\frac{v}{f}"] },
+              { num: "Ch. 04", icon: "🌈", title: "Réflexion et réfraction de la lumière", desc: "Lois de Snell-Descartes, réflexion totale interne, indice optique.", tags: ["Optique", "Réfraction"], href: "2nde_chapitre4_v2.html", formulas: ["n_1\\sin i_1 = n_2\\sin i_2"] },
+              { num: "Ch. 05", icon: "🌈", title: "La dispersion de la lumière et les spectres", desc: "Lumière blanche, prismes, spectres continus et de raies, couleurs.", tags: ["Lumière", "Spectre"], href: "2nde_chapitre5_v2.html" },
+              { num: "Ch. 08", icon: "🔭", title: "Les lentilles minces convergentes", desc: "Vergence, conjugaison, grandissement, construction d'images.", tags: ["Lentilles", "Optique"], href: "2nde_chapitre8_v2.html", formulas: ["\\frac{1}{\\overline{OA'}} - \\frac{1}{\\overline{OA}} = \\frac{1}{f'}"] }
+            ]
+          },
+          {
+            kicker: "Thème 3",
+            title: "⚡ Électricité & mouvement",
+            chapters: [
+              { num: "Ch. 09", icon: "🔌", title: "Les lois de l'électricité", desc: "Circuits, lois de Kirchhoff, loi d'Ohm, puissance et énergie électrique.", tags: ["Électricité", "Kirchhoff"], href: "2nde_chapitre9_v2.html", formulas: ["U = RI", "P = UI"] },
+              { num: "Ch. 12", icon: "🚀", title: "Description d'un mouvement", desc: "Système, référentiel, trajectoire, vecteur vitesse, chronophotographie.", tags: ["Mouvement", "Vitesse"], href: "2nde_chapitre12_v2.html", formulas: ["v = \\frac{d}{\\Delta t}"] },
+              { num: "Ch. 13", icon: "⚙️", title: "Forces et mouvements", desc: "Actions mécaniques, modélisation vectorielle, force gravitationnelle.", tags: ["Forces", "Newton"], href: "2nde_chapitre13_v2.html", formulas: ["P = mg", "F = G\\frac{m_Am_B}{d^2}"] },
+              { num: "Ch. 14", icon: "🏃", title: "Le principe d'inertie", desc: "Lien entre forces et mouvement, état d'équilibre, référentiel galiléen.", tags: ["Inertie", "Équilibre"], href: "2nde_chapitre14_v2.html", formulas: ["\\sum\\vec{F}=\\vec{0} \\Leftrightarrow \\vec{v}=\\vec{cst}"] }
+            ]
+          }
+        ]
+      },
+      college3: {
+        label: "Troisième",
+        lead: "En 3e, les atomes, l'énergie et les forces physiques tracent le chemin vers le lycée.",
+        quote: "Relier l'atome, l'énergie et les forces avec un langage plus précis.",
+        quoteAuthor: "Al-Biruni",
+        notebook: "livret3e_vEleve2025.pdf",
+        color: "#7c8cff",
+        rgb: "124, 140, 255",
+        icon: "ρ",
+        themes: [
+          {
+            kicker: "Chimie & Physique",
+            title: "⚛️ Atome, énergie, forces et électricité",
+            chapters: [
+              { num: "Ch. 01", icon: "⚛️", title: "Constitution de l'atome et ions", desc: "Protons, neutrons, électrons, numéro atomique, isotopes, ions monoatomiques.", tags: ["Atome", "Ions"], href: "3eme_chapitre1_v2.html", formulas: ["A = Z + N"] },
+              { num: "Ch. 02", icon: "🚀", title: "Mouvement et vitesse", desc: "Description du mouvement, trajectoires, vitesse moyenne, unités.", tags: ["Vitesse", "Mouvement"], href: "3eme_chapitre2_v2.html", formulas: ["v = \\frac{d}{t}"] },
+              { num: "Ch. 03", icon: "⚡", title: "L'énergie, ses transferts et conversions", desc: "Différentes formes d'énergie, transferts thermiques, énergie électrique.", tags: ["Énergie", "Transferts"], href: "3eme_chapitre3_v2.html", formulas: ["E = P \\cdot t"] },
+              { num: "Ch. 04", icon: "🧪", title: "Acides, bases et pH", desc: "Solutions acides, basiques et neutres, échelle de pH, indicateurs colorés.", tags: ["pH", "Acides"], href: "3eme_chapitre4_v2.html", formulas: ["pH < 7 \\text{ (acide)}"] },
+              { num: "Ch. 05", icon: "🌍", title: "Interactions, forces et gravitation", desc: "Force gravitationnelle, poids, masse, différence masse/poids.", tags: ["Gravitation", "Poids"], href: "3eme_chapitre5_v2.html", formulas: ["P = m \\cdot g"] },
+              { num: "Ch. 06", icon: "💧", title: "La masse volumique", desc: "Masse volumique des liquides et solides, flottabilité, applications.", tags: ["Masse", "Volumique"], href: "3eme_chapitre6_v2.html", formulas: ["\\rho = \\frac{m}{V}"] },
+              { num: "Ch. 07", icon: "🔌", title: "Puissance et électricité", desc: "Puissance électrique, énergie, facture électrique, sécurité.", tags: ["Électricité", "Puissance"], href: "3eme_chapitre7_v2.html", formulas: ["P = U \\cdot I", "E = P \\cdot t"] }
+            ]
+          }
+        ]
+      },
+      college4: {
+        label: "Quatrième",
+        lead: "En 4e, l'esprit scientifique s'exerce sur la lumière, le son et l'électricité.",
+        quote: "Mesurer la lumière, le son et le courant comme les grands expérimentateurs.",
+        quoteAuthor: "Ibn al-Habbak",
+        notebook: "livret4e_vEleve2026.pdf",
+        color: "#a3ff5f",
+        rgb: "163, 255, 95",
+        icon: "ξ",
+        themes: [
+          {
+            kicker: "Électricité & Optique & Matière",
+            title: "〰️ Signaux, lumière, matière et énergie",
+            chapters: [
+              { num: "Ch. 01", icon: "🔌", title: "Électricité : rappels de 5e", desc: "Courant électrique, dipôles, circuits simples, tensions et intensités.", tags: ["Circuits", "Courant"], href: "4eme_chapitre1_v2.html" },
+              { num: "Ch. 02", icon: "🌑", title: "Ombre et lumière", desc: "Propagation rectiligne, sources, ombres propre et portée, phases de la Lune.", tags: ["Lumière", "Ombre"], href: "4eme_chapitre2_v2.html" },
+              { num: "Ch. 03", icon: "⚛️", title: "Matière et molécules", desc: "Atomes, molécules, représentation de Lewis simple, réactions chimiques.", tags: ["Molécules", "Atomes"], href: "4eme_chapitre3_v2.html" },
+              { num: "Ch. 04", icon: "⚡", title: "Lois de l'intensité et des tensions", desc: "Circuits série et dérivation, lois de Kirchhoff, loi d'Ohm.", tags: ["Électricité", "Ohm"], href: "4eme_chapitre4_v2.html", formulas: ["U = R \\cdot I"] },
+              { num: "Ch. 05", icon: "💡", title: "La vitesse de la lumière", desc: "Célérité de la lumière, distances astronomiques, année-lumière.", tags: ["Lumière", "Vitesse"], href: "4eme_chapitre5_v2.html", formulas: ["c = 3 \\times 10^8 \\text{ m/s}"] },
+              { num: "Ch. 06", icon: "🔥", title: "Combustions et pollution", desc: "Réactions de combustion, produits, dioxyde de carbone, enjeux climatiques.", tags: ["Combustion", "Chimie"], href: "4eme_chapitre6_v2.html" },
+              { num: "Ch. 07", icon: "🔌", title: "Loi d'Ohm et sécurité", desc: "Résistance, loi d'Ohm, puissance, sécurité électrique et protection.", tags: ["Ohm", "Sécurité"], href: "4eme_chapitre7_v2.html", formulas: ["U = R \\cdot I", "P = U^2/R"] },
+              { num: "Ch. 08", icon: "🎵", title: "Signaux sonores", desc: "Son, vibrations mécaniques, fréquence, longueur d'onde, applications.", tags: ["Son", "Fréquence"], href: "4eme_chapitre8_v2.html", formulas: ["\\lambda = \\frac{v}{f}"] }
+            ]
+          }
+        ]
+      },
+      college5: {
+        label: "Cinquième",
+        lead: "En 5e, l'élève commence son voyage scientifique par l'observation et la mesure des phénomènes simples.",
+        quote: "Le premier geste du savant est d'observer et de nommer ce qu'il perçoit.",
+        quoteAuthor: "Cercle d'El-Abili",
+        notebook: "livret5e_vEleve2026.pdf",
+        color: "#ff7aa2",
+        rgb: "255, 122, 162",
+        icon: "μ",
+        themes: [
+          {
+            kicker: "Matière, Circuits & Mouvement",
+            title: "🔌 Circuits électriques, mélanges et états",
+            chapters: [
+              { num: "Ch. 01", icon: "🔌", title: "Les circuits électriques", desc: "Circuits simples, générateurs, récepteurs, symboles, courant électrique.", tags: ["Circuits", "Courant"], href: "5eme_chapitre1_v2.html" },
+              { num: "Ch. 02", icon: "🔬", title: "Corps purs et mélanges", desc: "Corps purs simples et composés, mélanges homogènes et hétérogènes.", tags: ["Chimie", "Mélanges"], href: "5eme_chapitre2_v2.html" },
+              { num: "Ch. 03", icon: "💧", title: "Mélanges et séparation des constituants", desc: "Filtration, distillation, chromatographie, dissolution et solubilité.", tags: ["Séparation", "Filtration"], href: "5eme_chapitre3_v2.html" },
+              { num: "Ch. 04", icon: "❄️", title: "États et changements d'état", desc: "Solide, liquide, gazeux. Fusion, solidification, vaporisation, condensation.", tags: ["États", "Température"], href: "5eme_chapitre4_v2.html" },
+              { num: "Ch. 05", icon: "🚀", title: "Caractériser le mouvement", desc: "Mouvement ou repos, trajectoires, vitesse, référentiel d'observation.", tags: ["Mouvement", "Vitesse"], href: "5eme_chapitre5_v2.html", formulas: ["v = \\frac{d}{t}"] }
+            ]
+          }
+        ]
+      },
+      pcsi: {
+        label: "Passerelle PCSI",
+        lead: "Avec l'exigence d'Al-Biruni, le modèle devient précis : calculer, estimer l'erreur, valider les dimensions.",
+        quote: "Mesurer, c'est comprendre ce que le nombre autorise et jusqu'où il reste fiable.",
+        quoteAuthor: "Al-Biruni",
+        notebook: "tableau-periodique.pdf",
+        color: "#00ffb3",
+        rgb: "0, 255, 179",
+        icon: "ψ",
+        themes: [
+          {
+            kicker: "Outils de base",
+            title: "∑ Outils mathématiques & physiques",
+            chapters: [
+              { num: "PCSI-M00", icon: "∑", title: "Outils mathématiques", desc: "Équations différentielles, complexes, transformée de Laplace, développements limités.", tags: ["Maths", "Calcul"], href: "pcsi_outils_mathematiques.html", formulas: ["\\mathcal{L}[f'](p) = pF(p) - f(0^+)"] },
+              { num: "PCSI-M01", icon: "D", title: "Analyse dimensionnelle", desc: "Théorème de Buckingham, homogénéité des équations, grandeurs fondamentales SI.", tags: ["Dimensions", "SI"], href: "pcsi_analyse_dimensionnelle.html", formulas: ["[X] = M^a L^b T^c"] },
+              { num: "PCSI-M02", icon: "u", title: "Mesures et incertitudes", desc: "Incertitudes-types A et B, propagation des erreurs, chiffres significatifs.", tags: ["Incertitude", "Mesure"], href: "pcsi_mesures_incertitudes.html", formulas: ["u_c(y) = \\sqrt{\\sum_i \\left(\\frac{\\partial f}{\\partial x_i}\\right)^2 u^2(x_i)}"] }
+            ]
+          },
+          {
+            kicker: "Physique PCSI",
+            title: "⚡ Parcours Physique — 11 chapitres",
+            chapters: [
+              { num: "PCSI-P01", icon: "⚡", title: "Électrocinétique — Lois des circuits", desc: "Lois de Kirchhoff, dipôles, régime sinusoïdal, impédances complexes, résonance.", tags: ["Kirchhoff", "RLC"], href: "pcsi_chapitre1.html", formulas: ["\\underline{Z}_C = \\frac{1}{jC\\omega}", "H(j\\omega) = \\frac{\\underline{u}_s}{\\underline{u}_e}"] },
+              { num: "PCSI-P02", icon: "〰️", title: "Oscillateurs harmoniques & amortis", desc: "Libres, amortis, forcés. Facteur de qualité Q, résonance, diagrammes de Bode.", tags: ["Oscillateurs", "Bode"], href: "pcsi_chapitre2.html", formulas: ["\\ddot{x} + \\frac{\\omega_0}{Q}\\dot{x} + \\omega_0^2 x = F_{ext}"] },
+              { num: "PCSI-P03", icon: "📡", title: "Ondes électromagnétiques", desc: "Équations de Maxwell, propagation, polarisation, ondes planes progressive.", tags: ["Ondes EM", "Maxwell"], href: "pcsi_chapitre3.html", formulas: ["c = \\frac{1}{\\sqrt{\\mu_0 \\varepsilon_0}}"] },
+              { num: "PCSI-P04", icon: "🌈", title: "Optique ondulatoire avancée", desc: "Diffraction, interférences, réseaux, fentes de Young, cohérence.", tags: ["Diffraction", "Young"], href: "pcsi_chapitre4.html", formulas: ["a\\sin\\theta = p\\lambda"] },
+              { num: "PCSI-P05", icon: "📐", title: "Cinématique & repères", desc: "Coordonnées cartésiennes, polaires, cylindriques et sphériques. Référentiels non-galiléens.", tags: ["Cinématique", "Repères"], href: "pcsi_chapitre5.html", formulas: ["\\vec{a} = (\\ddot{r}-r\\dot{\\theta}^2)\\vec{u}_r + (r\\ddot{\\theta}+2\\dot{r}\\dot{\\theta})\\vec{u}_\\theta"] },
+              { num: "PCSI-P06", icon: "⚙️", title: "Dynamique du point — Théorèmes", desc: "PFD, théorèmes de l'énergie cinétique et du moment cinétique, forces centrales.", tags: ["Dynamique", "Énergie"], href: "pcsi_chapitre6.html", formulas: ["\\sum\\vec{F} = m\\vec{a}", "\\frac{d\\vec{L}}{dt} = \\vec{M}"] },
+              { num: "PCSI-P07", icon: "🌡️", title: "Thermodynamique approfondie", desc: "1er et 2nd principes, enthalpie, entropie, machines thermiques, cycles.", tags: ["Thermo", "Entropie"], href: "pcsi_chapitre7.html", formulas: ["\\Delta U = W + Q", "\\Delta S \\geq \\frac{\\delta Q}{T}"] },
+              { num: "PCSI-P08", icon: "🔭", title: "Optique géométrique", desc: "Lois de Descartes, miroirs, lentilles, systèmes optiques, conditions de Gauss.", tags: ["Optique", "Lentilles"], href: "pcsi_chapitre8.html", formulas: ["n_1\\sin i_1 = n_2\\sin i_2", "\\frac{1}{f'} = \\frac{1}{\\overline{OA'}}-\\frac{1}{\\overline{OA}}"] },
+              { num: "PCSI-P09", icon: "🔄", title: "Induction électromagnétique", desc: "Flux, force électromotrice, loi de Lenz-Faraday, auto-induction, transformateur.", tags: ["Induction", "Faraday"], href: "pcsi_chapitre9.html", formulas: ["e = -\\frac{d\\Phi}{dt}", "e = L\\frac{di}{dt}"] },
+              { num: "PCSI-P10", icon: "💧", title: "Statique des fluides et corps pur", desc: "Équation d'état, loi de Laplace, corps pur diphasé, diagramme P-T et P-V.", tags: ["Fluides", "Corps pur"], href: "pcsi_chapitre10.html", formulas: ["PV = nRT", "\\Delta P = \\frac{2\\gamma}{r}"] },
+              { num: "PCSI-P11", icon: "🌀", title: "Moment cinétique, forces centrales & solide", desc: "Moment cinétique, mouvement à force centrale, rotation du solide, moment d'inertie.", tags: ["Moment", "Solide"], href: "pcsi_chapitre11.html", formulas: ["J\\ddot{\\theta} = \\sum M", "T^2 = \\frac{4\\pi^2}{GM}a^3"] }
+            ]
+          },
+          {
+            kicker: "Chimie PCSI",
+            title: "⚗️ Parcours Chimie — 8 chapitres",
+            chapters: [
+              { num: "PCSI-C01", icon: "⚛️", title: "Structure électronique approfondie", desc: "Orbitales atomiques, configuration électronique, tableau périodique, liaison chimique.", tags: ["Structure", "Orbitales"], href: "pcsi_chimie1.html", formulas: ["E_n = -\\frac{13.6}{n^2} \\text{ eV}"] },
+              { num: "PCSI-C02", icon: "💎", title: "Liaison chimique & solides", desc: "Théorie VSEPR, hybridation, liaisons dans les solides, cristallographie.", tags: ["Liaison", "Cristaux"], href: "pcsi_chimie2.html" },
+              { num: "PCSI-C03", icon: "⚖️", title: "Équilibres chimiques approfondis", desc: "Constante d'équilibre, loi de Le Chatelier, équilibres en solution, pH.", tags: ["Équilibre", "Ka"], href: "pcsi_chimie3.html", formulas: ["\\Delta G^\\circ = -RT\\ln K", "pH = pK_a + \\log\\frac{[A^-]}{[HA]}"] },
+              { num: "PCSI-C04", icon: "🧬", title: "Chimie organique — Introduction", desc: "Nomenclature, mécanismes réactionnels SN1/SN2, stéréochimie, réactions.", tags: ["Organique", "Mécanismes"], href: "pcsi_chimie4.html" },
+              { num: "PCSI-C05", icon: "🧪", title: "Acido-basicité et dosages", desc: "pH, solutions tampons, dosages pH-métriques et conductimétriques, courbes.", tags: ["pH", "Dosage"], href: "pcsi_chimie5.html", formulas: ["pH = \\frac{1}{2}(pK_e + pK_a + \\log C)"] },
+              { num: "PCSI-C06", icon: "🔬", title: "Précipitation et complexation", desc: "Produit de solubilité Ks, formation de complexes, constante de formation.", tags: ["Précipitation", "Complexes"], href: "pcsi_chimie6.html", formulas: ["K_s = [M^{n+}][X^{m-}]"] },
+              { num: "PCSI-C07", icon: "🔋", title: "Oxydoréduction et électrochimie", desc: "Potentiel d'électrode, équation de Nernst, piles, électrolyse, diagrammes.", tags: ["Redox", "Nernst"], href: "pcsi_chimie7.html", formulas: ["E = E^\\circ + \\frac{RT}{nF}\\ln\\frac{[Ox]}{[Red]}"] },
+              { num: "PCSI-C08", icon: "⏱️", title: "Cinétique chimique et thermochimie", desc: "Lois de vitesse, ordres, Arrhenius, enthalpie de réaction, Hess.", tags: ["Cinétique", "Thermochimie"], href: "pcsi_chimie8.html", formulas: ["k = A e^{-E_a/RT}", "\\Delta H^\\circ_r = \\sum \\Delta H^\\circ_f(prod) - \\sum \\Delta H^\\circ_f(réac)"] }
+            ]
+          }
+        ]
+      }
+    };
+
+    const SUBJECTS = [
+      { id: "all", label: "Tout afficher", icon: "∞", tags: [] },
+      { id: "mecanique", label: "Mécanique", icon: "⚙️", tags: ["Newton", "Vecteurs", "Gravitation", "Champ E", "Kepler", "Orbite", "Bernoulli", "Fluides", "Mouvement", "Forces", "Inertie", "Poids"] },
+      { id: "chimie", label: "Chimie", icon: "⚗️", tags: ["pH", "Ka", "Tampon", "Titrage", "Étalonnage", "Cinétique", "Radioactivité", "Qr", "Équilibre", "Piles", "Électrolyse", "Synthèse", "Organique", "Matière", "Mole", "Redox", "Bilan", "Lewis", "Polarité", "Cohésion"] },
+      { id: "electricite", label: "Électricité", icon: "⚡", tags: ["RC", "Condensateur", "Kirchhoff", "RLC", "Circuits", "Courant", "Ohm"] },
+      { id: "ondes", label: "Ondes & Optique", icon: "🔭", tags: ["UV-Vis", "IR", "RMN", "Célérité", "Ondes", "Diffraction", "Doppler", "Interférence", "Optique", "Lentilles", "Photon", "Quantum", "Lumière", "Ombre", "Fréquence", "Son"] },
+      { id: "thermo", label: "Thermodynamique", icon: "🌡️", tags: ["1er principe", "Enthalpie", "Conduction", "Rayonnement", "Pression", "Température", "Eau"] }
+    ];
+
+    const TICKER = [
+      { f: "pH = -\\log[H_3O^+]", t: "Acido-basicité" },
+      { f: "T^2 = \\frac{4\\pi^2}{GM} a^3", t: "Loi de Kepler III" },
+      { f: "N(t) = N_0 \\cdot e^{-\\lambda t}", t: "Décroissance radioactive" },
+      { f: "\\Delta U = W + Q", t: "Premier principe thermodynamique" },
+      { f: "\\underline{Z}_C = \\frac{1}{jC\\omega}", t: "Impédance condensateur" },
+      { f: "P + \\frac{1}{2}\\rho v^2 + \\rho g h = Cte", t: "Théorème de Bernoulli" },
+      { f: "U = R \\cdot I", t: "Loi d'Ohm" },
+      { f: "n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2", t: "Snell-Descartes" }
+    ];
+  </script>
+
+  <!-- JS Engine (Orrery, Network, Desktop, Search) -->
+  <script>
+    let activeLevel = "terminale";
+    let activeSubject = "all";
+    let viewMode = "astrolabe";
+    let isDarkTheme = true;
+
+    // Core Init
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+      initMeshBackground();
+      initLevelNav();
+      initTicker();
+      initSubjectFilters();
+      initOrrery();
+      initConstellation();
+      initDesktop();
+      initSearchPalette();
+      
+      // Event for UI Mode toggle
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const target = btn.dataset.view;
+          switchViewMode(target);
+        });
+      });
+
+      // Sidebar Collapsed toggle
+      document.getElementById('dock-toggle-btn').addEventListener('click', () => {
+        document.getElementById('workspace-container').classList.toggle('dock-collapsed');
+      });
+
+      // Theme toggle
+      document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
+
+      // Heritage modal toggle
+      document.getElementById('heritage-toggle-btn').addEventListener('click', openHeritageModal);
+
+      // Keyboard listener
+      document.addEventListener('keydown', handleKeyboard);
+    });
+
+    function initApp() {
+      selectLevel(activeLevel);
+    }
+
+    // Swtich views between Orrery, Constellation, Desktop
+    function switchViewMode(mode) {
+      viewMode = mode;
+      document.querySelectorAll('.panel-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.getElementById(`view-${mode}`).classList.remove('active');
+      
+      // Force active view
+      const targetView = document.getElementById(`view-${mode}`);
+      if (targetView) targetView.classList.add('active');
+
+      if (mode === 'constellation') {
+        resizeConstellationCanvas();
+      }
+    }
+
+    // Set styling variables for selected levels
+    function selectLevel(id) {
+      activeLevel = id;
+      const levelData = DATA[id];
+      if (!levelData) return;
+
+      // Update active links in Sidebar
+      document.querySelectorAll('.level-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.id === id);
+      });
+
+      // Update accent color variables
+      document.documentElement.style.setProperty('--accent', levelData.color);
+      document.documentElement.style.setProperty('--accent-rgb', levelData.rgb);
+      document.documentElement.style.setProperty('--accent-glow', `rgba(${levelData.rgb}, 0.25)`);
+
+      // Update sidebar motto
+      const mottoBox = document.getElementById('dock-motto-box');
+      mottoBox.innerHTML = `"${levelData.quote}" <cite>${levelData.quoteAuthor}</cite>`;
+
+      // Update Orrery HUD Panel
+      document.getElementById('hud-level-name').textContent = levelData.label;
+      document.getElementById('hud-level-quote').innerHTML = `"${levelData.quote}" <cite>${levelData.quoteAuthor}</cite>`;
+      document.getElementById('orrery-center-seal').textContent = levelData.icon;
+
+      // Notebook links
+      const notebookFilename = levelData.notebook;
+      const notebookBtn = document.getElementById('hud-level-notebook-link');
+      if (notebookFilename) {
+        notebookBtn.style.display = 'flex';
+        notebookBtn.href = `./${notebookFilename}`;
+        document.getElementById('hud-notebook-filename').textContent = decodeURIComponent(notebookFilename);
+      } else {
+        notebookBtn.style.display = 'none';
+      }
+
+      // Update central seal style
+      const seal = document.getElementById('orrery-center-seal');
+      seal.style.boxShadow = `0 0 35px rgba(${levelData.rgb}, 0.4), inset 0 0 15px rgba(0,0,0,0.5)`;
+
+      // Sync active rings in Orrery
+      document.querySelectorAll('.orrery-ring').forEach(ring => {
+        ring.classList.toggle('active', ring.dataset.id === id);
+      });
+
+      // Retypeset math formulas
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
+    }
+
+    // Render left navigation
+    function initLevelNav() {
+      const navContainer = document.getElementById('dock-level-nav');
+      navContainer.innerHTML = '';
+      
+      Object.keys(DATA).forEach((key, index) => {
+        const lvl = DATA[key];
+        const item = document.createElement('button');
+        item.className = `level-link ${key === activeLevel ? 'active' : ''}`;
+        item.dataset.id = key;
+        item.style.setProperty('--lvl-color', lvl.color);
+        item.style.setProperty('--lvl-rgb', lvl.rgb);
+        
+        item.innerHTML = `
+          <div class="level-icon" style="background: linear-gradient(135deg, ${lvl.color}, #fff);">${lvl.icon}</div>
+          <div class="level-meta">
+            <strong>${lvl.label}</strong>
+            <span>${lvl.themes.length} thèmes</span>
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          selectLevel(key);
+          // Highlight ring
+          const ring = document.querySelector(`.orrery-ring[data-id="${key}"]`);
+          if (ring) {
+            highlightRing(ring);
+          }
+        });
+        
+        navContainer.appendChild(item);
+      });
+    }
+
+    // Equation Ticker
+    function initTicker() {
+      const list = document.getElementById('equation-ticker-list');
+      list.innerHTML = '';
+      
+      // Double the array for seamless scrolling loop
+      const tickerItems = [...TICKER, ...TICKER];
+      tickerItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'ticker-item';
+        div.innerHTML = `<span>$${item.f}$</span><strong>${item.t}</strong>`;
+        list.appendChild(div);
+      });
+    }
+
+    // Theme toggler
+    function toggleTheme() {
+      isDarkTheme = !isDarkTheme;
+      document.documentElement.setAttribute('data-theme', isDarkTheme ? 'dark' : 'light');
+      document.getElementById('theme-toggle-btn').textContent = isDarkTheme ? '🌙' : '☀️';
+    }
+
+    // Heritage Modal controllers
+    function openHeritageModal() {
+      document.getElementById('heritage-modal').classList.add('open');
+    }
+    function closeHeritageModal() {
+      document.getElementById('heritage-modal').classList.remove('open');
+    }
+
+    // Keyboard handlers
+    function handleKeyboard(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openSearchPalette();
+        return;
+      }
+      if (e.key === 'Escape') {
+        closeSearchPalette();
+        closeSidebar();
+        closeHeritageModal();
+        return;
+      }
+      // Direct shortcuts
+      if (document.activeElement.tagName === 'INPUT') return;
+
+      if (e.key.toLowerCase() === 't') {
+        toggleTheme();
+      }
+      if (e.key.toLowerCase() === 'd') {
+        document.getElementById('workspace-container').classList.toggle('dock-collapsed');
+      }
+
+      // 1-7 school levels
+      const levelKeys = Object.keys(DATA);
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= levelKeys.length) {
+        selectLevel(levelKeys[num - 1]);
+      }
+    }
+
+    // Floating Sidebar for selected chapter details
+    function openSidebar(chapter, levelId) {
+      const sidebar = document.getElementById('chapter-details-sidebar');
+      const level = DATA[levelId];
+      
+      // Style setting
+      sidebar.style.setProperty('--lvl-color', level.color);
+      
+      document.getElementById('det-level-label').textContent = level.label;
+      document.getElementById('det-chapter-title').textContent = chapter.title;
+      document.getElementById('det-chapter-num').textContent = chapter.num;
+      document.getElementById('det-chapter-desc').textContent = chapter.desc;
+      
+      // Tags
+      const tagsContainer = document.getElementById('det-chapter-tags');
+      tagsContainer.innerHTML = '';
+      (chapter.tags || []).forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'card-tag';
+        span.textContent = tag;
+        tagsContainer.appendChild(span);
+      });
+      
+      // Formulas
+      const formulaList = document.getElementById('det-formula-list');
+      formulaList.innerHTML = '';
+      if (chapter.formulas && chapter.formulas.length > 0) {
+        chapter.formulas.forEach(form => {
+          const fbox = document.createElement('div');
+          fbox.className = 'formula-box';
+          fbox.textContent = `$$${form}$$`;
+          formulaList.appendChild(fbox);
+        });
+      } else {
+        formulaList.innerHTML = '<div style="font-size:0.8rem;color:var(--muted);text-align:center;">Aucune formule répertoriée</div>';
+      }
+
+      // Study resources
+      const resourceList = document.getElementById('det-resource-list');
+      resourceList.innerHTML = '';
+
+      // 1. Web Interactive Poly (HTML)
+      if (chapter.href) {
+        const a1 = document.createElement('a');
+        a1.className = 'doc-link';
+        a1.href = `./${chapter.href}`;
+        a1.target = '_blank';
+        a1.innerHTML = `
+          <span class="doc-icon">🌐</span>
+          <div class="doc-text">
+            <strong>Fiche interactive de cours</strong>
+            <span>Accéder au support web</span>
+          </div>
+          <span class="doc-btn">→</span>
+        `;
+        resourceList.appendChild(a1);
+      }
+
+      // 2. Completed PDF Course
+      if (chapter.pdf) {
+        const a2 = document.createElement('a');
+        a2.className = 'doc-link';
+        a2.href = `./${chapter.pdf}`;
+        a2.target = '_blank';
+        a2.innerHTML = `
+          <span class="doc-icon">📕</span>
+          <div class="doc-text">
+            <strong>Cours complété (PDF)</strong>
+            <span>${decodeURIComponent(chapter.pdf)}</span>
+          </div>
+          <span class="doc-btn">↓</span>
+        `;
+        resourceList.appendChild(a2);
+      }
+
+      // 3. Student Notebook
+      if (level.notebook) {
+        const a3 = document.createElement('a');
+        a3.className = 'doc-link';
+        a3.href = `./${level.notebook}`;
+        a3.target = '_blank';
+        a3.innerHTML = `
+          <span class="doc-icon">📓</span>
+          <div class="doc-text">
+            <strong>Cahier d'activités (PDF)</strong>
+            <span>${decodeURIComponent(level.notebook)}</span>
+          </div>
+          <span class="doc-btn">↓</span>
+        `;
+        resourceList.appendChild(a3);
+      }
+      
+      sidebar.classList.add('open');
+      
+      // Retypeset
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formulaList]);
+      }
+    }
+
+    function closeSidebar() {
+      document.getElementById('chapter-details-sidebar').classList.remove('open');
+    }
+
+    document.getElementById('details-sidebar-close-btn').addEventListener('click', closeSidebar);
+
+    // Filter Chips implementation
+    function initSubjectFilters() {
+      const filterBox = document.getElementById('subject-filter-box');
+      filterBox.innerHTML = '';
+      
+      SUBJECTS.forEach(subj => {
+        const chip = document.createElement('button');
+        chip.className = `subject-chip ${subj.id === activeSubject ? 'active' : ''}`;
+        chip.dataset.id = subj.id;
+        chip.innerHTML = `${subj.icon} ${subj.label}`;
+        
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.subject-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          activeSubject = subj.id;
+          
+          // Re-render views
+          renderOrreryNodes();
+          renderDesktopWindowContents();
+        });
+        
+        filterBox.appendChild(chip);
+      });
+    }
+
+    // Helper: matches subject tags
+    function chapterMatchesSubject(ch, subjId) {
+      if (subjId === 'all') return true;
+      const subj = SUBJECTS.find(s => s.id === subjId);
+      if (!subj || !subj.tags.length) return true;
+      const chTags = ch.tags || [];
+      return subj.tags.some(st => chTags.some(ct => ct.toLowerCase().includes(st.toLowerCase())));
+    }
+  </script>
+
+  <!-- ASTROLABE (ORRERY) ENGINE -->
+  <script>
+    let orreryOffsetAngles = {}; // Angle offset for each level ring
+    let orbitsConfig = {}; // Concentric rings radii config
+
+    function initOrrery() {
+      const wrapper = document.getElementById('orrery-wrapper');
+      
+      // Establish radii dynamically
+      const levels = Object.keys(DATA);
+      const totalLevels = levels.length;
+      const minRadius = 70;
+      const maxRadius = 260;
+      const step = (maxRadius - minRadius) / (totalLevels - 1);
+      
+      levels.forEach((levelKey, idx) => {
+        const radius = minRadius + idx * step;
+        orbitsConfig[levelKey] = radius;
+        orreryOffsetAngles[levelKey] = Math.random() * Math.PI * 2; // random start angle
+
+        // Create HTML Ring
+        const ring = document.createElement('div');
+        ring.className = `orrery-ring ${levelKey === activeLevel ? 'active' : ''}`;
+        ring.dataset.id = levelKey;
+        ring.style.width = `${radius * 2}px`;
+        ring.style.height = `${radius * 2}px`;
+        ring.style.setProperty('--ring-color', DATA[levelKey].color);
+        ring.style.setProperty('--ring-rgb', DATA[levelKey].rgb);
+
+        // Ring Drag / Rotate interaction
+        let isDragging = false;
+        let startAngle = 0;
+        let initialOffset = 0;
+
+        ring.addEventListener('mousedown', (e) => {
+          if (e.target !== ring && !e.target.classList.contains('orrery-node')) return;
+          isDragging = true;
+          const rect = wrapper.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+          initialOffset = orreryOffsetAngles[levelKey];
+          ring.style.cursor = 'grabbing';
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const rect = wrapper.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+          orreryOffsetAngles[levelKey] = initialOffset + (currentAngle - startAngle);
+          
+          // Render chapters immediately
+          positionOrreryNodes(levelKey);
+          drawOrreryConnectingLines();
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            ring.style.cursor = 'grab';
+          }
+        });
+
+        // Click on Ring selects the school level
+        ring.addEventListener('click', (e) => {
+          if (e.target === ring) {
+            selectLevel(levelKey);
+          }
+        });
+
+        // Hover effect
+        ring.addEventListener('mouseenter', () => {
+          ring.classList.add('hovered');
+        });
+        ring.addEventListener('mouseleave', () => {
+          ring.classList.remove('hovered');
+        });
+
+        // Wheel rotate effect
+        ring.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const speed = 0.08;
+          const direction = e.deltaY > 0 ? 1 : -1;
+          orreryOffsetAngles[levelKey] += direction * speed;
+          positionOrreryNodes(levelKey);
+          drawOrreryConnectingLines();
+        });
+
+        wrapper.appendChild(ring);
+      });
+
+      renderOrreryNodes();
+      
+      // Resize canvas underlay
+      const canvas = document.getElementById('orrery-lines-canvas');
+      const resizeOrreryCanvas = () => {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        drawOrreryConnectingLines();
+      };
+      window.addEventListener('resize', resizeOrreryCanvas);
+      resizeOrreryCanvas();
+    }
+
+    // Render stars on the rings
+    function renderOrreryNodes() {
+      // Clear old nodes
+      document.querySelectorAll('.orrery-node').forEach(n => n.remove());
+
+      const wrapper = document.getElementById('orrery-wrapper');
+      
+      Object.keys(DATA).forEach((levelKey) => {
+        const level = DATA[levelKey];
+        
+        // Flatten chapters
+        const chapters = [];
+        level.themes.forEach(theme => {
+          theme.chapters.forEach(ch => {
+            if (chapterMatchesSubject(ch, activeSubject)) {
+              chapters.push(ch);
+            }
+          });
+        });
+
+        const totalChapters = chapters.length;
+        if (totalChapters === 0) return;
+
+        // Place chapter nodes
+        chapters.forEach((ch, idx) => {
+          const node = document.createElement('div');
+          node.className = `orrery-node ${ch.title === activeChapterTitle ? 'active' : ''}`;
+          node.dataset.level = levelKey;
+          node.dataset.chIndex = idx;
+          node.style.setProperty('--node-color', level.color);
+          
+          // Node hover: floating formulas
+          node.addEventListener('mouseenter', (e) => {
+            node.classList.add('hovered');
+            if (ch.formulas && ch.formulas.length > 0) {
+              showFormulaTooltip(e, ch.title, ch.formulas[0]);
+            }
+            // Highlight connected path
+            drawOrreryConnectingLines(node);
+          });
+          
+          node.addEventListener('mouseleave', () => {
+            node.classList.remove('hovered');
+            hideFormulaTooltip();
+            drawOrreryConnectingLines();
+          });
+
+          node.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectLevel(levelKey);
+            activeChapterTitle = ch.title;
+            // Update node selection visual state
+            document.querySelectorAll('.orrery-node').forEach(n => n.classList.remove('active'));
+            node.classList.add('active');
+            
+            openSidebar(ch, levelKey);
+          });
+
+          wrapper.appendChild(node);
+        });
+
+        positionOrreryNodes(levelKey);
+      });
+      
+      drawOrreryConnectingLines();
+    }
+
+    let activeChapterTitle = "";
+
+    // Math positioning for node stars on rings
+    function positionOrreryNodes(levelKey) {
+      const radius = orbitsConfig[levelKey];
+      const offset = orreryOffsetAngles[levelKey];
+      
+      // Grab all nodes for this level
+      const nodes = document.querySelectorAll(`.orrery-node[data-level="${levelKey}"]`);
+      const total = nodes.length;
+      if (total === 0) return;
+
+      nodes.forEach((node, idx) => {
+        const angle = offset + (idx * (Math.PI * 2 / total));
+        const x = 300 + radius * Math.cos(angle);
+        const y = 300 + radius * Math.sin(angle);
+        node.style.left = `${x}px`;
+        node.style.top = `${y}px`;
+        
+        // Store computed absolute coordinates relative to Orrery container
+        node.dataset.computedX = x;
+        node.dataset.computedY = y;
+      });
+    }
+
+    // Draw coordinate connection lines in Astrolabe
+    function drawOrreryConnectingLines(highlightNode = null) {
+      const canvas = document.getElementById('orrery-lines-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const wrapper = document.getElementById('orrery-wrapper');
+      const wRect = wrapper.getBoundingClientRect();
+      const cRect = canvas.getBoundingClientRect();
+
+      // Center coords in canvas system
+      const cx = (wRect.left + wRect.width / 2) - cRect.left;
+      const cy = (wRect.top + wRect.height / 2) - cRect.top;
+
+      // Draw faint default grid lines on canvas
+      ctx.strokeStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)';
+      ctx.lineWidth = 1;
+      
+      // Horizontal / Vertical crosshair
+      ctx.beginPath();
+      ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
+      ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height);
+      ctx.stroke();
+
+      // Laser path to hovered node
+      if (highlightNode) {
+        const nRect = highlightNode.getBoundingClientRect();
+        const nx = (nRect.left + nRect.width / 2) - cRect.left;
+        const ny = (nRect.top + nRect.height / 2) - cRect.top;
+        
+        const lvlColor = DATA[highlightNode.dataset.level].color;
+        const rgb = DATA[highlightNode.dataset.level].rgb;
+        
+        // Glowing laser line
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = `rgba(${rgb}, 0.15)`;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = lvlColor;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Glowing circle path
+        const dist = Math.sqrt((nx - cx)*(nx - cx) + (ny - cy)*(ny - cy));
+        ctx.beginPath();
+        ctx.arc(cx, cy, dist, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${rgb}, 0.25)`;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    function highlightRing(ringElement) {
+      ringElement.classList.add('active');
+      setTimeout(() => {
+        ringElement.classList.remove('active');
+        // Reselect current level state
+        const curRing = document.querySelector(`.orrery-ring[data-id="${activeLevel}"]`);
+        if (curRing) curRing.classList.add('active');
+      }, 1000);
+    }
+  </script>
+
+  <!-- CONSTELLATION MAP PHYSICS ENGINE -->
+  <script>
+    let constellationNodes = [];
+    let constellationLinks = [];
+    let constZoom = 1;
+    let constPanX = 0;
+    let constPanY = 0;
+    let isConstPanning = false;
+    let constStartPanX = 0;
+    let constStartPanY = 0;
+    
+    function initConstellation() {
+      const canvas = document.getElementById('constellation-canvas');
+      
+      canvas.addEventListener('mousedown', (e) => {
+        isConstPanning = true;
+        constStartPanX = e.clientX - constPanX;
+        constStartPanY = e.clientY - constPanY;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isConstPanning) {
+          // Track mouse position for constellation physics
+          const rect = canvas.getBoundingClientRect();
+          mouseX = (e.clientX - rect.left - constPanX) / constZoom;
+          mouseY = (e.clientY - rect.top - constPanY) / constZoom;
+          return;
+        }
+        constPanX = e.clientX - constStartPanX;
+        constPanY = e.clientY - constStartPanY;
+      });
+
+      document.addEventListener('mouseup', () => {
+        isConstPanning = false;
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomIntensity = 0.08;
+        const mouseX = e.clientX - canvas.getBoundingClientRect().left;
+        const mouseY = e.clientY - canvas.getBoundingClientRect().top;
+        
+        const wheel = e.deltaY < 0 ? 1 : -1;
+        const zoomFactor = Math.exp(wheel * zoomIntensity);
+        
+        constPanX = mouseX - (mouseX - constPanX) * zoomFactor;
+        constPanY = mouseY - (mouseY - constPanY) * zoomFactor;
+        constZoom *= zoomFactor;
+        constZoom = Math.max(0.4, Math.min(2.5, constZoom)); // clamp zoom
+      });
+
+      // Canvas Clicks
+      canvas.addEventListener('click', (e) => {
+        // If they dragged, don't trigger click action
+        if (Math.abs(e.clientX - constStartPanX - constPanX) > 5) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left - constPanX) / constZoom;
+        const my = (e.clientY - rect.top - constPanY) / constZoom;
+        
+        // Find clicked star node
+        let clickedNode = null;
+        for (let node of constellationNodes) {
+          const dist = Math.sqrt((node.x - mx)**2 + (node.y - my)**2);
+          if (dist < 25) {
+            clickedNode = node;
+            break;
+          }
+        }
+        
+        if (clickedNode && clickedNode.chapter) {
+          selectLevel(clickedNode.levelId);
+          openSidebar(clickedNode.chapter, clickedNode.levelId);
+        }
+      });
+
+      buildConstellationData();
+      
+      // Start loop
+      requestAnimationFrame(constellationLoop);
+    }
+
+    let mouseX = -999;
+    let mouseY = -999;
+
+    function resizeConstellationCanvas() {
+      const canvas = document.getElementById('constellation-canvas');
+      if (!canvas) return;
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+
+    // Build knowledge graph network database
+    function buildConstellationData() {
+      constellationNodes = [];
+      constellationLinks = [];
+      
+      const themeCenters = {}; // Theme title -> Center node index
+      let nodeIdx = 0;
+      
+      Object.keys(DATA).forEach((levelKey) => {
+        const lvl = DATA[levelKey];
+        
+        lvl.themes.forEach((theme) => {
+          const themeKey = `${levelKey}|${theme.title}`;
+          
+          // Create theme center node
+          const themeNode = {
+            id: nodeIdx++,
+            x: Math.random() * 800 + 100,
+            y: Math.random() * 600 + 100,
+            vx: 0, vy: 0,
+            r: 16,
+            color: lvl.color,
+            rgb: lvl.rgb,
+            label: theme.title.replace(/[^a-zA-Z0-9\s]/g, '').trim(),
+            isTheme: true
+          };
+          constellationNodes.push(themeNode);
+          themeCenters[themeKey] = themeNode;
+          
+          // Chapters
+          theme.chapters.forEach((ch) => {
+            const chNode = {
+              id: nodeIdx++,
+              x: themeNode.x + (Math.random() - 0.5) * 150,
+              y: themeNode.y + (Math.random() - 0.5) * 150,
+              vx: 0, vy: 0,
+              r: 9,
+              color: lvl.color,
+              rgb: lvl.rgb,
+              label: ch.num,
+              chapter: ch,
+              levelId: levelKey,
+              isTheme: false
+            };
+            constellationNodes.push(chNode);
+            
+            // Link chapter star to theme core
+            constellationLinks.push({
+              source: themeNode,
+              target: chNode,
+              distance: 120
+            });
+          });
+        });
+      });
+    }
+
+    // Constellation Canvas loop (Physics + Draw)
+    function constellationLoop() {
+      if (viewMode !== 'constellation') {
+        requestAnimationFrame(constellationLoop);
+        return;
+      }
+      
+      const canvas = document.getElementById('constellation-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Apply Physics
+      applyConstellationPhysics();
+      
+      // Draw grid zoom/pan space
+      ctx.save();
+      ctx.translate(constPanX, constPanY);
+      ctx.scale(constZoom, constZoom);
+      
+      // 1. Draw Links
+      constellationLinks.forEach(link => {
+        ctx.beginPath();
+        ctx.moveTo(link.source.x, link.source.y);
+        ctx.lineTo(link.target.x, link.target.y);
+        ctx.strokeStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // 2. Draw Stars
+      constellationNodes.forEach(node => {
+        const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 2.5);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.3, node.color);
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        
+        // Hover node stars
+        const dist = Math.sqrt((node.x - mouseX)**2 + (node.y - mouseY)**2);
+        if (dist < 22) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.r * 4, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${node.rgb}, 0.25)`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          
+          // Draw text label tooltip
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          const text = node.isTheme ? node.label : (node.chapter ? node.chapter.title : '');
+          ctx.fillText(text, node.x, node.y - node.r - 8);
+        } else if (node.isTheme) {
+          // Draw faint labels for themes
+          ctx.fillStyle = isDarkTheme ? 'rgba(255,255,255,0.35)' : 'rgba(15,23,42,0.45)';
+          ctx.font = '500 10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(node.label.slice(0, 20) + '...', node.x, node.y - node.r - 6);
+        }
+      });
+      
+      ctx.restore();
+      
+      requestAnimationFrame(constellationLoop);
+    }
+
+    // Force-directed layout physics
+    function applyConstellationPhysics() {
+      const kForce = 0.05; // Spring force constant
+      const kRepulsion = 1500; // Repulsion constant
+      const kGravity = 0.96; // Damping/friction
+      
+      // 1. Repulsion between all node stars
+      for (let i = 0; i < constellationNodes.length; i++) {
+        const nodeA = constellationNodes[i];
+        for (let j = i + 1; j < constellationNodes.length; j++) {
+          const nodeB = constellationNodes[j];
+          const dx = nodeB.x - nodeA.x;
+          const dy = nodeB.y - nodeA.y;
+          const distSq = dx*dx + dy*dy + 0.1;
+          const dist = Math.sqrt(distSq);
+          
+          if (dist < 180) {
+            const force = kRepulsion / distSq;
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            
+            nodeA.vx -= fx;
+            nodeA.vy -= fy;
+            nodeB.vx += fx;
+            nodeB.vy += fy;
+          }
+        }
+      }
+
+      // 2. Attraction along lines (Spring force)
+      constellationLinks.forEach(link => {
+        const dx = link.target.x - link.source.x;
+        const dy = link.target.y - link.source.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) + 0.1;
+        const delta = dist - link.distance;
+        const force = delta * kForce;
+        
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        
+        link.source.vx += fx;
+        link.source.vy += fy;
+        link.target.vx -= fx;
+        link.target.vy -= fy;
+      });
+
+      // 3. Mouse attraction (gravity distortion)
+      if (mouseX !== -999 && mouseY !== -999) {
+        constellationNodes.forEach(node => {
+          const dx = mouseX - node.x;
+          const dy = mouseY - node.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) + 0.1;
+          
+          if (dist < 150) {
+            const force = (150 - dist) * 0.015;
+            node.vx += (dx / dist) * force;
+            node.vy += (dy / dist) * force;
+          }
+        });
+      }
+
+      // 4. Update velocity and position, friction/damping
+      constellationNodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        node.vx *= kGravity;
+        node.vy *= kGravity;
+        
+        // Keep inside bounds
+        node.x = Math.max(50, Math.min(1200, node.x));
+        node.y = Math.max(50, Math.min(800, node.y));
+      });
+    }
+  </script>
+
+  <!-- WEBOS CLASS GLASS DESKTOP ENGINE -->
+  <script>
+    let windowsCount = 0;
+    let activeWindowEl = null;
+
+    function initDesktop() {
+      // Create Dock Icons
+      const dockContainer = document.getElementById('desktop-dock-icons');
+      dockContainer.innerHTML = '';
+      
+      Object.keys(DATA).forEach(levelKey => {
+        const lvl = DATA[levelKey];
+        const icon = document.createElement('button');
+        icon.className = 'dock-icon';
+        icon.style.background = `linear-gradient(135deg, ${lvl.color}, #fff)`;
+        icon.style.setProperty('--lvl-color', lvl.color);
+        icon.textContent = lvl.icon;
+        icon.title = lvl.label;
+        icon.dataset.level = levelKey;
+        
+        icon.addEventListener('click', () => {
+          openDesktopWindow(levelKey);
+        });
+        
+        dockContainer.appendChild(icon);
+      });
+    }
+
+    function openDesktopWindow(levelKey) {
+      const level = DATA[levelKey];
+      let win = document.getElementById(`window-${levelKey}`);
+      
+      // Update dock icon visual state
+      document.querySelectorAll('.dock-icon').forEach(icon => {
+        if (icon.dataset.level === levelKey) {
+          icon.classList.add('active');
+        }
+      });
+      
+      if (!win) {
+        // Create new window
+        win = document.createElement('div');
+        win.className = 'desktop-window';
+        win.id = `window-${levelKey}`;
+        win.style.setProperty('--window-accent', level.color);
+        win.style.setProperty('--window-rgb', level.rgb);
+        
+        // Center position dynamically
+        const viewport = document.getElementById('desktop-viewport');
+        const offset = 30 * (windowsCount % 5);
+        win.style.left = `${(viewport.clientWidth - 780)/2 + offset}px`;
+        win.style.top = `${80 + offset}px`;
+        windowsCount++;
+        
+        win.innerHTML = `
+          <div class="window-header" id="win-header-${levelKey}">
+            <div class="window-title">
+              <span style="color:${level.color}">${level.icon}</span> ${level.label}
+            </div>
+            <div class="window-actions">
+              <button class="win-btn win-min" onclick="minimizeWindow('${levelKey}')"></button>
+              <button class="win-btn win-max" onclick="maximizeWindow('${levelKey}')"></button>
+              <button class="win-btn win-close" onclick="closeWindow('${levelKey}')"></button>
+            </div>
+          </div>
+          <div class="window-body" id="win-body-${levelKey}"></div>
+          <div class="window-resize"></div>
+        `;
+        
+        viewport.appendChild(win);
+        makeWindowInteractive(win, levelKey);
+      }
+      
+      // Toggle visibility
+      win.classList.add('open');
+      focusWindow(win);
+      
+      // Populate inside cards
+      renderDesktopWindowContent(levelKey);
+    }
+
+    // Windows dragging and resizing code
+    function makeWindowInteractive(win, levelKey) {
+      const header = document.getElementById(`win-header-${levelKey}`);
+      
+      // Drag Window
+      let isDragging = false;
+      let startX, startY;
+      let initLeft, initTop;
+      
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('win-btn')) return;
+        isDragging = true;
+        focusWindow(win);
+        startX = e.clientX;
+        startY = e.clientY;
+        initLeft = win.offsetLeft;
+        initTop = win.offsetTop;
+        document.body.style.cursor = 'move';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        win.style.left = `${initLeft + dx}px`;
+        win.style.top = `${initTop + dy}px`;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          document.body.style.cursor = 'default';
+        }
+      });
+      
+      // Focus on window click
+      win.addEventListener('mousedown', () => {
+        focusWindow(win);
+      });
+      
+      // Resizing Window
+      const resizeHandle = win.querySelector('.window-resize');
+      let isResizing = false;
+      let initWidth, initHeight;
+      
+      resizeHandle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        focusWindow(win);
+        startX = e.clientX;
+        startY = e.clientY;
+        initWidth = win.clientWidth;
+        initHeight = win.clientHeight;
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        win.style.width = `${initWidth + dx}px`;
+        win.style.height = `${initHeight + dy}px`;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isResizing = false;
+      });
+    }
+
+    function focusWindow(win) {
+      document.querySelectorAll('.desktop-window').forEach(w => {
+        w.classList.remove('active');
+      });
+      win.classList.add('active');
+      activeWindowEl = win;
+    }
+
+    function closeWindow(levelKey) {
+      const win = document.getElementById(`window-${levelKey}`);
+      if (win) {
+        win.classList.remove('open');
+      }
+      // Remove dock dot
+      document.querySelectorAll('.dock-icon').forEach(icon => {
+        if (icon.dataset.level === levelKey) {
+          icon.classList.remove('active');
+        }
+      });
+    }
+
+    function minimizeWindow(levelKey) {
+      closeWindow(levelKey); // Simply close for now
+    }
+    
+    function maximizeWindow(levelKey) {
+      const win = document.getElementById(`window-${levelKey}`);
+      if (!win) return;
+      if (win.style.width === '100%') {
+        win.style.width = '780px';
+        win.style.height = '480px';
+        win.style.left = '10%';
+        win.style.top = '10%';
+      } else {
+        win.style.width = '100%';
+        win.style.height = 'calc(100% - 68px)';
+        win.style.left = '0';
+        win.style.top = '0';
+      }
+    }
+
+    // Populate levels window content dynamically
+    function renderDesktopWindowContent(levelKey) {
+      const body = document.getElementById(`win-body-${levelKey}`);
+      if (!body) return;
+      
+      const level = DATA[levelKey];
+      body.innerHTML = '';
+      
+      level.themes.forEach(theme => {
+        const block = document.createElement('div');
+        block.className = 'theme-block';
+        
+        // Filter chapters
+        const filteredChapters = theme.chapters.filter(ch => chapterMatchesSubject(ch, activeSubject));
+        if (filteredChapters.length === 0) return;
+
+        block.innerHTML = `<div class="theme-title">${theme.kicker} : ${theme.title}</div>`;
+        
+        const grid = document.createElement('div');
+        grid.className = 'chapter-grid';
+        
+        filteredChapters.forEach(ch => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style.setProperty('--level-color', level.color);
+          card.style.setProperty('--level-rgb', level.rgb);
+          
+          card.innerHTML = `
+            <div class="card-num">${ch.num}</div>
+            <div class="card-title">${ch.title}</div>
+            <div class="card-desc">${ch.desc}</div>
+          `;
+          
+          // Clik on card triggers sidebar information
+          card.addEventListener('click', () => {
+            selectLevel(levelKey);
+            openSidebar(ch, levelKey);
+          });
+          
+          grid.appendChild(card);
+        });
+        
+        block.appendChild(grid);
+        body.appendChild(block);
+      });
+      
+      if (body.innerHTML === '') {
+        body.innerHTML = '<div style="color:var(--muted);text-align:center;padding:40px;">Aucun chapitre pour ce filtre.</div>';
+      }
+    }
+
+    function renderDesktopWindowContents() {
+      Object.keys(DATA).forEach(levelKey => {
+        renderDesktopWindowContent(levelKey);
+      });
+    }
+  </script>
+
+  <!-- SEARCH PALETTE (CTRL+K ENGINE) -->
+  <script>
+    let selectedSearchIndex = -1;
+    let searchResults = [];
+
+    function initSearchPalette() {
+      const searchBtn = document.getElementById('search-trigger-btn');
+      searchBtn.addEventListener('click', openSearchPalette);
+      
+      const overlay = document.getElementById('cmd-search-overlay');
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          closeSearchPalette();
+        }
+      });
+      
+      const input = document.getElementById('cmd-search-input');
+      input.addEventListener('input', (e) => {
+        performSearch(e.target.value);
+      });
+
+      // Palette Keyboard Navigation (arrows + enter)
+      input.addEventListener('keydown', (e) => {
+        const items = document.querySelectorAll('.cmd-item');
+        if (items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedSearchIndex = (selectedSearchIndex + 1) % items.length;
+          highlightSearchItem(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedSearchIndex = (selectedSearchIndex - 1 + items.length) % items.length;
+          highlightSearchItem(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (selectedSearchIndex >= 0 && selectedSearchIndex < items.length) {
+            items[selectedSearchIndex].click();
+          }
+        }
+      });
+    }
+
+    function openSearchPalette() {
+      document.getElementById('cmd-search-overlay').classList.add('open');
+      const input = document.getElementById('cmd-search-input');
+      input.value = '';
+      input.focus();
+      performSearch('');
+    }
+
+    function closeSearchPalette() {
+      document.getElementById('cmd-search-overlay').classList.remove('open');
+    }
+
+    function highlightSearchItem(items) {
+      items.forEach((item, index) => {
+        item.classList.toggle('selected', index === selectedSearchIndex);
+        if (index === selectedSearchIndex) {
+          item.scrollIntoView({ block: 'nearest' });
+        }
+      });
+    }
+
+    // Weighted Search Engine
+    function performSearch(query) {
+      const container = document.getElementById('cmd-search-results');
+      container.innerHTML = '';
+      selectedSearchIndex = -1;
+      
+      if (!query.trim()) {
+        // Render quick links by default
+        renderDefaultSearchSuggestions(container);
+        return;
+      }
+
+      const q = query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      searchResults = [];
+
+      Object.keys(DATA).forEach(levelKey => {
+        const lvl = DATA[levelKey];
+        lvl.themes.forEach(theme => {
+          theme.chapters.forEach(ch => {
+            let score = 0;
+            
+            const titleNorm = ch.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const descNorm = ch.desc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const tags = ch.tags || [];
+            
+            if (titleNorm.includes(q)) score += 10;
+            if (descNorm.includes(q)) score += 3;
+            tags.forEach(t => {
+              if (t.toLowerCase().includes(q)) score += 5;
+            });
+            if (ch.formulas) {
+              ch.formulas.forEach(form => {
+                if (form.toLowerCase().includes(q)) score += 6;
+              });
+            }
+
+            if (score > 0) {
+              searchResults.push({
+                chapter: ch,
+                levelKey: levelKey,
+                levelLabel: lvl.label,
+                levelColor: lvl.color,
+                score: score
+              });
+            }
+          });
+        });
+      });
+
+      // Sort by score
+      searchResults.sort((a, b) => b.score - a.score);
+
+      if (searchResults.length === 0) {
+        container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px;font-size:0.85rem;">Aucune notion trouvée...</div>';
+        return;
+      }
+
+      const listWrap = document.createElement('div');
+      searchResults.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cmd-item';
+        
+        div.innerHTML = `
+          <div class="cmd-item-icon" style="background-color:${item.levelColor}">${item.chapter.icon}</div>
+          <div class="cmd-item-text">
+            <strong>${item.chapter.title}</strong>
+            <span>${item.levelLabel} · ${item.chapter.num}</span>
+          </div>
+          <div class="cmd-item-badge">${item.chapter.tags ? item.chapter.tags[0] : 'Sciences'}</div>
+        `;
+        
+        div.addEventListener('click', () => {
+          selectLevel(item.levelKey);
+          closeSearchPalette();
+          
+          // Switch to workspace view mode or open Desktop window directly
+          if (viewMode === 'bureau') {
+            openDesktopWindow(item.levelKey);
+          }
+          openSidebar(item.chapter, item.levelKey);
+        });
+
+        listWrap.appendChild(div);
+      });
+      container.appendChild(listWrap);
+    }
+
+    function renderDefaultSearchSuggestions(container) {
+      container.innerHTML = `<div class="cmd-group-title">Raccourcis de niveaux</div>`;
+      
+      const listWrap = document.createElement('div');
+      Object.keys(DATA).forEach(levelKey => {
+        const lvl = DATA[levelKey];
+        const div = document.createElement('div');
+        div.className = 'cmd-item';
+        div.innerHTML = `
+          <div class="cmd-item-icon" style="background-color:${lvl.color}">${lvl.icon}</div>
+          <div class="cmd-item-text">
+            <strong>Ouvrir le niveau ${lvl.label}</strong>
+            <span>${lvl.lead}</span>
+          </div>
+        `;
+        div.addEventListener('click', () => {
+          selectLevel(levelKey);
+          closeSearchPalette();
+        });
+        listWrap.appendChild(div);
+      });
+      container.appendChild(listWrap);
+    }
+  </script>
+
+  <!-- BACKGROUND NEURAL MESH & STARFIELD ENGINE -->
+  <script>
+    function initMeshBackground() {
+      const canvas = document.getElementById('background-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+      let stars = [];
+      let meshNodes = [];
+
+      const resize = () => {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        
+        // Spawn stars for sky twinkling
+        stars = Array.from({ length: 90 }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.5,
+          twinkleSpeed: 0.01 + Math.random() * 0.02,
+          alpha: Math.random()
+        }));
+
+        // Spawn neural nodes
+        const nodesCount = Math.min(60, Math.floor((W * H) / 25000));
+        meshNodes = Array.from({ length: nodesCount }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.2 + 0.3
+        }));
+      };
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      let mouseX = -999;
+      let mouseY = -999;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Background Render Loop
+      const loop = () => {
+        ctx.clearRect(0, 0, W, H);
+        
+        // Render 1: Twinkling Starfield
+        ctx.fillStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.4)' : 'rgba(15, 23, 42, 0.2)';
+        stars.forEach(star => {
+          star.alpha += star.twinkleSpeed;
+          if (star.alpha > 1 || star.alpha < 0) {
+            star.twinkleSpeed = -star.twinkleSpeed;
+          }
+          ctx.save();
+          ctx.globalAlpha = Math.abs(star.alpha);
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Render 2: Interactive Neural Mesh
+        const lvlColorRgb = DATA[activeLevel] ? DATA[activeLevel].rgb : "0, 229, 255";
+        
+        meshNodes.forEach(node => {
+          // Physics
+          node.x += node.vx;
+          node.y += node.vy;
+          if (node.x < 0 || node.x > W) node.vx = -node.vx;
+          if (node.y < 0 || node.y > H) node.vy = -node.vy;
+          
+          // Mouse gravity pull
+          if (mouseX !== -999) {
+            const dx = mouseX - node.x;
+            const dy = mouseY - node.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 120) {
+              const pull = (120 - dist) * 0.0003;
+              node.vx += dx * pull;
+              node.vy += dy * pull;
+            }
+          }
+          
+          // Friction limit
+          node.vx = Math.max(-0.5, Math.min(0.5, node.vx));
+          node.vy = Math.max(-0.5, Math.min(0.5, node.vy));
+
+          // Draw node star
+          ctx.fillStyle = `rgba(${lvlColorRgb}, 0.25)`;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Draw node links
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < meshNodes.length; i++) {
+          for (let j = i + 1; j < meshNodes.length; j++) {
+            const dx = meshNodes[j].x - meshNodes[i].x;
+            const dy = meshNodes[j].y - meshNodes[i].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            if (d < 160) {
+              ctx.strokeStyle = `rgba(${lvlColorRgb}, ${(1 - d/160) * 0.12})`;
+              ctx.beginPath();
+              ctx.moveTo(meshNodes[i].x, meshNodes[i].y);
+              ctx.lineTo(meshNodes[j].x, meshNodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(loop);
+      };
+
+      loop();
+    }
+  </script>
+
+  <!-- FLOATING TOOLTIP HOVER FORMULA ENGINE -->
+  <script>
+    function showFormulaTooltip(event, title, formulaTex) {
+      const tip = document.getElementById('formula-hover-tip');
+      const titleEl = document.getElementById('ftip-title');
+      const formulaEl = document.getElementById('ftip-formula-render');
+      
+      titleEl.textContent = title;
+      formulaEl.innerHTML = `$$${formulaTex}$$`;
+      
+      // Position
+      tip.style.left = `${event.clientX + 15}px`;
+      tip.style.top = `${event.clientY + 15}px`;
+      tip.classList.add('visible');
+      
+      // MathJax re-render
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([formulaEl]);
+      }
+    }
+
+    function hideFormulaTooltip() {
+      document.getElementById('formula-hover-tip').classList.remove('visible');
+    }
+  </script>
+</body>
+</html>
