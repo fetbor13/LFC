@@ -219,6 +219,191 @@ th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
 th { background: rgba(255,255,255,0.05); color: var(--active); }
 </style>
 
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
 </head>
 <body>
 <canvas id="starfield"></canvas>
