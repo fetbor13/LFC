@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminale Spé · Chapitre 1 — Réactions acido-basiques (V2)</title>
+  
+  <!-- Fonts & MathJax -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' },
+      startup: { typeset: false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+  <style>
+    /* ─── CSS DESIGN SYSTEM ─── */
+    :root {
+      --accent: #00e5ff;
+      --accent-rgb: 0, 229, 255;
+      --accent-glow: rgba(0, 229, 255, 0.25);
+      
+      --bg: #030816;
+      --bg-panel: rgba(8, 14, 36, 0.65);
+      --border: rgba(0, 229, 255, 0.15);
+      --border-hover: rgba(0, 229, 255, 0.4);
+      --ink: #e2e8f0;
+      --muted: #64748b;
+      --soft: #cbd5e1;
+      --dark: #071026;
+      --card-bg: rgba(8, 14, 36, 0.8);
+      --radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      --rail-width: 290px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f3f7fd;
+      --bg-panel: rgba(255, 255, 255, 0.75);
+      --border: rgba(0, 180, 200, 0.2);
+      --border-hover: rgba(0, 180, 200, 0.5);
+      --ink: #0f172a;
+      --muted: #475569;
+      --soft: #334155;
+      --dark: #e2ebf8;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --accent: #00a4bd;
+      --accent-rgb: 0, 164, 189;
+      --accent-glow: rgba(0, 164, 189, 0.15);
+    }
+
+    /* ─── RESET & BASE ─── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    a:hover {
+      text-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* ─── BACKGROUND EFFECTS ─── */
+    .aurora-container {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      filter: blur(100px);
+      opacity: 0.3;
+    }
+    .aurora-blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+    }
+    .ab1 {
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      top: -10%;
+      left: -10%;
+    }
+    .ab2 {
+      background: radial-gradient(circle, #0055ff 0%, transparent 70%);
+      bottom: -10%;
+      right: -10%;
+    }
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ─── APP SHELL ─── */
+    #app-container {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex: 1;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── SIDEBAR RAIL ─── */
+    .rail {
+      width: var(--rail-width);
+      background: var(--bg-panel);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      gap: 16px;
+      overflow-y: auto;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .brand-mark {
+      background: linear-gradient(135deg, var(--accent), #0055ff);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .brand-text h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .brand-text p {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .level-card {
+      background: rgba(var(--accent-rgb), 0.05);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .level-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .badge {
+      background: var(--accent);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .micro {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .nav-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+    .tablist {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--soft);
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 500;
+      transition: var(--transition);
+      width: 100%;
+    }
+    .tab:hover {
+      background: rgba(var(--accent-rgb), 0.06);
+      color: #fff;
+      border-color: rgba(var(--accent-rgb), 0.1);
+    }
+    .tab.active {
+      background: rgba(var(--accent-rgb), 0.12);
+      border-color: var(--border);
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: inset 0 0 8px rgba(var(--accent-rgb), 0.05);
+    }
+    .tab-icon {
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+    .tab-text {
+      flex: 1;
+    }
+
+    .rail-footer {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .tools {
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: grid;
+      place-items: center;
+      transition: var(--transition);
+    }
+    .icon-btn:hover {
+      background: rgba(var(--accent-rgb), 0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .back-home-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .back-home-btn:hover {
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* ─── MAIN CONTAINER ─── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ─── HEADER / HERO ─── */
+    .hero {
+      background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.04) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 30px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .hero-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .hero-info h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .hero-info h2 span {
+      background: linear-gradient(135deg, var(--accent) 0%, #0077ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 0.85rem;
+      color: var(--soft);
+      line-height: 1.6;
+      max-width: 650px;
+      margin-top: 6px;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 12px;
+      margin-left: 24px;
+      flex-shrink: 0;
+    }
+    .metric {
+      background: var(--bg-panel);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      text-align: center;
+      min-width: 80px;
+    }
+    .metric b {
+      display: block;
+      font-size: 1.25rem;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+    .metric span {
+      font-size: 0.55rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── SCROLLABLE PANELS ─── */
+    .panels {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 48px 60px;
+      position: relative;
+    }
+    .panel {
+      display: none;
+    }
+    .panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── GLASSMORPHIC CONTENT CARDS ─── */
+    .content-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: var(--transition);
+    }
+    .content-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.06);
+    }
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 14px;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 20px 0 10px 0;
+    }
+    p {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--soft);
+      margin-bottom: 12px;
+    }
+    strong {
+      color: #fff;
+    }
+    [data-theme="light"] strong {
+      color: #000;
+    }
+
+    /* ─── INFO BOXES & WARN BOXES ─── */
+    .info-box, .warn-box {
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin: 16px 0;
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+    .info-box {
+      background: rgba(0, 229, 255, 0.04);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      color: #7dd3fc;
+    }
+    [data-theme="light"] .info-box {
+      background: rgba(0, 164, 189, 0.05);
+      border-color: rgba(0, 164, 189, 0.2);
+      color: #075985;
+    }
+    .warn-box {
+      background: rgba(251, 191, 36, 0.04);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      color: #fde047;
+    }
+    [data-theme="light"] .warn-box {
+      background: rgba(180, 83, 9, 0.05);
+      border-color: rgba(180, 83, 9, 0.2);
+      color: #78350f;
+    }
+
+    /* ─── MATH / FORMULA BOXES ─── */
+    .key-formula {
+      position: relative;
+      background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(0, 85, 255, 0.08));
+      border: 1.5px solid var(--accent);
+      border-radius: 12px;
+      padding: 18px 24px;
+      margin: 20px 0;
+      box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.1);
+    }
+    .key-formula::before {
+      content: '★ À retenir';
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: linear-gradient(90deg, var(--accent), #0055ff);
+      color: #000;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .key-formula p {
+      margin: 0;
+      font-size: 1rem;
+      color: #fff;
+    }
+    [data-theme="light"] .key-formula p {
+      color: #000;
+    }
+
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .formula-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+    .formula-box .label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .formula-box .expr {
+      font-size: 1.05rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .formula-box .unit {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ─── DATA TABLES ─── */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin: 16px 0;
+    }
+    table.data-table th {
+      background: rgba(var(--accent-rgb), 0.1);
+      color: var(--accent);
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+    table.data-table td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      color: var(--soft);
+    }
+    table.data-table tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    /* ─── STEPS LIST ─── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .steps li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      counter-increment: step;
+      font-size: 0.85rem;
+      color: var(--soft);
+    }
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #000;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ─── ACCORDIONS ─── */
+    .accordion {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 16px 0;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .accordion summary {
+      cursor: pointer;
+      padding: 12px 18px;
+      background: rgba(var(--accent-rgb), 0.03);
+      font-weight: 600;
+      font-size: 0.85rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--ink);
+    }
+    .accordion summary::after {
+      content: '▼';
+      font-size: 0.65rem;
+      color: var(--muted);
+      transition: transform 0.2s;
+    }
+    .accordion[open] summary::after {
+      transform: rotate(180deg);
+    }
+    .accordion .acc-body {
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.15);
+      font-size: 0.85rem;
+    }
+
+    /* ─── INTERACTIVE DIAGRAMS / VISUALIZERS ─── */
+    .visualizer-card {
+      background: linear-gradient(135deg, rgba(8, 14, 36, 0.9), rgba(4, 8, 22, 0.95));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+    .vis-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .vis-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .vis-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .vis-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vis-slider-wrap label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .vis-slider {
+      -webkit-appearance: none;
+      width: 130px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+    .vis-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .vis-split {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    @media(max-width: 768px) {
+      .vis-split {
+        grid-template-columns: 1fr;
+      }
+    }
+    .vis-canvas-container {
+      width: 100%;
+      height: 220px;
+      position: relative;
+    }
+    .vis-canvas {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      display: block;
+    }
+    .beaker-container {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      min-height: 220px;
+    }
+    .beaker-svg {
+      width: 100px;
+      height: 120px;
+    }
+
+    /* ─── pH CALCULATOR WIDGET ─── */
+    .calc-card {
+      background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.04), rgba(0, 85, 255, 0.04));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .calc-card h4 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    [data-theme="light"] .calc-card h4 {
+      color: #000;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .calc-field label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .calc-field select, .calc-field input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    [data-theme="light"] .calc-field select, [data-theme="light"] .calc-field input {
+      background: #fff;
+      color: #000;
+    }
+    .calc-field select:focus, .calc-field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .calc-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .calc-btn:hover {
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .calc-result-box {
+      margin-top: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      border: 1px dashed var(--border);
+      padding: 16px;
+    }
+    .calc-result-val {
+      font-size: 1.25rem;
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .calc-explain {
+      font-size: 0.78rem;
+      color: var(--soft);
+      line-height: 1.5;
+    }
+
+    /* ─── BRØNSTED MECHANISM INTERACTIVE ANIMATOR ─── */
+    .mech-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .mech-canvas-container {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .mech-svg {
+      width: 100%;
+      max-width: 480px;
+      height: 140px;
+    }
+    .mech-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .mech-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+    .mech-btn {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .mech-btn:hover {
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: var(--accent);
+    }
+    .mech-btn.active {
+      background: var(--accent);
+      color: #000;
+    }
+    .mech-desc-box {
+      font-size: 0.8rem;
+      color: var(--soft);
+      line-height: 1.5;
+      background: rgba(255,255,255,0.02);
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      flex: 1;
+      min-width: 250px;
+    }
+
+    /* ─── FLASHCARDS ─── */
+    .fc-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+    }
+    .fc-card {
+      width: 100%;
+      max-width: 500px;
+      height: 200px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .fc-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+    .fc-card.flipped .fc-inner {
+      transform: rotateY(180deg);
+    }
+    .fc-front, .fc-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .fc-front {
+      background: linear-gradient(135deg, #081026, #020716);
+      color: #fff;
+    }
+    .fc-back {
+      background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), rgba(0, 85, 255, 0.08));
+      color: var(--accent);
+      transform: rotateY(180deg);
+      border-color: var(--accent);
+    }
+    .fc-front p, .fc-back p {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .fc-indicator {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+    .fc-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fc-btn {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .fc-btn:hover {
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: var(--accent);
+    }
+
+    /* ─── QUIZ CARDS ─── */
+    .quiz-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .quiz-q {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .quiz-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .quiz-opt {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--soft);
+      transition: var(--transition);
+    }
+    .quiz-opt:hover {
+      background: rgba(var(--accent-rgb), 0.05);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .quiz-opt.correct {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: #10b981;
+      color: #34d399;
+      font-weight: 700;
+    }
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+      color: #f87171;
+    }
+    .quiz-explain {
+      background: rgba(16, 185, 129, 0.03);
+      border-left: 3px solid #10b981;
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--soft);
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* ─── EXERCISES CARDS ─── */
+    .exo-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .exo-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .exo-head {
+      background: linear-gradient(90deg, var(--dark), rgba(var(--accent-rgb), 0.15));
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .exo-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .exo-meta {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .exo-body {
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .exo-body ol {
+      padding-left: 18px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--soft);
+    }
+    .exo-btn {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .exo-btn:hover {
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: var(--accent);
+    }
+    .exo-answer {
+      margin-top: 14px;
+      background: rgba(16, 185, 129, 0.03);
+      border-left: 3px solid #10b981;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--soft);
+      display: none;
+    }
+
+    /* ─── CHATBOT HUB WIDGET ─── */
+    .chat-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .chat-bot-btn {
+      background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .chat-bot-btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+    .chat-bot-btn .bot-icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .chat-bot-btn .bot-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .prompt-generator {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .prompt-selects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .prompt-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .prompt-field label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .prompt-field select {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .prompt-output-box {
+      position: relative;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 100px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--soft);
+      white-space: pre-wrap;
+    }
+    .copy-prompt-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .copy-prompt-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-nav-btn {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .footer-nav-btn:hover {
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Backgrounds -->
+  <div class="aurora-container">
+    <div class="aurora-blob ab1"></div>
+    <div class="aurora-blob ab2"></div>
+  </div>
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- App Shell -->
+  <div id="app-container">
+    
+    <!-- Sidebar Rail -->
+    <aside class="rail">
+      <div class="brand">
+        <div class="brand-mark">PC</div>
+        <div class="brand-text">
+          <h1>PhysiChem</h1>
+          <p>M. Borsali · LFC</p>
+        </div>
+      </div>
+
+      <div class="level-card">
+        <div class="level-row">
+          <span class="badge">Terminale Spé</span>
+          <span class="micro">Ch. 01 · V2</span>
+        </div>
+        <div class="progress-bar"><span id="masteryBar" style="width: 0%;"></span></div>
+        <div class="micro" style="margin-top: 6px; display: flex; justify-content: space-between;">
+          <span>Progression</span>
+          <strong id="progressText" style="color:var(--accent);">0%</strong>
+        </div>
+      </div>
+
+      <div class="nav-label">Sommaire</div>
+      <nav class="tablist" role="tablist">
+        <button class="tab active" data-tab="cours">
+          <span class="tab-icon">📘</span>
+          <span class="tab-text">Cours complet</span>
+        </button>
+        <button class="tab" data-tab="formules">
+          <span class="tab-icon">🧮</span>
+          <span class="tab-text">Formules & Calculs</span>
+        </button>
+        <button class="tab" data-tab="mecanismes">
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-text">Mécanismes & Virages</span>
+        </button>
+        <button class="tab" data-tab="visualiseur">
+          <span class="tab-icon">📊</span>
+          <span class="tab-text">Visualiseur & Becher</span>
+        </button>
+        <button class="tab" data-tab="exercices">
+          <span class="tab-icon">📝</span>
+          <span class="tab-text">Exercices (Entraînement & Bac)</span>
+        </button>
+        <button class="tab" data-tab="chatbot">
+          <span class="tab-icon">🤖</span>
+          <span class="tab-text">IA & Prompts Hub</span>
+        </button>
+        <button class="tab" data-tab="prepa">
+          <span class="tab-icon">🎓</span>
+          <span class="tab-text">Passerelle PCSI</span>
+        </button>
+      </nav>
+
+      <div class="rail-footer">
+        <div class="tools">
+          <button class="icon-btn" id="themeBtn" title="Changer de thème">🌙</button>
+          <button class="icon-btn" onclick="window.print()" title="Imprimer le cours">⎙</button>
+        </div>
+        <button class="back-home-btn" onclick="window.location.href='./index.html'">
+          🛸 Retour à l'Astrolabe
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Section -->
+    <main class="main">
+      
+      <!-- Top Header / Hero -->
+      <section class="hero">
+        <div class="hero-info">
+          <div class="eyebrow">Thème 1 · Constitution et transformations de la matière</div>
+          <h2>Équilibrages <span>Acido-Basiques</span></h2>
+          <p class="hero-desc">Autoprotolyse de l'eau, pH des solutions aqueuses, constante d'acidité $K_a$, diagrammes de prédominance et solutions tampons. Version 2 enrichie avec simulateurs et assistants d'entraînement.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="metric"><b>4</b><span>Notions Clés</span></div>
+          <div class="metric"><b>8</b><span>Relations</span></div>
+          <div class="metric"><b>8</b><span>Exercices</span></div>
+        </div>
+      </section>
+
+      <!-- Scrollable content panels -->
+      <div class="panels" id="panelsRoot">
+        
+        <!-- ================= PANEL 1: COURS ================= -->
+        <div class="panel active" id="tab-cours">
+          
+          <div class="content-card">
+            <div class="section-title">I — Les couples acide-base selon Brønsted</div>
+            
+            <h3>1. Définitions</h3>
+            <p>Selon Johannes Brønsted :</p>
+            <ul>
+              <li>Un <strong>acide</strong> est une espèce chimique capable de <strong>libérer un proton</strong> $\text{H}^+$.</li>
+              <li>Une <strong>base</strong> est une espèce chimique capable de <strong>capter un proton</strong> $\text{H}^+$.</li>
+            </ul>
+            <p>Un couple acide-base est constitué de deux espèces $\text{HA}$ et $\text{A}^-$ qui s'échangent un proton selon la demi-équation :</p>
+            <div class="key-formula">
+              <p>$$\text{HA} \rightleftharpoons \text{A}^- + \text{H}^+$$</p>
+            </div>
+            
+            <h3>2. Ampholytes (ou espèces amphotères)</h3>
+            <p>Un <strong>ampholyte</strong> est une espèce qui se comporte comme l'acide d'un couple et la base d'un autre.</p>
+            <div class="info-box">
+              Exemple : L'eau $\text{H}_2\text{O}$ appartient aux couples $\text{H}_3\text{O}^+/\text{H}_2\text{O}$ (base) et $\text{H}_2\text{O}/\text{OH}^-$ (acide). L'ion hydrogénocarbonate $\text{HCO}_3^-$ appartient aux couples $\text{CO}_2, \text{H}_2\text{O}/\text{HCO}_3^-$ et $\text{HCO}_3^-/\text{CO}_3^{2-}$.
+            </div>
+          </div>
+
+          <div class="content-card">
+            <div class="section-title">II — Autoprotolyse de l'eau et constante $K_e$</div>
+            <p>L'eau pure subit une réaction d'auto-ionisation limitée appelée <strong>autoprotolyse de l'eau</strong> :</p>
+            <div class="key-formula">
+              <p>$$2\,\text{H}_2\text{O}_{(l)} \rightleftharpoons \text{H}_3\text{O}^+_{(aq)} + \text{OH}^-_{(aq)}$$</p>
+            </div>
+            <p>La constante d'équilibre associée est le <strong>produit ionique de l'eau</strong>, noté $K_e$ :</p>
+            <div class="key-formula">
+              <p>$$K_e = [\text{H}_3\text{O}^+]_\text{éq} \cdot [\text{OH}^-]_\text{éq} \qquad \text{et} \quad \text{p}K_e = -\log(K_e)$$</p>
+            </div>
+            <div class="info-box">
+              À $25^\circ\text{C}$, $K_e = 1{,}0 \times 10^{-14}$ ($\text{p}K_e = 14$). Ce produit est toujours vérifié dans toutes les solutions aqueuses.
+            </div>
+            <p>Le <strong>pH</strong> (potentiel hydrogène) est défini par :</p>
+            <div class="key-formula">
+              <p>$$\text{pH} = -\log\left(\frac{[\text{H}_3\text{O}^+]}{C^\circ}\right) \quad \iff \quad [\text{H}_3\text{O}^+] = C^\circ \cdot 10^{-\text{pH}}$$</p>
+            </div>
+          </div>
+
+          <div class="content-card">
+            <div class="section-title">III — La constante d'acidité $K_a$</div>
+            <p>La réaction d'un acide faible $\text{HA}$ avec l'eau est limitée :</p>
+            <div class="key-formula">
+              <p>$$\text{HA}_{(aq)} + \text{H}_2\text{O}_{(l)} \rightleftharpoons \text{A}^-_{(aq)} + \text{H}_3\text{O}^+_{(aq)}$$</p>
+            </div>
+            <p>La constante d'équilibre de cette réaction s'appelle la <strong>constante d'acidité $K_a$</strong> du couple :</p>
+            <div class="key-formula">
+              <p>$$K_a = \frac{[\text{A}^-]_\text{éq} \cdot [\text{H}_3\text{O}^+]_\text{éq}}{[\text{HA}]_\text{éq}} \qquad \text{et} \quad \text{p}K_a = -\log(K_a)$$</p>
+            </div>
+            <p>Plus le $\text{p}K_a$ est petit (ou $K_a$ grand), plus l'acide est fort (se dissocie facilement dans l'eau).</p>
+          </div>
+
+          <div class="content-card">
+            <div class="section-title">IV — Prédominance et Indicateurs Colorés</div>
+            <p>En reliant le pH et le $\text{p}K_a$, on obtient la relation d'Henderson-Hasselbalch :</p>
+            <div class="key-formula">
+              <p>$$\text{pH} = \text{p}K_a + \log\left(\frac{[\text{A}^-]_\text{éq}}{[\text{HA}]_\text{éq}}\right)$$</p>
+            </div>
+            <ul>
+              <li>Si $\text{pH} < \text{p}K_a$ : la forme acide $\text{HA}$ prédomine ($[\text{HA}] > [\text{A}^-]$).</li>
+              <li>Si $\text{pH} > \text{p}K_a$ : la forme basique $\text{A}^-$ prédomine ($[\text{A}^-] > [\text{HA}]$).</li>
+              <li>Si $\text{pH} = \text{p}K_a$ : les formes sont équimolaires ($[\text{HA}] = [\text{A}^-]$).</li>
+            </ul>
+            <h3>Indicateurs colorés acido-basiques</h3>
+            <p>Un <strong>indicateur coloré</strong> est un couple acide-base faible dont la forme acide $\text{HInd}$ et la forme basique $\text{Ind}^-$ possèdent des couleurs différentes en solution. La zone où les deux formes coexistent sans qu'une seule n'impose entièrement sa couleur s'appelle la <strong>zone de virage</strong> ($\text{pH} \approx \text{p}K_{a\text{Ind}} \pm 1$).</p>
+          </div>
+
+          <div class="footer-nav">
+            <button class="footer-nav-btn" onclick="window.location.href='./index.html'">← Accueil Astrolabe</button>
+            <button class="footer-nav-btn" onclick="switchTab('formules')">Relations & Calculs →</button>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 2: FORMULES ================= -->
+        <div class="panel" id="tab-formules">
+          <div class="content-card">
+            <div class="section-title">Relations et Unités Fondamentales</div>
+            <div class="formula-grid">
+              <div class="formula-box">
+                <div class="label">Définition du pH</div>
+                <div class="expr">$\text{pH} = -\log\left(\frac{[\text{H}_3\text{O}^+]}{C^\circ}\right)$</div>
+                <div class="unit">Sans unité. $[\text{H}_3\text{O}^+]$ en mol·L⁻¹</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">Concentration en ions oxonium</div>
+                <div class="expr">$[\text{H}_3\text{O}^+] = 10^{-\text{pH}}$</div>
+                <div class="unit">En mol·L⁻¹</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">Produit ionique de l'eau</div>
+                <div class="expr">$K_e = [\text{H}_3\text{O}^+] \cdot [\text{OH}^-]$</div>
+                <div class="unit">$1{,}0\times10^{-14}$ à 25°C</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">Constante d'acidité Ka</div>
+                <div class="expr">$K_a = \frac{[\text{A}^-]_\text{éq} \cdot [\text{H}_3\text{O}^+]_\text{éq}}{[\text{HA}]_\text{éq}}$</div>
+                <div class="unit">Sans unité</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">pH acide fort</div>
+                <div class="expr">$\text{pH} = -\log(C)$</div>
+                <div class="unit">Réaction totale avec l'eau</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">pH base forte</div>
+                <div class="expr">$\text{pH} = 14 + \log(C)$</div>
+                <div class="unit">À 25°C</div>
+              </div>
+              <div class="formula-box">
+                <div class="label">Relation Henderson-Hasselbalch</div>
+                <div class="expr">$\text{pH} = \text{p}K_a + \log\frac{[\text{A}^-]}{[\text{HA}]}$</div>
+                <div class="unit">Toujours valide à l'équilibre</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Calculator Widget -->
+          <div class="visualizer-card">
+            <div class="vis-header">
+              <div class="vis-title">🧮 Simulateur de calcul de pH pas-à-pas</div>
+            </div>
+            
+            <div class="calc-grid">
+              <div class="calc-field">
+                <label for="species-type">Type de solution</label>
+                <select id="species-type" onchange="toggleKaField()">
+                  <option value="strong-acid">Acide Fort ($AH$)</option>
+                  <option value="strong-base">Base Forte ($B$)</option>
+                  <option value="weak-acid" selected>Acide Faible ($HA$)</option>
+                  <option value="weak-base">Base Faible ($A^-$)</option>
+                </select>
+              </div>
+              
+              <div class="calc-field">
+                <label for="calc-c">Concentration $C$ (mol/L)</label>
+                <input type="number" id="calc-c" value="0.01" step="0.001" min="1e-6" max="1">
+              </div>
+
+              <div class="calc-field" id="ka-field-group">
+                <label for="calc-pka">$\text{p}K_a$ du couple</label>
+                <input type="number" id="calc-pka" value="4.75" step="0.05" min="0" max="14">
+              </div>
+            </div>
+
+            <button class="calc-btn" onclick="calculatePH()">Simuler et Expliquer</button>
+
+            <div class="calc-result-box" id="calc-result-box" style="display:none;">
+              <div class="calc-result-val" id="calc-res-ph">pH = 3.38</div>
+              <div class="calc-explain" id="calc-res-explain">Explication détaillée en attente...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 3: MECANISMES ================= -->
+        <div class="panel" id="tab-mecanismes">
+          <div class="content-card">
+            <div class="section-title">III — Mécanismes réactionnels de transfert de proton</div>
+            <p>Le transfert de proton d'un acide à une base s'explique au niveau microscopique par le mouvement de paires d'électrons (représenté par des flèches courbes). Le doublet non liant de la base attaque le proton de l'acide.</p>
+            
+            <div class="mech-card">
+              <div class="vis-title" style="margin-bottom: 8px;">Animation : Attaque de l'Ammoniac sur l'Eau</div>
+              
+              <div class="mech-canvas-container">
+                <svg id="mech-svg" class="mech-svg" viewBox="0 0 480 140">
+                  <!-- NH3 -->
+                  <g transform="translate(60, 70)">
+                    <circle cx="0" cy="0" r="18" fill="#4f46e5" />
+                    <text x="0" y="5" fill="#fff" font-weight="bold" text-anchor="middle" font-size="14">N</text>
+                    <!-- Hydrogens NH3 -->
+                    <line x1="0" y1="-18" x2="0" y2="-38" stroke="#cbd5e1" stroke-width="2" />
+                    <circle cx="0" cy="-38" r="8" fill="#64748b" />
+                    <text x="0" y="-35" fill="#fff" text-anchor="middle" font-size="8">H</text>
+
+                    <line x1="-15" y1="10" x2="-32" y2="24" stroke="#cbd5e1" stroke-width="2" />
+                    <circle cx="-32" cy="24" r="8" fill="#64748b" />
+                    <text x="-32" y="27" fill="#fff" text-anchor="middle" font-size="8">H</text>
+
+                    <line x1="15" y1="10" x2="32" y2="24" stroke="#cbd5e1" stroke-width="2" />
+                    <circle cx="32" cy="24" r="8" fill="#64748b" />
+                    <text x="32" y="27" fill="#fff" text-anchor="middle" font-size="8">H</text>
+
+                    <!-- Lone pair on Nitrogen -->
+                    <ellipse id="lone-pair" cx="18" cy="-5" rx="5" ry="3" fill="#ffd700" transform="rotate(-15, 18, -5)" />
+                  </g>
+
+                  <!-- Water H2O -->
+                  <g transform="translate(360, 70)">
+                    <circle cx="0" cy="0" r="18" fill="#ea580c" />
+                    <text x="0" y="5" fill="#fff" font-weight="bold" text-anchor="middle" font-size="14">O</text>
+                    <!-- Hydrogens H2O -->
+                    <line x1="-15" y1="-10" x2="-35" y2="-22" stroke="#cbd5e1" stroke-width="2" />
+                    <circle cx="-35" cy="-22" r="8" fill="#64748b" />
+                    <text x="-35" y="-19" fill="#fff" text-anchor="middle" font-size="8">H</text>
+
+                    <line id="h-transfer-line" x1="-15" y1="10" x2="-140" y2="0" stroke="#ffd700" stroke-width="2" stroke-dasharray="3,3" />
+                    <circle id="h-transfer-circle" cx="-140" cy="0" r="8" fill="#00e5ff" />
+                    <text id="h-transfer-text" x="-140" y="3" fill="#000" font-weight="bold" text-anchor="middle" font-size="8">H</text>
+                  </g>
+
+                  <!-- Curved arrow representing electrons movement -->
+                  <path id="curved-arrow" d="M 83 65 Q 200 10, 215 -10" fill="none" stroke="#ffd700" stroke-width="2.5" marker-end="url(#arrow)" style="display:none;" />
+                  <path id="curved-arrow-break" d="M 230 -10 Q 300 -10, 345 60" fill="none" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow)" style="display:none;" />
+
+                  <!-- Markers for arrows -->
+                  <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd700" />
+                    </marker>
+                  </defs>
+                </svg>
+              </div>
+
+              <div class="mech-controls">
+                <div class="mech-btn-group">
+                  <button class="mech-btn active" onclick="setMechStep(1)">1. Départ</button>
+                  <button class="mech-btn" onclick="setMechStep(2)">2. Attaque</button>
+                  <button class="mech-btn" onclick="setMechStep(3)">3. Rupture</button>
+                  <button class="mech-btn" onclick="setMechStep(4)">4. Final</button>
+                </div>
+                <div class="mech-desc-box" id="mech-desc">
+                  L'azote de l'ammoniac ($\text{NH}_3$) possède un doublet non liant (zone dorée) très nucléophile. L'eau est l'acide.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 4: VISUALISEUR ================= -->
+        <div class="panel" id="tab-visualiseur">
+          <div class="content-card">
+            <div class="section-title">📊 Visualiseur de prédominance & Becher indicateur</div>
+            <p>Faites glisser le curseur de pH ci-dessous pour observer en temps réel la distribution des formes acide $HA$ (en rouge) et basique $A^-$ (en bleu). Le bécher de droite montre la couleur correspondante pour l'indicateur coloré choisi.</p>
+            
+            <div class="visualizer-card">
+              <div class="vis-header">
+                <div class="vis-title">Distribution des formes (%)</div>
+                <div class="vis-controls">
+                  <div class="vis-slider-wrap">
+                    <label for="indicator-select">Indicateur : </label>
+                    <select id="indicator-select" onchange="changeIndicator()" style="background:var(--dark); border:1px solid var(--border); color:#fff; font-size:0.75rem; border-radius:4px; padding:3px 8px;">
+                      <option value="bbt" selected>Bleu de Bromothymol (BBT)</option>
+                      <option value="helianthine">Hélianthine</option>
+                      <option value="phenolphthalein">Phénolphtaléine</option>
+                    </select>
+                  </div>
+                  <div class="vis-slider-wrap">
+                    <label for="ph-slider">pH de la solution : </label>
+                    <input type="range" id="ph-slider" min="0" max="14" step="0.1" value="4.75" class="vis-slider" oninput="updateVis()">
+                    <span id="ph-val" style="font-size: 0.8rem; color: var(--accent);">4.75</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="vis-split">
+                <div class="vis-canvas-container">
+                  <canvas id="vis-canvas" class="vis-canvas"></canvas>
+                </div>
+                
+                <div class="beaker-container">
+                  <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Couleur du becher</div>
+                  <svg class="beaker-svg" viewBox="0 0 100 120">
+                    <!-- Glass beaker outline -->
+                    <path d="M 20 10 L 20 110 A 10 10 0 0 0 30 120 L 70 120 A 10 10 0 0 0 80 110 L 80 10 L 85 10 L 85 5 L 15 5 L 15 10 Z" fill="none" stroke="#e2e8f0" stroke-width="3" />
+                    <!-- Liquid level inside -->
+                    <rect id="beaker-liquid" x="23" y="45" width="54" height="65" rx="4" ry="4" fill="#ffd700" opacity="0.8" />
+                  </svg>
+                  <div id="indicator-color-name" style="font-size:0.75rem; font-weight:700; color:var(--accent); margin-top:8px;">Jaune (Acide)</div>
+                </div>
+              </div>
+              
+              <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:0.8rem;">
+                <span style="color:#ff5f56; font-weight:bold;">Acide [HInd/HA] : <span id="pct-ha">50.0</span>%</span>
+                <span style="color:#00e5ff; font-weight:bold;">Base [Ind⁻/A⁻] : <span id="pct-a">50.0</span>%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 5: EXERCICES ================= -->
+        <div class="panel" id="tab-exercices">
+          
+          <div class="content-card">
+            <div class="section-title">✍️ Exercices d'entraînement progressifs</div>
+            <p style="font-size:0.82rem; color:var(--soft); margin-bottom:16px;">
+              Développez vos compétences pas-à-pas avec notre banque d'exercices extraits des cahiers officiels de Terminale. Utilisez les filtres ci-dessous pour cibler des notions particulières.
+            </p>
+
+            <!-- Interactive Filters -->
+            <div class="exo-filters">
+              <button class="filter-btn active" onclick="filterExercises('all')">Tous</button>
+              <button class="filter-btn" onclick="filterExercises('transferts')">Transferts & Couples</button>
+              <button class="filter-btn" onclick="filterExercises('ph-force')">pH & Force des Acides</button>
+              <button class="filter-btn" onclick="filterExercises('bac')">Problèmes Type Bac</button>
+            </div>
+            
+            <!-- Exercise 1 -->
+            <div class="exo-card" data-category="transferts">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 1 — Venin de fourmis et acide formique</span>
+                <span class="exo-meta">Niveau 1 : Fondamentaux</span>
+              </div>
+              <div class="exo-body">
+                <p>Lors d’une attaque, les fourmis adoptent pour se défendre une position légèrement arquée sur leurs pattes arrières, contractent leur abdomen afin de projeter le venin sur leur ennemi. Ce venin contient entre autres l’espèce de formule $\text{HCO}_2\text{H}_{(aq)}$. La molécule de formule $\text{HCO}_2\text{H}_{(aq)}$ réagit avec l’eau pour donner l’ion oxonium $\text{H}_3\text{O}^+_{(aq)}$ et l’ion méthanoate $\text{HCO}_2^-{}_{(aq)}$.</p>
+                <ol>
+                  <li>Écrire, en justifiant, le couple acide-base auquel appartient $\text{HCO}_2\text{H}_{(aq)}$.</li>
+                  <li>L’acide formique $\text{HCO}_2\text{H}_{(aq)}$ réagit avec l’eau selon une transformation non totale. Écrire l’équation.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Couple acide-base :</strong><br>
+                  L’espèce de formule $\text{HCO}_2\text{H}_{(aq)}$ et l’ion méthanoate de formule $\text{HCO}_2^-{}_{(aq)}$ s’obtiennent l’un à partir de l’autre par transfert d’un ion hydrogène $\text{H}^+$. Ils sont donc acide et base conjugués.<br>
+                  La demi-équation acide-base est : $\text{HCO}_2\text{H}_{(aq)} \rightleftharpoons \text{HCO}_2^-{}_{(aq)} + \text{H}^+$<br>
+                  La molécule de formule $\text{HCO}_2\text{H}$ est donc l’acide du couple car elle cède un ion hydrogène $\text{H}^+$ pour donner l’ion méthanoate $\text{HCO}_2^-$, sa base conjuguée.<br>
+                  Le couple s’écrit en plaçant l’acide à gauche : <strong>$\text{HCO}_2\text{H}_{(aq)} / \text{HCO}_2^-{}_{(aq)}$</strong>.</p>
+                  <p><strong>2. Équation de réaction :</strong><br>
+                  L’eau est la base qui capte un ion hydrogène $\text{H}^+$ pour former l’ion oxonium $\text{H}_3\text{O}^+_{(aq)}$. Le deuxième couple impliqué est donc $\text{H}_3\text{O}^+_{(aq)} / \text{H}_2\text{O}_{(l)}$.<br>
+                  Les demi-équations s'écrivent :<br>
+                  $\text{HCO}_2\text{H}_{(aq)} \rightleftharpoons \text{HCO}_2^-{}_{(aq)} + \text{H}^+$<br>
+                  $\text{H}_2\text{O}_{(l)} + \text{H}^+ \rightleftharpoons \text{H}_3\text{O}^+_{(aq)}$<br>
+                  En combinant, on obtient l'équation bilan :<br>
+                  $$\text{HCO}_2\text{H}_{(aq)} + \text{H}_2\text{O}_{(l)} \rightleftharpoons \text{HCO}_2^-{}_{(aq)} + \text{H}_3\text{O}^+_{(aq)}$$</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 2 -->
+            <div class="exo-card" data-category="transferts">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 2 — Lewis et basicité de la N-éthyléthanamine</span>
+                <span class="exo-meta">Niveau 1 : Fondamentaux</span>
+              </div>
+              <div class="exo-body">
+                <p>On s'intéresse à la N-éthyléthanamine, une molécule que l’on utilise dans la synthèse de la lidocaïne, un anesthésique local.</p>
+                <ol>
+                  <li>Établir la représentation de Lewis de cette molécule.</li>
+                  <li>Cette molécule est-elle un acide ou une base selon la définition de Brønsted ? Justifier à l'aide de sa représentation de Lewis.</li>
+                  <li>En déduire la formule de son espèce conjuguée.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Représentation de Lewis :</strong><br>
+                  La N-éthyléthanamine est une amine secondaire de formule semi-développée $(\text{C}_2\text{H}_5)_2\text{NH}$.<br>
+                  Sa représentation de Lewis fait apparaître un doublet non liant sur l'atome d'azote $\text{N}$ :<br>
+                  $$\text{CH}_3-\text{CH}_2-\ddot{\text{N}}\text{H}-\text{CH}_2-\text{CH}_3$$</p>
+                  <p><strong>2. Caractère acido-basique :</strong><br>
+                  Cette molécule est une amine. La représentation de Lewis montre la présence d'un <strong>doublet non liant</strong> sur l’atome d’azote $\text{N}$. Grâce à ce doublet non liant, l'atome d'azote constitue un site donneur de doublet d’électrons capable de capter un ion hydrogène $\text{H}^+$ (site accepteur de doublet). Cette molécule est donc une <strong>base selon Brønsted</strong>.</p>
+                  <p><strong>3. Espèce conjuguée :</strong><br>
+                  En captant un ion hydrogène $\text{H}^+$, elle se transforme en son acide conjugué de formule : <strong>$(\text{C}_2\text{H}_5)_2\text{NH}_2^+$</strong> (ion diéthylammonium).<br>
+                  La demi-équation associée est : $(\text{C}_2\text{H}_5)_2\text{NH}_{(aq)} + \text{H}^+ \rightleftharpoons (\text{C}_2\text{H}_5)_2\text{NH}_2^+{}_{(aq)}$.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 3 -->
+            <div class="exo-card" data-category="ph-force">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 3 — Dilution d'un acide fort</span>
+                <span class="exo-meta">Niveau 2 : Application</span>
+              </div>
+              <div class="exo-body">
+                <p>Une solution d'acide chlorhydrique de concentration en quantité de matière d'ions oxonium $[\text{H}_3\text{O}^+] = 1{,}5 \times 10^{-3}\ \text{mol·L}^{-1}$ est diluée d'un facteur 100.</p>
+                <ol>
+                  <li>Quel est le pH de la solution initiale ?</li>
+                  <li>Quel est le pH de la solution diluée ?</li>
+                  <li>Quelle est la solution la plus acide des deux ?</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. pH de la solution initiale :</strong><br>
+                  En appliquant la définition du pH :<br>
+                  $$\text{pH} = -\log\left(\frac{[\text{H}_3\text{O}^+]}{C^\circ}\right) = -\log(1{,}5 \times 10^{-3}) \approx 2{,}8$$</p>
+                  <p><strong>2. pH de la solution diluée :</strong><br>
+                  La solution étant diluée d'un facteur 100, la concentration finale en ions oxonium est divisée par 100 :<br>
+                  $$[\text{H}_3\text{O}^+]_{\text{dilué}} = \frac{1{,}5 \times 10^{-3}}{100} = 1{,}5 \times 10^{-5}\ \text{mol·L}^{-1}$$<br>
+                  Le pH de la solution diluée vaut :<br>
+                  $$\text{pH}_{\text{dilué}} = -\log(1{,}5 \times 10^{-5}) \approx 4{,}8$$</p>
+                  <p><strong>3. Solution la plus acide :</strong><br>
+                  La solution la plus acide est la solution initiale car elle possède la concentration en ions oxonium la plus élevée, ce qui correspond au pH le plus faible ($\text{pH} = 2{,}8 < 4{,}8$).</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 4 -->
+            <div class="exo-card" data-category="ph-force">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 4 — Dissociation et taux d'avancement de l'acide éthanoïque</span>
+                <span class="exo-meta">Niveau 2 : Application</span>
+              </div>
+              <div class="exo-body">
+                <p>Un volume $V_A = 1{,}00\ \text{mL}$ d'acide éthanoïque pur (densité $d = 1{,}05$) est versé dans une fiole jaugée de volume $V = 500{,}0\ \text{mL}$. On ajuste au trait de jauge avec de l'eau distillée. Le pH de la solution est égal à $3{,}1$.<br>
+                L'acide éthanoïque réagit avec l'eau suivant la réaction d'équation :<br>
+                $$\text{CH}_3\text{CO}_2\text{H}_{(aq)} + \text{H}_2\text{O}_{(l)} \rightleftharpoons \text{CH}_3\text{CO}_2^-{}_{(aq)} + \text{H}_3\text{O}^+_{(aq)}$$</p>
+                <ol>
+                  <li>Calculer l'avancement maximal de la réaction $x_{\text{max}}$. (Donnée : masse volumique de l'eau $\rho_{\text{eau}} = 1{,}00\ \text{g·mL}^{-1}$, $M(\text{acide}) = 60{,}0\ \text{g·mol}^{-1}$)</li>
+                  <li>Calculer le taux d'avancement final $\tau$.</li>
+                  <li>Conclure quant au caractère total ou non de la transformation.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Avancement maximal $x_{\text{max}}$ :</strong><br>
+                  - Masse d'acide éthanoïque apporté : $m = d \cdot V_A \cdot \rho_{\text{eau}} = 1{,}05 \times 1{,}00\ \text{mL} \times 1{,}00\ \text{g·mL}^{-1} = 1{,}05\ \text{g}$.<br>
+                  - Quantité d'acide éthanoïque apportée : $n_0 = \frac{m}{M} = \frac{1{,}05}{60{,}0} = 1{,}75 \times 10^{-2}\ \text{mol} = 17{,}5\ \text{mmol}$.<br>
+                  L’eau est en large excès (solvant), donc l’avancement maximal correspond à la consommation totale du soluté limitant : <strong>$x_{\text{max}} = 17{,}5\ \text{mmol}$</strong>.</p>
+                  <p><strong>2. Taux d'avancement final $\tau$ :</strong><br>
+                  D'après la stœchiométrie de la réaction, à l'état final : $n(\text{H}_3\text{O}^+)_f = x_f = [\text{H}_3\text{O}^+] \cdot V$.<br>
+                  Le pH est égal à $3{,}1$ donc :<br>
+                  $$[\text{H}_3\text{O}^+] = 10^{-\text{pH}} = 10^{-3{,}1} \approx 7{,}9 \times 10^{-4}\ \text{mol·L}^{-1}$$<br>
+                  L'avancement final vaut :<br>
+                  $$x_f = 7{,}9 \times 10^{-4}\ \text{mol·L}^{-1} \times 0{,}500\ \text{L} \approx 3{,}97 \times 10^{-4}\ \text{mol} = 0{,}40\ \text{mmol}$$<br>
+                  Le taux d'avancement final s'exprime par :<br>
+                  $$\tau = \frac{x_f}{x_{\text{max}}} = \frac{0{,}40\ \text{mmol}}{17{,}5\ \text{mmol}} \approx 2{,}3\%$$</p>
+                  <p><strong>3. Conclusion :</strong><br>
+                  Comme $\tau \approx 2{,}3\% \ll 100\%$, la transformation n’est pas totale. Elle est très limitée : l'acide éthanoïque est un acide faible dans l'eau.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 5 -->
+            <div class="exo-card" data-category="bac">
+              <div class="exo-head">
+                <span class="exo-title">Type Bac — Un indicateur coloré naturel issu du chou rouge</span>
+                <span class="exo-meta">Niveau 3 : Approfondissement</span>
+              </div>
+              <div class="exo-body">
+                <p>La couleur du chou rouge est principalement due à la présence d'anthocyanes. On modélise ce mélange complexe par une seule espèce chimique, la <em>cyanidine</em>, dont la couleur dépend fortement du pH (Zone de virage et formes conjuguées). On limite la modélisation à des milieux où le pH est compris entre 4,5 et 9,0.</p>
+                <p>Dans cet intervalle, la cyanidine existe sous trois formes. La couleur de la solution évolue ainsi :</p>
+                <div style="margin: 10px 0; overflow-x: auto;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center;">
+                    <tr style="border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.15)">
+                      <th style="padding: 6px;">pH</th>
+                      <td>4,5 - 5,0</td>
+                      <td>5,5 - 6,0</td>
+                      <td>6,5 - 7,5</td>
+                      <td>8,0 - 9,0</td>
+                    </tr>
+                    <tr>
+                      <th style="padding: 6px;">Couleur</th>
+                      <td style="color:#d946ef; font-weight:bold;">Violet</td>
+                      <td style="color:#8b5cf6; font-weight:bold;">Violet-bleu</td>
+                      <td style="color:#3b82f6; font-weight:bold;">Bleu</td>
+                      <td style="color:#10b981; font-weight:bold;">Vert</td>
+                    </tr>
+                  </table>
+                </div>
+                <p>Pour préparer un yaourt, on réalise le titrage de $10{,}0\ \text{mL}$ d'un lait fermenté par une solution aqueuse d'hydroxyde de sodium de concentration $C_0 = 1{,}11 \times 10^{-1}\ \text{mol·L}^{-1}$. On suit ce dosage avec du jus de chou rouge comme indicateur coloré. Le pH initial du lait vaut $5{,}9$ et le pH à l’équivalence vaut $8{,}3$. Le volume équivalent obtenu est $V_E = 2{,}8\ \text{mL}$.<br>
+                L'équation support du dosage est : $\text{AH}_{(aq)} + \text{OH}^-_{(aq)} \to \text{A}^-_{(aq)} + \text{H}_2\text{O}_{(l)}$ (où $\text{AH}$ désigne l'acide lactique de masse molaire $M(\text{AH}) = 90{,}1\ \text{g·mol}^{-1}$).</p>
+                <ol>
+                  <li>La forme principale de la cyanidine à pH neutre (forme 1) peut capter un proton à pH acide pour donner la forme 3, ou céder un proton à pH basique pour donner la forme 2. Justifier son caractère amphotère.</li>
+                  <li>Justifier que le jus de chou rouge peut être utilisé pour repérer l'équivalence de ce titrage et préciser le changement de couleur observé.</li>
+                  <li>L'acidité Dornic d’un lait, exprimée en degrés Dornic ($1{,}0\ \text{°D}$ correspond à une concentration en masse d'acide lactique de $0{,}10\ \text{g·L}^{-1}$), doit être supérieure à $80\ \text{°D}$ pour permettre la fabrication d'un yaourt. Déterminer si ce lait convient.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Caractère amphotère :</strong><br>
+                  La forme n°1 de la cyanidine se comporte comme un acide dans le couple Forme 1 / Forme 2 car elle cède un proton $\text{H}^+$. Elle se comporte également comme une base dans le couple Forme 3 / Forme 1 car elle capte un proton $\text{H}^+$. Pouvant se comporter à la fois comme un acide et comme une base selon le milieu, c’est une <strong>espèce amphotère</strong> (ou ampholyte).</p>
+                  
+                  <p><strong>2. Choix de l'indicateur coloré :</strong><br>
+                  Pour qu'un indicateur coloré convienne pour repérer l'équivalence d'un titrage, sa <strong>zone de virage doit contenir le pH à l'équivalence</strong> ($\text{pH}_E$). Ici, $\text{pH}_E = 8{,}3$. Cette valeur est comprise dans la transition bleu-vert (qui s'effectue entre le pH 7,5 et 8,0). À l'équivalence, on observera donc un net <strong>changement de couleur de la solution qui passe du bleu au vert</strong>.</p>
+                  
+                  <p><strong>3. Calcul de l'acidité Dornic :</strong><br>
+                  À l'équivalence, les réactifs ont été introduits dans les proportions stœchiométriques :<br>
+                  $$n(\text{AH})_{\text{initial}} = n(\text{OH}^-)_{\text{versé}} \implies C_A \cdot V_A = C_0 \cdot V_E$$<br>
+                  - Concentration en quantité d'acide lactique :<br>
+                  $$C_A = \frac{C_0 \cdot V_E}{V_A} = \frac{1{,}11 \times 10^{-1}\ \text{mol·L}^{-1} \times 2{,}8\ \text{mL}}{10{,}0\ \text{mL}} = 3{,}11 \times 10^{-2}\ \text{mol·L}^{-1}$$<br>
+                  - Concentration en masse d'acide lactique ($C_m$) :<br>
+                  $$C_m = C_A \cdot M(\text{AH}) = 3{,}11 \times 10^{-2}\ \text{mol·L}^{-1} \times 90{,}1\ \text{g·mol}^{-1} \approx 2{,}80\ \text{g·L}^{-1}$$<br>
+                  - Conversion en degrés Dornic :<br>
+                  Sachant que $1{,}0\ \text{°D}$ correspond à $0{,}10\ \text{g·L}^{-1}$, le lait possède une acidité de :<br>
+                  $$\text{Degré Dornic} = \frac{2{,}80\ \text{g·L}^{-1}}{0{,}10\ \text{g·L}^{-1}\text{/°D}} = 28\ \text{°D}$$<br>
+                  Cette valeur étant très inférieure à $80\ \text{°D}$, le lait testé ne permet pas encore la fabrication d’un yaourt.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 6 -->
+            <div class="exo-card" data-category="bac">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 6 — L'acide benzoïque comme conservateur alimentaire</span>
+                <span class="exo-meta">Niveau 3 : Approfondissement</span>
+              </div>
+              <div class="exo-body">
+                <p>L’acide benzoïque $\text{C}_6\text{H}_5\text{COOH}$ (E210) et le benzoate de sodium $\text{C}_6\text{H}_5\text{COONa}$ (E211) sont utilisés comme conservateurs alimentaires.<br>
+                <strong>Données :</strong><br>
+                - Masse molaire : $M(\text{C}_6\text{H}_5\text{COOH}) = 122\ \text{g·mol}^{-1}$<br>
+                - Solubilité dans l'eau à 25°C : $s = 2{,}4\ \text{g·L}^{-1}$<br>
+                - Couples acide-base : $\text{C}_6\text{H}_5\text{COOH} / \text{C}_6\text{H}_5\text{COO}^-$ ($\text{p}K_{a1} = 4{,}2$) ; $\text{H}_2\text{O} / \text{OH}^-$ ($\text{p}K_{a2} = 14{,}0$).</p>
+                <ol>
+                  <li>On dissout une masse $m_0 = 0{,}12\ \text{g}$ d'acide benzoïque dans de l'eau distillée afin d'obtenir un volume $V_0 = 100\ \text{mL}$ de solution de concentration $C_0 = 1{,}0 \times 10^{-2}\ \text{mol·L}^{-1}$. Justifier par le calcul que la solution n'est pas saturée.</li>
+                  <li>Le pH de cette solution vaut $3{,}1$. Écrire l'équation de la réaction de l'acide benzoïque avec l'eau.</li>
+                  <li>Déterminer la valeur du taux d'avancement final $\tau$. Ce résultat est-il cohérent avec le diagramme de prédominance du couple ?</li>
+                  <li>On ajoute à la solution $S_0$ quelques gouttes d'une solution concentrée d'hydroxyde de sodium de manière à amener le pH à $6{,}2$. Écrire l’équation de la réaction qui se produit et exprimer sa constante d’équilibre $K$. Calculer sa valeur et conclure sur le type de transformation.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Vérification de la solubilité :</strong><br>
+                  La concentration en masse $C_{m0}$ de la solution préparée vaut :<br>
+                  $$C_{m0} = \frac{m_0}{V_0} = \frac{0{,}12\ \text{g}}{0{,}100\ \text{L}} = 1{,}2\ \text{g·L}^{-1}$$<br>
+                  Comme $C_{m0} < s = 2{,}4\ \text{g·L}^{-1}$, la totalité de la masse introduite se dissout. La solution n’est pas saturée.</p>
+                  
+                  <p><strong>2. Réaction de l'acide benzoïque avec l'eau :</strong><br>
+                  $$\text{C}_6\text{H}_5\text{COOH}_{(aq)} + \text{H}_2\text{O}_{(l)} \rightleftharpoons \text{C}_6\text{H}_5\text{COO}^-_{(aq)} + \text{H}_3\text{O}^+_{(aq)}$$</p>
+                  
+                  <p><strong>3. Taux d'avancement final $\tau$ :</strong><br>
+                  L'avancement maximal est $x_{\text{max}} = C_0 \cdot V_0$. L'avancement final à l'équilibre vaut $x_f = [\text{H}_3\text{O}^+] \cdot V_0 = 10^{-\text{pH}} \cdot V_0$.<br>
+                  $$\tau = \frac{x_f}{x_{\text{max}}} = \frac{10^{-\text{pH}}}{C_0} = \frac{10^{-3{,}1}}{1{,}0 \times 10^{-2}} = 10^{-1{,}1} \approx 7{,}9\%$$<br>
+                  Comme le $\text{pH} = 3{,}1 < \text{p}K_{a1} = 4{,}2$, la forme acide $\text{C}_6\text{H}_5\text{COOH}$ prédomine largement dans la solution. C'est en parfait accord avec le taux d'avancement très faible de $7{,}9\%$, indiquant que l'acide ne s'est que très peu dissocié.</p>
+                  
+                  <p><strong>4. Réaction avec les ions hydroxydes :</strong><br>
+                  $$\text{C}_6\text{H}_5\text{COOH}_{(aq)} + \text{OH}^-_{(aq)} \rightleftharpoons \text{C}_6\text{H}_5\text{COO}^-_{(aq)} + \text{H}_2\text{O}_{(l)}$$
+                  - Expression de la constante d'équilibre $K$ :<br>
+                  $$K = \frac{[\text{C}_6\text{H}_5\text{COO}^-]}{[\text{C}_6\text{H}_5\text{COOH}] \cdot [\text{OH}^-]} = \frac{[\text{C}_6\text{H}_5\text{COO}^-] \cdot [\text{H}_3\text{O}^+]}{[\text{C}_6\text{H}_5\text{COOH}]} \cdot \frac{1}{[\text{OH}^-] \cdot [\text{H}_3\text{O}^+]} = \frac{K_{a1}}{K_e}$$<br>
+                  - Calcul numérique :<br>
+                  $$K = 10^{\text{p}K_{a2} - \text{p}K_{a1}} = 10^{14{,}0 - 4{,}2} = 10^{9{,}8} \approx 6{,}3 \times 10^9$$<br>
+                  La constante d’équilibre étant très élevée ($K \gg 10^4$), la transformation est totale. Elle est d'ailleurs utilisée comme support de titrage.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exercise 7 -->
+            <div class="exo-card" data-category="bac">
+              <div class="exo-head">
+                <span class="exo-title">Exercice 7 — pH d'un mélange d'acide nitreux et d'ion méthanoate</span>
+                <span class="exo-meta">Niveau 3 : Approfondissement</span>
+              </div>
+              <div class="exo-body">
+                <p>On mélange un volume $V_1 = 200\ \text{mL}$ d'une solution d'acide nitreux $\text{HNO}_2$ ($C_1 = 0{,}20\ \text{mol·L}^{-1}$) avec un volume $V_2 = 200\ \text{mL}$ de solution de méthanoate de sodium ($\text{HCOO}^- + \text{Na}^+$, $C_2 = 0{,}40\ \text{mol·L}^{-1}$).<br>
+                <strong>Données :</strong> $\text{p}K_{a1}(\text{HNO}_2 / \text{NO}_2^-) = 3{,}3$ ; $\text{p}K_{a2}(\text{HCOOH} / \text{HCOO}^-) = 3{,}8$.</p>
+                <ol>
+                  <li>Écrire l'équation de la réaction s'établissant lors du mélange.</li>
+                  <li>Déterminer l'expression de sa constante d'équilibre $K$ en fonction des constantes d'acidité des couples, puis la calculer.</li>
+                  <li>Sachant que l'avancement final à l'équilibre vaut $x_{\text{éq}} = 3{,}3 \times 10^{-2}\ \text{mol}$, calculer les concentrations finales de toutes les espèces chimiques à l'équilibre.</li>
+                  <li>En déduire le pH du mélange à l'équilibre en utilisant l'un des deux couples.</li>
+                </ol>
+                <button class="exo-btn" onclick="toggleExo(this)">Voir le corrigé</button>
+                <div class="exo-answer">
+                  <p><strong>1. Équation de la réaction :</strong><br>
+                  $$\text{HNO}_2{}_{(aq)} + \text{HCOO}^-_{(aq)} \rightleftharpoons \text{NO}_2^-{}_{(aq)} + \text{HCOOH}_{(aq)}$$</p>
+                  
+                  <p><strong>2. Calcul de la constante d'équilibre $K$ :</strong><br>
+                  $$K = \frac{[\text{NO}_2^-]_{\text{éq}} \cdot [\text{HCOOH}]_{\text{éq}}}{[\text{HNO}_2]_{\text{éq}} \cdot [\text{HCOO}^-]_{\text{éq}}}$$<br>
+                  En multipliant en haut et en bas par $[\text{H}_3\text{O}^+]$ :<br>
+                  $$K = \frac{[\text{NO}_2^-]_{\text{éq}} \cdot [\text{H}_3\text{O}^+]}{[\text{HNO}_2]_{\text{éq}}} \cdot \frac{[\text{HCOOH}]_{\text{éq}}}{[\text{HCOO}^-]_{\text{éq}} \cdot [\text{H}_3\text{O}^+]} = \frac{K_{a1}}{K_{a2}}$$<br>
+                  $$K = 10^{\text{p}K_{a2} - \text{p}K_{a1}} = 10^{3{,}8 - 3{,}3} = 10^{0{,}5} \approx 3{,}2$$</p>
+                  
+                  <p><strong>3. Concentrations à l'équilibre :</strong><br>
+                  Le volume total du mélange vaut : $V_T = V_1 + V_2 = 200\ \text{mL} + 200\ \text{mL} = 400\ \text{mL} = 0{,}400\ \text{L}$.<br>
+                  - Quantités initiales : $n_1(\text{HNO}_2) = C_1 \cdot V_1 = 0{,}040\ \text{mol}$ et $n_2(\text{HCOO}^-) = C_2 \cdot V_2 = 0{,}080\ \text{mol}$.<br>
+                  À l'équilibre :<br>
+                  - $[\text{HNO}_2]_{\text{éq}} = \frac{n_1 - x_{\text{éq}}}{V_T} = \frac{0{,}040 - 0{,}033}{0{,}400} = 1{,}75 \times 10^{-2}\ \text{mol·L}^{-1}$<br>
+                  - $[\text{HCOO}^-]_{\text{éq}} = \frac{n_2 - x_{\text{éq}}}{V_T} = \frac{0{,}080 - 0{,}033}{0{,}400} = 1{,}175 \times 10^{-1}\ \text{mol·L}^{-1}$<br>
+                  - $[\text{NO}_2^-]_{\text{éq}} = [\text{HCOOH}]_{\text{éq}} = \frac{x_{\text{éq}}}{V_T} = \frac{0{,}033}{0{,}400} = 8{,}25 \times 10^{-2}\ \text{mol·L}^{-1}$</p>
+                  
+                  <p><strong>4. Calcul du pH final :</strong><br>
+                  En utilisant le couple $\text{HNO}_2 / \text{NO}_2^-$ :<br>
+                  $$\text{pH} = \text{p}K_{a1} + \log\left(\frac{[\text{NO}_2^-]_{\text{éq}}}{[\text{HNO}_2]_{\text{éq}}}\right) = 3{,}3 + \log\left(\frac{8{,}25 \times 10^{-2}}{1{,}75 \times 10^{-2}}\right) = 3{,}3 + \log(4{,}71) \approx 3{,}97 \approx 4{,}0$$<br>
+                  <em>Remarque :</em> On obtiendrait la même valeur en utilisant le couple $\text{HCOOH} / \text{HCOO}^-$ :<br>
+                  $$\text{pH} = \text{p}K_{a2} + \log\left(\frac{[\text{HCOO}^-]_{\text{éq}}}{[\text{HCOOH}]_{\text{éq}}}\right) = 3{,}8 + \log\left(\frac{1{,}175 \times 10^{-1}}{8{,}25 \times 10^{-2}}\right) = 3{,}8 + 0{,}153 = 3{,}95 \approx 4{,}0$$.</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+          <div class="content-card">
+            <div class="section-title">📂 Annales types Bac (VecteurBac.fr)</div>
+            <p>Retrouvez ci-dessous les énoncés officiels classés par thématiques sur lesquels vous entraîner. Vous pouvez copier leur titre pour chercher leur énoncé complet et corrigé sur <a href="https://www.vecteurbac.fr" target="_blank">VecteurBac</a> :</p>
+            
+            <ul class="steps" style="counter-reset: none;">
+              <li style="margin-bottom:12px;">
+                <div>
+                  <strong style="color:var(--accent);">Sujet Métropole 2022 :</strong> <em>L'acide lactique dans le lait et l'effort musculaire</em>
+                  <p style="font-size:0.75rem; color:var(--muted); margin:2px 0 0 0;">Thèmes : prédominance, dosage indirect, pH-métrie.</p>
+                </div>
+              </li>
+              <li style="margin-bottom:12px;">
+                <div>
+                  <strong style="color:var(--accent);">Sujet Centres Étrangers 2023 :</strong> <em>Restauration d'une œuvre d'art à l'acide citrique</em>
+                  <p style="font-size:0.75rem; color:var(--muted); margin:2px 0 0 0;">Thèmes : constantes d'acidité successives (polyacide), réactions totales.</p>
+                </div>
+              </li>
+              <li style="margin-bottom:12px;">
+                <div>
+                  <strong style="color:var(--accent);">Sujet Asie 2023 :</strong> <em>Le bleu de bromothymol en analyse quantitative</em>
+                  <p style="font-size:0.75rem; color:var(--muted); margin:2px 0 0 0;">Thèmes : indicateurs colorés, zone de virage, absorbance du HInd et Ind⁻.</p>
+                </div>
+              </li>
+              <li style="margin-bottom:12px;">
+                <div>
+                  <strong style="color:var(--accent);">Sujet Amérique du Nord 2021 :</strong> <em>pH et conservation du jus de pomme</em>
+                  <p style="font-size:0.75rem; color:var(--muted); margin:2px 0 0 0;">Thèmes : acide malique, solution tampon, pouvoir tampon.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 6: CHATBOT HUB ================= -->
+        <div class="panel" id="tab-chatbot">
+          <div class="content-card">
+            <div class="section-title">🤖 Hub IA d'Assistance Scolaire</div>
+            <p>Utilisez les assistants IA externes les plus performants pour vous faire expliquer le cours, générer des exercices supplémentaires ou lever un doute en copiant nos prompts structurés ci-dessous.</p>
+            
+            <div class="chat-hub-grid">
+              <div class="chat-bot-btn" onclick="window.open('https://claude.ai', '_blank')">
+                <span class="bot-icon">🪐</span>
+                <span class="bot-name">Claude.ai</span>
+              </div>
+              <div class="chat-bot-btn" onclick="window.open('https://gemini.google.com', '_blank')">
+                <span class="bot-icon">✨</span>
+                <span class="bot-name">Google Gemini</span>
+              </div>
+              <div class="chat-bot-btn" onclick="window.open('https://chatgpt.com', '_blank')">
+                <span class="bot-icon">🧠</span>
+                <span class="bot-name">ChatGPT</span>
+              </div>
+              <div class="chat-bot-btn" onclick="window.open('https://copilot.microsoft.com', '_blank')">
+                <span class="bot-icon">🛸</span>
+                <span class="bot-name">MS Copilot</span>
+              </div>
+            </div>
+
+            <div class="prompt-generator">
+              <div class="vis-title" style="margin-bottom: 12px; font-size: 0.82rem;">🪄 Générateur de Prompt Éducatif</div>
+              
+              <div class="prompt-selects">
+                <div class="prompt-field">
+                  <label for="prompt-task">Ce que vous voulez faire</label>
+                  <select id="prompt-task" onchange="generatePrompt()">
+                    <option value="explain" selected>M'expliquer une notion</option>
+                    <option value="solve">M'aider à résoudre un exercice</option>
+                    <option value="quiz">Me créer un QCM d'entraînement</option>
+                    <option value="pcsi">Préparer l'entrée en prépa PCSI</option>
+                  </select>
+                </div>
+
+                <div class="prompt-field">
+                  <label for="prompt-topic">Sujet d'étude</label>
+                  <select id="prompt-topic" onchange="generatePrompt()">
+                    <option value="tampon" selected>Les solutions tampons</option>
+                    <option value="ka">Le pKa et la force des acides</option>
+                    <option value="brotsted">Les mécanismes de Brønsted</option>
+                    <option value="indicators">Les indicateurs colorés</option>
+                  </select>
+                </div>
+
+                <div class="prompt-field">
+                  <label for="prompt-tone">Style de réponse</label>
+                  <select id="prompt-tone" onchange="generatePrompt()">
+                    <option value="simple" selected>Simple et imagé</option>
+                    <option value="rigorous">Rigoureux et mathématique</option>
+                    <option value="step">Méthode pas-à-pas guidée</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="prompt-output-box">
+                <button class="copy-prompt-btn" onclick="copyPrompt()">Copier</button>
+                <div id="prompt-output-text">Prompt généré en attente...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 7: PREPA ================= -->
+        <div class="panel" id="tab-prepa">
+          <div class="content-card">
+            <div class="section-title">🎓 Passerelle vers la Prépa PCSI</div>
+            
+            <h3>1. L'activité chimique et état standard</h3>
+            <p>En CPGE, la définition rigoureuse du pH utilise la notion d'<strong>activité chimique</strong> $a_i$ d'une espèce, au lieu de sa concentration brute :</p>
+            <div class="key-formula">
+              <p>$$\text{pH} = -\log(a_{\text{H}_3\text{O}^+}) \qquad \text{avec} \quad a_i = \gamma_i \cdot \frac{C_i}{C^\circ}$$</p>
+            </div>
+            <p>$\gamma_i$ est le coefficient d'activité, modélisant les forces d'interactions inter-ioniques (loi de Debye-Hückel). Pour une solution infiniment diluée, $\gamma_i \to 1$ et on retrouve la formule de Terminale.</p>
+
+            <h3>2. Équation de conservation de la matière et d'électroneutralité</h3>
+            <p>Pour calculer le pH exact de n'importe quel mélange complexe d'acides et de bases, la méthode systématique de prépa consiste à écrire :</p>
+            <ul style="padding-left:18px; line-height:1.8; font-size:0.85rem;">
+              <li>Les constantes d'équilibre ($K_a, K_e$).</li>
+              <li>L'équation de conservation de la matière : $[\text{HA}] + [\text{A}^-] = C_\text{tot}$.</li>
+              <li>L'équation d'électroneutralité de la solution : la somme des charges positives est égale à la somme des charges négatives (ex: $[\text{H}_3\text{O}^+] = [\text{A}^-] + [\text{OH}^-]$).</li>
+            </ul>
+            <p>En combinant ces équations, on résout un polynôme en $[\text{H}_3\text{O}^+]$.</p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- JavaScript Interaction Logic -->
+  <script>
+    // Tab switching engine
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+    const bar = document.getElementById('masteryBar');
+    const progressTxt = document.getElementById('progressText');
+
+    let exploredTabs = new Set(['cours']);
+
+    function updateProgress() {
+      const totalTabs = tabs.length;
+      const percent = Math.round((exploredTabs.size / totalTabs) * 100);
+      bar.style.width = `${percent}%`;
+      progressTxt.textContent = `${percent}%`;
+    }
+
+    function switchTab(tabId) {
+      panels.forEach(p => p.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+
+      const activePanel = document.getElementById(`tab-${tabId}`);
+      const activeTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+      
+      if (activePanel) activePanel.classList.add('active');
+      if (activeTab) activeTab.classList.add('active');
+
+      exploredTabs.add(tabId);
+      updateProgress();
+
+      // Typeset formulas inside the newly opened tab
+      if (activePanel && window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([activePanel]).catch(err => console.log('MathJax error: ', err));
+      }
+
+      if (tabId === 'visualiseur') {
+        setTimeout(initVisualizerCanvas, 50);
+      }
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.tab;
+        switchTab(id);
+      });
+    });
+
+    updateProgress();
+
+    // Theme toggling
+    let isDark = true;
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+      
+      // redraw visualizer if open
+      const canvas = document.getElementById('vis-canvas');
+      if (canvas && canvas.style.display !== 'none') {
+        drawVisualizer();
+      }
+    });
+
+    // Exercises visibility toggler
+    function toggleExo(btn) {
+      const answer = btn.nextElementSibling;
+      const isHidden = answer.style.display === 'none' || !answer.style.display;
+      answer.style.display = isHidden ? 'block' : 'none';
+      btn.textContent = isHidden ? 'Masquer le corrigé' : 'Voir le corrigé';
+      if (isHidden && window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([answer]).catch(err => console.log(err));
+      }
+    }
+
+    // Dynamic exercises filtering
+    function filterExercises(category) {
+      // Update active button state
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        const onClickAttr = btn.getAttribute('onclick');
+        if (onClickAttr && onClickAttr.includes(category)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Filter cards
+      const cards = document.querySelectorAll('.exo-card');
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        if (category === 'all' || cat === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Quiz evaluation
+    function checkQuiz(btn, isCorrect, group) {
+      const opts = btn.parentNode.querySelectorAll('.quiz-opt');
+      opts.forEach(opt => opt.disabled = true);
+      
+      if (isCorrect) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('wrong');
+        opts.forEach(opt => {
+          if (opt.textContent.includes('C)')) opt.classList.add('correct');
+        });
+      }
+      
+      const explain = document.getElementById(`${group}-explain`);
+      if (explain) {
+        explain.style.display = 'block';
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([explain]);
+        }
+      }
+    }
+
+    // Interactive Brønsted animation steps
+    function setMechStep(step) {
+      const btns = document.querySelectorAll('.mech-btn');
+      btns.forEach((btn, idx) => {
+        if (idx === step - 1) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      const desc = document.getElementById('mech-desc');
+      const arrowAtt = document.getElementById('curved-arrow');
+      const arrowBrk = document.getElementById('curved-arrow-break');
+      const hTransLine = document.getElementById('h-transfer-line');
+      const hTransCirc = document.getElementById('h-transfer-circle');
+      const hTransTxt = document.getElementById('h-transfer-text');
+      const lonePair = document.getElementById('lone-pair');
+
+      if (step === 1) {
+        desc.innerHTML = "L'azote de l'ammoniac ($\\text{NH}_3$) possède un doublet non liant (zone dorée) très nucléophile. L'eau est l'acide.";
+        arrowAtt.style.display = "none";
+        arrowBrk.style.display = "none";
+        hTransLine.setAttribute("x1", "-15");
+        hTransLine.setAttribute("y1", "-10");
+        hTransLine.setAttribute("x2", "-35");
+        hTransLine.setAttribute("y2", "-22");
+        hTransLine.setAttribute("stroke-dasharray", "none");
+        hTransLine.setAttribute("stroke", "#cbd5e1");
+        hTransCirc.setAttribute("cx", "-35");
+        hTransCirc.setAttribute("cy", "-22");
+        hTransTxt.setAttribute("x", "-35");
+        hTransTxt.setAttribute("y", "-19");
+        lonePair.setAttribute("cx", "18");
+        lonePair.setAttribute("cy", "-5");
+        lonePair.style.display = "block";
+      } 
+      else if (step === 2) {
+        desc.innerHTML = "Le doublet non liant de l'azote de $\text{NH}_3$ commence son <strong>attaque nucléophile</strong> sur le proton $\text{H}^+$ acide de la molécule d'eau (flèche jaune).";
+        arrowAtt.style.display = "block";
+        arrowBrk.style.display = "none";
+        hTransLine.setAttribute("x1", "-15");
+        hTransLine.setAttribute("y1", "-10");
+        hTransLine.setAttribute("x2", "-35");
+        hTransLine.setAttribute("y2", "-22");
+        hTransLine.setAttribute("stroke-dasharray", "none");
+        hTransLine.setAttribute("stroke", "#cbd5e1");
+        hTransCirc.setAttribute("cx", "-35");
+        hTransCirc.setAttribute("cy", "-22");
+        hTransTxt.setAttribute("x", "-35");
+        hTransTxt.setAttribute("y", "-19");
+        lonePair.setAttribute("cx", "18");
+        lonePair.setAttribute("cy", "-5");
+        lonePair.style.display = "block";
+      } 
+      else if (step === 3) {
+        desc.innerHTML = "Le proton est attiré. Parallèlement, la liaison covalente $\text{O-H}$ de l'eau est fragilisée et se rompt. Le doublet liant est rabattu sur l'oxygène de l'eau (flèche rouge).";
+        arrowAtt.style.display = "block";
+        arrowBrk.style.display = "block";
+        hTransLine.setAttribute("x1", "0");
+        hTransLine.setAttribute("y1", "0");
+        hTransLine.setAttribute("x2", "-110");
+        hTransLine.setAttribute("y2", "5");
+        hTransLine.setAttribute("stroke-dasharray", "4,4");
+        hTransLine.setAttribute("stroke", "#ffd700");
+        hTransCirc.setAttribute("cx", "250");
+        hTransCirc.setAttribute("cy", "75");
+        hTransTxt.setAttribute("x", "250");
+        hTransTxt.setAttribute("y", "78");
+        lonePair.style.display = "none";
+      } 
+      else if (step === 4) {
+        desc.innerHTML = "Le transfert est complet. On obtient l'ion ammonium $\\text{NH}_4^+$ (acide conjugué) et l'ion hydroxyde $\\text{OH}^-$ (base conjuguée).";
+        arrowAtt.style.display = "none";
+        arrowBrk.style.display = "none";
+        hTransLine.setAttribute("stroke", "none");
+        hTransCirc.setAttribute("cx", "83");
+        hTransCirc.setAttribute("cy", "58");
+        hTransTxt.setAttribute("x", "83");
+        hTransTxt.setAttribute("y", "61");
+        lonePair.style.display = "none";
+      }
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([desc]);
+      }
+    }
+
+    // Indicators color map
+    const INDICATORS = {
+      bbt: {
+        name: "Bleu de Bromothymol (BBT)",
+        pka: 7.1,
+        getColor: (ph) => {
+          if (ph < 6.0) return { hex: "#ffd700", name: "Jaune (Acide)" };
+          if (ph > 7.6) return { hex: "#0066ff", name: "Bleu (Basique)" };
+          // green transition
+          const ratio = (ph - 6.0) / 1.6;
+          const r = Math.round(255 - ratio * 255);
+          const g = Math.round(215 + ratio * (102 - 215));
+          const b = Math.round(0 + ratio * 255);
+          return { hex: `rgb(${r},${g},${b})`, name: "Vert (Teinte sensible)" };
+        }
+      },
+      helianthine: {
+        name: "Hélianthine",
+        pka: 3.7,
+        getColor: (ph) => {
+          if (ph < 3.1) return { hex: "#ff3333", name: "Rouge (Acide)" };
+          if (ph > 4.4) return { hex: "#ffd700", name: "Jaune (Basique)" };
+          // orange transition
+          const ratio = (ph - 3.1) / 1.3;
+          const g = Math.round(51 + ratio * 164);
+          return { hex: `rgb(255,${g},0)`, name: "Orange (Teinte sensible)" };
+        }
+      },
+      phenolphthalein: {
+        name: "Phénolphtaléine",
+        pka: 9.1,
+        getColor: (ph) => {
+          if (ph < 8.2) return { hex: "rgba(240,240,240,0.15)", name: "Incolore (Acide)" };
+          if (ph > 10.0) return { hex: "#ff007f", name: "Rose fuchsia (Basique)" };
+          // pink transition
+          const ratio = (ph - 8.2) / 1.8;
+          return { hex: `rgba(255, 0, 127, ${ratio * 0.8 + 0.15})`, name: "Rose pâle (Teinte sensible)" };
+        }
+      }
+    };
+
+    let activeIndicatorKey = 'bbt';
+
+    function changeIndicator() {
+      activeIndicatorKey = document.getElementById('indicator-select').value;
+      const ind = INDICATORS[activeIndicatorKey];
+      // Set slider default to match indicator pKa
+      document.getElementById('ph-slider').value = ind.pka;
+      document.getElementById('ph-val').textContent = ind.pka.toFixed(2);
+      
+      updateVis();
+    }
+
+    // Visualizer distribution curves
+    let visCanvas, visCtx;
+
+    function initVisualizerCanvas() {
+      visCanvas = document.getElementById('vis-canvas');
+      if (!visCanvas) return;
+      visCanvas.width = visCanvas.parentElement.clientWidth;
+      visCanvas.height = visCanvas.parentElement.clientHeight;
+      visCtx = visCanvas.getContext('2d');
+      drawVisualizer();
+    }
+
+    function updateVis() {
+      const ph = parseFloat(document.getElementById('ph-slider').value);
+      const ind = INDICATORS[activeIndicatorKey];
+      const pka = ind.pka;
+      
+      document.getElementById('ph-val').textContent = ph.toFixed(2);
+      
+      // Calculate percentages
+      const ratio = Math.pow(10, ph - pka);
+      const pctA = (ratio / (1 + ratio)) * 100;
+      const pctHA = 100 - pctA;
+      
+      document.getElementById('pct-a').textContent = pctA.toFixed(1);
+      document.getElementById('pct-ha').textContent = pctHA.toFixed(1);
+      
+      // Update beaker liquid color
+      const colorObj = ind.getColor(ph);
+      document.getElementById('beaker-liquid').setAttribute('fill', colorObj.hex);
+      document.getElementById('indicator-color-name').textContent = colorObj.name;
+      document.getElementById('indicator-color-name').style.color = colorObj.hex;
+      
+      drawVisualizer();
+    }
+
+    function drawVisualizer() {
+      if (!visCanvas || !visCtx) return;
+      const w = visCanvas.width;
+      const h = visCanvas.height;
+      visCtx.clearRect(0, 0, w, h);
+
+      const ind = INDICATORS[activeIndicatorKey];
+      const pka = ind.pka;
+      const ph = parseFloat(document.getElementById('ph-slider').value);
+
+      const padding = 40;
+      const graphW = w - padding * 2;
+      const graphH = h - padding * 2;
+
+      // Draw Grid Axes
+      const lightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+      visCtx.strokeStyle = lightTheme ? '#cbd5e1' : 'rgba(255,255,255,0.08)';
+      visCtx.lineWidth = 1;
+      
+      visCtx.beginPath();
+      visCtx.moveTo(padding, padding);
+      visCtx.lineTo(padding, h - padding);
+      visCtx.lineTo(w - padding, h - padding);
+      visCtx.stroke();
+
+      // Draw curves
+      visCtx.lineWidth = 2.5;
+      
+      // 1. HA curve (red)
+      visCtx.strokeStyle = '#ff5f56';
+      visCtx.beginPath();
+      for (let x = 0; x <= graphW; x++) {
+        const xPh = (x / graphW) * 14;
+        const r = Math.pow(10, xPh - pka);
+        const yPct = 1 / (1 + r);
+        const y = h - padding - (yPct * graphH);
+        if (x === 0) visCtx.moveTo(padding + x, y);
+        else visCtx.lineTo(padding + x, y);
+      }
+      visCtx.stroke();
+
+      // 2. A- curve (cyan/blue)
+      visCtx.strokeStyle = '#00e5ff';
+      visCtx.beginPath();
+      for (let x = 0; x <= graphW; x++) {
+        const xPh = (x / graphW) * 14;
+        const r = Math.pow(10, xPh - pka);
+        const yPct = r / (1 + r);
+        const y = h - padding - (yPct * graphH);
+        if (x === 0) visCtx.moveTo(padding + x, y);
+        else visCtx.lineTo(padding + x, y);
+      }
+      visCtx.stroke();
+
+      // Vertical line for current pH
+      const activeX = padding + (ph / 14) * graphW;
+      visCtx.strokeStyle = '#fff';
+      visCtx.lineWidth = 1.5;
+      visCtx.setLineDash([4, 4]);
+      visCtx.beginPath();
+      visCtx.moveTo(activeX, padding);
+      visCtx.lineTo(activeX, h - padding);
+      visCtx.stroke();
+      visCtx.setLineDash([]);
+
+      // Label current pH on x axis
+      visCtx.fillStyle = '#fff';
+      visCtx.font = '500 10px sans-serif';
+      visCtx.textAlign = 'center';
+      visCtx.fillText(`pH=${ph.toFixed(1)}`, activeX, h - padding + 15);
+
+      // Label pKa on x axis
+      const pkaX = padding + (pka / 14) * graphW;
+      visCtx.fillStyle = '#ffd700';
+      visCtx.beginPath();
+      visCtx.arc(pkaX, h - padding, 4, 0, Math.PI*2);
+      visCtx.fill();
+      visCtx.fillText(`pKa=${pka.toFixed(1)}`, pkaX, h - padding - 8);
+
+      // Y Axis text
+      visCtx.fillStyle = lightTheme ? '#475569' : '#94a3b8';
+      visCtx.font = '10px sans-serif';
+      visCtx.textAlign = 'right';
+      visCtx.fillText('100%', padding - 8, padding + 5);
+      visCtx.fillText('50%', padding - 8, padding + graphH / 2 + 5);
+      visCtx.fillText('0%', padding - 8, h - padding + 5);
+      
+      // X Axis text
+      visCtx.textAlign = 'center';
+      visCtx.fillText('pH 0', padding, h - padding + 15);
+      visCtx.fillText('pH 7', padding + graphW / 2, h - padding + 15);
+      visCtx.fillText('pH 14', w - padding, h - padding + 15);
+    }
+
+    // pH Calculator Logic
+    function toggleKaField() {
+      const type = document.getElementById('species-type').value;
+      const grp = document.getElementById('ka-field-group');
+      if (type === 'strong-acid' || type === 'strong-base') {
+        grp.style.opacity = '0.3';
+        document.getElementById('calc-pka').disabled = true;
+      } else {
+        grp.style.opacity = '1';
+        document.getElementById('calc-pka').disabled = false;
+      }
+    }
+    
+    function calculatePH() {
+      const type = document.getElementById('species-type').value;
+      const c = parseFloat(document.getElementById('calc-c').value);
+      const pka = parseFloat(document.getElementById('calc-pka').value);
+      
+      const box = document.getElementById('calc-result-box');
+      const phEl = document.getElementById('calc-res-ph');
+      const expEl = document.getElementById('calc-res-explain');
+      
+      box.style.display = 'block';
+
+      if (isNaN(c) || c <= 0) {
+        phEl.textContent = "Erreur";
+        expEl.textContent = "Veuillez entrer une concentration valide supérieure à 0.";
+        return;
+      }
+
+      let ph = 7;
+      let explanation = "";
+
+      if (type === 'strong-acid') {
+        ph = -Math.log10(c);
+        if (ph < 0) ph = 0;
+        explanation = `L'acide est fort. Il réagit totalement avec l'eau selon l'équation : <br>
+                       $$\\text{AH} + \\text{H}_2\\text{O} \\to \\text{A}^- + \\text{H}_3\\text{O}^+$$ <br>
+                       Donc $[\\text{H}_3\\text{O}^+] = C = ${c.toExponential(3)}\\ \\text{mol·L}^{-1}$. <br>
+                       $$\\text{pH} = -\\log[\\text{H}_3\\text{O}^+] = -\\log(${c.toExponential(3)}) = ${ph.toFixed(2)}$$`;
+      } 
+      else if (type === 'strong-base') {
+        ph = 14 + Math.log10(c);
+        if (ph > 14) ph = 14;
+        explanation = `La base est forte. Elle libère totalement des ions hydroxydes $\\text{OH}^-$ selon : <br>
+                       $$\\text{B} + \\text{H}_2\\text{O} \\to \\text{BH}^+ + \\text{OH}^-$$ <br>
+                       Donc $[\\text{OH}^-] = C = ${c.toExponential(3)}\\ \\text{mol·L}^{-1}$. <br>
+                       On utilise le produit ionique de l'eau : $[\\text{H}_3\\text{O}^+] = \\frac{K_e}{[\\text{OH}^-]} = \\frac{10^{-14}}{${c.toExponential(3)}}$. <br>
+                       $$\\text{pH} = 14 + \\log(C) = 14 + \\log(${c.toExponential(3)}) = ${ph.toFixed(2)}$$`;
+      } 
+      else if (type === 'weak-acid') {
+        const ka = Math.pow(10, -pka);
+        const h3o = (-ka + Math.sqrt(ka*ka + 4*ka*c)) / 2;
+        ph = -Math.log10(h3o);
+        explanation = `L'acide est faible. La réaction avec l'eau est limitée et gouvernée par le $K_a = 10^{-\\text{p}K_a} = ${ka.toExponential(3)}$. <br>
+                       L'équation de conservation et d'équilibre conduit à : <br>
+                       $$K_a = \\frac{[\\text{H}_3\\text{O}^+]^2}{C - [\\text{H}_3\\text{O}^+]}$$ <br>
+                       En résolvant l'équation du second degré $[\\text{H}_3\\text{O}^+]^2 + K_a[\\text{H}_3\\text{O}^+] - K_a C = 0$, on obtient : <br>
+                       $[\\text{H}_3\\text{O}^+] = ${h3o.toExponential(3)}\\ \\text{mol·L}^{-1}$. <br>
+                       $$\\text{pH} = -\\log[\\text{H}_3\\text{O}^+] = ${ph.toFixed(2)}$$`;
+      } 
+      else if (type === 'weak-base') {
+        const ka = Math.pow(10, -pka);
+        const kb = Math.pow(10, -14) / ka;
+        const oh = (-kb + Math.sqrt(kb*kb + 4*kb*c)) / 2;
+        const h3o = Math.pow(10, -14) / oh;
+        ph = -Math.log10(h3o);
+        explanation = `La base conjuguée est faible. La réaction avec l'eau est caractérisée par la constante de basicité $K_b = \\frac{K_e}{K_a} = ${kb.toExponential(3)}$. <br>
+                       L'équation d'équilibre conduit à : <br>
+                       $$K_b = \\frac{[\\text{OH}^-]^2}{C - [\\text{OH}^-]}$$ <br>
+                       En résolvant l'équation du second degré, on trouve $[\\text{OH}^-] = ${oh.toExponential(3)}\\ \\text{mol·L}^{-1}$. <br>
+                       Puis $[\\text{H}_3\\text{O}^+] = \\frac{K_e}{[\\text{OH}^-]} = ${h3o.toExponential(3)}\\ \\text{mol·L}^{-1}$. <br>
+                       $$\\text{pH} = ${ph.toFixed(2)}$$`;
+      }
+
+      phEl.textContent = `pH calculé = ${ph.toFixed(2)}`;
+      expEl.innerHTML = explanation;
+      
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([expEl]);
+      }
+    }
+
+    // Prompts Builder generator
+    const PROMPTS = {
+      explain: {
+        tampon: {
+          simple: "Agis en tant que professeur agrégé de physique-chimie de classe préparatoire. Peux-tu m'expliquer de manière simple et imagée le fonctionnement des solutions tampons, en me montrant comment le pH sanguin reste stable à 7.4 ?",
+          rigorous: "Bonjour. Peux-tu me faire une démonstration mathématique rigoureuse du pouvoir tampon d'une solution équimolaire d'acide faible, en calculant sa dérivée d(pH)/dn lors de l'ajout d'une base forte ?",
+          step: "Je prépare le bac et j'ai du mal avec les tampons. Explique-moi le cours pas-à-pas avec des questions de validation simples à chaque étape pour t'assurer que je comprends."
+        },
+        ka: {
+          simple: "Explique-moi le lien entre la constante d'acidité Ka, le pKa et la force d'un acide faible à l'aide d'une métaphore concrète.",
+          rigorous: "Démontre la relation générale reliant le pH de la solution, le pKa du couple et les concentrations des formes conjuguées à l'équilibre.",
+          step: "Comment détermine-t-on le pKa d'un couple acide-base ? Propose-moi un protocole expérimental d'ECE guidé pas-à-pas."
+        }
+      },
+      solve: {
+        tampon: {
+          simple: "J'ai un exercice sur la préparation d'un tampon à pH 5.0 à partir d'acide acétique. Guide-moi sur la démarche de résolution de manière très imagée.",
+          rigorous: "Résous-moi de manière rigoureuse l'exercice suivant : on mélange 50mL d'acide faible à 0.1M et 20mL de base forte NaOH à 0.1M. Quel est le pH final exact ?",
+          step: "Aide-moi à résoudre cet exercice de type bac sur les solutions tampons. Donne-moi seulement des indices étape par étape sans me donner la réponse globale."
+        }
+      }
+    };
+
+    function generatePrompt() {
+      const task = document.getElementById('prompt-task').value;
+      const topic = document.getElementById('prompt-topic').value;
+      const tone = document.getElementById('prompt-tone').value;
+
+      let promptStr = "";
+      
+      // Fallback generator if exact path not matching
+      if (PROMPTS[task] && PROMPTS[task][topic] && PROMPTS[task][topic][tone]) {
+        promptStr = PROMPTS[task][topic][tone];
+      } else {
+        // Fallback dynamic generator
+        const taskText = task === 'explain' ? "Explique-moi" : task === 'solve' ? "Aide-moi à résoudre un exercice sur" : task === 'quiz' ? "Crée un QCM d'entraînement sur" : "Aide-moi à faire la transition vers la prépa PCSI sur";
+        const topicText = topic === 'tampon' ? "les solutions tampons en chimie aqueuse" : topic === 'ka' ? "la constante d'acidité Ka et le pKa" : topic === 'brotsted' ? "les transferts de protons et les mécanismes de Brønsted" : "les zones de virage des indicateurs colorés";
+        const toneText = tone === 'simple' ? "avec un langage simple, des analogies claires et peu d'équations complexes." : tone === 'rigorous' ? "avec toute la rigueur mathématique, les équations chimiques complètes et les approximations associées." : "en me guidant étape par étape, en posant une question intermédiaire à la fois.";
+        
+        promptStr = `Agis en tant que tuteur expert en physique-chimie de Terminale Spécialité. ${taskText} ${topicText} ${toneText}`;
+      }
+
+      document.getElementById('prompt-output-text').textContent = promptStr;
+    }
+
+    function copyPrompt() {
+      const text = document.getElementById('prompt-output-text').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-prompt-btn');
+        btn.textContent = "Copié !";
+        btn.style.background = "#10b981";
+        btn.style.color = "#fff";
+        setTimeout(() => {
+          btn.textContent = "Copier";
+          btn.style.background = "";
+          btn.style.color = "";
+        }, 1500);
+      });
+    }
+
+    // Flashcards engine
+    const FLASHCARDS = [
+      { q: "Quelle est la définition du pH d'une solution aqueuse ?", a: "$$\\text{pH} = -\\log\\left(\\frac{[\\text{H}_3\\text{O}^+]}{C^\\circ}\\right)$$" },
+      { q: "Quelle est la valeur du produit ionique de l'eau Ke à 25°C ?", a: "$$K_e = [\\text{H}_3\\text{O}^+] \\cdot [\\text{OH}^-] = 1{,}0 \\times 10^{-14} \\quad (\\text{p}K_e = 14)$$" },
+      { q: "Comment exprime-t-on le pH d'un acide fort de concentration C ?", a: "$$\\text{pH} = -\\log(C)$$" },
+      { q: "Quelle est la constante d'acidité Ka pour un couple HA / A⁻ ?", a: "$$K_a = \\frac{[\\text{A}^-]_\\text{éq} \\cdot [\\text{H}_3\\text{O}^+]_\\text{éq}}{[\\text{HA}]_\\text{éq}}$$" },
+      { q: "Quelle est la relation générale liant pH et pKa d'un couple ?", a: "$$\\text{pH} = \\text{p}K_a + \\log\\left(\\frac{[\\text{A}^-]}{[\\text{HA}]}\\right)$$" }
+    ];
+    let fcIndex = 0;
+    
+    function flipCard() {
+      document.getElementById('fc-card').classList.toggle('flipped');
+    }
+    
+    function updateCard() {
+      const card = document.getElementById('fc-card');
+      card.classList.remove('flipped');
+      setTimeout(() => {
+        document.getElementById('fc-question').textContent = FLASHCARDS[fcIndex].q;
+        const ans = document.getElementById('fc-answer');
+        ans.innerHTML = FLASHCARDS[fcIndex].a;
+        document.getElementById('fc-counter').textContent = `${fcIndex + 1} / ${FLASHCARDS.length}`;
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([ans]);
+        }
+      }, 200);
+    }
+    
+    function nextCard() {
+      fcIndex = (fcIndex + 1) % FLASHCARDS.length;
+      updateCard();
+    }
+    
+    function prevCard() {
+      fcIndex = (fcIndex - 1 + FLASHCARDS.length) % FLASHCARDS.length;
+      updateCard();
+    }
+
+    // Neural mesh background animation
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let meshNodes = [];
+    const maxNodes = 65;
+    let mouseX = -999, mouseY = -999;
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    function initMesh() {
+      meshNodes = [];
+      for (let i = 0; i < maxNodes; i++) {
+        meshNodes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          r: Math.random() * 2 + 1
+        });
+      }
+    }
+    
+    function animLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const lightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+      const colorRGB = lightTheme ? '0, 164, 189' : '0, 229, 255';
+      
+      meshNodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        
+        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+        
+        if (mouseX !== -999) {
+          const dx = mouseX - node.x;
+          const dy = mouseY - node.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) {
+            const pull = (120 - dist) * 0.0003;
+            node.vx += dx * pull;
+            node.vy += dy * pull;
+          }
+        }
+        
+        node.vx = Math.max(-0.6, Math.min(0.6, node.vx));
+        node.vy = Math.max(-0.6, Math.min(0.6, node.vy));
+        
+        ctx.fillStyle = `rgba(${colorRGB}, 0.25)`;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < meshNodes.length; i++) {
+        for (let j = i + 1; j < meshNodes.length; j++) {
+          const dx = meshNodes[j].x - meshNodes[i].x;
+          const dy = meshNodes[j].y - meshNodes[i].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 160) {
+            ctx.strokeStyle = `rgba(${colorRGB}, ${(1 - dist/160) * 0.12})`;
+            ctx.beginPath();
+            ctx.moveTo(meshNodes[i].x, meshNodes[i].y);
+            ctx.lineTo(meshNodes[j].x, meshNodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      requestAnimationFrame(animLoop);
+    }
+    
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      initMesh();
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    
+    window.addEventListener('mouseleave', () => {
+      mouseX = -999;
+      mouseY = -999;
+    });
+    
+    // Trigger animations and initial loads
+    resizeCanvas();
+    initMesh();
+    animLoop();
+
+    // Initial MathJax typesetting & widgets setup on load
+    window.addEventListener('load', () => {
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([document.getElementById('tab-cours')])
+          .catch(err => console.log('MathJax load error:', err));
+      }
+      
+      // Initialize prompt generator
+      generatePrompt();
+
+      // Initialize visualizer variables
+      updateVis();
+    });
+  </script>
+</body>
+</html>
