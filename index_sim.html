@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Hub des Simulations Interactives</title>
+    <style>
+        :root {
+            --bg-base: #020617;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #0ea5e9;
+            --accent-glow: 0 0 20px rgba(14, 165, 233, 0.5);
+            --card-bg: rgba(30, 41, 59, 0.5);
+            --card-hover: rgba(51, 65, 85, 0.8);
+
+            /* Subject colors */
+            --color-meca: #f59e0b; /* Orange */
+            --color-chimie: #ec4899; /* Pink */
+            --color-elec: #8b5cf6; /* Purple */
+            --color-ondes: #10b981; /* Green */
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-primary: #0284c7;
+            --accent-glow: 0 0 20px rgba(2, 132, 199, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Animated Galactic Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Top Navigation Bar */
+        nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: var(--accent-primary);
+            text-shadow: var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span { color: var(--text-main); font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        [data-theme="light"] .search-bar input { background: rgba(255,255,255,0.5); }
+
+        .search-bar input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: var(--accent-glow);
+        }
+
+        .search-bar svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            fill: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content Grid */
+        main {
+            display: flex;
+            padding: 30px 40px;
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Filters */
+        aside {
+            width: 250px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .filter-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .filter-section h3 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .filter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .filter-btn.active {
+            background: rgba(14, 165, 233, 0.15);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .badge-count {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .filter-btn.active .badge-count {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+
+        /* Grid of Simulations */
+        .sim-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            align-content: start;
+        }
+
+        /* Simulation Card */
+        .sim-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .sim-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent-primary);
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        .sim-card:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .sim-card:hover::before { opacity: 1; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .card-level {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Thematic tags */
+        .tag.meca { border-color: var(--color-meca); color: var(--color-meca); }
+        .tag.chimie { border-color: var(--color-chimie); color: var(--color-chimie); }
+        .tag.elec { border-color: var(--color-elec); color: var(--color-elec); }
+        .tag.ondes { border-color: var(--color-ondes); color: var(--color-ondes); }
+
+        .play-icon {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: 0.3s;
+            box-shadow: var(--accent-glow);
+        }
+
+        .sim-card:hover .play-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .play-icon svg { fill: white; width: 20px; height: 20px; margin-left: 3px; }
+
+        /* Modal / Frame Viewer */
+        #sim-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        #sim-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-header {
+            height: 50px;
+            background: #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .modal-title { color: #fff; font-weight: bold; letter-spacing: 1px; }
+
+        .btn-close {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #sim-frame {
+            width: 100%;
+            flex-grow: 1;
+            border: none;
+            background: #fff; /* Frames handle their own theme, usually dark by default */
+        }
+
+        #theme-toggle-btn {
+            background: transparent; border: 1px solid var(--glass-border);
+            color: var(--text-main); padding: 8px 15px; border-radius: 20px; cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Animation -->
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="logo">
+            NEXUS <span>SIMULATIONS</span>
+        </div>
+
+        <div class="search-bar">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 12.01 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 12.01 14 9.5 14z"/></svg>
+            <input type="text" id="search-input" placeholder="Rechercher une simulation, notion...">
+        </div>
+
+        <div>
+            <button id="theme-toggle-btn">Changer Thème</button>
+        </div>
+    </nav>
+
+    <main>
+        <aside>
+            <div class="filter-section">
+                <h3>Niveau</h3>
+                <div class="filter-list" id="level-filters">
+                    <button class="filter-btn active" data-filter="all">Tous les niveaux <span class="badge-count" id="count-all">0</span></button>
+                    <button class="filter-btn" data-filter="college">Collège <span class="badge-count" id="count-college">0</span></button>
+                    <button class="filter-btn" data-filter="seconde">Seconde <span class="badge-count" id="count-seconde">0</span></button>
+                    <button class="filter-btn" data-filter="premiere">Première Spé <span class="badge-count" id="count-premiere">0</span></button>
+                    <button class="filter-btn" data-filter="terminale">Terminale Spé <span class="badge-count" id="count-terminale">0</span></button>
+                    <button class="filter-btn" data-filter="sup">Supérieur / Univ <span class="badge-count" id="count-sup">0</span></button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Domaine</h3>
+                <div class="filter-list" id="domain-filters">
+                    <button class="filter-btn active" data-domain="all">Tous les domaines</button>
+                    <button class="filter-btn" data-domain="meca">Mécanique</button>
+                    <button class="filter-btn" data-domain="chimie">Chimie</button>
+                    <button class="filter-btn" data-domain="ondes">Ondes & Optique</button>
+                    <button class="filter-btn" data-domain="elec">Électricité</button>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sim-grid" id="sim-grid">
+            <!-- Cards injected via JS -->
+        </div>
+    </main>
+
+    <!-- Modal for Simulation -->
+    <div id="sim-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Chargement...</div>
+            <button class="btn-close" id="btn-close-modal">Fermer [X]</button>
+        </div>
+        <iframe id="sim-frame" src=""></iframe>
+    </div>
+
+    <script>
+        // --- Database of Simulations ---
+        const simulations = [
+            {
+                id: 'uniform_field',
+                title: 'Champ Uniforme (Gravité & Élec)',
+                desc: 'Trajectoires paraboliques, vecteurs cinématiques et forces dans un condensateur plan ou champ de pesanteur.',
+                level: ['terminale', 'sup'],
+                domain: 'meca',
+                tags: ['Balistique', 'Cinématique', 'Newton', 'Coulomb'],
+                file: 'src/simulations/uniform_field_motion.html'
+            },
+            {
+                id: 'kepler',
+                title: 'Lois de Kepler & Gravitation',
+                desc: 'Mécanique céleste : orbites elliptiques, loi des aires, forces gravitationnelles et énergies.',
+                level: ['terminale', 'sup'],
+                domain: 'meca',
+                tags: ['Astro', 'Newton', 'Énergie'],
+                file: 'src/simulations/kepler.html'
+            },
+            {
+                id: 'fluids',
+                title: 'Mécanique des Fluides',
+                desc: 'Tube de Venturi, principe de Bernoulli, conservation du débit et pression.',
+                level: ['terminale', 'sup'],
+                domain: 'meca',
+                tags: ['Bernoulli', 'Pression', 'Débit'],
+                file: 'src/simulations/fluids.html'
+            },
+            {
+                id: 'interference',
+                title: 'Interférences & Diffraction',
+                desc: 'Expérience des fentes d\'Young. Calcul précis de la figure d\'interférence et courbe d\'intensité I(x).',
+                level: ['terminale', 'sup'],
+                domain: 'ondes',
+                tags: ['Young', 'Laser', 'Onde'],
+                file: 'src/simulations/interference.html'
+            },
+            {
+                id: 'electrostatics',
+                title: 'Champs Électrostatiques',
+                desc: 'Visualisation des lignes de champ, vecteurs et équipotentielles générés par des charges ponctuelles.',
+                level: ['premiere', 'sup'],
+                domain: 'elec',
+                tags: ['Coulomb', 'Potentiel', 'Vecteurs'],
+                file: 'src/simulations/electrostatics.html'
+            },
+            {
+                id: 'rc_circuit',
+                title: 'Circuit RC (Transitoire)',
+                desc: 'Charge et décharge d\'un condensateur. Oscilloscope intégré pour les courbes de tension.',
+                level: ['terminale'],
+                domain: 'elec',
+                tags: ['Condensateur', 'Régime transitoire', 'Oscilloscope'],
+                file: 'src/simulations/rc_circuit.html'
+            },
+            {
+                id: 'ohms_law',
+                title: 'Loi d\'Ohm & Puissance',
+                desc: 'Circuit simple avec animation des électrons, calculs en temps réel de U, I, R et P.',
+                level: ['college', 'seconde'],
+                domain: 'elec',
+                tags: ['Résistance', 'Courant', 'Énergie'],
+                file: 'src/simulations/ohms_law.html'
+            },
+            {
+                id: 'titration',
+                title: 'Titrage pH-métrique & Colorimétrique',
+                desc: 'Simulation précise d\'un dosage acide-base (fort/faible) avec courbe pH=f(V) et changement d\'indicateur.',
+                level: ['terminale', 'sup'],
+                domain: 'chimie',
+                tags: ['Acide-Base', 'Équivalence', 'Graphe'],
+                file: 'src/simulations/titration.html'
+            },
+            {
+                id: 'kinetics',
+                title: 'Cinétique Chimique',
+                desc: 'Suivi temporel de réactions d\'ordre 0, 1 et 2. Linéarisation et calculs des vitesses de disparition.',
+                level: ['terminale', 'sup'],
+                domain: 'chimie',
+                tags: ['Vitesse', 'Demi-vie', 'Ordre'],
+                file: 'src/simulations/chemical_kinetics.html'
+            },
+            {
+                id: 'electrochem',
+                title: 'Piles & Électrolyse',
+                desc: 'Fonctionnement spontané (Pile Daniell) et forcé (Électrolyse). Transfert d\'électrons et variations de masse.',
+                level: ['terminale', 'sup'],
+                domain: 'chimie',
+                tags: ['Oxydoréduction', 'Faraday', 'Électrodes'],
+                file: 'src/simulations/electrochemistry.html'
+            },
+            {
+                id: 'lab_tech',
+                title: 'Techniques de Laboratoire',
+                desc: 'Chauffage à reflux, extraction liquide-liquide (ampoule à décanter) et filtration sous vide.',
+                level: ['seconde', 'premiere', 'terminale'],
+                domain: 'chimie',
+                tags: ['Synthèse', 'Séparation', 'Matériel'],
+                file: 'src/simulations/lab_techniques.html'
+            },
+            {
+                id: 'spectra',
+                title: 'Spectres d\'Émission',
+                desc: 'Spectroscopie de lampes à décharge (H, He, Ne, Hg). Visualisation des raies d\'émission exactes.',
+                level: ['seconde', 'premiere'],
+                domain: 'ondes',
+                tags: ['Atome', 'Quantique', 'Lumière'],
+                file: 'src/simulations/spectra.html'
+            },
+            {
+                id: 'refraction',
+                title: 'Réfraction (Snell-Descartes)',
+                desc: 'Laser interactif traversant deux milieux d\'indices différents. Réflexion totale interne.',
+                level: ['seconde'],
+                domain: 'ondes',
+                tags: ['Optique', 'Laser', 'Angle'],
+                file: 'src/simulations/refraction.html'
+            },
+            {
+                id: 'projectile',
+                title: 'Balistique Simple',
+                desc: 'Mouvement parabolique classique d\'un projectile. Idéal pour introduire la cinématique.',
+                level: ['premiere', 'terminale'],
+                domain: 'meca',
+                tags: ['Cinématique', 'Parabole'],
+                file: 'src/simulations/projectile_motion.html'
+            }
+        ];
+
+        // --- UI Logic ---
+        const grid = document.getElementById('sim-grid');
+        const searchInput = document.getElementById('search-input');
+        const levelBtns = document.querySelectorAll('#level-filters .filter-btn');
+        const domainBtns = document.querySelectorAll('#domain-filters .filter-btn');
+
+        let currentLevel = 'all';
+        let currentDomain = 'all';
+        let currentSearch = '';
+
+        function init() {
+            updateCounts();
+            renderCards();
+
+            // Event Listeners
+            levelBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    levelBtns.forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentLevel = e.currentTarget.dataset.filter;
+                    renderCards();
+                });
+            });
+
+            domainBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    domainBtns.forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentDomain = e.currentTarget.dataset.domain;
+                    renderCards();
+                });
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                renderCards();
+            });
+
+            document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+                const html = document.documentElement;
+                html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            });
+
+            document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+        }
+
+        function updateCounts() {
+            document.getElementById('count-all').textContent = simulations.length;
+            ['college', 'seconde', 'premiere', 'terminale', 'sup'].forEach(lvl => {
+                const count = simulations.filter(s => s.level.includes(lvl)).length;
+                document.getElementById(`count-${lvl}`).textContent = count;
+            });
+        }
+
+        function filterSimulations() {
+            return simulations.filter(sim => {
+                const matchLevel = currentLevel === 'all' || sim.level.includes(currentLevel);
+                const matchDomain = currentDomain === 'all' || sim.domain === currentDomain;
+                const matchSearch = currentSearch === '' ||
+                    sim.title.toLowerCase().includes(currentSearch) ||
+                    sim.desc.toLowerCase().includes(currentSearch) ||
+                    sim.tags.some(t => t.toLowerCase().includes(currentSearch));
+
+                return matchLevel && matchDomain && matchSearch;
+            });
+        }
+
+        function renderCards() {
+            const filtered = filterSimulations();
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--text-muted);">Aucune simulation ne correspond à vos critères.</div>`;
+                return;
+            }
+
+            filtered.forEach(sim => {
+                const card = document.createElement('div');
+                card.className = 'sim-card';
+                // Use the highest level for the badge
+                const displayLevel = sim.level[sim.level.length-1];
+
+                // Color mapping for border based on domain
+                let domainColorVar = `var(--color-${sim.domain})`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title">${sim.title}</div>
+                    </div>
+                    <div class="card-level" style="align-self:flex-start;">Niveau: ${displayLevel}</div>
+                    <div class="card-desc">${sim.desc}</div>
+                    <div class="card-tags">
+                        ${sim.tags.map(tag => `<span class="tag ${sim.domain}">${tag}</span>`).join('')}
+                    </div>
+                    <div class="play-icon">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                `;
+
+                // Set the accent color of the card border dynamically
+                card.style.setProperty('--accent-primary', `var(--color-${sim.domain})`);
+
+                card.addEventListener('click', () => openModal(sim));
+                grid.appendChild(card);
+            });
+        }
+
+        // --- Modal Logic ---
+        const modal = document.getElementById('sim-modal');
+        const frame = document.getElementById('sim-frame');
+        const modalTitle = document.getElementById('modal-title');
+
+        function openModal(sim) {
+            modalTitle.textContent = `NEXUS / ${sim.title}`;
+            frame.src = sim.file;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // prevent bg scroll
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            frame.src = ''; // stop execution
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- Background Canvas Animation (Galactic Nodes) ---
+        const bgCanvas = document.getElementById('bg-canvas');
+        const ctx = bgCanvas.getContext('2d');
+        let bgWidth, bgHeight;
+        let nodes = [];
+
+        function resizeBg() {
+            bgWidth = window.innerWidth;
+            bgHeight = window.innerHeight;
+            bgCanvas.width = bgWidth;
+            bgCanvas.height = bgHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        for(let i=0; i<80; i++) {
+            nodes.push({
+                x: Math.random() * bgWidth,
+                y: Math.random() * bgHeight,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                size: Math.random() * 2 + 1
+            });
+        }
+
+        function drawBg() {
+            ctx.clearRect(0, 0, bgWidth, bgHeight);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.2)';
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
+
+            for(let i=0; i<nodes.length; i++) {
+                let n = nodes[i];
+                n.x += n.vx; n.y += n.vy;
+
+                if(n.x < 0 || n.x > bgWidth) n.vx *= -1;
+                if(n.y < 0 || n.y > bgHeight) n.vy *= -1;
+
+                ctx.beginPath(); ctx.arc(n.x, n.y, n.size, 0, Math.PI*2); ctx.fill();
+
+                // Connect nearby
+                for(let j=i+1; j<nodes.length; j++) {
+                    let n2 = nodes[j];
+                    let dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+                    if(dist < 150) {
+                        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(drawBg);
+        }
+        drawBg();
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>
