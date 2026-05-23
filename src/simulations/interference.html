@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Avancée: Interférences & Diffraction</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #3b82f6;
+            --accent-glow: 0 0 15px rgba(59, 130, 246, 0.8);
+            --panel-bg: rgba(0,0,0,0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --accent-color: #2563eb;
+            --accent-glow: 0 0 15px rgba(37, 99, 235, 0.5);
+            --panel-bg: rgba(255,255,255,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        #visual-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            background: var(--panel-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-title {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+        }
+
+        #controls-pane {
+            width: 360px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--glass-border);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: var(--accent-glow);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        label {
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: var(--accent-glow);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(128, 128, 128, 0.4);
+            border-radius: 2px;
+        }
+
+        select {
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            padding: 8px;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .stats-box {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .math-eq {
+            font-style: italic;
+            color: #10b981;
+            text-align: center;
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 20;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+
+        <div id="visual-pane">
+            <!-- 2D Projection (Screen) -->
+            <div class="canvas-wrapper">
+                <div class="canvas-title">Écran de Projection (Figure d'Interférence)</div>
+                <canvas id="screenCanvas"></canvas>
+            </div>
+
+            <!-- 1D Graph (Intensity) -->
+            <div class="canvas-wrapper">
+                <div class="canvas-title">Profil d'Intensité I(x)</div>
+                <canvas id="graphCanvas"></canvas>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Optique Ondulatoire</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Niveau Universitaire / Terminale Spé</div>
+
+            <div class="control-group">
+                <label>Dispositif</label>
+                <select id="setup-type">
+                    <option value="double" selected>Fentes d'Young (Interférences)</option>
+                    <option value="single">Fente Simple (Diffraction)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Longueur d'onde (λ) <span id="lambda-val">532 nm</span></label>
+                <input type="range" id="lambda" min="380" max="750" step="1" value="532">
+                <div id="color-preview" style="height:4px; width:100%; border-radius:2px; margin-top:5px;"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Largeur de fente (a) <span id="a-val">50 µm</span></label>
+                <input type="range" id="a-width" min="10" max="200" step="1" value="50">
+            </div>
+
+            <div class="control-group" id="b-group">
+                <label>Écartement fentes (b) <span id="b-val">200 µm</span></label>
+                <input type="range" id="b-dist" min="50" max="1000" step="10" value="200">
+            </div>
+
+            <div class="control-group">
+                <label>Distance Écran (D) <span id="d-val">2.0 m</span></label>
+                <input type="range" id="d-dist" min="0.5" max="5.0" step="0.1" value="2.0">
+            </div>
+
+            <div class="control-group">
+                <label>Zoom (Largeur Écran) <span id="zoom-val">10 cm</span></label>
+                <input type="range" id="zoom" min="2" max="20" step="0.5" value="10">
+            </div>
+
+            <div class="stats-box">
+                <div class="math-eq" style="font-size: 0.9rem;">I(θ) = I₀ · sinc²(π·a·sinθ/λ) · cos²(π·b·sinθ/λ)</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div>Interfrange (i): <span id="stat-i" style="color:#fbbf24; font-weight:bold;">0.00</span> mm</div>
+                <div>Tache centrale: <span id="stat-l" style="color:#38bdf8; font-weight:bold;">0.00</span> mm</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const screenCanvas = document.getElementById('screenCanvas');
+        const screenCtx = screenCanvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const graphCtx = graphCanvas.getContext('2d');
+
+        // Controls
+        const setupType = document.getElementById('setup-type');
+        const lambdaInput = document.getElementById('lambda');
+        const aInput = document.getElementById('a-width');
+        const bInput = document.getElementById('b-dist');
+        const dInput = document.getElementById('d-dist');
+        const zoomInput = document.getElementById('zoom');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const lambdaVal = document.getElementById('lambda-val');
+        const aVal = document.getElementById('a-val');
+        const bVal = document.getElementById('b-val');
+        const dVal = document.getElementById('d-val');
+        const zoomVal = document.getElementById('zoom-val');
+        const colorPreview = document.getElementById('color-preview');
+        const bGroup = document.getElementById('b-group');
+
+        const statI = document.getElementById('stat-i');
+        const statL = document.getElementById('stat-l');
+
+        let screenWidth, screenHeight, graphWidth, graphHeight;
+        let r_col=0, g_col=0, b_col=0; // Current color
+
+        function resize() {
+            screenWidth = screenCanvas.parentElement.clientWidth;
+            screenHeight = screenCanvas.parentElement.clientHeight;
+            screenCanvas.width = screenWidth;
+            screenCanvas.height = screenHeight;
+
+            graphWidth = graphCanvas.parentElement.clientWidth;
+            graphHeight = graphCanvas.parentElement.clientHeight;
+            graphCanvas.width = graphWidth;
+            graphCanvas.height = graphHeight;
+
+            draw();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            draw();
+        });
+
+        // Wavelength to RGB approximation
+        function wavelengthToRGB(Wavelength) {
+            let R, G, B;
+            if (Wavelength >= 380 && Wavelength < 440) {
+                R = -(Wavelength - 440) / (440 - 380);
+                G = 0.0;
+                B = 1.0;
+            } else if (Wavelength >= 440 && Wavelength < 490) {
+                R = 0.0;
+                G = (Wavelength - 440) / (490 - 440);
+                B = 1.0;
+            } else if (Wavelength >= 490 && Wavelength < 510) {
+                R = 0.0;
+                G = 1.0;
+                B = -(Wavelength - 510) / (510 - 490);
+            } else if (Wavelength >= 510 && Wavelength < 580) {
+                R = (Wavelength - 510) / (580 - 510);
+                G = 1.0;
+                B = 0.0;
+            } else if (Wavelength >= 580 && Wavelength < 645) {
+                R = 1.0;
+                G = -(Wavelength - 645) / (645 - 580);
+                B = 0.0;
+            } else if (Wavelength >= 645 && Wavelength <= 750) {
+                R = 1.0;
+                G = 0.0;
+                B = 0.0;
+            } else {
+                R = 0.0; G = 0.0; B = 0.0;
+            }
+
+            // Intensity fade at vision limits
+            let factor;
+            if (Wavelength >= 380 && Wavelength < 420) {
+                factor = 0.3 + 0.7 * (Wavelength - 380) / (420 - 380);
+            } else if (Wavelength >= 420 && Wavelength < 700) {
+                factor = 1.0;
+            } else if (Wavelength >= 700 && Wavelength <= 750) {
+                factor = 0.3 + 0.7 * (750 - Wavelength) / (750 - 700);
+            } else {
+                factor = 0.0;
+            }
+
+            const gamma = 0.80;
+            R = Math.round(255 * Math.pow(R * factor, gamma));
+            G = Math.round(255 * Math.pow(G * factor, gamma));
+            B = Math.round(255 * Math.pow(B * factor, gamma));
+
+            return [R, G, B];
+        }
+
+        function updateUI() {
+            const lambda = parseFloat(lambdaInput.value);
+            const a = parseFloat(aInput.value);
+            const b = parseFloat(bInput.value);
+            const D = parseFloat(dInput.value);
+            const z = parseFloat(zoomInput.value);
+            const isDouble = setupType.value === 'double';
+
+            lambdaVal.textContent = `${lambda} nm`;
+            aVal.textContent = `${a} µm`;
+            bVal.textContent = `${b} µm`;
+            dVal.textContent = `${D.toFixed(1)} m`;
+            zoomVal.textContent = `${z} cm`;
+
+            bGroup.style.display = isDouble ? 'flex' : 'none';
+
+            // Update color preview
+            const [R, G, B] = wavelengthToRGB(lambda);
+            r_col = R; g_col = G; b_col = B;
+            colorPreview.style.backgroundColor = `rgb(${R}, ${G}, ${B})`;
+            colorPreview.style.boxShadow = `0 0 10px rgb(${R}, ${G}, ${B})`;
+            document.documentElement.style.setProperty('--accent-color', `rgb(${R}, ${G}, ${B})`);
+
+            // Calculate theoretical stats
+            const lambda_m = lambda * 1e-9;
+            const a_m = a * 1e-6;
+            const b_m = b * 1e-6;
+
+            // Largeur de la tache centrale de diffraction: L = 2 * lambda * D / a
+            const L_m = 2 * lambda_m * D / a_m;
+            statL.textContent = (L_m * 1000).toFixed(2);
+
+            if (isDouble) {
+                // Interfrange: i = lambda * D / b
+                const i_m = lambda_m * D / b_m;
+                statI.textContent = (i_m * 1000).toFixed(2);
+                statI.parentElement.style.opacity = '1';
+            } else {
+                statI.textContent = "N/A";
+                statI.parentElement.style.opacity = '0.4';
+            }
+
+            draw();
+        }
+
+        setupType.addEventListener('change', updateUI);
+        lambdaInput.addEventListener('input', updateUI);
+        aInput.addEventListener('input', updateUI);
+        bInput.addEventListener('input', updateUI);
+        dInput.addEventListener('input', updateUI);
+        zoomInput.addEventListener('input', updateUI);
+
+        function sinc(x) {
+            if (Math.abs(x) < 1e-8) return 1.0;
+            return Math.sin(x) / x;
+        }
+
+        function calculateIntensity(x_m, lambda_m, a_m, b_m, D_m, isDouble) {
+            // angle theta
+            const theta = Math.atan(x_m / D_m);
+            const sinTheta = Math.sin(theta);
+
+            // Diffraction envelope
+            const alpha = (Math.PI * a_m * sinTheta) / lambda_m;
+            const I_diff = Math.pow(sinc(alpha), 2);
+
+            if (isDouble) {
+                // Interference fringes
+                const beta = (Math.PI * b_m * sinTheta) / lambda_m;
+                const I_inter = Math.pow(Math.cos(beta), 2);
+                return I_diff * I_inter;
+            } else {
+                return I_diff;
+            }
+        }
+
+        function draw() {
+            if (!screenWidth || !graphWidth) return;
+
+            // Params in standard SI units
+            const lambda_m = parseFloat(lambdaInput.value) * 1e-9;
+            const a_m = parseFloat(aInput.value) * 1e-6;
+            const b_m = parseFloat(bInput.value) * 1e-6;
+            const D_m = parseFloat(dInput.value);
+            const screenWidth_m = parseFloat(zoomInput.value) * 1e-2; // Convert cm to m
+            const isDouble = setupType.value === 'double';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // --- Draw 2D Screen Pattern ---
+            const imgData = screenCtx.createImageData(screenWidth, screenHeight);
+            const data = imgData.data;
+
+            const intensities = new Float32Array(screenWidth);
+
+            // Calculate 1D intensities mapping to screen pixels
+            for (let px = 0; px < screenWidth; px++) {
+                // Map px to physical x coordinate on screen (-screenWidth_m/2 to +screenWidth_m/2)
+                const x_m = (px / screenWidth - 0.5) * screenWidth_m;
+                const I = calculateIntensity(x_m, lambda_m, a_m, b_m, D_m, isDouble);
+                intensities[px] = I;
+
+                // Fill ImageData column
+                for (let py = 0; py < screenHeight; py++) {
+                    const idx = (py * screenWidth + px) * 4;
+                    // For realism, apply a nonlinear curve (gamma or simple pow) to intensity to mimic human eye/camera saturation
+                    const visualI = Math.pow(I, 0.7);
+
+                    data[idx] = r_col;
+                    data[idx+1] = g_col;
+                    data[idx+2] = b_col;
+                    data[idx+3] = Math.round(visualI * 255);
+                }
+            }
+            // Background color base
+            screenCtx.fillStyle = isDark ? '#000' : '#fff';
+            screenCtx.fillRect(0, 0, screenWidth, screenHeight);
+
+            // Put ImageData (preserves background via alpha blending natively? No, putImageData overwrites.
+            // Better to use offscreen canvas if we want to blend, but we set alpha, so we need to manually blend or use drawImage.)
+            // Manual blend:
+            const bgR = isDark ? 0 : 255;
+            const bgG = isDark ? 0 : 255;
+            const bgB = isDark ? 0 : 255;
+
+            for (let i=0; i<data.length; i+=4) {
+                const alpha = data[i+3] / 255.0;
+                data[i] = data[i]*alpha + bgR*(1-alpha);
+                data[i+1] = data[i+1]*alpha + bgG*(1-alpha);
+                data[i+2] = data[i+2]*alpha + bgB*(1-alpha);
+                data[i+3] = 255; // Full opaque
+            }
+            screenCtx.putImageData(imgData, 0, 0);
+
+            // Draw center line & scale on Screen Canvas
+            screenCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+            screenCtx.setLineDash([5, 5]);
+            screenCtx.beginPath();
+            screenCtx.moveTo(screenWidth/2, 0);
+            screenCtx.lineTo(screenWidth/2, screenHeight);
+            screenCtx.stroke();
+            screenCtx.setLineDash([]);
+
+
+            // --- Draw 1D Intensity Graph ---
+            graphCtx.clearRect(0, 0, graphWidth, graphHeight);
+
+            // Grid
+            graphCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            graphCtx.lineWidth = 1;
+            graphCtx.beginPath();
+            const padding = 20;
+            const plotH = graphHeight - padding*2;
+
+            // Horizontal lines
+            for(let i=0; i<=4; i++) {
+                let y = padding + i*(plotH/4);
+                graphCtx.moveTo(padding, y);
+                graphCtx.lineTo(graphWidth - padding, y);
+            }
+            // Center Vertical line
+            graphCtx.moveTo(graphWidth/2, padding);
+            graphCtx.lineTo(graphWidth/2, graphHeight - padding);
+            graphCtx.stroke();
+
+            // Plot
+            graphCtx.beginPath();
+            graphCtx.strokeStyle = `rgb(${r_col}, ${g_col}, ${b_col})`;
+            graphCtx.lineWidth = 2;
+
+            for (let px = 0; px < graphWidth; px++) {
+                // Use pre-calculated intensity mapped to graphWidth resolution
+                const x_m = (px / graphWidth - 0.5) * screenWidth_m;
+                const I = calculateIntensity(x_m, lambda_m, a_m, b_m, D_m, isDouble);
+
+                const y = padding + plotH - (I * plotH);
+                const x = padding + (px / graphWidth) * (graphWidth - 2*padding);
+
+                if (px === 0) graphCtx.moveTo(x, y);
+                else graphCtx.lineTo(x, y);
+            }
+            // Glow
+            graphCtx.shadowBlur = 10;
+            graphCtx.shadowColor = graphCtx.strokeStyle;
+            graphCtx.stroke();
+            graphCtx.shadowBlur = 0;
+
+            // Graph Labels
+            graphCtx.fillStyle = isDark ? '#aaa' : '#555';
+            graphCtx.font = '10px Arial';
+            graphCtx.textAlign = 'center';
+            // Axis x
+            const maxCm = zoomInput.value / 2;
+            graphCtx.fillText(`-${maxCm} cm`, padding, graphHeight - 5);
+            graphCtx.fillText(`0`, graphWidth/2, graphHeight - 5);
+            graphCtx.fillText(`+${maxCm} cm`, graphWidth - padding, graphHeight - 5);
+            // Axis y
+            graphCtx.textAlign = 'right';
+            graphCtx.textBaseline = 'middle';
+            graphCtx.fillText('I₀', padding - 5, padding);
+            graphCtx.fillText('0', padding - 5, graphHeight - padding);
+
+            // Theoretical Envelope (Diffraction only) if Double Slit
+            if (isDouble) {
+                graphCtx.beginPath();
+                graphCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+                graphCtx.setLineDash([4, 4]);
+                graphCtx.lineWidth = 1;
+                for (let px = 0; px < graphWidth; px++) {
+                    const x_m = (px / graphWidth - 0.5) * screenWidth_m;
+                    const I_env = calculateIntensity(x_m, lambda_m, a_m, b_m, D_m, false); // false = single slit env
+                    const y = padding + plotH - (I_env * plotH);
+                    const x = padding + (px / graphWidth) * (graphWidth - 2*padding);
+                    if (px === 0) graphCtx.moveTo(x, y);
+                    else graphCtx.lineTo(x, y);
+                }
+                graphCtx.stroke();
+                graphCtx.setLineDash([]);
+            }
+        }
+
+        // Init
+        updateUI();
+        resize();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Avancée: Spectres d'Émission Atomique</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f43f5e;
+            --accent-glow: 0 0 15px rgba(244, 63, 94, 0.6);
+            --panel-bg: rgba(0,0,0,0.5);
+            --tube-glow: rgba(255,255,255,0);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #e2e8f0;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        #visual-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .section-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        /* Gas Tube Section */
+        #tube-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .discharge-tube {
+            width: 300px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            position: relative;
+            box-shadow:
+                inset 0 0 20px rgba(0,0,0,0.5),
+                0 0 50px var(--tube-glow);
+            transition: box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .electrode {
+            width: 15px;
+            height: 40px;
+            background: #cbd5e1;
+            border-radius: 5px;
+            border: 2px solid #475569;
+        }
+
+        .plasma {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 40px;
+            border-radius: 20px;
+            background: var(--tube-glow);
+            filter: blur(10px);
+            opacity: 0.8;
+            transition: background 0.3s;
+        }
+
+        /* Spectrum Section */
+        #spectrum-section {
+            height: 250px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin-top: 15px;
+            background: #000;
+            border-radius: 4px;
+        }
+
+        #controls-pane {
+            width: 350px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--glass-border);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: var(--accent-glow);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        select {
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ef4444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .stats-box {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 20;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #raies-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+            padding: 5px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+
+        <div id="visual-pane">
+            <div id="tube-section" class="section-box">
+                <div class="section-title">Lampe à décharge (Gaz)</div>
+                <div class="discharge-tube" id="tube">
+                    <div class="electrode"></div>
+                    <div class="plasma" id="plasma"></div>
+                    <div class="electrode"></div>
+                </div>
+            </div>
+
+            <div id="spectrum-section" class="section-box">
+                <div class="section-title">Spectre d'Émission (Réseau/Prisme)</div>
+                <div style="flex:1; position:relative;">
+                    <canvas id="spectrumCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Spectroscopie</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Niveau Universitaire / Seconde</div>
+
+            <div class="control-group">
+                <div class="switch-container">
+                    <span>Générateur Haute Tension</span>
+                    <label class="switch">
+                        <input type="checkbox" id="power-switch" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label style="font-weight:600; margin-bottom:5px; display:block;">Gaz contenu dans l'ampoule</label>
+                <select id="element-select">
+                    <option value="H">Hydrogène (H)</option>
+                    <option value="He">Hélium (He)</option>
+                    <option value="Ne" selected>Néon (Ne)</option>
+                    <option value="Hg">Mercure (Hg)</option>
+                    <option value="Na">Sodium (Na)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <div class="switch-container">
+                    <span>Afficher Spectre Continu (Fond)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="bg-switch">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div style="font-size:0.8rem; color:gray; line-height:1.2;">Note: Permet d'observer un spectre d'absorption si combiné à une source blanche.</div>
+            </div>
+
+            <div class="stats-box">
+                <div style="font-weight:bold; color:var(--accent-color); margin-bottom:5px;">Principales raies visibles (nm)</div>
+                <div id="raies-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const spectrumCanvas = document.getElementById('spectrumCanvas');
+        const ctx = spectrumCanvas.getContext('2d');
+
+        const powerSwitch = document.getElementById('power-switch');
+        const elementSelect = document.getElementById('element-select');
+        const bgSwitch = document.getElementById('bg-switch');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const tube = document.getElementById('tube');
+        const plasma = document.getElementById('plasma');
+        const raiesList = document.getElementById('raies-list');
+
+        let width, height;
+
+        // Spectral data (visible spectrum roughly 380nm - 750nm)
+        // Format: [wavelength_nm, intensity_0_to_1]
+        const elementsData = {
+            'H': {
+                name: 'Hydrogène',
+                color: 'rgba(236, 72, 153, 0.8)', // Pink-purple plasma
+                lines: [
+                    [410.2, 0.4], // Violet (delta)
+                    [434.0, 0.6], // Blue-violet (gamma)
+                    [486.1, 0.8], // Blue-green (beta)
+                    [656.3, 1.0]  // Red (alpha)
+                ]
+            },
+            'He': {
+                name: 'Hélium',
+                color: 'rgba(253, 186, 116, 0.9)', // Pale peach/orange
+                lines: [
+                    [388.9, 0.5],
+                    [402.6, 0.4],
+                    [447.1, 0.7],
+                    [471.3, 0.3],
+                    [492.2, 0.4],
+                    [501.6, 0.6],
+                    [587.6, 1.0], // Yellow
+                    [667.8, 0.7],
+                    [706.5, 0.5]
+                ]
+            },
+            'Ne': {
+                name: 'Néon',
+                color: 'rgba(239, 68, 68, 0.9)', // Bright Red-Orange
+                lines: [
+                    [540.1, 0.5],
+                    [585.2, 0.8],
+                    [588.2, 0.7],
+                    [594.5, 0.9],
+                    [609.6, 1.0],
+                    [614.3, 0.9],
+                    [626.6, 1.0],
+                    [633.4, 0.8],
+                    [640.2, 0.9],
+                    [650.6, 0.8],
+                    [692.9, 0.6],
+                    [703.2, 0.7]
+                ]
+            },
+            'Hg': {
+                name: 'Mercure',
+                color: 'rgba(56, 189, 248, 0.8)', // Light Blue
+                lines: [
+                    [404.7, 0.8],
+                    [435.8, 1.0], // Strong blue
+                    [546.1, 1.0], // Strong green
+                    [577.0, 0.9], // Yellow doublet
+                    [579.0, 0.9]
+                ]
+            },
+            'Na': {
+                name: 'Sodium',
+                color: 'rgba(234, 179, 8, 0.9)', // Yellow
+                lines: [
+                    [589.0, 1.0], // D2 line
+                    [589.6, 0.9]  // D1 line
+                ]
+            }
+        };
+
+        function resize() {
+            width = spectrumCanvas.parentElement.clientWidth;
+            height = spectrumCanvas.parentElement.clientHeight;
+            spectrumCanvas.width = width;
+            spectrumCanvas.height = height;
+            draw();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        });
+
+        // Wavelength to RGB converter
+        function wavelengthToRGB(Wavelength) {
+            let R, G, B;
+            if (Wavelength >= 380 && Wavelength < 440) {
+                R = -(Wavelength - 440) / (440 - 380);
+                G = 0.0;
+                B = 1.0;
+            } else if (Wavelength >= 440 && Wavelength < 490) {
+                R = 0.0;
+                G = (Wavelength - 440) / (490 - 440);
+                B = 1.0;
+            } else if (Wavelength >= 490 && Wavelength < 510) {
+                R = 0.0;
+                G = 1.0;
+                B = -(Wavelength - 510) / (510 - 490);
+            } else if (Wavelength >= 510 && Wavelength < 580) {
+                R = (Wavelength - 510) / (580 - 510);
+                G = 1.0;
+                B = 0.0;
+            } else if (Wavelength >= 580 && Wavelength < 645) {
+                R = 1.0;
+                G = -(Wavelength - 645) / (645 - 580);
+                B = 0.0;
+            } else if (Wavelength >= 645 && Wavelength <= 750) {
+                R = 1.0;
+                G = 0.0;
+                B = 0.0;
+            } else {
+                R = 0.0; G = 0.0; B = 0.0;
+            }
+
+            let factor;
+            if (Wavelength >= 380 && Wavelength < 420) {
+                factor = 0.3 + 0.7 * (Wavelength - 380) / (420 - 380);
+            } else if (Wavelength >= 420 && Wavelength < 700) {
+                factor = 1.0;
+            } else if (Wavelength >= 700 && Wavelength <= 750) {
+                factor = 0.3 + 0.7 * (750 - Wavelength) / (750 - 700);
+            } else {
+                factor = 0.0;
+            }
+
+            const gamma = 0.80;
+            R = Math.round(255 * Math.pow(R * factor, gamma));
+            G = Math.round(255 * Math.pow(G * factor, gamma));
+            B = Math.round(255 * Math.pow(B * factor, gamma));
+
+            return `rgb(${R}, ${G}, ${B})`;
+        }
+
+        function updateUI() {
+            const el = elementsData[elementSelect.value];
+            const isOn = powerSwitch.checked;
+
+            // Tube glow
+            if (isOn) {
+                document.documentElement.style.setProperty('--tube-glow', el.color);
+                plasma.style.opacity = '1';
+                document.documentElement.style.setProperty('--accent-color', el.color); // match UI to gas
+            } else {
+                document.documentElement.style.setProperty('--tube-glow', 'rgba(255,255,255,0)');
+                plasma.style.opacity = '0';
+            }
+
+            // Populate Raies list
+            raiesList.innerHTML = '';
+            el.lines.forEach(line => {
+                const wl = line[0];
+                const color = wavelengthToRGB(wl);
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.marginBottom = '2px';
+
+                const spanWl = document.createElement('span');
+                spanWl.textContent = wl.toFixed(1) + ' nm';
+
+                const spanCol = document.createElement('span');
+                spanCol.style.width = '20px';
+                spanCol.style.height = '10px';
+                spanCol.style.background = color;
+                spanCol.style.borderRadius = '2px';
+                spanCol.style.display = 'inline-block';
+
+                div.appendChild(spanWl);
+                div.appendChild(spanCol);
+                raiesList.appendChild(div);
+            });
+
+            draw();
+        }
+
+        powerSwitch.addEventListener('change', updateUI);
+        elementSelect.addEventListener('change', updateUI);
+        bgSwitch.addEventListener('change', draw);
+
+        function draw() {
+            if (!width) return;
+            ctx.clearRect(0, 0, width, height);
+
+            const isOn = powerSwitch.checked;
+            const showBg = bgSwitch.checked;
+            const el = elementsData[elementSelect.value];
+
+            const minWl = 380;
+            const maxWl = 750;
+            const wlRange = maxWl - minWl;
+
+            // Draw continuous background if requested
+            if (showBg) {
+                const imgData = ctx.createImageData(width, height);
+                const data = imgData.data;
+
+                for (let px = 0; px < width; px++) {
+                    const wl = minWl + (px / width) * wlRange;
+                    const rgbStr = wavelengthToRGB(wl);
+                    // Extract rgb values (simple hack since wavelengthToRGB returns string)
+                    const rgb = rgbStr.match(/\d+/g).map(Number);
+
+                    for (let py = 0; py < height; py++) {
+                        const idx = (py * width + px) * 4;
+                        data[idx] = rgb[0];
+                        data[idx+1] = rgb[1];
+                        data[idx+2] = rgb[2];
+                        data[idx+3] = 255; // Full alpha
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                // If continuous is ON and power is ON, we should show ABSORPTION lines (black)
+                // For simplicity of Seconde curriculum, we usually show Emission vs Continuous separately.
+                // But let's overlay black lines for absorption if both are on, just for fun, or just keep emission super bright.
+                // Let's do absorption lines:
+                if (isOn) {
+                    el.lines.forEach(line => {
+                        const wl = line[0];
+                        if (wl >= minWl && wl <= maxWl) {
+                            const x = ((wl - minWl) / wlRange) * width;
+                            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                            // Width based on intensity/reality, usually very thin
+                            ctx.fillRect(x - 1, 0, 3, height);
+                        }
+                    });
+                }
+            } else {
+                // Emission spectrum
+                ctx.fillStyle = '#050505';
+                ctx.fillRect(0, 0, width, height);
+
+                if (isOn) {
+                    el.lines.forEach(line => {
+                        const wl = line[0];
+                        const intensity = line[1];
+
+                        if (wl >= minWl && wl <= maxWl) {
+                            const x = ((wl - minWl) / wlRange) * width;
+                            const color = wavelengthToRGB(wl);
+
+                            // Draw line
+                            ctx.strokeStyle = color;
+                            ctx.lineWidth = 2 + intensity * 2; // Brighter lines are slightly thicker
+
+                            // Glow effect
+                            ctx.shadowBlur = 15 * intensity;
+                            ctx.shadowColor = color;
+
+                            ctx.beginPath();
+                            ctx.moveTo(x, 0);
+                            ctx.lineTo(x, height - 30); // leave room for scale
+                            ctx.stroke();
+
+                            // Reset shadow
+                            ctx.shadowBlur = 0;
+                        }
+                    });
+                }
+            }
+
+            // Draw Scale
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.fillRect(0, height - 30, width, 30);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let wl = 400; wl <= 700; wl += 50) {
+                const x = ((wl - minWl) / wlRange) * width;
+
+                ctx.beginPath();
+                ctx.moveTo(x, height - 30);
+                ctx.lineTo(x, height - 25);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.fillText(wl, x, height - 12);
+            }
+
+            // Add 'nm' label
+            ctx.textAlign = 'right';
+            ctx.fillText('λ (nm)', width - 10, height - 12);
+        }
+
+        // Init
+        updateUI();
+        resize();
+
+    </script>
+</body>
+</html>
