@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Mouvement dans un Champ Uniforme</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f59e0b;
+            --accent-glow: 0 0 15px rgba(245, 158, 11, 0.6);
+            --panel-bg: rgba(0,0,0,0.5);
+            --traj-color: #2dd4bf;
+            --pos-color: #ef4444;
+            --neg-color: #3b82f6;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 15px rgba(217, 119, 6, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --traj-color: #0d9488;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #canvas-container {
+            flex-grow: 1; position: relative;
+            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+        #controls-pane { width: 360px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); text-shadow: var(--accent-glow); text-align: center; margin-bottom: 5px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        label { font-size: 0.9rem; display: flex; justify-content: space-between; font-weight: 600; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #10b981; text-align: center; margin: 5px 0; font-weight: bold; }
+        #theme-toggle { position: absolute; top: 15px; left: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .switch-container { display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: 600; }
+        input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent-color); cursor: pointer; }
+
+        .mode-toggle { display: flex; background: var(--panel-bg); border-radius: 8px; border: 1px solid var(--glass-border); overflow: hidden; margin-bottom: 5px; }
+        .mode-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; background: transparent; border: none; color: var(--text-color); }
+        .mode-btn.active { background: var(--accent-color); color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+        button.action-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-fire { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+        .btn-fire:hover { filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="canvas-container">
+            <canvas id="simCanvas"></canvas>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Champ Uniforme</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Pesanteur & Électrostatique</div>
+
+            <div class="mode-toggle">
+                <button id="mode-grav" class="mode-btn active">Pesanteur (g)</button>
+                <button id="mode-elec" class="mode-btn">Électrostatique (E)</button>
+            </div>
+
+            <!-- Common Controls -->
+            <div class="control-group">
+                <label>Vitesse initiale (v₀) <span id="v0-val">10 m/s</span></label>
+                <input type="range" id="v0" min="0" max="30" step="1" value="10">
+            </div>
+
+            <div class="control-group">
+                <label>Angle de tir (α) <span id="angle-val">45°</span></label>
+                <input type="range" id="angle" min="-90" max="90" step="1" value="45">
+            </div>
+
+            <!-- Gravity Specific Controls -->
+            <div id="controls-grav">
+                <div class="control-group">
+                    <label>Gravité (g) <span id="g-val">9.8 m/s²</span></label>
+                    <input type="range" id="grav" min="1" max="25" step="0.1" value="9.8">
+                </div>
+                <div class="control-group">
+                    <label>Masse (m) <span id="m-val">1.0 kg</span></label>
+                    <input type="range" id="mass" min="0.1" max="10" step="0.1" value="1.0">
+                </div>
+            </div>
+
+            <!-- Electrostatic Specific Controls -->
+            <div id="controls-elec" style="display:none;">
+                <div class="control-group">
+                    <label>Tension Plaques (U) <span id="u-val">500 V</span></label>
+                    <input type="range" id="voltage" min="-1000" max="1000" step="50" value="500">
+                </div>
+                <div class="control-group">
+                    <label>Particule</label>
+                    <select id="particle-type" style="background:var(--bg-color); color:var(--text-color); padding:5px; border-radius:4px; border:1px solid var(--glass-border);">
+                        <option value="electron">Électron (e⁻)</option>
+                        <option value="proton">Proton (p⁺)</option>
+                        <option value="alpha">Particule Alpha (He²⁺)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="switch-container">
+                    <label>Afficher Vecteurs (v, a)</label>
+                    <input type="checkbox" id="show-vectors" checked>
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <div class="math-eq" id="eq-main">a_y = -g</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div>Temps (t): <span id="stat-t" style="color:#fbbf24; font-weight:bold;">0.00 s</span></div>
+                <div>Position x: <span id="stat-x">0.00 m</span></div>
+                <div>Position y: <span id="stat-y">0.00 m</span></div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-fire" class="action-btn btn-fire" style="flex:2;">Lancer</button>
+                <button id="btn-clear" class="action-btn" style="flex:1;">Effacer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Mode toggles
+        const modeGravBtn = document.getElementById('mode-grav');
+        const modeElecBtn = document.getElementById('mode-elec');
+        const controlsGrav = document.getElementById('controls-grav');
+        const controlsElec = document.getElementById('controls-elec');
+        const eqMain = document.getElementById('eq-main');
+
+        // Inputs
+        const v0Input = document.getElementById('v0');
+        const angleInput = document.getElementById('angle');
+        const gravInput = document.getElementById('grav');
+        const massInput = document.getElementById('mass');
+        const voltageInput = document.getElementById('voltage');
+        const particleSelect = document.getElementById('particle-type');
+        const showVectors = document.getElementById('show-vectors');
+
+        // Labels
+        const v0Val = document.getElementById('v0-val');
+        const angleVal = document.getElementById('angle-val');
+        const gVal = document.getElementById('g-val');
+        const mVal = document.getElementById('m-val');
+        const uVal = document.getElementById('u-val');
+
+        // Stats
+        const statT = document.getElementById('stat-t');
+        const statX = document.getElementById('stat-x');
+        const statY = document.getElementById('stat-y');
+
+        // Buttons
+        const btnFire = document.getElementById('btn-fire');
+        const btnClear = document.getElementById('btn-clear');
+
+        let width, height;
+        let mode = 'grav'; // 'grav' or 'elec'
+
+        // Constants for Elec Mode
+        const e_charge = 1.602e-19; // C
+        const m_e = 9.109e-31; // kg
+        const m_p = 1.672e-27; // kg
+        const d_plates = 0.1; // meters (distance between plates)
+
+        // Visual scaling
+        // Grav: 1m = 40px. Field is 30m x 20m
+        // Elec: Scale depends on particle to make it visible.
+        // We will normalize the simulation to logic coordinates (meters), then project to screen.
+
+        let particles = [];
+        let isRunning = false;
+        let animId;
+        let lastTime = 0;
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+            drawStatic();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawStatic();
+        });
+
+        function switchMode(newMode) {
+            mode = newMode;
+            modeGravBtn.classList.toggle('active', mode === 'grav');
+            modeElecBtn.classList.toggle('active', mode === 'elec');
+            controlsGrav.style.display = mode === 'grav' ? 'block' : 'none';
+            controlsElec.style.display = mode === 'elec' ? 'block' : 'none';
+
+            if (mode === 'grav') {
+                document.documentElement.style.setProperty('--accent-color', '#f59e0b');
+                document.documentElement.style.setProperty('--accent-glow', '0 0 15px rgba(245, 158, 11, 0.6)');
+                eqMain.textContent = "a_y = -g";
+                // Adjust ranges for grav
+                v0Input.max = 30; v0Input.value = 10;
+            } else {
+                document.documentElement.style.setProperty('--accent-color', '#3b82f6');
+                document.documentElement.style.setProperty('--accent-glow', '0 0 15px rgba(59, 130, 246, 0.6)');
+                eqMain.textContent = "a_y = (q·U) / (m·d)";
+                // Adjust ranges for elec (simulate typical CRT / Deflection tube params)
+                // Speeds are usually 10^6 or 10^7, but we scale it for the UI slider (let's say it's 10^6 multiplier)
+                v0Input.max = 30; v0Input.value = 10;
+            }
+            updateLabels();
+            particles = [];
+            drawStatic();
+        }
+
+        modeGravBtn.addEventListener('click', () => switchMode('grav'));
+        modeElecBtn.addEventListener('click', () => switchMode('elec'));
+
+        function updateLabels() {
+            if (mode === 'grav') {
+                v0Val.textContent = v0Input.value + ' m/s';
+            } else {
+                v0Val.textContent = v0Input.value + ' × 10⁶ m/s';
+            }
+            angleVal.textContent = angleInput.value + '°';
+            gVal.textContent = gravInput.value + ' m/s²';
+            mVal.textContent = massInput.value + ' kg';
+            uVal.textContent = voltageInput.value + ' V';
+            drawStatic();
+        }
+
+        v0Input.addEventListener('input', updateLabels);
+        angleInput.addEventListener('input', updateLabels);
+        gravInput.addEventListener('input', updateLabels);
+        massInput.addEventListener('input', updateLabels);
+        voltageInput.addEventListener('input', updateLabels);
+        particleSelect.addEventListener('change', updateLabels);
+
+        class Projectile {
+            constructor() {
+                this.mode = mode;
+                this.v0_ui = parseFloat(v0Input.value);
+                this.angle = parseFloat(angleInput.value) * Math.PI / 180;
+
+                this.t = 0;
+                this.x = 0;
+                this.y = 0;
+
+                this.active = true;
+                this.path = [];
+
+                if (this.mode === 'grav') {
+                    this.v0 = this.v0_ui;
+                    this.g = parseFloat(gravInput.value);
+                    this.m = parseFloat(massInput.value);
+                    this.ax = 0;
+                    this.ay = -this.g;
+                    this.scaleX = 40; // px per meter
+                    this.scaleY = 40;
+                    this.originX = 50;
+                    this.originY = height - 50;
+                    this.color = '#f59e0b';
+                } else {
+                    // Elec mode
+                    this.v0 = this.v0_ui * 1e6; // Real speed ~ 10^6 m/s
+                    let pType = particleSelect.value;
+                    let q, m;
+                    if (pType === 'electron') { q = -e_charge; m = m_e; this.color = '#3b82f6'; } // Blue
+                    else if (pType === 'proton') { q = e_charge; m = m_p; this.color = '#ef4444'; } // Red
+                    else { q = 2 * e_charge; m = 4 * m_p; this.color = '#10b981'; } // Alpha Green
+
+                    let U = parseFloat(voltageInput.value);
+                    // E = U/d. Force F = qE = qU/d. Accel a = F/m = qU/(md).
+                    let E_field = U / d_plates;
+                    this.ay = (q * E_field) / m; // Acceleration in y (assuming plates are horizontal)
+                    this.ax = 0;
+
+                    // UI Scaling for elec mode to fit on screen
+                    // Let's assume the screen represents 0.2 meters horizontally.
+                    this.scaleX = width / 0.2;
+                    this.scaleY = height / 0.2;
+                    this.originX = 50;
+                    this.originY = height / 2; // Shoot from center
+                }
+
+                this.vx = this.v0 * Math.cos(this.angle);
+                this.vy = this.v0 * Math.sin(this.angle);
+            }
+
+            update(dt) {
+                if (!this.active) return;
+
+                // In elec mode, dt needs to be tiny.
+                // We'll scale real time to sim time.
+                let simDt = dt;
+                if (this.mode === 'elec') {
+                    // Let's say 1 second real time = 10^-7 seconds sim time
+                    simDt = dt * 1e-7;
+                } else {
+                    simDt = dt * 1.5; // Slightly faster grav
+                }
+
+                this.t += simDt;
+
+                // Equations horaires (Integration)
+                this.vx += this.ax * simDt;
+                this.vy += this.ay * simDt;
+
+                this.x += this.vx * simDt;
+                this.y += this.vy * simDt;
+
+                let screenX = this.originX + this.x * this.scaleX;
+                let screenY = this.originY - this.y * this.scaleY; // -y because canvas y is down
+
+                this.path.push({x: screenX, y: screenY});
+
+                // Boundary checks
+                if (this.mode === 'grav') {
+                    if (screenY > height - 50) { // Hit ground
+                        this.active = false;
+                    }
+                } else {
+                    // Hit plates (assuming plates are at y = +/- d_plates/2)
+                    if (Math.abs(this.y) > d_plates / 2) {
+                        this.active = false;
+                    }
+                }
+
+                if (screenX > width) this.active = false;
+            }
+
+            draw(ctx) {
+                // Path
+                if (this.path.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.path[0].x, this.path[0].y);
+                    for (let i = 1; i < this.path.length; i++) {
+                        ctx.lineTo(this.path[i].x, this.path[i].y);
+                    }
+                    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--traj-color').trim();
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Particle
+                if (this.path.length > 0) {
+                    let lastPos = this.path[this.path.length - 1];
+
+                    ctx.beginPath();
+                    ctx.arc(lastPos.x, lastPos.y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // Vectors
+                    if (showVectors.checked && this.active) {
+                        // Velocity vector
+                        let vScale = (this.mode === 'grav') ? 2 : (2 / 1e6);
+                        ctx.beginPath();
+                        ctx.moveTo(lastPos.x, lastPos.y);
+                        ctx.lineTo(lastPos.x + this.vx * vScale, lastPos.y - this.vy * vScale);
+                        ctx.strokeStyle = '#10b981'; // Green
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+
+                        // Acceleration vector
+                        let aScale = (this.mode === 'grav') ? 2 : (2 / 1e12);
+                        ctx.beginPath();
+                        ctx.moveTo(lastPos.x, lastPos.y);
+                        ctx.lineTo(lastPos.x + this.ax * aScale, lastPos.y - this.ay * aScale);
+                        ctx.strokeStyle = '#ef4444'; // Red
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function drawStatic() {
+            if(!width) return;
+            ctx.clearRect(0, 0, width, height);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            if (mode === 'grav') {
+                // Ground
+                ctx.beginPath();
+                ctx.moveTo(0, height - 50);
+                ctx.lineTo(width, height - 50);
+                ctx.strokeStyle = isDark ? '#fff' : '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Cannon
+                let angle = parseFloat(angleInput.value) * Math.PI / 180;
+                ctx.save();
+                ctx.translate(50, height - 50);
+                ctx.rotate(-angle);
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                ctx.fillRect(0, -5, 30, 10);
+                ctx.restore();
+                ctx.beginPath(); ctx.arc(50, height - 50, 5, 0, Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+
+            } else {
+                // Condensateur Plan
+                let scaleY = height / 0.2;
+                let plateY_top = height/2 - (d_plates/2)*scaleY;
+                let plateY_bot = height/2 + (d_plates/2)*scaleY;
+
+                let U = parseFloat(voltageInput.value);
+                let topColor = U < 0 ? '#ef4444' : (U > 0 ? '#3b82f6' : '#cbd5e1'); // If U>0, top plate is - (bottom is +) based on standard convention or vice versa. Let's just color it.
+                let botColor = U > 0 ? '#ef4444' : (U < 0 ? '#3b82f6' : '#cbd5e1');
+
+                // Draw Plates
+                ctx.fillStyle = isDark ? '#334155' : '#94a3b8';
+                ctx.fillRect(50, plateY_top - 10, width - 100, 10); // Top Plate
+                ctx.fillRect(50, plateY_bot, width - 100, 10); // Bottom Plate
+
+                // E Field lines
+                if (Math.abs(U) > 0) {
+                    ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 1;
+                    for (let x = 100; x < width - 50; x += 50) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, plateY_top);
+                        ctx.lineTo(x, plateY_bot);
+                        ctx.stroke();
+                        // Arrow
+                        let midY = height/2;
+                        ctx.beginPath();
+                        if (U < 0) { // Top +, Bot - -> Field goes DOWN
+                            ctx.moveTo(x - 5, midY - 5); ctx.lineTo(x, midY); ctx.lineTo(x + 5, midY - 5);
+                        } else { // Top -, Bot + -> Field goes UP
+                            ctx.moveTo(x - 5, midY + 5); ctx.lineTo(x, midY); ctx.lineTo(x + 5, midY + 5);
+                        }
+                        ctx.stroke();
+                    }
+                    ctx.setLineDash([]);
+                }
+
+                // Source
+                let angle = parseFloat(angleInput.value) * Math.PI / 180;
+                ctx.save();
+                ctx.translate(50, height / 2);
+                ctx.rotate(-angle);
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                ctx.fillRect(-20, -5, 20, 10); // Gun body
+                ctx.restore();
+            }
+
+            // Draw particles
+            particles.forEach(p => p.draw(ctx));
+        }
+
+        btnFire.addEventListener('click', () => {
+            particles.push(new Projectile());
+            if (!isRunning) {
+                isRunning = true;
+                lastTime = 0;
+                animId = requestAnimationFrame(loop);
+            }
+        });
+
+        btnClear.addEventListener('click', () => {
+            particles = [];
+            isRunning = false;
+            cancelAnimationFrame(animId);
+            statT.textContent = "0.00";
+            statX.textContent = "0.00";
+            statY.textContent = "0.00";
+            drawStatic();
+        });
+
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            let anyActive = false;
+            particles.forEach(p => {
+                p.update(dt);
+                if (p.active) {
+                    anyActive = true;
+                    // Update stats with active projectile
+                    if (p.mode === 'grav') {
+                        statT.textContent = p.t.toFixed(2) + ' s';
+                        statX.textContent = p.x.toFixed(2) + ' m';
+                        statY.textContent = p.y.toFixed(2) + ' m';
+                    } else {
+                        // For elec, display in ns and mm
+                        statT.textContent = (p.t * 1e9).toFixed(1) + ' ns';
+                        statX.textContent = (p.x * 1000).toFixed(1) + ' mm';
+                        statY.textContent = (p.y * 1000).toFixed(1) + ' mm';
+                    }
+                }
+            });
+
+            drawStatic();
+
+            if (anyActive) {
+                animId = requestAnimationFrame(loop);
+            } else {
+                isRunning = false;
+                lastTime = 0;
+            }
+        }
+
+        // Init
+        updateLabels();
+        resize();
+
+    </script>
+</body>
+</html>
