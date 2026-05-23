@@ -6,736 +6,788 @@
     <title>NEXUS - Hub des Simulations Interactives</title>
     <style>
         :root {
-            --bg-base: #020617;
+            --bg-base: #030712;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --glass-bg: rgba(15, 23, 42, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-primary: #0ea5e9;
-            --accent-glow: 0 0 20px rgba(14, 165, 233, 0.5);
-            --card-bg: rgba(30, 41, 59, 0.5);
-            --card-hover: rgba(51, 65, 85, 0.8);
+            --accent-primary: #00e5ff;
+            --accent-glow: 0 0 20px rgba(0, 229, 255, 0.5);
 
-            /* Subject colors */
-            --color-meca: #f59e0b; /* Orange */
-            --color-chimie: #ec4899; /* Pink */
+            /* Domain Colors */
+            --color-meca: #f59e0b; /* Orange/Gold */
+            --color-chimie: #ff6bd6; /* Pink/Magenta */
             --color-elec: #8b5cf6; /* Purple */
-            --color-ondes: #10b981; /* Green */
+            --color-ondes: #10b981; /* Emerald */
+            --color-multi: #0ea5e9; /* Cyan */
         }
 
-        [data-theme="light"] {
-            --bg-base: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            --accent-primary: #0284c7;
-            --accent-glow: 0 0 20px rgba(2, 132, 199, 0.3);
-            --card-bg: rgba(255, 255, 255, 0.5);
-            --card-hover: rgba(255, 255, 255, 0.9);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
         body {
             background-color: var(--bg-base);
             color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* Animated Galactic Background */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Top Navigation Bar */
-        nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 70px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 100;
         }
 
-        .logo {
+        /* --------------------------------------------------------
+           BACKGROUND CANVAS (ORBITAL ENGINE)
+           -------------------------------------------------------- */
+        #orbital-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+
+        /* --------------------------------------------------------
+           UI OVERLAYS
+           -------------------------------------------------------- */
+        .hud-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+        }
+
+        /* SIDEBAR (LIST & FILTERS) */
+        .sidebar {
+            width: 350px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(3,7,18,0.95), rgba(3,7,18,0.6));
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+            transform: translateX(0);
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 20;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-350px);
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
             font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 4px;
+            font-weight: 700;
             color: var(--accent-primary);
             text-shadow: var(--accent-glow);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .logo span { color: var(--text-main); font-weight: 300; letter-spacing: 1px; font-size: 1.2rem; }
-
-        .search-bar {
-            position: relative;
-            width: 300px;
+        .brand-subtitle {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 30px;
         }
 
-        .search-bar input {
+        /* Search */
+        .search-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .search-box input {
             width: 100%;
-            padding: 10px 15px 10px 40px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.2);
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        [data-theme="light"] .search-bar input { background: rgba(255,255,255,0.5); }
-
-        .search-bar input:focus {
-            border-color: var(--accent-primary);
-            box-shadow: var(--accent-glow);
-        }
-
-        .search-bar svg {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            fill: var(--text-muted);
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Main Content Grid */
-        main {
-            display: flex;
-            padding: 30px 40px;
-            gap: 30px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Sidebar Filters */
-        aside {
-            width: 250px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .filter-section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .filter-section h3 {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            color: var(--text-muted);
-        }
-
-        .filter-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .filter-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .filter-btn:hover {
             background: rgba(255,255,255,0.05);
-        }
-
-        .filter-btn.active {
-            background: rgba(14, 165, 233, 0.15);
-            border-color: var(--accent-primary);
-            color: var(--accent-primary);
-            font-weight: 600;
-        }
-
-        .badge-count {
-            background: rgba(255,255,255,0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-        }
-
-        .filter-btn.active .badge-count {
-            background: var(--accent-primary);
-            color: #fff;
-        }
-
-        /* Grid of Simulations */
-        .sim-grid {
-            flex-grow: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            align-content: start;
-        }
-
-        /* Simulation Card */
-        .sim-card {
-            background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
+            padding: 12px 15px 12px 35px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .search-box input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px rgba(0,229,255,0.2);
         }
 
-        .sim-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--accent-primary);
-            opacity: 0.5;
-            transition: 0.3s;
-        }
-
-        .sim-card:hover {
-            transform: translateY(-5px);
-            background: var(--card-hover);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border-color: rgba(255,255,255,0.2);
-        }
-
-        .sim-card:hover::before { opacity: 1; }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            line-height: 1.3;
-        }
-
-        .card-level {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-            font-weight: 600;
-        }
-
-        .card-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            flex-grow: 1;
-        }
-
-        .card-tags {
+        /* Filters */
+        .filters {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 10px;
+            margin-bottom: 20px;
         }
-
-        .tag {
+        .filter-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .filter-btn.active {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
         }
 
-        /* Thematic tags */
-        .tag.meca { border-color: var(--color-meca); color: var(--color-meca); }
-        .tag.chimie { border-color: var(--color-chimie); color: var(--color-chimie); }
-        .tag.elec { border-color: var(--color-elec); color: var(--color-elec); }
-        .tag.ondes { border-color: var(--color-ondes); color: var(--color-ondes); }
-
-        .play-icon {
-            position: absolute;
-            bottom: 25px;
-            right: 25px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: 0.3s;
-            box-shadow: var(--accent-glow);
-        }
-
-        .sim-card:hover .play-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .play-icon svg { fill: white; width: 20px; height: 20px; margin-left: 3px; }
-
-        /* Modal / Frame Viewer */
-        #sim-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
+        /* List */
+        .sim-list {
+            flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+        }
+        .sim-list::-webkit-scrollbar { width: 4px; }
+        .sim-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .list-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .list-item:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(5px);
+            border-color: var(--item-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .list-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 4px;
+            background: var(--item-color);
+        }
+
+        .item-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; color: #fff; }
+        .item-level { font-size: 0.7rem; color: var(--item-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .item-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* --------------------------------------------------------
+           WEBOS WINDOW (IFRAME)
+           -------------------------------------------------------- */
+        .desktop-area {
+            flex: 1;
+            position: relative;
+            pointer-events: none; /* Let clicks pass to canvas */
+        }
+
+        .window-frame {
+            position: absolute;
+            width: 900px;
+            height: 600px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: rgba(8, 14, 36, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             opacity: 0;
             pointer-events: none;
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
         }
 
-        #sim-modal.active {
+        .window-frame.open {
             opacity: 1;
-            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px var(--win-glow);
+            border-color: var(--win-color);
         }
 
-        .modal-header {
-            height: 50px;
-            background: #111;
+        .win-header {
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid #333;
+            justify-content: space-between;
+            padding: 0 15px;
+            user-select: none;
+            cursor: move;
         }
 
-        .modal-title { color: #fff; font-weight: bold; letter-spacing: 1px; }
-
-        .btn-close {
-            background: #ef4444;
+        .win-title {
+            font-size: 0.85rem;
+            font-weight: 600;
             color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .win-title span { color: var(--win-color); }
+
+        .win-controls { display: flex; gap: 8px; }
+        .win-btn { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer; }
+        .win-btn.close { background: #ff5f56; }
+        .win-btn.max { background: #27c93f; }
+
+        .win-body {
+            flex: 1;
+            background: #000; /* iframe bg */
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* --------------------------------------------------------
+           FLOATING TOOLTIP (HOVER ON ORBITAL NODE)
+           -------------------------------------------------------- */
+        .node-tooltip {
+            position: fixed;
+            background: rgba(8, 14, 36, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--tip-color);
+            padding: 15px;
+            border-radius: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -20px);
+            transition: 0.2s;
+            z-index: 50;
+            width: 260px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(var(--tip-rgb), 0.2);
+        }
+        .node-tooltip.visible {
+            opacity: 1;
+            transform: translate(-50%, -40px);
+        }
+        .node-tooltip::after {
+            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+            width: 12px; height: 12px; background: rgba(8, 14, 36, 0.95);
+            border-right: 1px solid var(--tip-color); border-bottom: 1px solid var(--tip-color);
+        }
+        .tip-level { font-size: 0.65rem; text-transform: uppercase; color: var(--tip-color); letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+        .tip-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+        .tip-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px; }
+        .tip-formula { background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; font-family: monospace; font-size: 0.7rem; color: #fff; text-align: center; border-left: 2px solid var(--tip-color); }
+
+        /* Toggle Sidebar Btn */
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            z-index: 30;
             cursor: pointer;
-            font-weight: bold;
+            pointer-events: auto;
+            display: none; /* Only show when collapsed */
         }
-
-        #sim-frame {
-            width: 100%;
-            flex-grow: 1;
-            border: none;
-            background: #fff; /* Frames handle their own theme, usually dark by default */
-        }
-
-        #theme-toggle-btn {
-            background: transparent; border: 1px solid var(--glass-border);
-            color: var(--text-main); padding: 8px 15px; border-radius: 20px; cursor: pointer;
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- Background Animation -->
-    <canvas id="bg-canvas"></canvas>
+    <!-- 1. ORBITAL ENGINE CANVAS -->
+    <canvas id="orbital-canvas"></canvas>
 
-    <nav>
-        <div class="logo">
-            NEXUS <span>SIMULATIONS</span>
-        </div>
+    <!-- 2. HUD & SIDEBAR -->
+    <div class="hud-overlay">
 
-        <div class="search-bar">
-            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 12.01 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 12.01 14 9.5 14z"/></svg>
-            <input type="text" id="search-input" placeholder="Rechercher une simulation, notion...">
-        </div>
+        <button class="toggle-sidebar" id="btn-toggle-sidebar" title="Ouvrir le menu">☰</button>
 
-        <div>
-            <button id="theme-toggle-btn">Changer Thème</button>
-        </div>
-    </nav>
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <span>⬡</span> NEXUS
+            </div>
+            <div class="brand-subtitle">Simulations Physiques & Chimiques</div>
 
-    <main>
-        <aside>
-            <div class="filter-section">
-                <h3>Niveau</h3>
-                <div class="filter-list" id="level-filters">
-                    <button class="filter-btn active" data-filter="all">Tous les niveaux <span class="badge-count" id="count-all">0</span></button>
-                    <button class="filter-btn" data-filter="college">Collège <span class="badge-count" id="count-college">0</span></button>
-                    <button class="filter-btn" data-filter="seconde">Seconde <span class="badge-count" id="count-seconde">0</span></button>
-                    <button class="filter-btn" data-filter="premiere">Première Spé <span class="badge-count" id="count-premiere">0</span></button>
-                    <button class="filter-btn" data-filter="terminale">Terminale Spé <span class="badge-count" id="count-terminale">0</span></button>
-                    <button class="filter-btn" data-filter="sup">Supérieur / Univ <span class="badge-count" id="count-sup">0</span></button>
-                </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Rechercher une simulation...">
             </div>
 
-            <div class="filter-section">
-                <h3>Domaine</h3>
-                <div class="filter-list" id="domain-filters">
-                    <button class="filter-btn active" data-domain="all">Tous les domaines</button>
-                    <button class="filter-btn" data-domain="meca">Mécanique</button>
-                    <button class="filter-btn" data-domain="chimie">Chimie</button>
-                    <button class="filter-btn" data-domain="ondes">Ondes & Optique</button>
-                    <button class="filter-btn" data-domain="elec">Électricité</button>
-                </div>
+            <div class="filters" id="domain-filters">
+                <button class="filter-btn active" data-filter="all">Tout</button>
+                <button class="filter-btn" data-filter="meca" style="color:var(--color-meca); border-color:rgba(245, 158, 11, 0.3);">Mécanique</button>
+                <button class="filter-btn" data-filter="chimie" style="color:var(--color-chimie); border-color:rgba(255, 107, 214, 0.3);">Chimie</button>
+                <button class="filter-btn" data-filter="ondes" style="color:var(--color-ondes); border-color:rgba(16, 185, 129, 0.3);">Ondes</button>
+                <button class="filter-btn" data-filter="elec" style="color:var(--color-elec); border-color:rgba(139, 92, 246, 0.3);">Élec</button>
+            </div>
+
+            <div class="sim-list" id="sim-list">
+                <!-- Generated via JS -->
             </div>
         </aside>
 
-        <div class="sim-grid" id="sim-grid">
-            <!-- Cards injected via JS -->
+        <div class="desktop-area" id="desktop">
+            <!-- WEBOS WINDOW -->
+            <div class="window-frame" id="sim-window">
+                <div class="win-header" id="win-header">
+                    <div class="win-title"><span id="win-icon">⬡</span> <span id="win-title-text" style="color:#fff; margin-left:5px;">Titre</span></div>
+                    <div class="win-controls">
+                        <button class="win-btn max" id="btn-win-max" title="Plein écran"></button>
+                        <button class="win-btn close" id="btn-win-close" title="Fermer"></button>
+                    </div>
+                </div>
+                <div class="win-body">
+                    <iframe id="sim-iframe" src=""></iframe>
+                </div>
+            </div>
         </div>
-    </main>
 
-    <!-- Modal for Simulation -->
-    <div id="sim-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div class="modal-header">
-            <div class="modal-title" id="modal-title">Chargement...</div>
-            <button class="btn-close" id="btn-close-modal">Fermer [X]</button>
-        </div>
-        <iframe id="sim-frame" src=""></iframe>
     </div>
 
+    <!-- TOOLTIP -->
+    <div class="node-tooltip" id="tooltip">
+        <div class="tip-level" id="tt-level">Terminale</div>
+        <div class="tip-title" id="tt-title">Titre de la simu</div>
+        <div class="tip-desc" id="tt-desc">Description courte.</div>
+        <div class="tip-formula" id="tt-formula">F = m*a</div>
+    </div>
+
+    <!-- SCRIPT DATA & LOGIC -->
     <script>
-        // --- Database of Simulations ---
-        const simulations = [
+        // --- 1. DATA ---
+        const SIMULATIONS = [
             {
-                id: 'uniform_field',
-                title: 'Champ Uniforme (Gravité & Élec)',
-                desc: 'Trajectoires paraboliques, vecteurs cinématiques et forces dans un condensateur plan ou champ de pesanteur.',
-                level: ['terminale', 'sup'],
-                domain: 'meca',
-                tags: ['Balistique', 'Cinématique', 'Newton', 'Coulomb'],
+                id: 'uniform_field', title: 'Champ Uniforme', desc: 'Mouvement parabolique d\'un projectile (g) ou d\'une particule chargée (E).',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'a = qE/m \\quad a = -g',
                 file: 'src/simulations/uniform_field_motion.html'
             },
             {
-                id: 'kepler',
-                title: 'Lois de Kepler & Gravitation',
-                desc: 'Mécanique céleste : orbites elliptiques, loi des aires, forces gravitationnelles et énergies.',
-                level: ['terminale', 'sup'],
-                domain: 'meca',
-                tags: ['Astro', 'Newton', 'Énergie'],
+                id: 'kepler', title: 'Lois de Kepler', desc: 'Mécanique céleste : orbites, lois des aires, forces gravitationnelles.',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'T^2/a^3 = 4\\pi^2/GM',
                 file: 'src/simulations/kepler.html'
             },
             {
-                id: 'fluids',
-                title: 'Mécanique des Fluides',
-                desc: 'Tube de Venturi, principe de Bernoulli, conservation du débit et pression.',
-                level: ['terminale', 'sup'],
-                domain: 'meca',
-                tags: ['Bernoulli', 'Pression', 'Débit'],
+                id: 'fluids', title: 'Mécanique des Fluides', desc: 'Tube de Venturi, principe de Bernoulli, conservation du débit.',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'P + \\frac{1}{2}\\rho v^2 + \\rho gz = Cte',
                 file: 'src/simulations/fluids.html'
             },
             {
-                id: 'interference',
-                title: 'Interférences & Diffraction',
-                desc: 'Expérience des fentes d\'Young. Calcul précis de la figure d\'interférence et courbe d\'intensité I(x).',
-                level: ['terminale', 'sup'],
-                domain: 'ondes',
-                tags: ['Young', 'Laser', 'Onde'],
+                id: 'interference', title: 'Interférences & Diffraction', desc: 'Fentes d\'Young. Modélisation de l\'intensité et de la figure d\'interférence.',
+                level: 'Terminale Spé', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: 'i = \\lambda D / b',
                 file: 'src/simulations/interference.html'
             },
             {
-                id: 'electrostatics',
-                title: 'Champs Électrostatiques',
-                desc: 'Visualisation des lignes de champ, vecteurs et équipotentielles générés par des charges ponctuelles.',
-                level: ['premiere', 'sup'],
-                domain: 'elec',
-                tags: ['Coulomb', 'Potentiel', 'Vecteurs'],
+                id: 'electrostatics', title: 'Champs Électrostatiques', desc: 'Lignes de champ, vecteurs et équipotentielles (Coulomb).',
+                level: 'Première Spé', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'E = k|q|/r^2',
                 file: 'src/simulations/electrostatics.html'
             },
             {
-                id: 'rc_circuit',
-                title: 'Circuit RC (Transitoire)',
-                desc: 'Charge et décharge d\'un condensateur. Oscilloscope intégré pour les courbes de tension.',
-                level: ['terminale'],
-                domain: 'elec',
-                tags: ['Condensateur', 'Régime transitoire', 'Oscilloscope'],
+                id: 'rc_circuit', title: 'Circuit RC', desc: 'Régime transitoire. Charge/décharge de condensateur avec oscilloscope.',
+                level: 'Terminale Spé', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'u_C(t) = E(1 - e^{-t/RC})',
                 file: 'src/simulations/rc_circuit.html'
             },
             {
-                id: 'ohms_law',
-                title: 'Loi d\'Ohm & Puissance',
-                desc: 'Circuit simple avec animation des électrons, calculs en temps réel de U, I, R et P.',
-                level: ['college', 'seconde'],
-                domain: 'elec',
-                tags: ['Résistance', 'Courant', 'Énergie'],
+                id: 'ohms_law', title: 'Loi d\'Ohm & Puissance', desc: 'Comportement d\'une résistance. Relation Tension/Courant.',
+                level: 'Collège/Seconde', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'U = R \\cdot I',
                 file: 'src/simulations/ohms_law.html'
             },
             {
-                id: 'titration',
-                title: 'Titrage pH-métrique & Colorimétrique',
-                desc: 'Simulation précise d\'un dosage acide-base (fort/faible) avec courbe pH=f(V) et changement d\'indicateur.',
-                level: ['terminale', 'sup'],
-                domain: 'chimie',
-                tags: ['Acide-Base', 'Équivalence', 'Graphe'],
+                id: 'titration', title: 'Titrage pH-métrique', desc: 'Suivi d\'un dosage acide-base. Courbe pH=f(V), saut de pH.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'pH = pK_a + \\log([A^-]/[AH])',
                 file: 'src/simulations/titration.html'
             },
             {
-                id: 'kinetics',
-                title: 'Cinétique Chimique',
-                desc: 'Suivi temporel de réactions d\'ordre 0, 1 et 2. Linéarisation et calculs des vitesses de disparition.',
-                level: ['terminale', 'sup'],
-                domain: 'chimie',
-                tags: ['Vitesse', 'Demi-vie', 'Ordre'],
+                id: 'kinetics', title: 'Cinétique Chimique', desc: 'Suivi temporel, ordres de réaction, temps de demi-vie et linéarisation.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'v = k[A]^p',
                 file: 'src/simulations/chemical_kinetics.html'
             },
             {
-                id: 'electrochem',
-                title: 'Piles & Électrolyse',
-                desc: 'Fonctionnement spontané (Pile Daniell) et forcé (Électrolyse). Transfert d\'électrons et variations de masse.',
-                level: ['terminale', 'sup'],
-                domain: 'chimie',
-                tags: ['Oxydoréduction', 'Faraday', 'Électrodes'],
+                id: 'electrochem', title: 'Piles & Électrolyse', desc: 'Piles Daniell, transfert d\'électrons, pont salin, variation de masse.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'Ox + ne^- \\rightleftharpoons Red',
                 file: 'src/simulations/electrochemistry.html'
             },
             {
-                id: 'lab_tech',
-                title: 'Techniques de Laboratoire',
-                desc: 'Chauffage à reflux, extraction liquide-liquide (ampoule à décanter) et filtration sous vide.',
-                level: ['seconde', 'premiere', 'terminale'],
-                domain: 'chimie',
-                tags: ['Synthèse', 'Séparation', 'Matériel'],
+                id: 'lab_tech', title: 'Techniques de Labo', desc: 'Chauffage à reflux, décantation, filtration sous vide.',
+                level: 'Lycée', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: '\\eta = m_{exp} / m_{th}',
                 file: 'src/simulations/lab_techniques.html'
             },
             {
-                id: 'spectra',
-                title: 'Spectres d\'Émission',
-                desc: 'Spectroscopie de lampes à décharge (H, He, Ne, Hg). Visualisation des raies d\'émission exactes.',
-                level: ['seconde', 'premiere'],
-                domain: 'ondes',
-                tags: ['Atome', 'Quantique', 'Lumière'],
+                id: 'spectra', title: 'Spectres d\'Émission', desc: 'Spectroscopie de lampes à gaz. Quantification de l\'énergie.',
+                level: 'Seconde/Première', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: '\\Delta E = hc/\\lambda',
                 file: 'src/simulations/spectra.html'
             },
             {
-                id: 'refraction',
-                title: 'Réfraction (Snell-Descartes)',
-                desc: 'Laser interactif traversant deux milieux d\'indices différents. Réflexion totale interne.',
-                level: ['seconde'],
-                domain: 'ondes',
-                tags: ['Optique', 'Laser', 'Angle'],
+                id: 'refraction', title: 'Réfraction (Descartes)', desc: 'Lois de l\'optique géométrique, rayon laser et réflexion totale.',
+                level: 'Seconde', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: 'n_1\\sin(i_1) = n_2\\sin(i_2)',
                 file: 'src/simulations/refraction.html'
             },
             {
-                id: 'projectile',
-                title: 'Balistique Simple',
-                desc: 'Mouvement parabolique classique d\'un projectile. Idéal pour introduire la cinématique.',
-                level: ['premiere', 'terminale'],
-                domain: 'meca',
-                tags: ['Cinématique', 'Parabole'],
+                id: 'projectile', title: 'Balistique Simple', desc: 'Cinématique classique d\'un tir parabolique.',
+                level: 'Première Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'y(x) = -g/(2v_0^2\\cos^2\\alpha)x^2 + \\tan\\alpha x',
                 file: 'src/simulations/projectile_motion.html'
             }
         ];
 
-        // --- UI Logic ---
-        const grid = document.getElementById('sim-grid');
+        // --- 2. SIDEBAR LOGIC ---
+        const listContainer = document.getElementById('sim-list');
         const searchInput = document.getElementById('search-input');
-        const levelBtns = document.querySelectorAll('#level-filters .filter-btn');
-        const domainBtns = document.querySelectorAll('#domain-filters .filter-btn');
+        const filterBtns = document.querySelectorAll('.filter-btn');
 
-        let currentLevel = 'all';
         let currentDomain = 'all';
         let currentSearch = '';
 
-        function init() {
-            updateCounts();
-            renderCards();
+        function renderList() {
+            listContainer.innerHTML = '';
 
-            // Event Listeners
-            levelBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    levelBtns.forEach(b => b.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    currentLevel = e.currentTarget.dataset.filter;
-                    renderCards();
-                });
+            const filtered = SIMULATIONS.filter(s => {
+                const matchDomain = currentDomain === 'all' || s.domain === currentDomain;
+                const searchStr = `${s.title} ${s.desc} ${s.level}`.toLowerCase();
+                const matchSearch = currentSearch === '' || searchStr.includes(currentSearch.toLowerCase());
+                return matchDomain && matchSearch;
             });
 
-            domainBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    domainBtns.forEach(b => b.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    currentDomain = e.currentTarget.dataset.domain;
-                    renderCards();
-                });
-            });
-
-            searchInput.addEventListener('input', (e) => {
-                currentSearch = e.target.value.toLowerCase();
-                renderCards();
-            });
-
-            document.getElementById('theme-toggle-btn').addEventListener('click', () => {
-                const html = document.documentElement;
-                html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-            });
-
-            document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-        }
-
-        function updateCounts() {
-            document.getElementById('count-all').textContent = simulations.length;
-            ['college', 'seconde', 'premiere', 'terminale', 'sup'].forEach(lvl => {
-                const count = simulations.filter(s => s.level.includes(lvl)).length;
-                document.getElementById(`count-${lvl}`).textContent = count;
-            });
-        }
-
-        function filterSimulations() {
-            return simulations.filter(sim => {
-                const matchLevel = currentLevel === 'all' || sim.level.includes(currentLevel);
-                const matchDomain = currentDomain === 'all' || sim.domain === currentDomain;
-                const matchSearch = currentSearch === '' ||
-                    sim.title.toLowerCase().includes(currentSearch) ||
-                    sim.desc.toLowerCase().includes(currentSearch) ||
-                    sim.tags.some(t => t.toLowerCase().includes(currentSearch));
-
-                return matchLevel && matchDomain && matchSearch;
-            });
-        }
-
-        function renderCards() {
-            const filtered = filterSimulations();
-            grid.innerHTML = '';
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:50px; color:var(--text-muted);">Aucune simulation ne correspond à vos critères.</div>`;
+            if(filtered.length === 0) {
+                listContainer.innerHTML = '<div style="color:var(--text-muted); padding:20px; text-align:center;">Aucune simulation trouvée.</div>';
                 return;
             }
 
             filtered.forEach(sim => {
-                const card = document.createElement('div');
-                card.className = 'sim-card';
-                // Use the highest level for the badge
-                const displayLevel = sim.level[sim.level.length-1];
+                const el = document.createElement('div');
+                el.className = 'list-item';
+                el.style.setProperty('--item-color', sim.color);
 
-                // Color mapping for border based on domain
-                let domainColorVar = `var(--color-${sim.domain})`;
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-title">${sim.title}</div>
-                    </div>
-                    <div class="card-level" style="align-self:flex-start;">Niveau: ${displayLevel}</div>
-                    <div class="card-desc">${sim.desc}</div>
-                    <div class="card-tags">
-                        ${sim.tags.map(tag => `<span class="tag ${sim.domain}">${tag}</span>`).join('')}
-                    </div>
-                    <div class="play-icon">
-                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </div>
+                el.innerHTML = `
+                    <div class="item-level">${sim.level}</div>
+                    <div class="item-title">${sim.title}</div>
+                    <div class="item-desc">${sim.desc}</div>
                 `;
 
-                // Set the accent color of the card border dynamically
-                card.style.setProperty('--accent-primary', `var(--color-${sim.domain})`);
+                el.addEventListener('click', () => {
+                    openSimulation(sim);
+                    focusOrbitalNode(sim.id);
+                });
 
-                card.addEventListener('click', () => openModal(sim));
-                grid.appendChild(card);
+                // Hover effects for orbital canvas
+                el.addEventListener('mouseenter', () => hoverOrbitalNode(sim.id));
+                el.addEventListener('mouseleave', () => hoverOrbitalNode(null));
+
+                listContainer.appendChild(el);
             });
         }
 
-        // --- Modal Logic ---
-        const modal = document.getElementById('sim-modal');
-        const frame = document.getElementById('sim-frame');
-        const modalTitle = document.getElementById('modal-title');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDomain = btn.dataset.filter;
+                renderList();
+                updateOrbitalVisibility();
+            });
+        });
 
-        function openModal(sim) {
-            modalTitle.textContent = `NEXUS / ${sim.title}`;
-            frame.src = sim.file;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // prevent bg scroll
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderList();
+            updateOrbitalVisibility();
+        });
+
+        // Sidebar Toggle
+        const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+
+        btnToggleSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            btnToggleSidebar.style.display = 'none';
+        });
+
+        // Click outside sidebar to close on small screens (or just a nice feature)
+        document.getElementById('orbital-canvas').addEventListener('click', () => {
+            if (window.innerWidth < 800) {
+                sidebar.classList.add('collapsed');
+                btnToggleSidebar.style.display = 'block';
+            }
+        });
+
+
+        // --- 3. WEBOS WINDOW LOGIC ---
+        const winFrame = document.getElementById('sim-window');
+        const winTitle = document.getElementById('win-title-text');
+        const winIcon = document.getElementById('win-icon');
+        const simIframe = document.getElementById('sim-iframe');
+        const btnWinClose = document.getElementById('btn-win-close');
+        const btnWinMax = document.getElementById('btn-win-max');
+        const winHeader = document.getElementById('win-header');
+
+        function openSimulation(sim) {
+            winTitle.textContent = sim.title;
+            winIcon.style.color = sim.color;
+            winFrame.style.setProperty('--win-color', sim.color);
+            winFrame.style.setProperty('--win-glow', `rgba(${sim.rgb}, 0.3)`);
+
+            simIframe.src = sim.file;
+            winFrame.classList.add('open');
+
+            // Hide sidebar on small screens to show window
+            if(window.innerWidth < 1200) {
+                sidebar.classList.add('collapsed');
+                btnToggleSidebar.style.display = 'block';
+            }
         }
 
-        function closeModal() {
-            modal.classList.remove('active');
-            frame.src = ''; // stop execution
-            document.body.style.overflow = 'auto';
-        }
+        btnWinClose.addEventListener('click', () => {
+            winFrame.classList.remove('open');
+            setTimeout(() => { simIframe.src = ''; }, 300); // clear after animation
+        });
 
-        // --- Background Canvas Animation (Galactic Nodes) ---
-        const bgCanvas = document.getElementById('bg-canvas');
-        const ctx = bgCanvas.getContext('2d');
-        let bgWidth, bgHeight;
+        let isMaximized = false;
+        btnWinMax.addEventListener('click', () => {
+            isMaximized = !isMaximized;
+            if(isMaximized) {
+                winFrame.style.width = '100vw';
+                winFrame.style.height = '100vh';
+                winFrame.style.borderRadius = '0';
+            } else {
+                winFrame.style.width = '900px';
+                winFrame.style.height = '600px';
+                winFrame.style.borderRadius = '16px';
+            }
+        });
+
+        // Window Dragging
+        let isDragging = false;
+        let startX, startY, initLeft, initTop;
+
+        winHeader.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('win-btn') || isMaximized) return;
+            isDragging = true;
+            startX = e.clientX; startY = e.clientY;
+
+            // Get current transform translate values
+            const rect = winFrame.getBoundingClientRect();
+            // Convert to absolute left/top instead of center translate
+            winFrame.style.transform = 'none';
+            winFrame.style.left = `${rect.left}px`;
+            winFrame.style.top = `${rect.top}px`;
+
+            initLeft = rect.left; initTop = rect.top;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            winFrame.style.left = `${initLeft + (e.clientX - startX)}px`;
+            winFrame.style.top = `${initTop + (e.clientY - startY)}px`;
+        });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
+
+        // --- 4. ORBITAL ENGINE CANVAS (CONSTELLATION/ORRERY) ---
+        const canvas = document.getElementById('orbital-canvas');
+        const ctx = canvas.getContext('2d');
+        let cw, ch;
         let nodes = [];
+        let hoveredNodeId = null;
+        let activeNodeId = null;
 
-        function resizeBg() {
-            bgWidth = window.innerWidth;
-            bgHeight = window.innerHeight;
-            bgCanvas.width = bgWidth;
-            bgCanvas.height = bgHeight;
+        // Tooltip elements
+        const tooltip = document.getElementById('tooltip');
+        const ttLevel = document.getElementById('tt-level');
+        const ttTitle = document.getElementById('tt-title');
+        const ttDesc = document.getElementById('tt-desc');
+        const ttFormula = document.getElementById('tt-formula');
+
+        function resizeCanvas() {
+            cw = canvas.width = window.innerWidth;
+            ch = canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resizeBg);
-        resizeBg();
+        window.addEventListener('resize', resizeCanvas);
 
-        for(let i=0; i<80; i++) {
-            nodes.push({
-                x: Math.random() * bgWidth,
-                y: Math.random() * bgHeight,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5,
-                size: Math.random() * 2 + 1
+        // Build orbital nodes based on data
+        function buildOrbitalNodes() {
+            nodes = [];
+            // Center of the system (shift right if sidebar is open)
+            const centerX = window.innerWidth > 800 ? window.innerWidth/2 + 150 : window.innerWidth/2;
+            const centerY = window.innerHeight/2;
+
+            const domains = ['meca', 'chimie', 'ondes', 'elec'];
+
+            SIMULATIONS.forEach((sim, index) => {
+                // Group by domain for orbit rings
+                const domainIdx = domains.indexOf(sim.domain);
+                const radiusBase = 120 + (domainIdx * 100);
+                // Stagger slightly
+                const radius = radiusBase + (index % 2 === 0 ? 20 : -20);
+                const angleOffset = (index / SIMULATIONS.length) * Math.PI * 2;
+                const speed = 0.0005 + (Math.random() * 0.0005) * (index%2===0?1:-1);
+
+                nodes.push({
+                    sim: sim,
+                    r: radius,
+                    angle: angleOffset,
+                    speed: speed,
+                    x: 0, y: 0, // computed in loop
+                    visible: true
+                });
             });
         }
 
-        function drawBg() {
-            ctx.clearRect(0, 0, bgWidth, bgHeight);
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.2)';
-            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)';
+        function updateOrbitalVisibility() {
+            nodes.forEach(n => {
+                const matchDomain = currentDomain === 'all' || n.sim.domain === currentDomain;
+                const searchStr = `${n.sim.title} ${n.sim.desc} ${n.sim.level}`.toLowerCase();
+                const matchSearch = currentSearch === '' || searchStr.includes(currentSearch.toLowerCase());
+                n.visible = matchDomain && matchSearch;
+            });
+        }
 
-            for(let i=0; i<nodes.length; i++) {
-                let n = nodes[i];
-                n.x += n.vx; n.y += n.vy;
+        function hoverOrbitalNode(id) {
+            hoveredNodeId = id;
+        }
+        function focusOrbitalNode(id) {
+            activeNodeId = id;
+        }
 
-                if(n.x < 0 || n.x > bgWidth) n.vx *= -1;
-                if(n.y < 0 || n.y > bgHeight) n.vy *= -1;
+        // Mouse interaction for Canvas
+        let mouseX = -100, mouseY = -100;
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
 
-                ctx.beginPath(); ctx.arc(n.x, n.y, n.size, 0, Math.PI*2); ctx.fill();
+            // Check collision with nodes
+            let found = false;
+            for(let n of nodes) {
+                if(!n.visible) continue;
+                const dist = Math.hypot(n.x - mouseX, n.y - mouseY);
+                if (dist < 20) { // Hover radius
+                    hoveredNodeId = n.sim.id;
+                    found = true;
 
-                // Connect nearby
-                for(let j=i+1; j<nodes.length; j++) {
-                    let n2 = nodes[j];
-                    let dist = Math.hypot(n.x - n2.x, n.y - n2.y);
-                    if(dist < 150) {
-                        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
-                    }
+                    // Show Tooltip
+                    ttLevel.textContent = n.sim.level;
+                    ttLevel.style.color = n.sim.color;
+                    ttTitle.textContent = n.sim.title;
+                    ttDesc.textContent = n.sim.desc;
+                    ttFormula.textContent = n.sim.formula;
+
+                    tooltip.style.setProperty('--tip-color', n.sim.color);
+                    tooltip.style.setProperty('--tip-rgb', n.sim.rgb);
+
+                    tooltip.style.left = `${n.x}px`;
+                    tooltip.style.top = `${n.y - 20}px`;
+                    tooltip.classList.add('visible');
+                    break;
                 }
             }
-            requestAnimationFrame(drawBg);
-        }
-        drawBg();
+            if (!found) {
+                hoveredNodeId = null;
+                tooltip.classList.remove('visible');
+            }
+        });
 
-        // Start
-        init();
+        canvas.addEventListener('click', () => {
+            if (hoveredNodeId) {
+                const node = nodes.find(n => n.sim.id === hoveredNodeId);
+                if (node) openSimulation(node.sim);
+            }
+        });
+
+
+        // Animation Loop
+        function drawOrbital() {
+            ctx.fillStyle = '#030712'; // Deep background
+            ctx.fillRect(0, 0, cw, ch);
+
+            const centerX = window.innerWidth > 800 ? window.innerWidth/2 + 150 : window.innerWidth/2;
+            const centerY = window.innerHeight/2;
+
+            // Draw Background grid/nebula effect subtly
+            const time = Date.now() * 0.001;
+
+            // Draw Center Star (The Nexus)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 30, 0, Math.PI*2);
+            const centerGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
+            centerGrad.addColorStop(0, '#fff');
+            centerGrad.addColorStop(0.2, '#00e5ff');
+            centerGrad.addColorStop(1, 'rgba(0,229,255,0)');
+            ctx.fillStyle = centerGrad;
+            ctx.fill();
+
+            // Draw Orbit Rings
+            const domains = ['meca', 'chimie', 'ondes', 'elec'];
+            domains.forEach((d, i) => {
+                const r = 120 + (i * 100);
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(255,255,255,0.03)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Update & Draw Nodes
+            nodes.forEach(n => {
+                if(!n.visible) return;
+
+                // Move orbit
+                n.angle += n.speed;
+                n.x = centerX + n.r * Math.cos(n.angle);
+                n.y = centerY + n.r * Math.sin(n.angle);
+
+                const isHovered = n.sim.id === hoveredNodeId;
+                const isActive = n.sim.id === activeNodeId;
+
+                // Draw Connecting Line to center if active/hovered
+                if (isHovered || isActive) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(n.x, n.y);
+                    ctx.strokeStyle = `rgba(${n.sim.rgb}, 0.3)`;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Draw Node Glow
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, isHovered ? 25 : 15, 0, Math.PI*2);
+                const nodeGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, isHovered ? 25 : 15);
+                nodeGrad.addColorStop(0, n.sim.color);
+                nodeGrad.addColorStop(1, `rgba(${n.sim.rgb}, 0)`);
+                ctx.fillStyle = nodeGrad;
+                ctx.fill();
+
+                // Draw Node Core
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, isHovered ? 6 : 4, 0, Math.PI*2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.strokeStyle = n.sim.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                if (isHovered || isActive) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(n.sim.title, n.x, n.y + 25);
+                }
+            });
+
+            requestAnimationFrame(drawOrbital);
+        }
+
+        // --- INIT ---
+        resizeCanvas();
+        buildOrbitalNodes();
+        renderList();
+        requestAnimationFrame(drawOrbital);
 
     </script>
 </body>
