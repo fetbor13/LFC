@@ -3,58 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulation: Circuit RC (Régime Transitoire)</title>
+    <title>Simulation Supérieure: Circuit RC & Oscilloscope</title>
     <style>
         :root {
-            --bg-color: #050505;
+            --bg-color: #030712;
             --text-color: #f8fafc;
             --glass-bg: rgba(15, 23, 42, 0.85);
             --glass-border: rgba(255, 255, 255, 0.15);
             --accent-color: #a855f7;
             --accent-glow: 0 0 15px rgba(168, 85, 247, 0.6);
-            --uc-color: #3b82f6; /* Uc curve color */
-            --ur-color: #ef4444; /* Ur curve color */
-            --panel-bg: rgba(0,0,0,0.5);
+            --uc-color: #38bdf8;
+            --ur-color: #fbbf24;
+            --panel-bg: rgba(0,0,0,0.6);
+            --osco-bg: #000;
+            --osco-grid: rgba(255, 255, 255, 0.15);
+            --osco-subgrid: rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="light"] {
-            --bg-color: #f1f5f9;
+            --bg-color: #f8fafc;
             --text-color: #0f172a;
             --glass-bg: rgba(255, 255, 255, 0.9);
-            --glass-border: rgba(0, 0, 0, 0.15);
+            --glass-border: rgba(0, 0, 0, 0.2);
             --accent-color: #7e22ce;
             --accent-glow: 0 0 15px rgba(126, 34, 206, 0.4);
-            --panel-bg: rgba(255,255,255,0.6);
-            --uc-color: #2563eb;
-            --ur-color: #dc2626;
+            --panel-bg: rgba(255,255,255,0.7);
+            --uc-color: #0284c7;
+            --ur-color: #d97706;
+            --osco-bg: #f8fafc;
+            --osco-grid: rgba(0, 0, 0, 0.15);
+            --osco-subgrid: rgba(0, 0, 0, 0.05);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
         #app-container { display: flex; width: 100%; height: 100%; }
 
         #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
         .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
-        .section-title { position: absolute; top: 10px; left: 15px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-color); opacity: 0.7; z-index: 10; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
 
         #circuit-section { flex: 1; display: flex; justify-content: center; align-items: center; }
-        #oscilloscope-section { height: 350px; }
+        #oscilloscope-section { height: 400px; padding: 20px; background: #000; border: 4px solid #334155; border-radius: 16px; box-shadow: inset 0 0 50px rgba(0,0,0,0.8); }
+        [data-theme="light"] #oscilloscope-section { background: #f1f5f9; border-color: #cbd5e1; box-shadow: inset 0 0 20px rgba(0,0,0,0.1); }
 
         canvas { display: block; width: 100%; height: 100%; }
 
-        #controls-pane { width: 350px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 20px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
-        h2 { font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); text-shadow: var(--accent-glow); text-align: center; margin-bottom: 5px; }
-        .control-group { display: flex; flex-direction: column; gap: 10px; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
-        label { font-size: 0.9rem; display: flex; justify-content: space-between; font-weight: 600; }
-        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
-        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; }
-        .math-eq { font-style: italic; color: #10b981; text-align: center; margin: 5px 0; font-weight: bold; }
-        #theme-toggle { position: absolute; top: 15px; left: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 500; color: var(--text-muted); }
 
-        .btn-switch { padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-color); cursor: pointer; font-weight: bold; flex: 1; text-align: center; transition: all 0.2s; }
-        .btn-switch.active { background: var(--accent-color); color: white; box-shadow: var(--accent-glow); border-color: var(--accent-color); }
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--text-color); cursor: pointer; margin-top: -5px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: var(--glass-border); border-radius: 1px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #10b981; font-weight: bold; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .btn-switch { padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border); background: transparent; color: var(--text-color); cursor: pointer; font-weight: 600; font-size: 0.85rem; flex: 1; text-align: center; transition: 0.2s; }
+        .btn-switch:hover { background: rgba(255,255,255,0.05); }
+        .btn-switch.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: var(--accent-glow); }
         .flex-row { display: flex; gap: 10px; }
     </style>
 </head>
@@ -65,39 +75,39 @@
     <div id="app-container">
         <div id="visual-pane">
             <div id="circuit-section" class="section-box">
-                <div class="section-title">Schéma du Circuit RC</div>
+                <div class="section-title">Schéma Électrique</div>
                 <div style="flex:1; position:relative; width:100%; height:100%;">
                     <canvas id="circuitCanvas"></canvas>
                 </div>
             </div>
 
-            <div id="oscilloscope-section" class="section-box">
-                <div class="section-title">Oscilloscope (Tensions)</div>
-                <div style="flex:1; position:relative; background:#000; border-radius:4px; overflow:hidden;">
+            <div id="oscilloscope-section">
+                <div style="flex:1; position:relative; width:100%; height:100%;">
                     <canvas id="oscoCanvas"></canvas>
                 </div>
             </div>
         </div>
 
         <div id="controls-pane">
-            <h2>Circuit RC</h2>
-            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Électricité / Régimes Transitoires</div>
+            <h2>Circuit RC Linéaire</h2>
 
             <div class="control-group">
-                <label style="margin-bottom: 5px;">Position de l'interrupteur</label>
+                <label style="margin-bottom: 5px;">Commutateur K</label>
                 <div class="flex-row">
-                    <div id="btn-charge" class="btn-switch active">Charge (E)</div>
-                    <div id="btn-discharge" class="btn-switch">Décharge (0)</div>
+                    <div id="btn-charge" class="btn-switch active">Position 1 (Charge)</div>
+                    <div id="btn-discharge" class="btn-switch">Position 2 (Décharge)</div>
                 </div>
             </div>
 
+            <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
+
             <div class="control-group">
-                <label>Tension (E) <span id="e-val">5.0 V</span></label>
-                <input type="range" id="e-input" min="1" max="12" step="0.5" value="5.0">
+                <label>F.É.M. Générateur (E) <span id="e-val">5.00 V</span></label>
+                <input type="range" id="e-input" min="1" max="12" step="0.25" value="5.0">
             </div>
 
             <div class="control-group">
-                <label>Résistance (R) <span id="r-val">1.0 kΩ</span></label>
+                <label>Résistance (R) <span id="r-val">1.00 kΩ</span></label>
                 <input type="range" id="r-input" min="0.1" max="10" step="0.1" value="1.0">
             </div>
 
@@ -106,19 +116,26 @@
                 <input type="range" id="c-input" min="10" max="1000" step="10" value="100">
             </div>
 
+            <!-- Oscilloscope Controls -->
+            <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
+            <div class="control-group">
+                <label style="color:#a855f7;">Base de temps (Oscillo) <span id="tbase-val">100 ms/div</span></label>
+                <input type="range" id="tbase-input" min="10" max="1000" step="10" value="100">
+            </div>
+
             <div class="stats-box">
-                <div class="math-eq">E = u_R + u_C</div>
-                <div class="math-eq" style="font-size:0.85rem;">τ = R·C</div>
+                <div class="math-eq">$\tau = R \cdot C$</div>
+                <div class="math-eq" style="font-size:0.75rem;">$u_C(t) = E(1 - e^{-t/\tau})$</div>
                 <hr style="border-color: var(--glass-border); margin: 5px 0;">
-                <div>Constante de temps τ: <span id="stat-tau" style="font-weight:bold; color:#fbbf24;">0.10</span> s</div>
-                <div>Temps écoulé (t): <span id="stat-t">0.00</span> s</div>
+                <div style="display:flex; justify-content:space-between;"><span>Constante $\tau$:</span> <span id="stat-tau" style="font-weight:bold; color:#fbbf24;">0.100 s</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Temps $t$:</span> <span id="stat-t">0.000 s</span></div>
                 <hr style="border-color: var(--glass-border); margin: 5px 0;">
-                <div style="color:var(--uc-color); font-weight:bold;">u_C(t) = <span id="stat-uc">0.00</span> V</div>
-                <div style="color:var(--ur-color); font-weight:bold;">u_R(t) = <span id="stat-ur">5.00</span> V</div>
+                <div style="display:flex; justify-content:space-between; color:var(--uc-color); font-weight:bold;"><span>$u_C(t)$:</span> <span id="stat-uc">0.000 V</span></div>
+                <div style="display:flex; justify-content:space-between; color:var(--ur-color); font-weight:bold;"><span>$u_R(t)$:</span> <span id="stat-ur">5.000 V</span></div>
             </div>
 
             <div style="display:flex; gap:10px; margin-top:auto;">
-                <button id="btn-reset" class="btn-switch" style="background:rgba(239, 68, 68, 0.2); border-color:#ef4444; color:#ef4444;">RAZ Chrono</button>
+                <button id="btn-reset" class="btn-switch" style="background:transparent; border-color:#ef4444; color:#ef4444;">Réinitialiser (t=0)</button>
             </div>
         </div>
     </div>
@@ -137,30 +154,36 @@
         const eInput = document.getElementById('e-input');
         const rInput = document.getElementById('r-input');
         const cInput = document.getElementById('c-input');
+        const tbaseInput = document.getElementById('tbase-input');
+
+        let dpr = window.devicePixelRatio || 1;
 
         let isCharging = true;
         let E = 5.0;
-        let R = 1000; // Ohms
-        let C = 0.0001; // Farads
+        let R = 1000;
+        let C = 0.0001;
         let tau = R * C;
+        let tbase = 0.1; // seconds per division
 
         let t = 0;
         let Uc = 0;
         let Ur = E;
-        let dataPoints = []; // [{t, Uc, Ur}]
+        let dataPoints = [];
 
         let oscoWidth, oscoHeight, circWidth, circHeight;
 
         function resize() {
             oscoWidth = oscoCanvas.parentElement.clientWidth;
             oscoHeight = oscoCanvas.parentElement.clientHeight;
-            oscoCanvas.width = oscoWidth;
-            oscoCanvas.height = oscoHeight;
+            oscoCanvas.width = oscoWidth * dpr;
+            oscoCanvas.height = oscoHeight * dpr;
+            oCtx.setTransform(dpr, 0, 0, dpr, 0, 0); // reset scale
 
             circWidth = circuitCanvas.parentElement.clientWidth;
             circHeight = circuitCanvas.parentElement.clientHeight;
-            circuitCanvas.width = circWidth;
-            circuitCanvas.height = circHeight;
+            circuitCanvas.width = circWidth * dpr;
+            circuitCanvas.height = circHeight * dpr;
+            cCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         window.addEventListener('resize', resize);
 
@@ -175,23 +198,26 @@
             R = parseFloat(rInput.value) * 1000;
             C = parseFloat(cInput.value) * 1e-6;
             tau = R * C;
+            tbase = parseFloat(tbaseInput.value) * 1e-3;
 
-            document.getElementById('e-val').textContent = E.toFixed(1) + ' V';
-            document.getElementById('r-val').textContent = (R/1000).toFixed(1) + ' kΩ';
+            document.getElementById('e-val').textContent = E.toFixed(2) + ' V';
+            document.getElementById('r-val').textContent = (R/1000).toFixed(2) + ' kΩ';
             document.getElementById('c-val').textContent = (C*1e6).toFixed(0) + ' µF';
-            document.getElementById('stat-tau').textContent = tau.toFixed(3);
+            document.getElementById('tbase-val').textContent = (tbase*1000).toFixed(0) + ' ms/div';
+            document.getElementById('stat-tau').textContent = tau.toFixed(3) + ' s';
         }
 
         eInput.addEventListener('input', updateParams);
         rInput.addEventListener('input', updateParams);
         cInput.addEventListener('input', updateParams);
+        tbaseInput.addEventListener('input', updateParams);
 
         btnCharge.addEventListener('click', () => {
             if (!isCharging) {
                 isCharging = true;
                 btnCharge.classList.add('active');
                 btnDischarge.classList.remove('active');
-                resetSim(Uc); // keep current capacitor voltage
+                resetSim(Uc);
             }
         });
 
@@ -204,9 +230,7 @@
             }
         });
 
-        btnReset.addEventListener('click', () => {
-            resetSim(0);
-        });
+        btnReset.addEventListener('click', () => resetSim(0));
 
         function resetSim(startUc) {
             t = 0;
@@ -216,7 +240,6 @@
             dataPoints.push({t: t, Uc: Uc, Ur: Ur});
         }
 
-        // DRAWING FUNCTIONS
         function drawCircuit() {
             cCtx.clearRect(0, 0, circWidth, circHeight);
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -224,183 +247,205 @@
             const compCol = isDark ? '#fff' : '#000';
 
             cCtx.strokeStyle = wireCol;
-            cCtx.lineWidth = 3;
+            cCtx.lineWidth = 2; // Finer lines
 
             const cx = circWidth/2;
             const cy = circHeight/2;
-            const w = 200;
-            const h = 120;
+            const w = 240;
+            const h = 140;
 
             // Wires
             cCtx.beginPath();
-            // Bottom wire
-            cCtx.moveTo(cx - w/2, cy + h/2);
-            cCtx.lineTo(cx + w/2, cy + h/2);
-            // Right wire (Capacitor branch)
-            cCtx.moveTo(cx + w/2, cy + h/2);
-            cCtx.lineTo(cx + w/2, cy - h/2);
-            // Top wire (Resistor branch)
-            cCtx.moveTo(cx + w/2, cy - h/2);
-            cCtx.lineTo(cx - 20, cy - h/2);
-            // Left wire (Generator)
-            cCtx.moveTo(cx - w/2, cy + h/2);
-            cCtx.lineTo(cx - w/2, cy - h/2);
-
-            // Switch central point
-            cCtx.moveTo(cx - 20, cy - h/2);
-            cCtx.lineTo(cx - 50, cy - h/2);
-
+            cCtx.moveTo(cx - w/2, cy + h/2); cCtx.lineTo(cx + w/2, cy + h/2);
+            cCtx.moveTo(cx + w/2, cy + h/2); cCtx.lineTo(cx + w/2, cy - h/2);
+            cCtx.moveTo(cx + w/2, cy - h/2); cCtx.lineTo(cx - 30, cy - h/2);
+            cCtx.moveTo(cx - w/2, cy + h/2); cCtx.lineTo(cx - w/2, cy - h/2);
+            cCtx.moveTo(cx - 30, cy - h/2); cCtx.lineTo(cx - 60, cy - h/2);
             cCtx.stroke();
 
             // Generator (Left)
-            cCtx.clearRect(cx - w/2 - 20, cy - 20, 40, 40);
-            cCtx.beginPath(); cCtx.arc(cx - w/2, cy, 20, 0, Math.PI*2); cCtx.fillStyle = isDark?'#1e293b':'#e2e8f0'; cCtx.fill();
+            cCtx.clearRect(cx - w/2 - 15, cy - 15, 30, 30);
+            cCtx.beginPath(); cCtx.arc(cx - w/2, cy, 15, 0, Math.PI*2); cCtx.fillStyle = isDark?'#1e293b':'#e2e8f0'; cCtx.fill();
             cCtx.strokeStyle = compCol; cCtx.stroke();
-            cCtx.fillStyle = compCol; cCtx.font='14px Arial'; cCtx.textAlign='center'; cCtx.textBaseline='middle'; cCtx.fillText('E', cx - w/2, cy);
+            cCtx.fillStyle = compCol; cCtx.font='12px "Inter", sans-serif'; cCtx.textAlign='center'; cCtx.textBaseline='middle'; cCtx.fillText('E', cx - w/2, cy);
 
-            // Generator top wire to switch pos 1
-            cCtx.beginPath(); cCtx.moveTo(cx - w/2, cy - h/2); cCtx.lineTo(cx - w/2 + 20, cy - h/2); cCtx.strokeStyle=wireCol; cCtx.stroke();
+            // Generator wire top
+            cCtx.beginPath(); cCtx.moveTo(cx - w/2, cy - h/2); cCtx.lineTo(cx - w/2 + 30, cy - h/2); cCtx.strokeStyle=wireCol; cCtx.stroke();
 
-            // Discharge loop (Middle wire)
-            cCtx.beginPath(); cCtx.moveTo(cx - w/2 + 20, cy + h/2); cCtx.lineTo(cx - w/2 + 20, cy); cCtx.lineTo(cx - 50, cy); cCtx.stroke();
+            // Discharge branch
+            cCtx.beginPath(); cCtx.moveTo(cx - w/2 + 30, cy + h/2); cCtx.lineTo(cx - w/2 + 30, cy); cCtx.lineTo(cx - 60, cy); cCtx.stroke();
 
             // Switch
             cCtx.fillStyle = compCol;
-            cCtx.beginPath(); cCtx.arc(cx - 50, cy - h/2, 4, 0, Math.PI*2); cCtx.fill(); // Common
-            cCtx.beginPath(); cCtx.arc(cx - w/2 + 20, cy - h/2, 4, 0, Math.PI*2); cCtx.fill(); // Pos 1 (Charge)
-            cCtx.beginPath(); cCtx.arc(cx - 50, cy, 4, 0, Math.PI*2); cCtx.fill(); // Pos 2 (Discharge)
+            cCtx.beginPath(); cCtx.arc(cx - 60, cy - h/2, 3, 0, Math.PI*2); cCtx.fill();
+            cCtx.beginPath(); cCtx.arc(cx - w/2 + 30, cy - h/2, 3, 0, Math.PI*2); cCtx.fill();
+            cCtx.beginPath(); cCtx.arc(cx - 60, cy, 3, 0, Math.PI*2); cCtx.fill();
 
             cCtx.beginPath();
-            cCtx.moveTo(cx - 50, cy - h/2);
+            cCtx.moveTo(cx - 60, cy - h/2);
             if (isCharging) {
-                cCtx.lineTo(cx - w/2 + 20, cy - h/2 - 10); // Closed to E
+                cCtx.lineTo(cx - w/2 + 30, cy - h/2 - 12);
             } else {
-                cCtx.lineTo(cx - 50, cy - 10); // Closed to discharge wire
+                cCtx.lineTo(cx - 60, cy - 12);
             }
             cCtx.strokeStyle = compCol;
-            cCtx.lineWidth = 3;
+            cCtx.lineWidth = 2.5;
             cCtx.stroke();
 
-            // Resistor (Top)
-            cCtx.clearRect(cx + 20, cy - h/2 - 15, 60, 30);
-            cCtx.beginPath(); cCtx.rect(cx + 20, cy - h/2 - 10, 60, 20); cCtx.fillStyle = isDark?'#334155':'#cbd5e1'; cCtx.fill(); cCtx.stroke();
+            // Resistor
+            cCtx.clearRect(cx + 20, cy - h/2 - 10, 60, 20);
+            cCtx.beginPath(); cCtx.rect(cx + 20, cy - h/2 - 8, 60, 16); cCtx.fillStyle = isDark?'#334155':'#cbd5e1'; cCtx.fill(); cCtx.stroke();
             cCtx.fillStyle = compCol; cCtx.fillText('R', cx + 50, cy - h/2);
 
-            // Capacitor (Right)
-            cCtx.clearRect(cx + w/2 - 20, cy - 10, 40, 20);
+            // Capacitor
+            cCtx.clearRect(cx + w/2 - 15, cy - 10, 30, 20);
             cCtx.beginPath();
-            cCtx.moveTo(cx + w/2 - 15, cy - 5); cCtx.lineTo(cx + w/2 + 15, cy - 5);
-            cCtx.moveTo(cx + w/2 - 15, cy + 5); cCtx.lineTo(cx + w/2 + 15, cy + 5);
-            cCtx.lineWidth = 4; cCtx.stroke();
+            cCtx.moveTo(cx + w/2 - 10, cy - 5); cCtx.lineTo(cx + w/2 + 10, cy - 5);
+            cCtx.moveTo(cx + w/2 - 10, cy + 5); cCtx.lineTo(cx + w/2 + 10, cy + 5);
+            cCtx.lineWidth = 3; cCtx.stroke();
             cCtx.fillText('C', cx + w/2 + 25, cy);
 
-            // Voltage arrows (Convention recepteur)
-            function drawArrow(x, y, len, label, color) {
+            // Precise Voltage Arrows
+            function drawVArrow(x, y, len, label, color) {
                 cCtx.beginPath(); cCtx.moveTo(x, y + len/2); cCtx.lineTo(x, y - len/2);
-                cCtx.lineTo(x - 4, y - len/2 + 8); cCtx.moveTo(x, y - len/2); cCtx.lineTo(x + 4, y - len/2 + 8);
-                cCtx.strokeStyle = color; cCtx.lineWidth = 2; cCtx.stroke();
-                cCtx.fillStyle = color; cCtx.fillText(label, x + 15, y);
+                cCtx.lineTo(x - 3, y - len/2 + 6); cCtx.moveTo(x, y - len/2); cCtx.lineTo(x + 3, y - len/2 + 6);
+                cCtx.strokeStyle = color; cCtx.lineWidth = 1.5; cCtx.stroke();
+                cCtx.fillStyle = color; cCtx.font='12px "Fira Code", monospace'; cCtx.fillText(label, x + 20, y);
             }
 
             let ucColor = getComputedStyle(document.documentElement).getPropertyValue('--uc-color').trim();
             let urColor = getComputedStyle(document.documentElement).getPropertyValue('--ur-color').trim();
 
-            drawArrow(cx + w/2 - 30, cy, 40, 'uC', ucColor);
+            drawVArrow(cx + w/2 - 25, cy, 40, 'uC', ucColor);
 
-            // Ur arrow horizontal
-            cCtx.beginPath(); cCtx.moveTo(cx + 80, cy - h/2 - 25); cCtx.lineTo(cx + 20, cy - h/2 - 25);
-            cCtx.lineTo(cx + 28, cy - h/2 - 29); cCtx.moveTo(cx + 20, cy - h/2 - 25); cCtx.lineTo(cx + 28, cy - h/2 - 21);
-            cCtx.strokeStyle = urColor; cCtx.stroke();
-            cCtx.fillStyle = urColor; cCtx.fillText('uR', cx + 50, cy - h/2 - 35);
+            cCtx.beginPath(); cCtx.moveTo(cx + 80, cy - h/2 - 20); cCtx.lineTo(cx + 20, cy - h/2 - 20);
+            cCtx.lineTo(cx + 26, cy - h/2 - 23); cCtx.moveTo(cx + 20, cy - h/2 - 20); cCtx.lineTo(cx + 26, cy - h/2 - 17);
+            cCtx.strokeStyle = urColor; cCtx.lineWidth=1.5; cCtx.stroke();
+            cCtx.fillStyle = urColor; cCtx.fillText('uR', cx + 50, cy - h/2 - 30);
         }
 
         function drawOscilloscope() {
             oCtx.clearRect(0, 0, oscoWidth, oscoHeight);
 
-            // Grid
-            oCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = getComputedStyle(document.documentElement).getPropertyValue('--osco-grid').trim();
+            const subgridCol = getComputedStyle(document.documentElement).getPropertyValue('--osco-subgrid').trim();
+
+            // Scope logic: 10 horizontal divisions, 8 vertical divisions
+            const hDivs = 10;
+            const vDivs = 8;
+            const stepX = oscoWidth / hDivs;
+            const stepY = oscoHeight / vDivs;
+
+            // Draw Graticule
             oCtx.lineWidth = 1;
+
+            // Subgrid (0.2 div)
+            oCtx.strokeStyle = subgridCol;
             oCtx.beginPath();
-            for(let i=0; i<10; i++) {
-                oCtx.moveTo(0, i*oscoHeight/10); oCtx.lineTo(oscoWidth, i*oscoHeight/10);
-                oCtx.moveTo(i*oscoWidth/10, 0); oCtx.lineTo(i*oscoWidth/10, oscoHeight);
+            for(let x=0; x<=oscoWidth; x+=stepX*0.2) { oCtx.moveTo(x,0); oCtx.lineTo(x,oscoHeight); }
+            for(let y=0; y<=oscoHeight; y+=stepY*0.2) { oCtx.moveTo(0,y); oCtx.lineTo(width,y); }
+            oCtx.stroke();
+
+            // Main grid
+            oCtx.strokeStyle = gridCol;
+            oCtx.beginPath();
+            for(let i=0; i<=hDivs; i++) {
+                oCtx.moveTo(i*stepX, 0); oCtx.lineTo(i*stepX, oscoHeight);
             }
-            // Center line Y=0
+            for(let i=0; i<=vDivs; i++) {
+                oCtx.moveTo(0, i*stepY); oCtx.lineTo(oscoWidth, i*stepY);
+            }
+            // Center crosshairs
             oCtx.moveTo(0, oscoHeight/2); oCtx.lineTo(oscoWidth, oscoHeight/2);
-            oCtx.strokeStyle = 'rgba(255,255,255,0.5)';
+            oCtx.moveTo(oscoWidth/2, 0); oCtx.lineTo(oscoWidth/2, oscoHeight);
+            oCtx.stroke();
+
+            // Center tick marks
+            oCtx.beginPath(); oCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+            for(let x=0; x<=oscoWidth; x+=stepX*0.2) { oCtx.moveTo(x, oscoHeight/2-3); oCtx.lineTo(x, oscoHeight/2+3); }
+            for(let y=0; y<=oscoHeight; y+=stepY*0.2) { oCtx.moveTo(oscoWidth/2-3, y); oCtx.lineTo(oscoWidth/2+3, y); }
             oCtx.stroke();
 
             if (dataPoints.length === 0) return;
 
-            // Scale: X max = 5*tau
-            let tMax = 5 * tau;
-            // Y scale: -E to +E
-            let vMax = 12; // Fixed max for scaling
+            // X scale: tbase per div -> total time = 10 * tbase
+            let tMax = hDivs * tbase;
+            // Y scale: let's fix it to 2V/div for example, or dynamic to fit E
+            let vPerDiv = E > 5 ? 2.0 : 1.0;
+            let vMax = (vDivs/2) * vPerDiv; // Max voltage from center (0V)
 
             function plotCurve(valKey, color) {
                 oCtx.beginPath();
                 oCtx.strokeStyle = color;
-                oCtx.lineWidth = 2;
-                oCtx.shadowBlur = 10;
-                oCtx.shadowColor = color;
+                oCtx.lineWidth = 1.5;
 
+                // Anti-aliased high precision plot
                 for(let i=0; i<dataPoints.length; i++) {
                     let pt = dataPoints[i];
                     let x = (pt.t / tMax) * oscoWidth;
-                    // Map V to height: +vMax is top (0), -vMax is bottom (height), 0 is middle
+                    // Y maps to middle. positive goes up.
                     let y = oscoHeight/2 - (pt[valKey] / vMax) * (oscoHeight/2);
+
+                    if (x > oscoWidth) break; // Don't draw past screen
 
                     if(i===0) oCtx.moveTo(x, y);
                     else oCtx.lineTo(x, y);
                 }
                 oCtx.stroke();
-                oCtx.shadowBlur = 0;
             }
 
             let ucColor = getComputedStyle(document.documentElement).getPropertyValue('--uc-color').trim();
             let urColor = getComputedStyle(document.documentElement).getPropertyValue('--ur-color').trim();
 
+            // Glow effect
+            oCtx.shadowBlur = isDark ? 6 : 0;
+            oCtx.shadowColor = ucColor;
             plotCurve('Uc', ucColor);
+
+            oCtx.shadowColor = urColor;
             plotCurve('Ur', urColor);
 
-            // Labels
-            oCtx.fillStyle = '#fff';
-            oCtx.font = '12px Arial';
-            oCtx.fillText(`Tension (V)`, 10, 20);
-            oCtx.fillText(`Temps (s)`, oscoWidth - 60, oscoHeight/2 - 10);
+            oCtx.shadowBlur = 0;
+
+            // HUD Text
+            oCtx.fillStyle = isDark ? '#10b981' : '#059669'; // phosphor green text
+            oCtx.font = '11px "Fira Code", monospace';
+            oCtx.fillText(`CH1 (uC) : ${vPerDiv} V/div`, 10, 20);
+            oCtx.fillText(`CH2 (uR) : ${vPerDiv} V/div`, 10, 35);
+            oCtx.fillText(`BASE : ${(tbase*1000).toFixed(0)} ms/div`, oscoWidth - 120, 20);
         }
 
         let lastTime = 0;
-        let startUc = 0; // For exact analytical calculation
+        let startUc = 0;
 
         function loop(timestamp) {
             if(!lastTime) { lastTime = timestamp; startUc = Uc; }
             let dtReal = (timestamp - lastTime) / 1000;
             lastTime = timestamp;
 
-            // Scale time so 1 tau takes roughly 1 second on screen
+            // Mapping real time to simulation time.
+            // If tau is very small (e.g. 10ms), running at real time finishes instantly.
+            // We slow down simulation visually so 1 tau always takes 1 second of real time to animate on screen.
             let simSpeed = tau;
             let dt = dtReal * simSpeed;
             t += dt;
 
-            // Stop plotting if t > 5 tau
-            if (t <= 5 * tau) {
-                // Analytical solution for exactness
+            // Stop recording points if we pass the right edge of oscilloscope (10 divs)
+            if (t <= 10 * tbase) {
                 if (isCharging) {
-                    // Uc(t) = E - (E - U0)*e^(-t/tau)
                     Uc = E - (E - startUc) * Math.exp(-t/tau);
                     Ur = E - Uc;
                 } else {
-                    // Uc(t) = U0 * e^(-t/tau)
                     Uc = startUc * Math.exp(-t/tau);
                     Ur = -Uc;
                 }
 
                 dataPoints.push({t: t, Uc: Uc, Ur: Ur});
 
-                document.getElementById('stat-t').textContent = t.toFixed(3);
-                document.getElementById('stat-uc').textContent = Uc.toFixed(2);
-                document.getElementById('stat-ur').textContent = Ur.toFixed(2);
+                document.getElementById('stat-t').textContent = t.toFixed(3) + ' s';
+                document.getElementById('stat-uc').textContent = Uc.toFixed(3) + ' V';
+                document.getElementById('stat-ur').textContent = Ur.toFixed(3) + ' V';
             }
 
             drawCircuit();
@@ -413,6 +458,15 @@
         updateParams();
         resetSim(0);
         requestAnimationFrame(loop);
+
+        // Inject MathJax
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
 
     </script>
 </body>
