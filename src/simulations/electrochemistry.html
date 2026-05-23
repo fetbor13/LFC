@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Électrochimie (Pile & Électrolyse)</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #0ea5e9;
+            --accent-glow: 0 0 15px rgba(14, 165, 233, 0.6);
+            --panel-bg: rgba(0,0,0,0.5);
+            --wire-color: #94a3b8;
+            --electron-color: #fbbf24;
+            --cu-color: #d97706; /* Cuivre */
+            --zn-color: #94a3b8; /* Zinc */
+            --cu-sol: rgba(56, 189, 248, 0.4); /* Bleu Cu2+ */
+            --zn-sol: rgba(255, 255, 255, 0.1); /* Incolore Zn2+ */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0284c7;
+            --accent-glow: 0 0 15px rgba(2, 132, 199, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --wire-color: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; position: relative; background-image: radial-gradient(var(--glass-border) 1px, transparent 1px); background-size: 30px 30px; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 360px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); text-shadow: var(--accent-glow); text-align: center; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        label { font-size: 0.9rem; display: flex; justify-content: space-between; font-weight: 600; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #10b981; text-align: center; margin: 5px 0; font-weight: bold; }
+
+        #theme-toggle { position: absolute; top: 15px; left: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .mode-toggle { display: flex; background: var(--panel-bg); border-radius: 8px; border: 1px solid var(--glass-border); overflow: hidden; margin-bottom: 5px; }
+        .mode-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; background: transparent; border: none; color: var(--text-color); }
+        .mode-btn.active { background: var(--accent-color); color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+        .btn-action { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align:center; }
+        .btn-action:hover { background: rgba(255,255,255,0.1); }
+
+        .anode-text { color: #ef4444; font-weight: bold; }
+        .cathode-text { color: #10b981; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <canvas id="simCanvas"></canvas>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Électrochimie</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Pile & Électrolyse (Système Zn/Cu)</div>
+
+            <div class="mode-toggle">
+                <button id="mode-pile" class="mode-btn active">Pile (Spontané)</button>
+                <button id="mode-elec" class="mode-btn">Électrolyse (Forcé)</button>
+            </div>
+
+            <div class="control-group">
+                <label>Intensité (Vitesse réaction) <span id="i-val">1.0 A</span></label>
+                <input type="range" id="i-input" min="0" max="5" step="0.5" value="1.0">
+            </div>
+
+            <div class="stats-box">
+                <div id="eq-title" style="text-align:center; font-weight:bold; border-bottom:1px solid var(--glass-border); padding-bottom:5px; margin-bottom:5px;">Fonctionnement en Pile</div>
+
+                <div class="math-eq" id="eq-left" style="font-size:0.9rem;">Zn(s) → Zn²⁺ + 2e⁻</div>
+                <div class="math-eq" id="eq-right" style="font-size:0.9rem;">Cu²⁺ + 2e⁻ → Cu(s)</div>
+                <div style="text-align:center; font-size:0.85rem; color:#f59e0b; font-weight:bold;" id="eq-global">Zn + Cu²⁺ → Zn²⁺ + Cu</div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span class="anode-text" id="label-left">Électrode Gauche (-)</span>
+                    <span id="mass-left">10.00 g</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span class="cathode-text" id="label-right">Électrode Droite (+)</span>
+                    <span id="mass-right">10.00 g</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span>Courant I:</span>
+                    <span id="stat-i" style="color:#fbbf24; font-weight:bold;">1.00 A</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-play" class="btn-action" style="flex:2; background:var(--accent-color); color:white; border-color:var(--accent-color);">Démarrer</button>
+                <button id="btn-reset" class="btn-action" style="flex:1;">RAZ</button>
+            </div>
+            <div style="font-size:0.8rem; color:gray; text-align:center; line-height:1.3;">
+                Dans les fils : e⁻.<br>Dans le pont salin : K⁺, Cl⁻ (électroneutralité).
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const modePileBtn = document.getElementById('mode-pile');
+        const modeElecBtn = document.getElementById('mode-elec');
+        const iInput = document.getElementById('i-input');
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+
+        const eqTitle = document.getElementById('eq-title');
+        const eqLeft = document.getElementById('eq-left');
+        const eqRight = document.getElementById('eq-right');
+        const eqGlobal = document.getElementById('eq-global');
+        const labelLeft = document.getElementById('label-left');
+        const labelRight = document.getElementById('label-right');
+        const massLeftDisplay = document.getElementById('mass-left');
+        const massRightDisplay = document.getElementById('mass-right');
+        const statI = document.getElementById('stat-i');
+
+        let width, height;
+        let mode = 'pile'; // 'pile' or 'elec'
+        let isRunning = false;
+
+        let massLeft = 10.0; // Zn
+        let massRight = 10.0; // Cu
+        let current = 1.0;
+
+        let electronOffset = 0;
+        let ions = []; // Floating ions in solution
+        let saltIons = []; // Ions in salt bridge
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initIons();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        });
+
+        function switchMode(newMode) {
+            mode = newMode;
+            modePileBtn.classList.toggle('active', mode === 'pile');
+            modeElecBtn.classList.toggle('active', mode === 'elec');
+
+            if (mode === 'pile') {
+                document.documentElement.style.setProperty('--accent-color', '#0ea5e9');
+                document.documentElement.style.setProperty('--accent-glow', '0 0 15px rgba(14, 165, 233, 0.6)');
+                eqTitle.textContent = "Fonctionnement en Pile (Spontané)";
+                eqLeft.textContent = "Zn(s) → Zn²⁺ + 2e⁻ (Oxydation/Anode)";
+                eqRight.textContent = "Cu²⁺ + 2e⁻ → Cu(s) (Réduction/Cathode)";
+                eqGlobal.textContent = "Zn + Cu²⁺ → Zn²⁺ + Cu";
+                labelLeft.textContent = "Électrode Zn (-)";
+                labelLeft.className = "anode-text";
+                labelRight.textContent = "Électrode Cu (+)";
+                labelRight.className = "cathode-text";
+            } else {
+                // Electrolysis (Forced)
+                document.documentElement.style.setProperty('--accent-color', '#a855f7');
+                document.documentElement.style.setProperty('--accent-glow', '0 0 15px rgba(168, 85, 247, 0.6)');
+                eqTitle.textContent = "Électrolyse (Forcé par Générateur)";
+                eqLeft.textContent = "Zn²⁺ + 2e⁻ → Zn(s) (Réduction/Cathode)";
+                eqRight.textContent = "Cu(s) → Cu²⁺ + 2e⁻ (Oxydation/Anode)";
+                eqGlobal.textContent = "Zn²⁺ + Cu → Zn + Cu²⁺";
+                labelLeft.textContent = "Électrode Zn (- du Gen)";
+                labelLeft.className = "cathode-text";
+                labelRight.textContent = "Électrode Cu (+ du Gen)";
+                labelRight.className = "anode-text";
+            }
+        }
+
+        modePileBtn.addEventListener('click', () => switchMode('pile'));
+        modeElecBtn.addEventListener('click', () => switchMode('elec'));
+
+        iInput.addEventListener('input', (e) => {
+            current = parseFloat(e.target.value);
+            document.getElementById('i-val').textContent = current.toFixed(1) + ' A';
+            statI.textContent = current.toFixed(2) + ' A';
+        });
+
+        btnPlay.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnPlay.textContent = isRunning ? "Pause" : "Démarrer";
+            if(isRunning) { lastTime = 0; requestAnimationFrame(loop); }
+        });
+
+        btnReset.addEventListener('click', () => {
+            massLeft = 10.0;
+            massRight = 10.0;
+            electronOffset = 0;
+            isRunning = false;
+            btnPlay.textContent = "Démarrer";
+            initIons();
+            drawStatic();
+        });
+
+        function initIons() {
+            ions = [];
+            saltIons = [];
+            let cx = width/2;
+            let cy = height/2 + 50;
+
+            // Beaker 1 (Zn2+ / SO4 2-)
+            for(let i=0; i<15; i++) {
+                ions.push({x: cx - 180 + Math.random()*120, y: cy + Math.random()*80, type: 'Zn2+'});
+                ions.push({x: cx - 180 + Math.random()*120, y: cy + Math.random()*80, type: 'SO42-'});
+            }
+            // Beaker 2 (Cu2+ / SO4 2-)
+            for(let i=0; i<15; i++) {
+                ions.push({x: cx + 60 + Math.random()*120, y: cy + Math.random()*80, type: 'Cu2+'});
+                ions.push({x: cx + 60 + Math.random()*120, y: cy + Math.random()*80, type: 'SO42-'});
+            }
+
+            // Salt Bridge (K+ / Cl-)
+            for(let i=0; i<10; i++) {
+                saltIons.push({offset: Math.random(), type: i%2===0?'K+':'Cl-'});
+            }
+            drawStatic();
+        }
+
+        const drawBeaker = (x, y, w, h, isDark, fluidColor) => {
+            // Fluid
+            ctx.fillStyle = fluidColor;
+            ctx.fillRect(x + 2, y + 20, w - 4, h - 22);
+            // Glass
+            ctx.beginPath();
+            ctx.moveTo(x, y); ctx.lineTo(x, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y);
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            ctx.fill();
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)';
+            ctx.lineWidth = 2; ctx.stroke();
+        };
+
+        function drawStatic() {
+            if(!width) return;
+            ctx.clearRect(0, 0, width, height);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const cx = width / 2;
+            const cy = height / 2 + 50;
+            const wireCol = getComputedStyle(document.documentElement).getPropertyValue('--wire-color').trim();
+
+            // Beakers
+            const bWidth = 140;
+            const bHeight = 120;
+            drawBeaker(cx - 200, cy - 20, bWidth, bHeight, isDark, getComputedStyle(document.documentElement).getPropertyValue('--zn-sol').trim());
+            drawBeaker(cx + 60, cy - 20, bWidth, bHeight, isDark, getComputedStyle(document.documentElement).getPropertyValue('--cu-sol').trim());
+
+            // Electrodes (Width depends on mass)
+            let wZn = 10 + (massLeft - 10) * 0.5; // Visual scaling
+            let wCu = 10 + (massRight - 10) * 0.5;
+            if(wZn < 2) wZn = 2;
+            if(wCu < 2) wCu = 2;
+
+            // Zn Electrode (Left)
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--zn-color').trim();
+            ctx.fillRect(cx - 140 - wZn/2, cy - 60, wZn, 120);
+            ctx.strokeStyle = '#000'; ctx.strokeRect(cx - 140 - wZn/2, cy - 60, wZn, 120);
+            ctx.fillStyle = isDark?'#fff':'#000'; ctx.font='14px Arial'; ctx.fillText('Zn', cx - 140 - 10, cy - 70);
+
+            // Cu Electrode (Right)
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--cu-color').trim();
+            ctx.fillRect(cx + 120 - wCu/2, cy - 60, wCu, 120);
+            ctx.strokeRect(cx + 120 - wCu/2, cy - 60, wCu, 120);
+            ctx.fillStyle = isDark?'#fff':'#000'; ctx.fillText('Cu', cx + 120 - 10, cy - 70);
+
+            // Wires
+            ctx.strokeStyle = wireCol;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx - 140, cy - 60); ctx.lineTo(cx - 140, cy - 140); ctx.lineTo(cx + 120, cy - 140); ctx.lineTo(cx + 120, cy - 60);
+            ctx.stroke();
+
+            // Load / Generator
+            ctx.fillStyle = isDark ? '#1e293b' : '#e2e8f0';
+            ctx.fillRect(cx - 30, cy - 160, 60, 40);
+            ctx.strokeStyle = isDark ? '#fff' : '#000';
+            ctx.strokeRect(cx - 30, cy - 160, 60, 40);
+
+            ctx.fillStyle = isDark?'#fff':'#000';
+            ctx.textAlign = 'center';
+            if (mode === 'pile') {
+                ctx.fillText('A', cx, cy - 140); // Ammeter or Resistor
+                ctx.font = '10px Arial'; ctx.fillText(statI.textContent, cx, cy - 125);
+            } else {
+                ctx.fillText('G', cx, cy - 140); // Generator
+                ctx.font = '10px Arial'; ctx.fillText('(-)', cx - 20, cy - 125);
+                ctx.fillText('(+)', cx + 20, cy - 125);
+            }
+
+            // Salt Bridge
+            ctx.beginPath();
+            ctx.moveTo(cx - 80, cy + 20); ctx.lineTo(cx - 80, cy - 40);
+            ctx.arc(cx, cy - 40, 80, Math.PI, 0);
+            ctx.lineTo(cx + 80, cy + 20);
+            ctx.lineTo(cx + 100, cy + 20);
+            ctx.arc(cx, cy - 40, 100, 0, Math.PI, true);
+            ctx.lineTo(cx - 100, cy + 20); ctx.closePath();
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.fill(); ctx.strokeStyle = isDark?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.5)'; ctx.stroke();
+
+            // Draw Ions in Beakers
+            ctx.font = '10px Arial';
+            ions.forEach(ion => {
+                if (ion.type === 'Zn2+') ctx.fillStyle = '#94a3b8';
+                else if (ion.type === 'Cu2+') ctx.fillStyle = '#38bdf8';
+                else ctx.fillStyle = '#a855f7'; // SO42-
+                ctx.fillText(ion.type, ion.x, ion.y);
+            });
+
+            // Draw Electrons in wire
+            if (isRunning && current > 0) {
+                // Determine direction
+                // Pile: Zn -> Cu (Left to Right)
+                // Elec: Zn <- Cu (Right to Left, forced by gen)
+                let dir = mode === 'pile' ? 1 : -1;
+
+                let wirePathLength = 140 + 260 + 140; // up, across, down
+                electronOffset = (electronOffset + dir * current * 2) % 40;
+                if(electronOffset < 0) electronOffset += 40;
+
+                ctx.fillStyle = '#f59e0b';
+                for(let d = electronOffset; d < wirePathLength; d += 40) {
+                    let ex, ey;
+                    if (d < 80) { // Up left wire
+                        ex = cx - 140; ey = cy - 60 - d;
+                    } else if (d < 80 + 260) { // Across top
+                        ex = cx - 140 + (d - 80); ey = cy - 140;
+                    } else { // Down right wire
+                        ex = cx + 120; ey = cy - 140 + (d - 340);
+                    }
+
+                    // Don't draw over the meter
+                    if (ey === cy - 140 && ex > cx - 30 && ex < cx + 30) continue;
+
+                    ctx.beginPath(); ctx.arc(ex, ey, 4, 0, Math.PI*2); ctx.fill();
+                    ctx.fillText('e⁻', ex + 8, ey - 5);
+                }
+
+                // Draw Salt Bridge Ions (K+ / Cl-) moving
+                saltIons.forEach(si => {
+                    // Pile: K+ goes to Cu (Right), Cl- goes to Zn (Left)
+                    // Elec: K+ goes to Zn (Left), Cl- goes to Cu (Right)
+                    let v = current * 0.005;
+                    let moveDir = 0;
+                    if (mode === 'pile') {
+                        moveDir = si.type === 'K+' ? 1 : -1; // 1 = Left to right
+                    } else {
+                        moveDir = si.type === 'K+' ? -1 : 1;
+                    }
+
+                    si.offset += moveDir * v;
+                    if(si.offset > 1) si.offset -= 1;
+                    if(si.offset < 0) si.offset += 1;
+
+                    // Map 0..1 to bridge arc (roughly angle PI to 0)
+                    let angle = Math.PI - (si.offset * Math.PI);
+                    let rx = cx + 90 * Math.cos(angle);
+                    let ry = cy - 40 - 90 * Math.sin(angle);
+
+                    ctx.fillStyle = si.type === 'K+' ? '#10b981' : '#ef4444';
+                    ctx.fillText(si.type, rx, ry);
+                });
+            }
+
+            massLeftDisplay.textContent = massLeft.toFixed(2) + ' g';
+            massRightDisplay.textContent = massRight.toFixed(2) + ' g';
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            if (isRunning) {
+                // Update Masses based on Faraday's law (simplified visual scaling)
+                // dm = I * dt * M / (z * F)
+                // We just use a visual multiplier proportional to current
+                let dm = current * dt * 0.1;
+
+                if (mode === 'pile') {
+                    massLeft -= dm; // Zn oxidizes
+                    massRight += dm; // Cu reduces
+                } else {
+                    massLeft += dm; // Zn reduces
+                    massRight -= dm; // Cu oxidizes
+                }
+
+                // Clamp masses
+                if (massLeft < 0) massLeft = 0;
+                if (massRight < 0) massRight = 0;
+
+                // Stop if electrode eaten
+                if (massLeft === 0 || massRight === 0) {
+                    isRunning = false;
+                    btnPlay.textContent = "Terminé";
+                }
+
+                // Jiggle ions slightly for realism
+                ions.forEach(ion => {
+                    ion.x += (Math.random() - 0.5) * 2;
+                    ion.y += (Math.random() - 0.5) * 2;
+                });
+            }
+
+            drawStatic();
+            requestAnimationFrame(loop);
+        }
+
+        resize();
+        initIons();
+
+    </script>
+</body>
+</html>
