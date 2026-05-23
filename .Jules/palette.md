@@ -1,0 +1,3 @@
+## 2024-05-23 - Accessibility in Static HTML Modals and Forms
+**Learning:** Custom modals built without modern frameworks often lack native dialog roles, meaning screen readers don't know they are modals or what they are titled. Additionally, inputs relying solely on visual placeholders for context are completely inaccessible to screen readers without explicit `aria-label`s.
+**Action:** Always ensure custom `.modal` components have `role="dialog"`, `aria-modal="true"`, and an `aria-labelledby` pointing to their title. For any input lacking a `<label>` tag (e.g. login/register forms using only placeholders), an `aria-label` must be injected to preserve context.
