@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Titrage Colorimétrique (Acide-Base)</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #a855f7;
+            --accent-glow: 0 0 10px rgba(168, 85, 247, 0.7);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-color: #7e22ce;
+            --accent-glow: 0 0 10px rgba(126, 34, 206, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        #visual-pane {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+        }
+
+        #graph-pane {
+            flex: 1;
+            border-left: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.1);
+        }
+
+        #controls-pane {
+            width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            overflow-y: auto;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            text-shadow: var(--accent-glow);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(0,0,0,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        label {
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin-top: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: var(--accent-glow);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(128, 128, 128, 0.5);
+            border-radius: 2px;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            box-shadow: var(--accent-glow);
+            width: 100%;
+        }
+
+        button:hover { filter: brightness(1.2); }
+        button:active { transform: translateY(2px); }
+
+        select {
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .stats-box {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .ph-display {
+            font-size: 2rem;
+            text-align: center;
+            font-weight: bold;
+            color: #2dd4bf;
+            text-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+            margin: 10px 0;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 20;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        /* Valve switch styling */
+        .valve-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ef4444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Changer Thème</button>
+
+    <div id="app-container">
+
+        <!-- Left: 3D-like Canvas for Equipment -->
+        <div id="visual-pane">
+            <canvas id="simCanvas"></canvas>
+        </div>
+
+        <!-- Middle: Graph -->
+        <div id="graph-pane">
+            <h2>Courbe de Titrage pH = f(V)</h2>
+            <div style="flex:1; position:relative;">
+                <canvas id="graphCanvas"></canvas>
+            </div>
+            <div style="text-align:center; font-size:0.8rem; margin-top:10px; color:gray;">
+                Volume versé (mL)
+            </div>
+        </div>
+
+        <!-- Right: Controls -->
+        <div id="controls-pane">
+            <h2>Paramètres</h2>
+
+            <div class="control-group">
+                <label>Bécher (Titré)</label>
+                <select id="analyte-type">
+                    <option value="strong_acid">Acide Fort (HCl)</option>
+                    <option value="weak_acid" selected>Acide Faible (CH3COOH)</option>
+                </select>
+                <div style="margin-top:10px;">
+                    <label>Volume (Va) <span id="va-val">20.0 mL</span></label>
+                    <input type="range" id="va" min="5" max="50" step="1" value="20">
+                </div>
+                <div style="margin-top:10px;">
+                    <label>Concentration (Ca) <span id="ca-val">0.100 mol/L</span></label>
+                    <input type="range" id="ca" min="0.01" max="0.5" step="0.01" value="0.10">
+                </div>
+                <div style="margin-top:10px;" id="pka-group">
+                    <label>pKa <span id="pka-val">4.76</span></label>
+                    <input type="range" id="pka" min="2" max="10" step="0.1" value="4.8">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Burette (Titrant)</label>
+                <select id="titrant-type">
+                    <option value="strong_base" selected>Base Forte (NaOH)</option>
+                </select>
+                <div style="margin-top:10px;">
+                    <label>Concentration (Cb) <span id="cb-val">0.100 mol/L</span></label>
+                    <input type="range" id="cb" min="0.01" max="0.5" step="0.01" value="0.10">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Indicateur Coloré</label>
+                <select id="indicator">
+                    <option value="none">Aucun</option>
+                    <option value="phenolphthalein" selected>Phénolphtaléine (8.2 - 10.0)</option>
+                    <option value="bbt">BBT (6.0 - 7.6)</option>
+                    <option value="heliantine">Hélianthine (3.1 - 4.4)</option>
+                </select>
+            </div>
+
+            <div class="valve-control">
+                <span style="font-weight:bold;">Robinet Burette</span>
+                <label class="switch">
+                    <input type="checkbox" id="valve-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div style="font-size:0.8rem; text-align:center; margin-top:-5px;">
+                Vitesse d'écoulement:
+                <input type="range" id="flow-rate" min="0.1" max="5" step="0.1" value="1">
+            </div>
+
+            <div class="stats-box">
+                <div class="ph-display" id="ph-display">pH: 2.88</div>
+                <div>Vol. versé: <span id="v-added" style="color:var(--accent-color); font-weight:bold;">0.00</span> mL</div>
+                <div>Veq théo: <span id="veq-theo">20.00</span> mL</div>
+            </div>
+
+            <button id="btn-reset" style="background:#ef4444; box-shadow:0 0 10px rgba(239,68,68,0.7);">Vider le Bécher</button>
+        </div>
+
+    </div>
+
+    <script>
+        const simCanvas = document.getElementById('simCanvas');
+        const ctxSim = simCanvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const ctxGraph = graphCanvas.getContext('2d');
+
+        // UI Elements
+        const analyteType = document.getElementById('analyte-type');
+        const titrantType = document.getElementById('titrant-type');
+        const indicator = document.getElementById('indicator');
+
+        const vaInput = document.getElementById('va');
+        const caInput = document.getElementById('ca');
+        const pkaInput = document.getElementById('pka');
+        const cbInput = document.getElementById('cb');
+        const flowRateInput = document.getElementById('flow-rate');
+
+        const vaVal = document.getElementById('va-val');
+        const caVal = document.getElementById('ca-val');
+        const pkaVal = document.getElementById('pka-val');
+        const cbVal = document.getElementById('cb-val');
+
+        const pkaGroup = document.getElementById('pka-group');
+        const valveSwitch = document.getElementById('valve-switch');
+        const btnReset = document.getElementById('btn-reset');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const phDisplay = document.getElementById('ph-display');
+        const vAddedDisplay = document.getElementById('v-added');
+        const veqTheoDisplay = document.getElementById('veq-theo');
+
+        // Simulation State
+        let Vb = 0; // Volume of base added (mL)
+        let dataPoints = []; // {Vb, pH}
+        let isTitrating = false;
+        let lastTime = 0;
+        let stirrerAngle = 0;
+        let dropY = 0;
+        let isDropping = false;
+
+        function resize() {
+            simCanvas.width = simCanvas.parentElement.clientWidth;
+            simCanvas.height = simCanvas.parentElement.clientHeight;
+
+            graphCanvas.width = graphCanvas.parentElement.clientWidth;
+            graphCanvas.height = graphCanvas.parentElement.clientHeight;
+
+            drawSim();
+            drawGraph();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            drawSim();
+            drawGraph();
+        });
+
+        analyteType.addEventListener('change', (e) => {
+            pkaGroup.style.display = e.target.value === 'weak_acid' ? 'block' : 'none';
+            resetSimulation();
+        });
+
+        // Input Updaters
+        function updateInputs() {
+            vaVal.textContent = parseFloat(vaInput.value).toFixed(1) + ' mL';
+            caVal.textContent = parseFloat(caInput.value).toFixed(3) + ' mol/L';
+            pkaVal.textContent = parseFloat(pkaInput.value).toFixed(2);
+            cbVal.textContent = parseFloat(cbInput.value).toFixed(3) + ' mol/L';
+            updateVeqTheo();
+            resetSimulation();
+        }
+
+        vaInput.addEventListener('input', updateInputs);
+        caInput.addEventListener('input', updateInputs);
+        pkaInput.addEventListener('input', updateInputs);
+        cbInput.addEventListener('input', updateInputs);
+        indicator.addEventListener('change', drawSim);
+
+        valveSwitch.addEventListener('change', (e) => {
+            isTitrating = e.target.checked;
+            if (isTitrating && lastTime === 0) {
+                lastTime = performance.now();
+                requestAnimationFrame(loop);
+            }
+        });
+
+        btnReset.addEventListener('click', resetSimulation);
+
+        function resetSimulation() {
+            Vb = 0;
+            dataPoints = [];
+            valveSwitch.checked = false;
+            isTitrating = false;
+            lastTime = 0;
+            isDropping = false;
+            updateVeqTheo();
+            updateState(0); // init pH
+            drawSim();
+            drawGraph();
+        }
+
+        function updateVeqTheo() {
+            const Ca = parseFloat(caInput.value);
+            const Va = parseFloat(vaInput.value);
+            const Cb = parseFloat(cbInput.value);
+            const Veq = (Ca * Va) / Cb;
+            veqTheoDisplay.textContent = Veq.toFixed(2);
+        }
+
+        // --- CHEMISTRY ENGINE ---
+        function calculatePH(Vb_added) {
+            const Ca = parseFloat(caInput.value);
+            const Va = parseFloat(vaInput.value);
+            const Cb = parseFloat(cbInput.value);
+            const Veq = (Ca * Va) / Cb;
+            const isWeak = analyteType.value === 'weak_acid';
+            const pKa = parseFloat(pkaInput.value);
+            const Kw = 1e-14;
+
+            // Total volume
+            const Vt = Va + Vb_added;
+
+            if (!isWeak) {
+                // STRONG ACID - STRONG BASE
+                if (Vb_added < Veq) {
+                    // Excess Acid
+                    const H = (Ca * Va - Cb * Vb_added) / Vt;
+                    return -Math.log10(H);
+                } else if (Math.abs(Vb_added - Veq) < 0.001) {
+                    // Equivalence
+                    return 7.0;
+                } else {
+                    // Excess Base
+                    const OH = (Cb * Vb_added - Ca * Va) / Vt;
+                    return 14 + Math.log10(OH);
+                }
+            } else {
+                // WEAK ACID - STRONG BASE
+                if (Vb_added === 0) {
+                    // Initial pH
+                    const Ka = Math.pow(10, -pKa);
+                    // Ka = x^2 / (Ca - x) => x^2 + Ka*x - Ka*Ca = 0
+                    const a = 1;
+                    const b = Ka;
+                    const c = -Ka * Ca;
+                    const delta = b*b - 4*a*c;
+                    const H = (-b + Math.sqrt(delta)) / (2*a);
+                    return -Math.log10(H);
+                } else if (Vb_added < Veq) {
+                    // Buffer region (Henderson-Hasselbalch)
+                    // Simplified approximation:
+                    const ratio = Vb_added / (Veq - Vb_added);
+                    return pKa + Math.log10(ratio);
+                } else if (Math.abs(Vb_added - Veq) < 0.001) {
+                    // Equivalence: Weak Base
+                    const C_base = (Ca * Va) / Vt;
+                    const Kb = Kw / Math.pow(10, -pKa);
+                    const a = 1;
+                    const b = Kb;
+                    const c = -Kb * C_base;
+                    const delta = b*b - 4*a*c;
+                    const OH = (-b + Math.sqrt(delta)) / (2*a);
+                    return 14 + Math.log10(OH);
+                } else {
+                    // Excess Strong Base
+                    const OH = (Cb * Vb_added - Ca * Va) / Vt;
+                    return 14 + Math.log10(OH);
+                }
+            }
+        }
+
+        function getIndicatorColor(pH) {
+            const ind = indicator.value;
+            if (ind === 'phenolphthalein') {
+                if (pH < 8.2) return 'rgba(255, 255, 255, 0.1)';
+                if (pH > 10.0) return 'rgba(236, 72, 153, 0.6)'; // Pink
+                // Transition
+                const ratio = (pH - 8.2) / (10.0 - 8.2);
+                return `rgba(236, 72, 153, ${0.1 + ratio * 0.5})`;
+            } else if (ind === 'bbt') {
+                if (pH < 6.0) return 'rgba(234, 179, 8, 0.6)'; // Yellow
+                if (pH > 7.6) return 'rgba(59, 130, 246, 0.6)'; // Blue
+                return 'rgba(34, 197, 94, 0.5)'; // Green (transition)
+            } else if (ind === 'heliantine') {
+                if (pH < 3.1) return 'rgba(239, 68, 68, 0.6)'; // Red
+                if (pH > 4.4) return 'rgba(234, 179, 8, 0.6)'; // Yellow
+                return 'rgba(249, 115, 22, 0.6)'; // Orange (transition)
+            }
+            return 'rgba(255, 255, 255, 0.1)'; // Clear
+        }
+
+        function updateState(dt) {
+            if (isTitrating) {
+                const rate = parseFloat(flowRateInput.value); // mL per second
+                Vb += rate * (dt / 1000);
+
+                // Stop at 50mL burette limit
+                if (Vb > 50) {
+                    Vb = 50;
+                    valveSwitch.checked = false;
+                    isTitrating = false;
+                }
+
+                // Droplet animation logic
+                dropY += rate * 5;
+                if (dropY > 150) {
+                    dropY = 0;
+                    isDropping = true;
+                }
+            }
+
+            const currentPH = calculatePH(Vb);
+            phDisplay.textContent = `pH: ${currentPH.toFixed(2)}`;
+            vAddedDisplay.textContent = Vb.toFixed(2);
+
+            // Record data for graph (throttle to avoid too many points)
+            if (dataPoints.length === 0 || Vb - dataPoints[dataPoints.length - 1].Vb > 0.1) {
+                dataPoints.push({Vb: Vb, pH: currentPH});
+            }
+
+            stirrerAngle += 0.2;
+        }
+
+        // --- DRAWING FUNCTIONS ---
+
+        function drawSim() {
+            const w = simCanvas.width;
+            const h = simCanvas.height;
+            ctxSim.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2 + 50; // Shift down slightly
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const strokeCol = isDark ? '#fff' : '#333';
+            const glassCol = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+
+            // Magnetic Stirrer Base
+            ctxSim.fillStyle = isDark ? '#334155' : '#cbd5e1';
+            ctxSim.fillRect(cx - 80, cy + 90, 160, 30);
+            ctxSim.strokeStyle = strokeCol;
+            ctxSim.lineWidth = 2;
+            ctxSim.strokeRect(cx - 80, cy + 90, 160, 30);
+            // Dial
+            ctxSim.beginPath();
+            ctxSim.arc(cx + 40, cy + 105, 8, 0, Math.PI*2);
+            ctxSim.fillStyle = '#ef4444';
+            ctxSim.fill();
+
+            // Beaker
+            const beakerW = 100;
+            const beakerH = 120;
+            const beakerX = cx - beakerW/2;
+            const beakerY = cy - 30;
+
+            // Liquid in Beaker
+            const Va = parseFloat(vaInput.value);
+            const Vt = Va + Vb; // Visual representation scales a bit with volume
+            const fillH = Math.min(beakerH - 20, 30 + Vt);
+            const fillY = beakerY + beakerH - fillH;
+
+            const currentPH = calculatePH(Vb);
+            ctxSim.fillStyle = getIndicatorColor(currentPH);
+            ctxSim.fillRect(beakerX + 2, fillY, beakerW - 4, fillH - 2);
+
+            // Beaker Glass
+            ctxSim.beginPath();
+            ctxSim.moveTo(beakerX, beakerY);
+            ctxSim.lineTo(beakerX, beakerY + beakerH);
+            ctxSim.lineTo(beakerX + beakerW, beakerY + beakerH);
+            ctxSim.lineTo(beakerX + beakerW, beakerY);
+            ctxSim.strokeStyle = strokeCol;
+            ctxSim.lineWidth = 3;
+            ctxSim.stroke();
+            ctxSim.fillStyle = glassCol;
+            ctxSim.fill();
+
+            // Stir bar (rotating)
+            ctxSim.save();
+            ctxSim.translate(cx, beakerY + beakerH - 10);
+            ctxSim.rotate(stirrerAngle);
+            ctxSim.fillStyle = '#fff';
+            ctxSim.strokeStyle = '#000';
+            ctxSim.lineWidth = 1;
+            ctxSim.beginPath();
+            ctxSim.roundRect(-15, -3, 30, 6, 3);
+            ctxSim.fill();
+            ctxSim.stroke();
+            ctxSim.restore();
+
+            // Burette
+            const burW = 16;
+            const burH = 200;
+            const burX = cx - burW/2;
+            const burY = beakerY - burH - 40;
+
+            // Burette Liquid
+            const remVolRatio = (50 - Vb) / 50;
+            const lY = burY + burH * (1 - remVolRatio);
+            ctxSim.fillStyle = 'rgba(255, 255, 255, 0.3)'; // Base is usually clear
+            ctxSim.fillRect(burX + 2, lY, burW - 4, burY + burH - lY);
+
+            // Burette Glass
+            ctxSim.beginPath();
+            ctxSim.rect(burX, burY, burW, burH);
+            ctxSim.strokeStyle = strokeCol;
+            ctxSim.lineWidth = 2;
+            ctxSim.stroke();
+
+            // Burette Tip
+            ctxSim.beginPath();
+            ctxSim.moveTo(burX, burY + burH);
+            ctxSim.lineTo(cx - 2, burY + burH + 15);
+            ctxSim.lineTo(cx + 2, burY + burH + 15);
+            ctxSim.lineTo(burX + burW, burY + burH);
+            ctxSim.stroke();
+
+            // Stopcock / Valve
+            ctxSim.fillStyle = isTitrating ? '#10b981' : '#ef4444';
+            ctxSim.fillRect(cx - 10, burY + burH - 10, 20, 8);
+
+            // Stand (Statif)
+            ctxSim.fillStyle = isDark ? '#475569' : '#94a3b8';
+            ctxSim.fillRect(cx - 120, cy - 200, 10, 320); // Pole
+            ctxSim.fillRect(cx - 150, cy + 120, 80, 10); // Base
+            // Clamp
+            ctxSim.fillRect(cx - 110, burY + 100, 100, 8);
+
+            // Falling Drop
+            if (isTitrating) {
+                ctxSim.beginPath();
+                ctxSim.arc(cx, burY + burH + 20 + dropY, 3, 0, Math.PI*2);
+                ctxSim.fillStyle = 'rgba(255,255,255,0.8)';
+                ctxSim.fill();
+            }
+
+            // pH Meter Probe
+            ctxSim.fillStyle = '#3b82f6';
+            ctxSim.fillRect(cx + 20, beakerY - 50, 8, 120);
+            // Wire
+            ctxSim.beginPath();
+            ctxSim.moveTo(cx + 24, beakerY - 50);
+            ctxSim.bezierCurveTo(cx + 30, beakerY - 100, cx + 80, beakerY - 80, cx + 100, beakerY - 120);
+            ctxSim.strokeStyle = '#64748b';
+            ctxSim.lineWidth = 2;
+            ctxSim.stroke();
+            // pH Box
+            ctxSim.fillStyle = isDark ? '#1e293b' : '#e2e8f0';
+            ctxSim.strokeStyle = strokeCol;
+            ctxSim.fillRect(cx + 80, beakerY - 160, 60, 40);
+            ctxSim.strokeRect(cx + 80, beakerY - 160, 60, 40);
+            ctxSim.fillStyle = '#2dd4bf';
+            ctxSim.font = '14px monospace';
+            ctxSim.fillText(currentPH.toFixed(2), cx + 90, beakerY - 135);
+        }
+
+        function drawGraph() {
+            const w = graphCanvas.width;
+            const h = graphCanvas.height;
+            ctxGraph.clearRect(0, 0, w, h);
+
+            const padding = 40;
+            const plotW = w - padding * 2;
+            const plotH = h - padding * 2;
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            const textCol = isDark ? '#94a3b8' : '#475569';
+
+            // Axes limits
+            const maxV = 50; // burette size
+            const maxPH = 14;
+
+            // Grid & Axes
+            ctxGraph.beginPath();
+            ctxGraph.strokeStyle = gridCol;
+            ctxGraph.lineWidth = 1;
+
+            // Horizontal lines (pH)
+            ctxGraph.fillStyle = textCol;
+            ctxGraph.font = '10px sans-serif';
+            ctxGraph.textAlign = 'right';
+            ctxGraph.textBaseline = 'middle';
+            for (let ph = 0; ph <= maxPH; ph += 2) {
+                const y = padding + plotH - (ph / maxPH) * plotH;
+                ctxGraph.moveTo(padding, y);
+                ctxGraph.lineTo(w - padding, y);
+                ctxGraph.fillText(ph, padding - 5, y);
+            }
+
+            // Vertical lines (Volume)
+            ctxGraph.textAlign = 'center';
+            ctxGraph.textBaseline = 'top';
+            for (let v = 0; v <= maxV; v += 10) {
+                const x = padding + (v / maxV) * plotW;
+                ctxGraph.moveTo(x, padding);
+                ctxGraph.lineTo(x, h - padding);
+                ctxGraph.fillText(v, x, h - padding + 5);
+            }
+            ctxGraph.stroke();
+
+            // Axes
+            ctxGraph.beginPath();
+            ctxGraph.strokeStyle = isDark ? '#fff' : '#000';
+            ctxGraph.lineWidth = 2;
+            ctxGraph.moveTo(padding, padding);
+            ctxGraph.lineTo(padding, h - padding);
+            ctxGraph.lineTo(w - padding, h - padding);
+            ctxGraph.stroke();
+
+            // Labels
+            ctxGraph.save();
+            ctxGraph.translate(15, h/2);
+            ctxGraph.rotate(-Math.PI/2);
+            ctxGraph.textAlign = 'center';
+            ctxGraph.fillStyle = isDark ? '#fff' : '#000';
+            ctxGraph.fillText("pH", 0, 0);
+            ctxGraph.restore();
+
+            // Plot Data
+            if (dataPoints.length > 0) {
+                ctxGraph.beginPath();
+                ctxGraph.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                ctxGraph.lineWidth = 3;
+
+                for (let i = 0; i < dataPoints.length; i++) {
+                    const pt = dataPoints[i];
+                    const x = padding + (pt.Vb / maxV) * plotW;
+                    const y = padding + plotH - (pt.pH / maxPH) * plotH;
+
+                    if (i === 0) ctxGraph.moveTo(x, y);
+                    else ctxGraph.lineTo(x, y);
+                }
+
+                // Glow
+                ctxGraph.shadowBlur = 10;
+                ctxGraph.shadowColor = ctxGraph.strokeStyle;
+                ctxGraph.stroke();
+                ctxGraph.shadowBlur = 0;
+            }
+
+            // Mark Equivalence Point Theoretical
+            const Ca = parseFloat(caInput.value);
+            const Va = parseFloat(vaInput.value);
+            const Cb = parseFloat(cbInput.value);
+            const Veq = (Ca * Va) / Cb;
+            if (Veq <= maxV) {
+                const xEq = padding + (Veq / maxV) * plotW;
+                ctxGraph.beginPath();
+                ctxGraph.setLineDash([5, 5]);
+                ctxGraph.moveTo(xEq, padding);
+                ctxGraph.lineTo(xEq, h - padding);
+                ctxGraph.strokeStyle = '#ef4444';
+                ctxGraph.lineWidth = 1;
+                ctxGraph.stroke();
+                ctxGraph.setLineDash([]);
+            }
+        }
+
+        // Animation Loop
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = timestamp - lastTime;
+            lastTime = timestamp;
+
+            if (isTitrating || stirrerAngle > 0) {
+                updateState(dt);
+                drawSim();
+                drawGraph();
+            }
+
+            if (isTitrating || (!isTitrating && stirrerAngle % (Math.PI*2) > 0.1)) {
+                requestAnimationFrame(loop);
+            } else {
+                lastTime = 0;
+            }
+        }
+
+        // Initialization
+        updateInputs();
+        resize();
+
+        // Start passive stir animation
+        setInterval(() => {
+            if (!isTitrating) {
+                stirrerAngle += 0.05;
+                drawSim();
+            }
+        }, 50);
+
+    </script>
+</body>
+</html>
