@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Cinétique Chimique</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f43f5e;
+            --accent-glow: 0 0 15px rgba(244, 63, 94, 0.6);
+            --panel-bg: rgba(0,0,0,0.5);
+            --a-color: #3b82f6; /* Reactant */
+            --b-color: #10b981; /* Product */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.6);
+            --a-color: #2563eb;
+            --b-color: #059669;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 10px; left: 15px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-color); opacity: 0.7; z-index: 10; }
+
+        #graph-section { flex: 2; display: flex; justify-content: center; align-items: center; }
+        #linear-section { flex: 1; }
+
+        canvas { display: block; width: 100%; height: 100%; background: rgba(0,0,0,0.2); border-radius: 4px; }
+
+        #controls-pane { width: 350px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 20px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); text-shadow: var(--accent-glow); text-align: center; margin-bottom: 5px; }
+        .control-group { display: flex; flex-direction: column; gap: 10px; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        label { font-size: 0.9rem; display: flex; justify-content: space-between; font-weight: 600; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 8px; border-radius: 4px; font-size: 0.95rem; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #10b981; text-align: center; margin: 5px 0; font-weight: bold; }
+        #theme-toggle { position: absolute; top: 15px; left: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .btn { padding: 10px; border-radius: 6px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-color); cursor: pointer; font-weight: bold; text-align: center; transition: all 0.2s; width: 100%; }
+        .btn:hover { filter: brightness(1.2); }
+        .btn-play { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: var(--accent-glow); }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="graph-section" class="section-box">
+                <div class="section-title">Suivi Cinétique : [A] et [B] en fonction du temps</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="linear-section" class="section-box">
+                <div class="section-title">Test d'Ordre (Linéarisation)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="linCanvas"></canvas>
+                </div>
+                <div id="lin-label" style="position:absolute; bottom:15px; right:15px; font-family:monospace; color:#aaa; font-size:12px;">f(t)</div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Cinétique</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Réaction: A → B</div>
+
+            <div class="control-group">
+                <label>Ordre de la réaction</label>
+                <select id="order-select">
+                    <option value="0">Ordre 0 (v = k)</option>
+                    <option value="1" selected>Ordre 1 (v = k[A])</option>
+                    <option value="2">Ordre 2 (v = k[A]²)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Concentration Initiale [A]₀ <span id="a0-val">1.0 mol/L</span></label>
+                <input type="range" id="a0-input" min="0.1" max="2.0" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label>Constante de vitesse (k) <span id="k-val">0.1</span></label>
+                <input type="range" id="k-input" min="0.01" max="0.5" step="0.01" value="0.1">
+                <div style="font-size:0.8rem; color:gray;">(Influencée par Température / Catalyseur)</div>
+            </div>
+
+            <div class="stats-box">
+                <div class="math-eq" id="eq-law">v = -d[A]/dt = k[A]</div>
+                <div class="math-eq" id="eq-int" style="font-size:0.85rem;">[A] = [A]₀·exp(-kt)</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div>Temps de demi-réaction (t₁/₂): <span id="stat-t12" style="font-weight:bold; color:#fbbf24;">0.0</span> s</div>
+                <div>Temps (t): <span id="stat-t">0.0</span> s</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div style="color:var(--a-color); font-weight:bold;">[A] = <span id="stat-a">1.00</span> mol/L</div>
+                <div style="color:var(--b-color); font-weight:bold;">[B] = <span id="stat-b">0.00</span> mol/L</div>
+                <div style="color:#f43f5e; font-weight:bold; margin-top:5px;">Vitesse v = <span id="stat-v">0.100</span> mol/(L.s)</div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-start" class="btn btn-play">Démarrer</button>
+                <button id="btn-reset" class="btn" style="background:rgba(239, 68, 68, 0.2); color:#ef4444; border-color:#ef4444;">RAZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const graphCanvas = document.getElementById('graphCanvas');
+        const gCtx = graphCanvas.getContext('2d');
+        const linCanvas = document.getElementById('linCanvas');
+        const lCtx = linCanvas.getContext('2d');
+
+        const orderSelect = document.getElementById('order-select');
+        const a0Input = document.getElementById('a0-input');
+        const kInput = document.getElementById('k-input');
+
+        const btnStart = document.getElementById('btn-start');
+        const btnReset = document.getElementById('btn-reset');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let order = 1;
+        let A0 = 1.0;
+        let k_rate = 0.1;
+        let isRunning = false;
+
+        let t = 0;
+        let A = 1.0;
+        let B = 0.0;
+        let v = 0.1;
+        let dataPoints = [];
+
+        let gWidth, gHeight, lWidth, lHeight;
+
+        function resize() {
+            gWidth = graphCanvas.parentElement.clientWidth;
+            gHeight = graphCanvas.parentElement.clientHeight;
+            graphCanvas.width = gWidth;
+            graphCanvas.height = gHeight;
+
+            lWidth = linCanvas.parentElement.clientWidth;
+            lHeight = linCanvas.parentElement.clientHeight;
+            linCanvas.width = lWidth;
+            linCanvas.height = lHeight;
+
+            draw();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            draw();
+        });
+
+        function updateUI() {
+            order = parseInt(orderSelect.value);
+            A0 = parseFloat(a0Input.value);
+            k_rate = parseFloat(kInput.value);
+
+            document.getElementById('a0-val').textContent = A0.toFixed(1) + ' mol/L';
+            document.getElementById('k-val').textContent = k_rate.toFixed(2);
+
+            let t12 = 0;
+            if (order === 0) {
+                document.getElementById('eq-law').textContent = 'v = k';
+                document.getElementById('eq-int').textContent = '[A] = [A]₀ - kt';
+                document.getElementById('lin-label').textContent = 'f(t) = [A]';
+                t12 = A0 / (2 * k_rate);
+            } else if (order === 1) {
+                document.getElementById('eq-law').textContent = 'v = k[A]';
+                document.getElementById('eq-int').textContent = '[A] = [A]₀·exp(-kt)';
+                document.getElementById('lin-label').textContent = 'f(t) = ln([A])';
+                t12 = Math.LN2 / k_rate;
+            } else if (order === 2) {
+                document.getElementById('eq-law').textContent = 'v = k[A]²';
+                document.getElementById('eq-int').textContent = '1/[A] = 1/[A]₀ + kt';
+                document.getElementById('lin-label').textContent = 'f(t) = 1/[A]';
+                t12 = 1 / (k_rate * A0);
+            }
+
+            document.getElementById('stat-t12').textContent = t12.toFixed(1);
+
+            if (!isRunning && t === 0) resetSim();
+        }
+
+        orderSelect.addEventListener('change', updateUI);
+        a0Input.addEventListener('input', updateUI);
+        kInput.addEventListener('input', updateUI);
+
+        function resetSim() {
+            t = 0;
+            A = A0;
+            B = 0;
+            if (order === 0) v = k_rate;
+            else if (order === 1) v = k_rate * A;
+            else if (order === 2) v = k_rate * A * A;
+
+            dataPoints = [];
+            dataPoints.push({t: t, A: A, B: B});
+            isRunning = false;
+            btnStart.textContent = 'Démarrer';
+            updateStats();
+            draw();
+        }
+
+        btnStart.addEventListener('click', () => {
+            if (!isRunning) {
+                if (A <= 0.01) resetSim(); // auto reset if finished
+                isRunning = true;
+                btnStart.textContent = 'Pause';
+                lastTime = 0;
+                requestAnimationFrame(loop);
+            } else {
+                isRunning = false;
+                btnStart.textContent = 'Reprendre';
+            }
+        });
+
+        btnReset.addEventListener('click', resetSim);
+
+        function updateStats() {
+            document.getElementById('stat-t').textContent = t.toFixed(1);
+            document.getElementById('stat-a').textContent = A.toFixed(3);
+            document.getElementById('stat-b').textContent = B.toFixed(3);
+            document.getElementById('stat-v').textContent = v.toFixed(3);
+        }
+
+        function drawGraph() {
+            gCtx.clearRect(0, 0, gWidth, gHeight);
+
+            // Grid
+            gCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+            gCtx.beginPath();
+            for(let i=1; i<10; i++) {
+                gCtx.moveTo(0, i*gHeight/10); gCtx.lineTo(gWidth, i*gHeight/10);
+                gCtx.moveTo(i*gWidth/10, 0); gCtx.lineTo(i*gWidth/10, gHeight);
+            }
+            gCtx.stroke();
+
+            if (dataPoints.length === 0) return;
+
+            let tMax = Math.max(30, t * 1.2); // adaptive x axis
+            let maxConc = 2.0;
+
+            function plotCurve(valKey, color) {
+                gCtx.beginPath();
+                gCtx.strokeStyle = color;
+                gCtx.lineWidth = 3;
+                gCtx.shadowBlur = 10;
+                gCtx.shadowColor = color;
+
+                for(let i=0; i<dataPoints.length; i++) {
+                    let pt = dataPoints[i];
+                    let x = (pt.t / tMax) * gWidth;
+                    let y = gHeight - (pt[valKey] / maxConc) * gHeight;
+
+                    if(i===0) gCtx.moveTo(x, y);
+                    else gCtx.lineTo(x, y);
+                }
+                gCtx.stroke();
+                gCtx.shadowBlur = 0;
+            }
+
+            let aColor = getComputedStyle(document.documentElement).getPropertyValue('--a-color').trim();
+            let bColor = getComputedStyle(document.documentElement).getPropertyValue('--b-color').trim();
+
+            plotCurve('A', aColor);
+            plotCurve('B', bColor);
+
+            // Draw Tangent (vitesse)
+            if (dataPoints.length > 0 && A > 0.01) {
+                let currentPt = dataPoints[dataPoints.length-1];
+                let xPx = (currentPt.t / tMax) * gWidth;
+                let yPx = gHeight - (currentPt.A / maxConc) * gHeight;
+
+                // slope in px coords: dy_px / dx_px.
+                // dA/dt = -v => dy/dx = -v. In px: dy_px = -(dC/maxC)*gHeight, dx_px = (dt/tMax)*gWidth
+                // Slope m = (-v / maxConc * gHeight) / (1 / tMax * gWidth)
+                let slope = (-v / maxConc * gHeight) / (1 / tMax * gWidth);
+                // Note: canvas Y is inverted, so negative dA/dt means positive dy_px
+                slope = -slope;
+
+                let dx = 40; // px
+                gCtx.beginPath();
+                gCtx.moveTo(xPx - dx, yPx - slope*dx);
+                gCtx.lineTo(xPx + dx, yPx + slope*dx);
+                gCtx.strokeStyle = '#f43f5e';
+                gCtx.lineWidth = 2;
+                gCtx.setLineDash([5, 5]);
+                gCtx.stroke();
+                gCtx.setLineDash([]);
+
+                gCtx.beginPath();
+                gCtx.arc(xPx, yPx, 4, 0, Math.PI*2);
+                gCtx.fillStyle = '#f43f5e';
+                gCtx.fill();
+            }
+
+            // Labels
+            gCtx.fillStyle = '#fff';
+            gCtx.font = '12px Arial';
+            gCtx.fillText(`[Concentration] mol/L`, 10, 20);
+            gCtx.fillText(`t (s)`, gWidth - 30, gHeight - 10);
+
+            gCtx.fillStyle = aColor; gCtx.fillText('[A] (Réactif)', gWidth - 100, 20);
+            gCtx.fillStyle = bColor; gCtx.fillText('[B] (Produit)', gWidth - 100, 40);
+        }
+
+        function drawLinear() {
+            lCtx.clearRect(0, 0, lWidth, lHeight);
+
+            // Grid
+            lCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+            lCtx.beginPath();
+            for(let i=1; i<5; i++) {
+                lCtx.moveTo(0, i*lHeight/5); lCtx.lineTo(lWidth, i*lHeight/5);
+                lCtx.moveTo(i*lWidth/5, 0); lCtx.lineTo(i*lWidth/5, lHeight);
+            }
+            lCtx.stroke();
+
+            if (dataPoints.length === 0) return;
+
+            let tMax = Math.max(30, t * 1.2);
+            let yMin = 0, yMax = 1;
+
+            if (order === 0) { yMin = 0; yMax = 2.0; } // [A]
+            else if (order === 1) { yMin = -5; yMax = 1; } // ln[A]
+            else if (order === 2) { yMin = 0; yMax = 10; } // 1/[A]
+
+            lCtx.beginPath();
+            lCtx.strokeStyle = '#eab308'; // yellow
+            lCtx.lineWidth = 2;
+
+            for(let i=0; i<dataPoints.length; i++) {
+                let pt = dataPoints[i];
+                if (pt.A <= 0.001) break; // avoid infinity
+
+                let valY = 0;
+                if (order === 0) valY = pt.A;
+                else if (order === 1) valY = Math.log(pt.A);
+                else if (order === 2) valY = 1 / pt.A;
+
+                let x = (pt.t / tMax) * lWidth;
+                // Map yMin..yMax to lHeight..0
+                let normY = (valY - yMin) / (yMax - yMin);
+                let y = lHeight - normY * lHeight;
+
+                if(i===0) lCtx.moveTo(x, y);
+                else lCtx.lineTo(x, y);
+            }
+            lCtx.stroke();
+        }
+
+        function draw() {
+            drawGraph();
+            drawLinear();
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if (!isRunning) return;
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            // Physics integration (Euler)
+            // Limit dt to avoid instability
+            if (dt > 0.1) dt = 0.1;
+
+            // 5x speedup for visualization
+            let simDt = dt * 2.0;
+
+            // Calculate current speed
+            if (order === 0) v = k_rate;
+            else if (order === 1) v = k_rate * A;
+            else if (order === 2) v = k_rate * A * A;
+
+            // Apply speed to concentrations
+            let dA = -v * simDt;
+            A += dA;
+            B += v * simDt; // 1:1 stoichiometry
+            t += simDt;
+
+            // Stop if consumed
+            if (A <= 0.001) {
+                A = 0;
+                B = A0;
+                v = 0;
+                isRunning = false;
+                btnStart.textContent = 'Terminé';
+            }
+
+            dataPoints.push({t: t, A: A, B: B});
+
+            updateStats();
+            draw();
+
+            if (isRunning) requestAnimationFrame(loop);
+        }
+
+        resize();
+        updateUI();
+        resetSim();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Techniques de Laboratoire & Synthèse</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #10b981;
+            --accent-glow: 0 0 15px rgba(16, 185, 129, 0.6);
+            --panel-bg: rgba(0,0,0,0.5);
+            --water-color: rgba(56, 189, 248, 0.4);
+            --organic-color: rgba(245, 158, 11, 0.6);
+            --heat-color: rgba(239, 68, 68, 0.8);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --accent-color: #059669;
+            --accent-glow: 0 0 15px rgba(5, 150, 105, 0.4);
+            --panel-bg: rgba(255,255,255,0.6);
+            --water-color: rgba(14, 165, 233, 0.3);
+            --organic-color: rgba(217, 119, 6, 0.5);
+            --heat-color: rgba(220, 38, 38, 0.8);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 360px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.4rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); text-shadow: var(--accent-glow); text-align: center; margin-bottom: 5px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        label { font-size: 0.9rem; font-weight: 600; display:flex; justify-content:space-between; }
+        select, button { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 4px; font-size: 0.95rem; cursor: pointer; }
+        button { font-weight: bold; background: var(--glass-bg); transition: all 0.2s; }
+        button:hover { background: rgba(255,255,255,0.1); }
+        .btn-active { background: var(--accent-color) !important; color: white; border-color: var(--accent-color); box-shadow: var(--accent-glow); }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.9rem; line-height: 1.5; color: #cbd5e1; }
+        [data-theme="light"] .stats-box { color: #334155; }
+
+        .math-eq { font-style: italic; color: var(--accent-color); font-weight: bold; margin-bottom:5px; }
+        #theme-toggle { position: absolute; top: 15px; left: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* Interactive element */
+        .interact-btn { margin-top: 10px; background: #3b82f6; border-color: #3b82f6; color: white; }
+        .interact-btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <canvas id="labCanvas"></canvas>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Techniques de Labo</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Chimie & Synthèse (Lycée/Sup)</div>
+
+            <div class="control-group">
+                <label>Sélectionner le montage</label>
+                <div style="display:flex; flex-direction:column; gap:5px; margin-top:5px;">
+                    <button id="btn-reflux" class="btn-active">Chauffage à Reflux</button>
+                    <button id="btn-decantation">Ampoule à Décanter</button>
+                    <button id="btn-filtration">Filtration sous vide</button>
+                </div>
+            </div>
+
+            <!-- Panel for Reflux -->
+            <div class="control-group" id="panel-reflux">
+                <label>Chauffe-ballon</label>
+                <input type="range" id="heat-slider" min="0" max="100" value="0">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:gray;">
+                    <span>Off</span><span>Max</span>
+                </div>
+
+                <div class="stats-box" style="margin-top:10px;">
+                    <div class="math-eq">Principe du Reflux</div>
+                    Accélère la réaction (T° élevée) sans perte de matière (les vapeurs se condensent et retombent).
+                    <br><br>
+                    T° : <span id="temp-val" style="color:#ef4444; font-weight:bold;">20</span> °C
+                </div>
+            </div>
+
+            <!-- Panel for Decantation -->
+            <div class="control-group" id="panel-decantation" style="display:none;">
+                <label>Action (Extraction Liquide-Liquide)</label>
+                <button class="interact-btn" id="btn-shake">Agiter / Dégazer</button>
+                <button class="interact-btn" id="btn-valve">Ouvrir le robinet (Couler)</button>
+
+                <div class="stats-box" style="margin-top:10px;">
+                    <div class="math-eq">Décantation (Immiscibles)</div>
+                    Phase supérieure: Moins dense (ex: Org. d=0.8)
+                    <br>
+                    Phase inférieure: Plus dense (ex: Aq. d=1.0)
+                    <br><br>
+                    Statut: <span id="decant-status" style="color:#fbbf24; font-weight:bold;">Repos</span>
+                </div>
+            </div>
+
+            <!-- Panel for Filtration -->
+            <div class="control-group" id="panel-filtration" style="display:none;">
+                <label>Filtration sur Büchner</label>
+                <button class="interact-btn" id="btn-vacuum">Activer Trompe à eau (Vide)</button>
+                <button class="interact-btn" id="btn-pour">Verser le mélange (S+L)</button>
+
+                <div class="stats-box" style="margin-top:10px;">
+                    <div class="math-eq">Séparation Solide-Liquide</div>
+                    Le vide accélère la filtration et essore les cristaux (produit synthétisé) sur le filtre.
+                    <br><br>
+                    Vide: <span id="vac-status" style="color:#ef4444; font-weight:bold;">Désactivé</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('labCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Mode buttons
+        const btnReflux = document.getElementById('btn-reflux');
+        const btnDecant = document.getElementById('btn-decantation');
+        const btnFiltr = document.getElementById('btn-filtration');
+
+        // Panels
+        const panelReflux = document.getElementById('panel-reflux');
+        const panelDecant = document.getElementById('panel-decantation');
+        const panelFiltr = document.getElementById('panel-filtration');
+
+        let width, height;
+        let mode = 'reflux'; // reflux, decantation, filtration
+
+        // Reflux state
+        const heatSlider = document.getElementById('heat-slider');
+        const tempVal = document.getElementById('temp-val');
+        let heatPower = 0;
+        let temperature = 20;
+        let bubbles = [];
+
+        // Decantation state
+        let isShaking = false;
+        let shakeTimer = 0;
+        let valveOpen = false;
+        let aqLevel = 80; // height in px
+        let orgLevel = 60; // height in px
+        let drops = [];
+
+        // Filtration state
+        let isVacuumOn = false;
+        let isPouring = false;
+        let pourTimer = 0;
+        let filterCakeSize = 0;
+        let filtrateLevel = 0;
+        let fallingFluid = [];
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        });
+
+        // UI Logic
+        function switchMode(newMode) {
+            mode = newMode;
+            btnReflux.classList.toggle('btn-active', mode === 'reflux');
+            btnDecant.classList.toggle('btn-active', mode === 'decantation');
+            btnFiltr.classList.toggle('btn-active', mode === 'filtration');
+
+            panelReflux.style.display = mode === 'reflux' ? 'flex' : 'none';
+            panelDecant.style.display = mode === 'decantation' ? 'flex' : 'none';
+            panelFiltr.style.display = mode === 'filtration' ? 'flex' : 'none';
+
+            // Reset states
+            temperature = 20; bubbles = [];
+            aqLevel = 80; orgLevel = 60; valveOpen = false; drops = [];
+            isVacuumOn = false; isPouring = false; filterCakeSize = 0; filtrateLevel = 0; fallingFluid = [];
+            document.getElementById('vac-status').textContent = 'Désactivé';
+            document.getElementById('vac-status').style.color = '#ef4444';
+        }
+
+        btnReflux.addEventListener('click', () => switchMode('reflux'));
+        btnDecant.addEventListener('click', () => switchMode('decantation'));
+        btnFiltr.addEventListener('click', () => switchMode('filtration'));
+
+        // Reflux Interactions
+        heatSlider.addEventListener('input', (e) => {
+            heatPower = parseInt(e.target.value);
+        });
+
+        // Decantation Interactions
+        document.getElementById('btn-shake').addEventListener('click', () => {
+            if (!isShaking && aqLevel > 0) {
+                isShaking = true;
+                shakeTimer = 2.0; // 2 seconds of shaking
+                document.getElementById('decant-status').textContent = "Agitation en cours...";
+            }
+        });
+        document.getElementById('btn-valve').addEventListener('click', (e) => {
+            if(isShaking) return;
+            valveOpen = !valveOpen;
+            e.target.textContent = valveOpen ? "Fermer le robinet" : "Ouvrir le robinet (Couler)";
+            document.getElementById('decant-status').textContent = valveOpen ? "Écoulement..." : "Repos";
+        });
+
+        // Filtration Interactions
+        document.getElementById('btn-vacuum').addEventListener('click', (e) => {
+            isVacuumOn = !isVacuumOn;
+            e.target.textContent = isVacuumOn ? "Désactiver Trompe à eau" : "Activer Trompe à eau (Vide)";
+            document.getElementById('vac-status').textContent = isVacuumOn ? 'Actif (Aspiration)' : 'Désactivé';
+            document.getElementById('vac-status').style.color = isVacuumOn ? '#10b981' : '#ef4444';
+        });
+        document.getElementById('btn-pour').addEventListener('click', () => {
+            if(filterCakeSize < 20) {
+                isPouring = true;
+                pourTimer = 2.0;
+            }
+        });
+
+
+        // Drawing Helpers
+        const drawGlassRect = (x, y, w, h, isDark) => {
+            ctx.beginPath(); ctx.rect(x, y, w, h);
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            ctx.fill();
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)';
+            ctx.lineWidth = 2; ctx.stroke();
+        };
+
+        const drawStand = (cx, cy) => {
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(cx - 150, cy - 250, 15, 450); // Pole
+            ctx.fillRect(cx - 180, cy + 200, 120, 15); // Base
+        };
+
+        function drawReflux(dt) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const cx = width / 2 + 50;
+            const cy = height / 2 + 50;
+
+            drawStand(cx, cy);
+
+            // Update Temp
+            let targetTemp = 20 + heatPower; // up to 120 C
+            temperature += (targetTemp - temperature) * dt * 0.5;
+            tempVal.textContent = Math.round(temperature);
+
+            // Clamp
+            ctx.fillStyle = '#64748b'; ctx.fillRect(cx - 150, cy - 50, 120, 8);
+            ctx.fillRect(cx - 150, cy - 150, 120, 8);
+
+            // Heater
+            let heatHue = (heatPower > 0) ? `rgba(239, 68, 68, ${0.2 + heatPower/100*0.6})` : '#334155';
+            ctx.beginPath();
+            ctx.arc(cx, cy + 60, 60, 0, Math.PI); // Half bowl
+            ctx.lineTo(cx - 60, cy + 100); ctx.lineTo(cx + 60, cy + 100);
+            ctx.closePath();
+            ctx.fillStyle = isDark ? '#1e293b' : '#cbd5e1';
+            ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle = isDark?'#fff':'#000'; ctx.stroke();
+
+            // Heater glow interior
+            ctx.beginPath(); ctx.arc(cx, cy + 60, 50, 0, Math.PI);
+            ctx.fillStyle = heatHue; ctx.fill();
+
+            // Flask (Ballon)
+            ctx.beginPath();
+            ctx.arc(cx, cy + 30, 50, 0, Math.PI*2);
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            ctx.fill(); ctx.stroke();
+
+            // Liquid in flask
+            ctx.beginPath();
+            ctx.arc(cx, cy + 30, 48, 0, Math.PI); // Half full
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.4)'; // Organic mix
+            ctx.fill();
+
+            // Bubbles (Boiling)
+            if (temperature > 70) {
+                if(Math.random() < (temperature-70)/50) {
+                    bubbles.push({x: cx - 30 + Math.random()*60, y: cy + 70, s: Math.random()*4+2});
+                }
+            }
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            for(let i=bubbles.length-1; i>=0; i--) {
+                let b = bubbles[i];
+                ctx.beginPath(); ctx.arc(b.x, b.y, b.s, 0, Math.PI*2); ctx.fill();
+                b.y -= 100*dt; // Move up
+                if(b.y < cy + 30) bubbles.splice(i,1); // Pop at surface
+            }
+
+            // Condenser (Réfrigérant à eau)
+            const condY = cy - 220;
+            const condH = 200;
+            // Inner tube
+            ctx.beginPath(); ctx.rect(cx - 8, condY, 16, condH); ctx.stroke();
+            // Outer jacket
+            ctx.beginPath(); ctx.rect(cx - 20, condY + 20, 40, condH - 40);
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.2)'; // Cooling water
+            ctx.fill(); ctx.stroke();
+            // Water ports
+            ctx.strokeRect(cx - 30, condY + condH - 40, 10, 10); // IN (bottom)
+            ctx.strokeRect(cx + 20, condY + 30, 10, 10); // OUT (top)
+
+            // Reflux dripping
+            if(temperature > 85 && Math.random() < 0.1) {
+                // simple drop from condenser back to flask
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.6)';
+                ctx.beginPath(); ctx.arc(cx, cy - 20 + Math.random()*20, 3, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        function drawDecantation(dt) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const cx = width / 2;
+            const cy = height / 2 - 50;
+
+            drawStand(cx, cy);
+
+            // Clamp ring
+            ctx.fillStyle = '#64748b'; ctx.fillRect(cx - 150, cy, 100, 8);
+            ctx.beginPath(); ctx.ellipse(cx, cy, 40, 15, 0, 0, Math.PI*2); ctx.stroke();
+
+            // Beaker at bottom
+            drawGlassRect(cx - 30, cy + 150, 60, 80, isDark);
+            // Liquid in beaker
+            let collectedLevel = (140 - (aqLevel + orgLevel)); // very rough math
+            if(collectedLevel > 0) {
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.4)'; // Assuming aqueous falls first
+                ctx.fillRect(cx - 28, cy + 150 + 80 - collectedLevel, 56, collectedLevel);
+            }
+
+            let offsetX = 0;
+            let mixFactor = 0;
+
+            if (isShaking) {
+                shakeTimer -= dt;
+                offsetX = Math.sin(shakeTimer * 20) * 10;
+                mixFactor = 1.0;
+                if (shakeTimer <= 0) {
+                    isShaking = false;
+                    document.getElementById('decant-status').textContent = "Séparation (Décantation)...";
+                }
+            } else {
+                // slow separation
+                if (document.getElementById('decant-status').textContent.includes("Séparation")) {
+                    mixFactor = 0.5; // temporary visual state? Let's just do an instant snap for simplicity
+                    setTimeout(()=> { if(!isShaking && !valveOpen) document.getElementById('decant-status').textContent = "Repos"; }, 2000);
+                }
+            }
+
+            ctx.save();
+            ctx.translate(offsetX, 0);
+
+            // Separatory Funnel Body
+            ctx.beginPath();
+            // Top opening
+            ctx.moveTo(cx - 20, cy - 80); ctx.lineTo(cx + 20, cy - 80);
+            // Bulb
+            ctx.bezierCurveTo(cx + 60, cy - 50, cx + 50, cy + 40, cx + 5, cy + 100);
+            // Tube
+            ctx.lineTo(cx + 5, cy + 130); ctx.lineTo(cx - 5, cy + 130);
+            // Bulb left
+            ctx.lineTo(cx - 5, cy + 100);
+            ctx.bezierCurveTo(cx - 50, cy + 40, cx - 60, cy - 50, cx - 20, cy - 80);
+
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle = isDark?'#fff':'#000'; ctx.stroke();
+
+            // Liquids (simplified clipping)
+            ctx.save();
+            ctx.clip(); // Clip to funnel shape
+
+            let bottomY = cy + 100; // rough bottom of bulb
+
+            if (isShaking) {
+                // Mixed emulsion
+                ctx.fillStyle = 'rgba(150, 180, 200, 0.6)';
+                ctx.fillRect(cx - 60, bottomY - aqLevel - orgLevel, 120, aqLevel + orgLevel);
+            } else {
+                // Separated
+                // Bottom Phase (Aqueous)
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.4)'; // Blue
+                ctx.fillRect(cx - 60, bottomY - aqLevel, 120, aqLevel);
+
+                // Top Phase (Organic)
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.5)'; // Orange
+                ctx.fillRect(cx - 60, bottomY - aqLevel - orgLevel, 120, orgLevel);
+            }
+
+            ctx.restore();
+
+            // Valve
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(cx - 15, cy + 110, 30, 8); // stopcock
+            if (valveOpen) ctx.fillStyle = '#10b981'; // green if open
+            ctx.fillRect(cx - 5, cy + 108, 10, 12);
+
+            ctx.restore(); // Undo shake translation
+
+            // Flow
+            if (valveOpen) {
+                if (aqLevel > 0) {
+                    aqLevel -= 20 * dt;
+                    drops.push({x: cx, y: cy + 130, color: 'rgba(56, 189, 248, 0.6)'});
+                } else if (orgLevel > 0) {
+                    orgLevel -= 20 * dt;
+                    drops.push({x: cx, y: cy + 130, color: 'rgba(245, 158, 11, 0.6)'});
+                } else {
+                    valveOpen = false;
+                    document.getElementById('btn-valve').textContent = "Ouvrir le robinet";
+                }
+            }
+
+            // Draw drops
+            for(let i=drops.length-1; i>=0; i--) {
+                let d = drops[i];
+                ctx.fillStyle = d.color;
+                ctx.beginPath(); ctx.arc(d.x, d.y, 3, 0, Math.PI*2); ctx.fill();
+                d.y += 200 * dt;
+                if (d.y > cy + 220) drops.splice(i, 1);
+            }
+        }
+
+        function drawFiltration(dt) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const cx = width / 2;
+            const cy = height / 2 + 50;
+
+            drawStand(cx, cy);
+
+            // Clamp
+            ctx.fillStyle = '#64748b'; ctx.fillRect(cx - 150, cy - 80, 110, 8);
+
+            // Buchner Funnel
+            const bY = cy - 140;
+            ctx.beginPath();
+            ctx.rect(cx - 30, bY, 60, 40); // Top cylinder
+            ctx.moveTo(cx - 30, bY + 40); ctx.lineTo(cx - 10, bY + 60); // Cone
+            ctx.lineTo(cx + 10, bY + 60); ctx.lineTo(cx + 30, bY + 40);
+            ctx.rect(cx - 10, bY + 60, 20, 30); // Stem
+            ctx.fillStyle = isDark ? '#cbd5e1' : '#f1f5f9'; // Ceramic is opaque white/grey
+            ctx.fill(); ctx.strokeStyle = isDark?'#fff':'#000'; ctx.lineWidth=2; ctx.stroke();
+
+            // Filter Paper & Cake
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(cx - 28, bY + 36, 56, 4); // Filter paper
+            if (filterCakeSize > 0) {
+                ctx.fillStyle = '#eab308'; // Yellowish crystals
+                ctx.fillRect(cx - 28, bY + 36 - filterCakeSize, 56, filterCakeSize);
+            }
+
+            // Erlenmeyer à vide (Buchner flask)
+            const eY = cy - 50;
+            ctx.beginPath();
+            ctx.moveTo(cx - 15, eY); ctx.lineTo(cx + 15, eY); // Neck
+            ctx.lineTo(cx + 15, eY + 40);
+            ctx.lineTo(cx + 50, eY + 120); // Body right
+            ctx.lineTo(cx - 50, eY + 120); // Body left
+            ctx.lineTo(cx - 15, eY + 40);
+            ctx.closePath();
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            ctx.fill(); ctx.stroke();
+
+            // Side arm
+            ctx.beginPath(); ctx.moveTo(cx + 15, eY + 20); ctx.lineTo(cx + 40, eY + 20);
+            ctx.lineTo(cx + 40, eY + 25); ctx.lineTo(cx + 15, eY + 25); ctx.stroke();
+
+            // Vacuum Hose
+            ctx.beginPath();
+            ctx.moveTo(cx + 40, eY + 22);
+            ctx.bezierCurveTo(cx + 100, eY + 22, cx + 150, cy, cx + 200, cy);
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 6; ctx.stroke();
+
+            // Filtrate liquid
+            if (filtrateLevel > 0) {
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+                ctx.beginPath();
+                ctx.moveTo(cx - 45, eY + 120);
+                ctx.lineTo(cx + 45, eY + 120);
+                ctx.lineTo(cx + 45 - (filtrateLevel/2), eY + 120 - filtrateLevel);
+                ctx.lineTo(cx - 45 + (filtrateLevel/2), eY + 120 - filtrateLevel);
+                ctx.fill();
+            }
+
+            // Pouring action
+            if (isPouring) {
+                pourTimer -= dt;
+                // Beaker pouring
+                ctx.save();
+                ctx.translate(cx - 40, bY - 20);
+                ctx.rotate(Math.PI/4);
+                drawGlassRect(-20, -40, 40, 60, isDark);
+                // Liquid pouring out
+                ctx.restore();
+
+                // Falling mixture
+                ctx.fillStyle = 'rgba(150, 200, 150, 0.8)'; // Mix of liquid and solid
+                ctx.fillRect(cx - 5, bY - 10, 10, 20);
+
+                // Build cake and filtrate
+                filterCakeSize += 10 * dt;
+                if (filterCakeSize > 20) filterCakeSize = 20;
+
+                if (pourTimer <= 0) {
+                    isPouring = false;
+                }
+            }
+
+            // Drip from stem
+            let dripRate = 0;
+            if (isPouring) dripRate = 0.5; // Drip slowly without vacuum
+            else if (isVacuumOn && filterCakeSize > 0) dripRate = 2.0; // Drip fast, pull liquid out of cake
+            else dripRate = 0;
+
+            if (dripRate > 0 && Math.random() < dripRate * 0.2) {
+                fallingFluid.push({x: cx + (Math.random()*10-5), y: bY + 90});
+            }
+
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+            for(let i=fallingFluid.length-1; i>=0; i--) {
+                let d = fallingFluid[i];
+                ctx.beginPath(); ctx.arc(d.x, d.y, 2, 0, Math.PI*2); ctx.fill();
+                d.y += 300 * dt;
+                if (d.y > eY + 120 - filtrateLevel) {
+                    fallingFluid.splice(i, 1);
+                    filtrateLevel += 0.2; // Increase pool
+                    if (filtrateLevel > 60) filtrateLevel = 60;
+                }
+            }
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            ctx.clearRect(0, 0, width, height);
+
+            if (mode === 'reflux') drawReflux(dt);
+            else if (mode === 'decantation') drawDecantation(dt);
+            else if (mode === 'filtration') drawFiltration(dt);
+
+            requestAnimationFrame(loop);
+        }
+
+        resize();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
