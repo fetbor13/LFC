@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Collège: Poids et Masse</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f59e0b;
+            --accent-glow: 0 0 15px rgba(245, 158, 11, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 15px rgba(217, 119, 6, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; position: relative; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; flex: 1; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        canvas { display: block; width: 100%; height: 100%; border-radius: 8px; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+        select:focus { border-color: var(--accent-color); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        .math-eq { font-family: 'Fira Code', monospace; color: #10b981; font-weight: bold; font-size: 1.1rem; text-align: center; margin-bottom: 5px; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div class="section-box" style="background:transparent; border:none; padding:0;">
+                <canvas id="simCanvas"></canvas>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2 style="color:#f59e0b;">Poids et Masse</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Programme du Collège (3ème)</div>
+
+            <div class="control-group">
+                <label>Lieu de la mesure</label>
+                <select id="planet-select">
+                    <option value="terre" selected>Terre (g = 9.8 N/kg)</option>
+                    <option value="lune">Lune (g = 1.6 N/kg)</option>
+                    <option value="mars">Mars (g = 3.7 N/kg)</option>
+                    <option value="jupiter">Jupiter (g = 24.8 N/kg)</option>
+                    <option value="espace">Espace profond (g ≈ 0 N/kg)</option>
+                </select>
+            </div>
+
+            <div class="control-group" style="margin-top: 10px;">
+                <label>Objet à peser</label>
+                <select id="object-select">
+                    <option value="pomme">Pomme (150 g)</option>
+                    <option value="poids1kg" selected>Poids standard (1 kg)</option>
+                    <option value="valise">Valise (15 kg)</option>
+                    <option value="astronaute">Astronaute équipé (120 kg)</option>
+                </select>
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div class="math-eq">P = m × g</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                    <span>Masse ($m$) :</span> <span id="stat-mass" style="color:#38bdf8;">1.00 kg</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
+                    La masse représente la quantité de matière. Elle <strong>ne change jamais</strong> quel que soit le lieu. Elle se mesure avec une <strong>balance</strong>.
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                    <span>Poids ($P$) :</span> <span id="stat-weight" style="color:#ef4444;">9.80 N</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">
+                    Le poids est la force d'attraction de l'astre. Il <strong>dépend du lieu</strong> ($g$). Il se mesure avec un <strong>dynamomètre</strong>.
+                </div>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:auto; font-style:italic;">
+                Observez l'élongation du ressort du dynamomètre qui change selon la planète, alors que la balance affiche toujours la même masse.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const planetSelect = document.getElementById('planet-select');
+        const objectSelect = document.getElementById('object-select');
+        const statMass = document.getElementById('stat-mass');
+        const statWeight = document.getElementById('stat-weight');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        const PLANETS = {
+            terre: { name: "Terre", g: 9.8, bg: "#1e3a8a", soil: "#065f46" },
+            lune: { name: "Lune", g: 1.6, bg: "#0f172a", soil: "#475569" },
+            mars: { name: "Mars", g: 3.7, bg: "#451a03", soil: "#b45309" },
+            jupiter: { name: "Jupiter", g: 24.8, bg: "#4f46e5", soil: "#d97706" }, // gas giant, just for visual
+            espace: { name: "Espace", g: 0.0, bg: "#000000", soil: null }
+        };
+
+        const OBJECTS = {
+            pomme: { name: "Pomme", m: 0.15, size: 20, color: "#ef4444" },
+            poids1kg: { name: "Poids", m: 1.0, size: 40, color: "#64748b" },
+            valise: { name: "Valise", m: 15.0, size: 80, color: "#0ea5e9" },
+            astronaute: { name: "Astronaute", m: 120.0, size: 120, color: "#f8fafc" }
+        };
+
+        let currentY = 0; // for spring animation
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            drawScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        planetSelect.addEventListener('change', updatePhysics);
+        objectSelect.addEventListener('change', updatePhysics);
+
+        function updatePhysics() {
+            const planet = PLANETS[planetSelect.value];
+            const obj = OBJECTS[objectSelect.value];
+
+            const weight = obj.m * planet.g;
+
+            statMass.textContent = obj.m.toFixed(2) + " kg";
+            statWeight.textContent = weight.toFixed(1) + " N";
+
+            // Target Y for the spring based on weight
+            // Let's say max displayable weight before visual bottom out is ~3000N (Jupiter astronaute)
+            // But we scale dynamically or cap
+            drawScene();
+        }
+
+        function drawScene() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+
+            const planet = PLANETS[planetSelect.value];
+            const obj = OBJECTS[objectSelect.value];
+            const weight = obj.m * planet.g;
+
+            // Background
+            ctx.fillStyle = planet.bg;
+            ctx.fillRect(0, 0, cw, ch);
+
+            // Soil
+            if (planet.soil) {
+                ctx.fillStyle = planet.soil;
+                ctx.beginPath();
+                ctx.ellipse(cw/2, ch, cw, 150, 0, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // Draw Balance (Left)
+            const balX = cw/3 - 50;
+            const balY = ch - 80;
+            drawBalance(balX, balY, obj);
+
+            // Draw Dynamometer (Right)
+            const dynX = 2*cw/3 + 50;
+            const dynY = 150;
+            drawDynamometer(dynX, dynY, obj, weight);
+
+            // Labels
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("Masse (Balance)", balX, balY + 40);
+            ctx.fillText("Poids (Dynamomètre)", dynX, dynY - 30);
+
+            ctx.font = 'bold 24px sans-serif';
+            ctx.fillText(planet.name.toUpperCase(), cw/2, 50);
+
+            ctx.font = '14px sans-serif';
+            ctx.fillText(`Gravité (g) = ${planet.g} N/kg`, cw/2, 80);
+        }
+
+        function drawBalance(x, y, obj) {
+            // Simple digital scale
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(x - 60, y, 120, 20); // base
+            ctx.fillRect(x - 40, y - 5, 80, 5); // plate
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(x - 30, y + 2, 60, 14); // screen
+
+            ctx.fillStyle = '#10b981'; // green digital text
+            ctx.font = 'bold 12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(obj.m + " kg", x, y + 13);
+
+            // Draw object on scale
+            drawObject(x, y - 5 - obj.size/2, obj);
+        }
+
+        function drawDynamometer(x, y, obj, weight) {
+            // Body
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillRect(x - 15, y, 30, 200);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x - 15, y, 30, 200);
+
+            // Hook top
+            ctx.beginPath(); ctx.arc(x, y - 10, 10, 0, Math.PI, true); ctx.stroke();
+
+            // Spring calculation
+            // Max visual stretch = 150px
+            // Let's make the spring stretch non-linear to fit both apple and astronaut
+            // or use a log scale, or dynamic stiffness
+            // Let's use dynamic stiffness based on object mass so it's always readable
+            // K is chosen so that Earth gravity gives ~50px stretch
+            const stiffness = obj.m * 9.8 / 50;
+            let stretch = 0;
+            if (stiffness > 0) {
+                stretch = weight / stiffness; // pixels
+            }
+            if (stretch > 180) stretch = 180; // cap
+            if (weight === 0) stretch = 0;
+
+            // Draw Spring
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 10);
+
+            const numCoils = 15;
+            const coilH = (40 + stretch) / numCoils;
+            for(let i=0; i<=numCoils; i++) {
+                let s = i%2 === 0 ? 1 : -1;
+                ctx.lineTo(x + s*10, y + 10 + i*coilH);
+            }
+            ctx.lineTo(x, y + 10 + (40 + stretch));
+            ctx.stroke();
+
+            // Hook bottom
+            let hookY = y + 10 + (40 + stretch);
+            ctx.beginPath(); ctx.moveTo(x, hookY); ctx.lineTo(x, hookY + 20); ctx.stroke();
+            ctx.beginPath(); ctx.arc(x, hookY + 25, 5, -Math.PI/2, Math.PI); ctx.stroke();
+
+            // Marker
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(x - 25, hookY - 10, 10, 4);
+
+            // Draw Object hanging
+            drawObject(x, hookY + 25 + obj.size/2, obj);
+
+            // Digital readout instead of lines for clarity
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(x - 25, y - 25, 50, 20);
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(weight.toFixed(1) + " N", x, y - 11);
+        }
+
+        function drawObject(x, y, obj) {
+            ctx.fillStyle = obj.color;
+            if (obj.name === "Poids") {
+                // draw a weight
+                ctx.beginPath();
+                ctx.moveTo(x - obj.size/3, y + obj.size/2);
+                ctx.lineTo(x + obj.size/3, y + obj.size/2);
+                ctx.lineTo(x + obj.size/4, y - obj.size/2);
+                ctx.lineTo(x - obj.size/4, y - obj.size/2);
+                ctx.fill();
+            } else if (obj.name === "Valise") {
+                ctx.fillRect(x - obj.size/2, y - obj.size/3, obj.size, obj.size/1.5);
+                ctx.strokeStyle = '#fff'; ctx.strokeRect(x - obj.size/4, y - obj.size/3 - 10, obj.size/2, 10);
+            } else {
+                // Sphere
+                ctx.beginPath();
+                ctx.arc(x, y, obj.size/2, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        // Init
+        resize();
+        updatePhysics();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>
