@@ -413,6 +413,11 @@
                 file: 'src/simulations/electrochemistry.html'
             },
             {
+                id: 'thermodynamics', title: 'Moteur de Carnot', desc: 'Machine thermique idéale. Diagramme de Clapeyron (P-V), intégration du travail et cycle thermodynamique.',
+                level: 'CPGE / Sup', domain: 'thermo', color: '#f43f5e', rgb: '244, 63, 94', formula: '\\eta = 1 - T_F/T_C',
+                file: 'src/simulations/thermodynamics.html'
+            },
+            {
                 id: 'lab_tech', title: 'Techniques de Labo', desc: 'Chauffage à reflux, décantation, filtration sous vide.',
                 level: 'Lycée', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: '\\eta = m_{exp} / m_{th}',
                 file: 'src/simulations/lab_techniques.html'
@@ -537,6 +542,10 @@
                 sidebar.classList.add('collapsed');
                 btnToggleSidebar.style.display = 'block';
             }
+
+            // Force hide tooltip
+            hoveredNodeId = null;
+            tooltip.classList.remove('visible');
         }
 
         btnWinClose.addEventListener('click', () => {
@@ -656,6 +665,13 @@
         // Mouse interaction for Canvas
         let mouseX = -100, mouseY = -100;
         canvas.addEventListener('mousemove', (e) => {
+            // If window is open, don't show tooltips behind it
+            if (winFrame.classList.contains('open')) {
+                hoveredNodeId = null;
+                tooltip.classList.remove('visible');
+                return;
+            }
+
             mouseX = e.clientX; mouseY = e.clientY;
 
             // Check collision with nodes
@@ -687,6 +703,11 @@
                 hoveredNodeId = null;
                 tooltip.classList.remove('visible');
             }
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            hoveredNodeId = null;
+            tooltip.classList.remove('visible');
         });
 
         canvas.addEventListener('click', () => {

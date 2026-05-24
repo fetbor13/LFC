@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Thermodynamique & Cycle de Carnot</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f43f5e;
+            --accent-glow: 0 0 15px rgba(244, 63, 94, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --iso-hot: #ef4444;
+            --iso-cold: #3b82f6;
+            --adia: #8b5cf6;
+
+            --grid-color: rgba(255, 255, 255, 0.05);
+            --axis-color: rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --grid-color: rgba(0, 0, 0, 0.05);
+            --axis-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #graph-section { flex: 2; display: flex; justify-content: center; align-items: center; }
+        #machine-section { height: 250px; display: flex; justify-content: center; align-items: center; }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 500; color: var(--text-muted); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--text-color); cursor: pointer; margin-top: -5px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: var(--glass-border); border-radius: 1px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #10b981; font-weight: bold; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        button.action-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-active { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+
+        .phase-indicator { display:flex; justify-content:space-between; font-size: 0.8rem; font-weight:bold; }
+        .phase-name { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="graph-section" class="section-box">
+                <div class="section-title">Diagramme de Clapeyron (P, V)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%;">
+                    <canvas id="clapeyronCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="machine-section" class="section-box">
+                <div class="section-title">Machine Thermique (Cylindre & Piston)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%;">
+                    <canvas id="pistonCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Thermodynamique</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Moteur de Carnot (Gaz Parfait)</div>
+
+            <div class="control-group">
+                <label>Source Chaude ($T_C$) <span id="tc-val">600 K</span></label>
+                <input type="range" id="tc-input" min="400" max="1000" step="10" value="600">
+            </div>
+
+            <div class="control-group">
+                <label>Source Froide ($T_F$) <span id="tf-val">300 K</span></label>
+                <input type="range" id="tf-input" min="200" max="400" step="10" value="300">
+            </div>
+
+            <div class="control-group">
+                <label>Volume max ($V_{max}$) <span id="vmax-val">0.05 m³</span></label>
+                <input type="range" id="vmax-input" min="0.02" max="0.1" step="0.01" value="0.05">
+            </div>
+
+            <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
+
+            <div class="stats-box">
+                <div class="math-eq">$\Delta U = W + Q = 0 \text{ (sur un cycle)}$</div>
+                <div class="math-eq" style="font-size:0.75rem;">$\eta = 1 - \frac{T_F}{T_C} \quad (Rendement Carnot)$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div class="phase-indicator">
+                    <span>Phase en cours:</span>
+                    <span id="phase-current" class="phase-name">1→2 (Isotherme Chaude)</span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;"><span>Pression $P$:</span> <span id="stat-p">100.0 kPa</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Volume $V$:</span> <span id="stat-v">0.020 m³</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Température $T$:</span> <span id="stat-t" style="color:var(--iso-hot);">600 K</span></div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;"><span>Travail total $W$:</span> <span id="stat-w" style="color:#fbbf24; font-weight:bold;">0.0 J</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Rendement $\eta$:</span> <span id="stat-eta" style="color:var(--accent-color); font-weight:bold;">50.0 %</span></div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-play" class="action-btn btn-active" style="flex:1;">Démarrer le Cycle</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const clapCanvas = document.getElementById('clapeyronCanvas');
+        const cCtx = clapCanvas.getContext('2d');
+        const pistonCanvas = document.getElementById('pistonCanvas');
+        const pCtx = pistonCanvas.getContext('2d');
+
+        const tcInput = document.getElementById('tc-input');
+        const tfInput = document.getElementById('tf-input');
+        const vmaxInput = document.getElementById('vmax-input');
+        const btnPlay = document.getElementById('btn-play');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cWidth, cHeight, pWidth, pHeight;
+
+        // Thermodynamics Constants
+        const R = 8.314; // J/(mol.K)
+        const n = 1.0; // mol
+        const gamma = 1.4; // Diatomic gas
+
+        // State variables
+        let Tc = 600;
+        let Tf = 300;
+        let V1 = 0.01; // Fixed min volume
+        let Vmax = 0.05;
+
+        // Carnot Cycle Points: 1 -> 2 -> 3 -> 4 -> 1
+        // 1: Top left (V1, Tc)
+        // 2: Top right (V2, Tc)
+        // 3: Bottom right (V3, Tf) -> V3 = Vmax
+        // 4: Bottom left (V4, Tf)
+        let P1, P2, P3, P4;
+        let V2, V3, V4;
+
+        let cyclePath = []; // Array of points {v, p, phase}
+
+        // Animation State
+        let isRunning = false;
+        let t_anim = 0; // parameter 0 to 4 for the 4 phases
+        let currentV = 0.01;
+        let currentP = 0;
+        let currentT = 600;
+        let currentWork = 0;
+        let totalWorkCycle = 0;
+        let currentPhase = 0;
+
+        function calculateCycle() {
+            Tc = parseFloat(tcInput.value);
+            Tf = parseFloat(tfInput.value);
+            Vmax = parseFloat(vmaxInput.value);
+
+            // Constraint: Tc must be > Tf for engine
+            if (Tc <= Tf) Tc = Tf + 10;
+
+            document.getElementById('tc-val').textContent = Tc + ' K';
+            document.getElementById('tf-val').textContent = Tf + ' K';
+            document.getElementById('vmax-val').textContent = Vmax.toFixed(3) + ' m³';
+
+            V3 = Vmax;
+
+            // From 2 to 3: Adiabatic expansion (T * V^(gamma-1) = cst)
+            // Tc * V2^(gamma-1) = Tf * V3^(gamma-1)
+            // V2 = V3 * (Tf / Tc)^(1/(gamma-1))
+            V2 = V3 * Math.pow(Tf / Tc, 1 / (gamma - 1));
+
+            // Ensure V2 > V1
+            if (V2 <= V1) {
+                // Adjust V1 or V3 visually if needed, but we keep V1 fixed here.
+                V2 = V1 + 0.005; // Fallback
+            }
+
+            // From 4 to 1: Adiabatic compression
+            // Tf * V4^(gamma-1) = Tc * V1^(gamma-1)
+            // V4 = V1 * (Tc / Tf)^(1/(gamma-1))
+            V4 = V1 * Math.pow(Tc / Tf, 1 / (gamma - 1));
+
+            // Pressures (P = nRT/V)
+            P1 = (n * R * Tc) / V1;
+            P2 = (n * R * Tc) / V2;
+            P3 = (n * R * Tf) / V3;
+            P4 = (n * R * Tf) / V4;
+
+            // Pre-calculate full high-res path for drawing
+            cyclePath = [];
+            const steps = 50;
+
+            // Phase 1: 1->2 (Isotherme T=Tc)
+            for(let i=0; i<=steps; i++) {
+                let v = V1 + (V2 - V1) * (i/steps);
+                cyclePath.push({v: v, p: (n*R*Tc)/v, phase: 1});
+            }
+            // Phase 2: 2->3 (Adiabatique)
+            let cst23 = P2 * Math.pow(V2, gamma);
+            for(let i=1; i<=steps; i++) {
+                let v = V2 + (V3 - V2) * (i/steps);
+                cyclePath.push({v: v, p: cst23 / Math.pow(v, gamma), phase: 2});
+            }
+            // Phase 3: 3->4 (Isotherme T=Tf)
+            for(let i=1; i<=steps; i++) {
+                let v = V3 + (V4 - V3) * (i/steps); // Note: V4 < V3
+                cyclePath.push({v: v, p: (n*R*Tf)/v, phase: 3});
+            }
+            // Phase 4: 4->1 (Adiabatique)
+            let cst41 = P4 * Math.pow(V4, gamma);
+            for(let i=1; i<=steps; i++) {
+                let v = V4 + (V1 - V4) * (i/steps);
+                cyclePath.push({v: v, p: cst41 / Math.pow(v, gamma), phase: 4});
+            }
+
+            // Theoretical total work W = W12 + W34 (Adiabatics cancel out W23+W41 in ideal gas depending on sign, actually W_cycle = Q_in + Q_out = nR Tc ln(V2/V1) + nR Tf ln(V4/V3))
+            // Since V2/V1 = V3/V4  => ln(V4/V3) = -ln(V2/V1)
+            // W_cycle = nR(Tc - Tf) ln(V2/V1)   (Work done BY gas, so physics W < 0)
+            totalWorkCycle = -n * R * (Tc - Tf) * Math.log(V2 / V1);
+            let eta = 1 - (Tf / Tc);
+
+            document.getElementById('stat-eta').textContent = (eta * 100).toFixed(1) + ' %';
+
+            drawClapeyron();
+        }
+
+        function resize() {
+            cWidth = clapCanvas.parentElement.clientWidth;
+            cHeight = clapCanvas.parentElement.clientHeight;
+            clapCanvas.width = cWidth * dpr;
+            clapCanvas.height = cHeight * dpr;
+            cCtx.scale(dpr, dpr);
+
+            pWidth = pistonCanvas.parentElement.clientWidth;
+            pHeight = pistonCanvas.parentElement.clientHeight;
+            pistonCanvas.width = pWidth * dpr;
+            pistonCanvas.height = pHeight * dpr;
+            pCtx.scale(dpr, dpr);
+
+            calculateCycle();
+        }
+        window.addEventListener('resize', resize);
+
+        tcInput.addEventListener('input', calculateCycle);
+        tfInput.addEventListener('input', calculateCycle);
+        vmaxInput.addEventListener('input', calculateCycle);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawClapeyron();
+            drawPiston();
+        });
+
+        btnPlay.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnPlay.textContent = isRunning ? "Pause" : "Démarrer le Cycle";
+            if (isRunning) {
+                lastTime = 0;
+                requestAnimationFrame(loop);
+            }
+        });
+
+        // Drawing Functions
+        function drawClapeyron() {
+            cCtx.clearRect(0, 0, cWidth, cHeight);
+
+            const padding = 40;
+            const pW = cWidth - 2 * padding;
+            const pH = cHeight - 2 * padding;
+
+            const gridCol = getComputedStyle(document.documentElement).getPropertyValue('--grid-color').trim();
+            const axisCol = getComputedStyle(document.documentElement).getPropertyValue('--axis-color').trim();
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Scaling limits
+            const pMax = P1 * 1.1;
+            const vMaxScale = Vmax * 1.1;
+
+            const getX = (v) => padding + (v / vMaxScale) * pW;
+            const getY = (p) => padding + pH - (p / pMax) * pH;
+
+            // Grid
+            cCtx.strokeStyle = gridCol;
+            cCtx.lineWidth = 1;
+            cCtx.beginPath();
+            for(let i=0; i<=10; i++) {
+                let x = padding + (i/10)*pW;
+                let y = padding + (i/10)*pH;
+                cCtx.moveTo(x, padding); cCtx.lineTo(x, cHeight - padding);
+                cCtx.moveTo(padding, y); cCtx.lineTo(cWidth - padding, y);
+            }
+            cCtx.stroke();
+
+            // Axes
+            cCtx.strokeStyle = axisCol;
+            cCtx.lineWidth = 1.5;
+            cCtx.beginPath();
+            cCtx.moveTo(padding, padding); cCtx.lineTo(padding, cHeight - padding); cCtx.lineTo(cWidth - padding, cHeight - padding);
+            cCtx.stroke();
+
+            // Labels
+            cCtx.fillStyle = isDark ? '#fff' : '#000';
+            cCtx.font = '12px "Fira Code", monospace';
+            cCtx.fillText('P', padding - 15, padding);
+            cCtx.fillText('V', cWidth - padding, cHeight - padding + 15);
+
+            // Draw full theoretical cycle
+            const colHot = getComputedStyle(document.documentElement).getPropertyValue('--iso-hot').trim();
+            const colCold = getComputedStyle(document.documentElement).getPropertyValue('--iso-cold').trim();
+            const colAdia = getComputedStyle(document.documentElement).getPropertyValue('--adia').trim();
+
+            if (cyclePath.length > 0) {
+                // Fill Work Area
+                cCtx.beginPath();
+                cCtx.moveTo(getX(cyclePath[0].v), getY(cyclePath[0].p));
+                for(let i=1; i<cyclePath.length; i++) {
+                    cCtx.lineTo(getX(cyclePath[i].v), getY(cyclePath[i].p));
+                }
+                cCtx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                cCtx.fill();
+
+                // Draw Paths colored by phase
+                for(let phase=1; phase<=4; phase++) {
+                    cCtx.beginPath();
+                    let color = colAdia;
+                    if (phase === 1) color = colHot;
+                    if (phase === 3) color = colCold;
+
+                    cCtx.strokeStyle = color;
+                    cCtx.lineWidth = 2.5;
+
+                    let started = false;
+                    for(let i=0; i<cyclePath.length; i++) {
+                        if (cyclePath[i].phase === phase) {
+                            if (!started) { cCtx.moveTo(getX(cyclePath[i].v), getY(cyclePath[i].p)); started = true; }
+                            else { cCtx.lineTo(getX(cyclePath[i].v), getY(cyclePath[i].p)); }
+                        }
+                    }
+                    // Connect to next phase
+                    if (phase < 4) {
+                        let nextStart = cyclePath.find(p => p.phase === phase+1);
+                        if(nextStart) cCtx.lineTo(getX(nextStart.v), getY(nextStart.p));
+                    } else {
+                        cCtx.lineTo(getX(cyclePath[0].v), getY(cyclePath[0].p));
+                    }
+                    cCtx.stroke();
+                }
+            }
+
+            // Draw Current State Point
+            if (isRunning || t_anim === 0) {
+                cCtx.beginPath();
+                cCtx.arc(getX(currentV), getY(currentP), 6, 0, Math.PI*2);
+                cCtx.fillStyle = '#fff';
+                cCtx.fill();
+                cCtx.shadowBlur = 10;
+                cCtx.shadowColor = '#fff';
+                cCtx.fill();
+                cCtx.shadowBlur = 0;
+            }
+        }
+
+        function drawPiston() {
+            pCtx.clearRect(0, 0, pWidth, pHeight);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            const cx = pWidth / 2;
+            const cy = pHeight / 2;
+            const maxW = pWidth * 0.7;
+            const h = 80;
+
+            // Cylinder
+            pCtx.strokeStyle = isDark ? '#fff' : '#000';
+            pCtx.lineWidth = 3;
+            pCtx.beginPath();
+            pCtx.moveTo(cx - maxW/2, cy - h/2);
+            pCtx.lineTo(cx + maxW/2, cy - h/2);
+            pCtx.lineTo(cx + maxW/2, cy + h/2);
+            pCtx.lineTo(cx - maxW/2, cy + h/2);
+            pCtx.stroke(); // Open on left for piston rod
+
+            // Calculate piston position based on Volume
+            // Map currentV (V1 to Vmax) to visual width (20% to 100% of maxW)
+            const minVisualW = maxW * 0.2;
+            const visualW = minVisualW + ((currentV - V1) / (Vmax - V1)) * (maxW - minVisualW);
+
+            // Gas color based on Temperature
+            // Map Tf..Tc to Cold..Hot color
+            const ratioT = (currentT - Tf) / (Tc - Tf); // 0 to 1
+            const r = Math.round(59 + ratioT * (239 - 59));   // Blue(59) to Red(239)
+            const g = Math.round(130 - ratioT * (130 - 68)); // Blue(130) to Red(68)
+            const b = Math.round(246 - ratioT * (246 - 68)); // Blue(246) to Red(68)
+
+            // Fill Gas
+            pCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
+            pCtx.fillRect(cx + maxW/2 - visualW, cy - h/2 + 1.5, visualW, h - 3);
+
+            // Piston Head
+            pCtx.fillStyle = isDark ? '#475569' : '#94a3b8';
+            pCtx.fillRect(cx + maxW/2 - visualW - 10, cy - h/2 + 1, 10, h - 2);
+
+            // Piston Rod
+            pCtx.fillRect(cx - maxW/2 - 20, cy - 4, maxW/2 + visualW - 20, 8);
+
+            // Add dynamic particles inside gas for realism
+            pCtx.fillStyle = '#fff';
+            // Speed of particles depends on T
+            const particleSpeed = 1 + ratioT * 3;
+            for(let i=0; i<30; i++) {
+                // Pseudo-random deterministic placement based on phase
+                let px = (Math.sin(i*12.3 + t_anim*particleSpeed) * 0.5 + 0.5) * (visualW - 5);
+                let py = (Math.cos(i*7.1 + t_anim*particleSpeed) * 0.5 + 0.5) * (h - 10);
+                pCtx.beginPath();
+                pCtx.arc(cx + maxW/2 - visualW + 2 + px, cy - h/2 + 5 + py, 1.5, 0, Math.PI*2);
+                pCtx.fill();
+            }
+
+            // Temperature text
+            pCtx.fillStyle = isDark ? '#fff' : '#000';
+            pCtx.font = '14px monospace';
+            pCtx.textAlign = 'center';
+            pCtx.fillText(`${Math.round(currentT)} K`, cx + maxW/2 - visualW/2, cy + h/2 + 20);
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            if (isRunning) {
+                // 1 full cycle = 4 seconds
+                t_anim += dt * 1.0;
+                if (t_anim >= 4.0) t_anim -= 4.0; // Loop
+
+                // Determine phase and current state
+                let phaseProgress = t_anim % 1.0;
+
+                if (t_anim < 1.0) {
+                    currentPhase = 1;
+                    currentV = V1 + (V2 - V1) * phaseProgress;
+                    currentT = Tc;
+                    currentP = (n * R * currentT) / currentV;
+                } else if (t_anim < 2.0) {
+                    currentPhase = 2;
+                    currentV = V2 + (V3 - V2) * phaseProgress;
+                    currentP = (P2 * Math.pow(V2, gamma)) / Math.pow(currentV, gamma);
+                    currentT = (currentP * currentV) / (n * R);
+                } else if (t_anim < 3.0) {
+                    currentPhase = 3;
+                    currentV = V3 + (V4 - V3) * phaseProgress;
+                    currentT = Tf;
+                    currentP = (n * R * currentT) / currentV;
+                } else {
+                    currentPhase = 4;
+                    currentV = V4 + (V1 - V4) * phaseProgress;
+                    currentP = (P4 * Math.pow(V4, gamma)) / Math.pow(currentV, gamma);
+                    currentT = (currentP * currentV) / (n * R);
+                }
+
+                // Work integration approx (W = - integral P dV)
+                // Actually we just display the theoretical cycle work since it's a state function
+
+                // UI Updates
+                let phaseNames = ["", "1→2 Isotherme (Chaude)", "2→3 Adiabatique (Détente)", "3→4 Isotherme (Froide)", "4→1 Adiabatique (Comp.)"];
+                document.getElementById('phase-current').textContent = phaseNames[currentPhase];
+
+                document.getElementById('stat-p').textContent = (currentP / 1000).toFixed(1) + ' kPa';
+                document.getElementById('stat-v').textContent = currentV.toFixed(3) + ' m³';
+
+                let tColor = currentT > (Tc+Tf)/2 ? 'var(--iso-hot)' : 'var(--iso-cold)';
+                document.getElementById('stat-t').style.color = tColor;
+                document.getElementById('stat-t').textContent = Math.round(currentT) + ' K';
+
+                // Cumulative work visual
+                // For simplicity in UI, we just show total theoretical Work of cycle
+                document.getElementById('stat-w').textContent = totalWorkCycle.toFixed(1) + ' J';
+
+                drawClapeyron();
+                drawPiston();
+            }
+
+            if (isRunning) {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        // Init
+        resize();
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+        // Pre-draw
+        setTimeout(() => {
+            currentV = V1; currentP = P1; currentT = Tc;
+            drawClapeyron(); drawPiston();
+        }, 500);
+
+    </script>
+</body>
+</html>
