@@ -194,8 +194,8 @@
         btnReset.addEventListener('click', initSim);
 
         // Utility to draw precise arrows
-        function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 1.5) {
-            const headlen = 8; // length of head in pixels
+        function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 2.5) {
+            const headlen = 14; // Bigger head
             const dx = toX - fromX;
             const dy = toY - fromY;
             const angle = Math.atan2(dy, dx);
@@ -393,9 +393,10 @@
 
             // Precision Vectors
             if (showV.checked) {
-                let vScale = 0.8;
+                // Increased visual scale for velocity
+                let vScale = 1.5;
                 let vColor = getComputedStyle(document.documentElement).getPropertyValue('--v-color').trim();
-                drawArrow(ctx, planet.x, planet.y, planet.x + planet.vx * vScale, planet.y + planet.vy * vScale, vColor, 1.5);
+                drawArrow(ctx, planet.x, planet.y, planet.x + planet.vx * vScale, planet.y + planet.vy * vScale, vColor, 2.5);
             }
 
             if (showA.checked) {
@@ -407,9 +408,10 @@
                 let ax = a * (dx/r);
                 let ay = a * (dy/r);
 
-                let aScale = 0.15;
+                // Increased visual scale for acceleration
+                let aScale = 0.4;
                 let aColor = getComputedStyle(document.documentElement).getPropertyValue('--a-color').trim();
-                drawArrow(ctx, planet.x, planet.y, planet.x + ax * aScale, planet.y + ay * aScale, aColor, 1.5);
+                drawArrow(ctx, planet.x, planet.y, planet.x + ax * aScale, planet.y + ay * aScale, aColor, 2.5);
             }
 
             ctx.restore();

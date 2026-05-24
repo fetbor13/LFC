@@ -162,6 +162,7 @@
             transition: 0.2s;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0; /* Prevent squishing */
         }
         .list-item:hover {
             background: rgba(255,255,255,0.06);
@@ -176,8 +177,8 @@
             background: var(--item-color);
         }
 
-        .item-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; color: #fff; }
-        .item-level { font-size: 0.7rem; color: var(--item-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .item-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; color: #fff; }
+        .item-level { font-size: 0.7rem; color: var(--item-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: none; /* Hidden as per request */ }
         .item-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* --------------------------------------------------------
@@ -462,7 +463,6 @@
                 el.style.setProperty('--item-color', sim.color);
 
                 el.innerHTML = `
-                    <div class="item-level">${sim.level}</div>
                     <div class="item-title">${sim.title}</div>
                     <div class="item-desc">${sim.desc}</div>
                 `;
@@ -771,13 +771,16 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Label
-                if (isHovered || isActive) {
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 12px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(n.sim.title, n.x, n.y + 25);
-                }
+                // Permanent Label (Simulation Title)
+                ctx.fillStyle = (isHovered || isActive) ? '#fff' : 'rgba(255, 255, 255, 0.7)';
+                ctx.font = (isHovered || isActive) ? 'bold 13px sans-serif' : '500 11px sans-serif';
+                ctx.textAlign = 'center';
+
+                // Add a subtle background to make text readable over the mesh
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#000';
+                ctx.fillText(n.sim.title, n.x, n.y + (isHovered ? 28 : 18));
+                ctx.shadowBlur = 0;
             });
 
             requestAnimationFrame(drawOrbital);
