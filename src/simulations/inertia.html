@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Principe d'Inertie</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f59e0b; /* Orange/Gold for Newton */
+            --accent-glow: 0 0 15px rgba(245, 158, 11, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --vector-f: #ef4444; /* Force red */
+            --vector-v: #10b981; /* Velocity green */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 15px rgba(217, 119, 6, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px; overflow:hidden;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; font-family: 'Fira Code', monospace; }
+        .math-eq { color: var(--accent-color); font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .btn-group { display: flex; gap: 8px; }
+        button.action-btn { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-play { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+
+        .switch-container { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; font-weight: 500; }
+        input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent-color); cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Banc à Coussin d'Air (Chronophotographie)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Principe d'Inertie</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">1ère Loi de Newton (Seconde)</div>
+
+            <div class="control-group">
+                <div class="switch-container">
+                    <label>Soufflerie (Coussin d'air actif)</label>
+                    <input type="checkbox" id="blower-toggle" checked>
+                </div>
+                <div style="font-size:0.75rem; color:gray; margin-bottom:10px;">
+                    Désactivez pour simuler une surface rugueuse avec des forces de frottement.
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Vitesse initiale ($v_0$) <span id="v0-val">2.0 m/s</span></label>
+                <input type="range" id="v0-input" min="-5" max="5" step="0.5" value="2.0">
+            </div>
+
+            <div class="control-group">
+                <label>Force motrice externe ($F_{ext}$) <span id="fext-val">0.0 N</span></label>
+                <input type="range" id="fext-input" min="-10" max="10" step="1" value="0">
+                <div style="font-size:0.75rem; color:gray;">Ex: Poussée d'un ventilateur ou d'un fil.</div>
+            </div>
+
+            <div class="control-group" style="margin-top:10px;">
+                <div class="switch-container">
+                    <label style="color:var(--vector-f);">Afficher Bilan des Forces ($\Sigma \vec{F}$)</label>
+                    <input type="checkbox" id="show-forces" checked>
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div class="math-eq" id="eq-main">$\sum \vec{F} = \vec{0} \iff \vec{v} = \vec{cst}$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Vitesse $v$:</span> <span id="stat-v" style="color:var(--vector-v); font-weight:bold;">2.00 m/s</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Forces $\sum F_x$:</span> <span id="stat-sumF" style="color:var(--vector-f); font-weight:bold;">0.0 N</span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div id="stat-desc" style="color:var(--text-muted); font-family:sans-serif; text-align:center;">
+                    Mouvement Rectiligne Uniforme (MRU). Les forces se compensent.
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top:auto;">
+                <button id="btn-play" class="action-btn btn-play">Lancer le mobile</button>
+                <button id="btn-reset" class="action-btn" style="color:#ef4444;">RAZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const blowerToggle = document.getElementById('blower-toggle');
+        const v0Input = document.getElementById('v0-input');
+        const fextInput = document.getElementById('fext-input');
+        const showForces = document.getElementById('show-forces');
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+
+        const eqMain = document.getElementById('eq-main');
+        const statV = document.getElementById('stat-v');
+        const statSumF = document.getElementById('stat-sumF');
+        const statDesc = document.getElementById('stat-desc');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Physics
+        const mass = 1.0; // kg
+        const g = 9.81;
+        const P = mass * g;
+        const mu_k = 0.3; // coefficient of kinetic friction
+
+        let state = {
+            x: 0,
+            v: 0,
+            t: 0,
+            active: false,
+            f_fric: 0,
+            f_ext: 0,
+            sumF: 0,
+            marks: [] // Chronophotography dots
+        };
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            drawStatic();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawStatic();
+        });
+
+        function updateInputs() {
+            document.getElementById('v0-val').textContent = parseFloat(v0Input.value).toFixed(1) + ' m/s';
+            document.getElementById('fext-val').textContent = parseFloat(fextInput.value).toFixed(1) + ' N';
+            if(!state.active) {
+                state.v = parseFloat(v0Input.value);
+                state.f_ext = parseFloat(fextInput.value);
+                calculateForces();
+                updateStats();
+                drawStatic();
+            }
+        }
+
+        blowerToggle.addEventListener('change', updateInputs);
+        v0Input.addEventListener('input', updateInputs);
+        fextInput.addEventListener('input', updateInputs);
+        showForces.addEventListener('change', drawStatic);
+
+        function calculateForces() {
+            let f_fric = 0;
+            if (!blowerToggle.checked && Math.abs(state.v) > 0.05) {
+                // If no air cushion, there is friction opposing motion
+                let frictionMag = mu_k * P;
+                f_fric = state.v > 0 ? -frictionMag : frictionMag;
+            } else if (!blowerToggle.checked && Math.abs(state.v) <= 0.05) {
+                // Static friction can oppose F_ext up to mu_s * P
+                let staticFrictionMax = 0.4 * P;
+                if (Math.abs(state.f_ext) <= staticFrictionMax) {
+                    f_fric = -state.f_ext; // Cancels out
+                } else {
+                    f_fric = state.f_ext > 0 ? -mu_k*P : mu_k*P;
+                }
+            }
+
+            state.f_fric = f_fric;
+            state.sumF = state.f_ext + state.f_fric;
+        }
+
+        function updateStats() {
+            statV.textContent = state.v.toFixed(2) + ' m/s';
+            statSumF.textContent = state.sumF.toFixed(1) + ' N';
+
+            if (Math.abs(state.sumF) < 0.1) {
+                eqMain.innerHTML = "$\\sum \\vec{F} = \\vec{0} \\iff \\vec{v} = \\vec{cst}$";
+                statDesc.innerHTML = Math.abs(state.v) < 0.1 ? "Repos. Les forces se compensent." : "Mouvement Rectiligne Uniforme (MRU). Les forces se compensent.";
+                statSumF.style.color = '#10b981';
+            } else {
+                eqMain.innerHTML = "$\\sum \\vec{F} \\neq \\vec{0} \\iff \\vec{v} \\neq \\vec{cst}$";
+                statDesc.innerHTML = state.sumF * state.v > 0 ? "Mouvement accéléré." : "Mouvement ralenti (freinage).";
+                statSumF.style.color = '#ef4444';
+            }
+            if(window.MathJax) MathJax.typesetPromise([eqMain]);
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 3) {
+            if(Math.hypot(toX-fromX, toY-fromY) < 2) return;
+            const headlen = 12;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            ctx.beginPath(); ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY);
+            ctx.strokeStyle = color; ctx.lineWidth = lineWidth; ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI/6), toY - headlen * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI/6), toY - headlen * Math.sin(angle + Math.PI/6));
+            ctx.lineTo(toX, toY);
+            ctx.fillStyle = color; ctx.fill();
+        }
+
+        function drawStatic() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            const trackY = ch / 2 + 50;
+            const scaleX = 100; // px per meter
+
+            // Draw Air Track
+            ctx.fillStyle = isDark ? '#334155' : '#cbd5e1';
+            ctx.fillRect(0, trackY, cw, 20);
+
+            // Air holes/cushion
+            if (blowerToggle.checked) {
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+                for(let x=10; x<cw; x+=20) {
+                    ctx.beginPath(); ctx.arc(x, trackY, 2, 0, Math.PI, true); ctx.fill();
+                    // air streams
+                    ctx.fillRect(x-1, trackY - 5 - Math.random()*5, 2, 5);
+                }
+            }
+
+            // Draw Chronophotography marks
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            state.marks.forEach(m => {
+                let px = cw/2 + m.x * scaleX;
+                ctx.beginPath(); ctx.arc(px, trackY - 15, 3, 0, Math.PI*2); ctx.fill();
+                // timestamp
+                ctx.font = '10px monospace';
+                ctx.fillText((m.t).toFixed(1)+'s', px, trackY + 35);
+            });
+
+            // Draw Glider (Mobile)
+            let px = cw/2 + state.x * scaleX;
+            let py = trackY - 30; // 30px height
+
+            // Limit drawing to screen
+            if (px < -50 || px > cw + 50) return;
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(px - 40, py, 80, 30);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(px - 40, py, 80, 30);
+
+            // Draw Velocity Vector
+            if (Math.abs(state.v) > 0.1) {
+                drawArrow(ctx, px, py - 20, px + state.v * 30, py - 20, '#10b981', 3);
+                ctx.fillStyle = '#10b981'; ctx.font = 'bold 12px sans-serif';
+                ctx.fillText('v', px + state.v*15, py - 30);
+            }
+
+            // Draw Forces
+            if (showForces.checked) {
+                let fColor = '#ef4444';
+                // Poids (P)
+                drawArrow(ctx, px, py + 15, px, py + 15 + P*5, fColor, 2);
+                ctx.fillStyle = fColor; ctx.fillText('P', px + 10, py + 15 + P*2.5);
+
+                // Réaction (R)
+                let R_norm = P; // Assuming horizontal track
+                drawArrow(ctx, px, py + 15, px, py + 15 - R_norm*5, fColor, 2);
+                ctx.fillText('R', px + 10, py + 15 - R_norm*2.5);
+
+                // F_ext
+                if (Math.abs(state.f_ext) > 0) {
+                    drawArrow(ctx, px, py + 15, px + state.f_ext*10, py + 15, fColor, 3);
+                    ctx.fillText('F_ext', px + state.f_ext*5, py + 5);
+                }
+
+                // F_fric
+                if (Math.abs(state.f_fric) > 0) {
+                    drawArrow(ctx, px, py + 25, px + state.f_fric*10, py + 25, fColor, 3);
+                    ctx.fillText('f', px + state.f_fric*5, py + 40);
+                }
+            }
+        }
+
+        btnPlay.addEventListener('click', () => {
+            state.active = !state.active;
+            btnPlay.textContent = state.active ? "Pause" : "Lancer le mobile";
+            if (state.active) {
+                lastTime = 0;
+                requestAnimationFrame(loop);
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            state.active = false;
+            state.x = 0;
+            state.t = 0;
+            state.marks = [];
+            btnPlay.textContent = "Lancer le mobile";
+            updateInputs();
+        });
+
+        let markTimer = 0;
+        let lastTimeLoop = 0;
+
+        function loop(timestamp) {
+            if (!state.active) return;
+            if (!lastTimeLoop) lastTimeLoop = timestamp;
+            let dt = (timestamp - lastTimeLoop) / 1000;
+            lastTimeLoop = timestamp;
+
+            if(dt > 0.1) dt = 0.1;
+
+            state.f_ext = parseFloat(fextInput.value); // dynamic adjust
+            calculateForces();
+
+            // a = sumF / m
+            let a = state.sumF / mass;
+
+            state.v += a * dt;
+
+            // Stop if friction killed velocity and no external force overrides static friction
+            if (!blowerToggle.checked && Math.abs(state.v) < 0.05 && Math.abs(state.f_ext) <= 0.4*P) {
+                state.v = 0;
+            }
+
+            state.x += state.v * dt;
+            state.t += dt;
+
+            // Chronophotography (mark every 0.5s)
+            markTimer += dt;
+            if (markTimer >= 0.5) {
+                state.marks.push({x: state.x, t: state.t});
+                markTimer = 0;
+            }
+
+            updateStats();
+            drawStatic();
+
+            // Stop if off screen bounds (e.g. +/- 10 meters)
+            if (Math.abs(state.x) > 10) {
+                state.active = false;
+                btnPlay.textContent = "Terminé (Hors limites)";
+            } else {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        // Init
+        resize();
+        updateInputs();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>
