@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Effet Doppler</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #8b5cf6; /* Purple for waves/doppler */
+            --accent-glow: 0 0 15px rgba(139, 92, 246, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --src-color: #ef4444;
+            --obs-color: #10b981;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #7e22ce;
+            --accent-glow: 0 0 15px rgba(126, 34, 206, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px; overflow:hidden;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; font-family: 'Fira Code', monospace; }
+        .math-eq { color: var(--accent-color); font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .btn-group { display: flex; gap: 8px; margin-top: auto; }
+        button.action-btn { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-play { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Onde Sonore Émise par un Mobile</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Effet Doppler</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Terminale Spécialité</div>
+
+            <div class="control-group">
+                <label>Vitesse de la source ($v_S$) <span id="vs-val">170 m/s</span></label>
+                <input type="range" id="vs-input" min="0" max="680" step="10" value="170">
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:gray;">
+                    <span>Repos</span>
+                    <span>Mach 1 (340)</span>
+                    <span>Mach 2</span>
+                </div>
+            </div>
+
+            <div class="control-group" style="margin-top:10px;">
+                <label>Fréquence émise ($f_{em}$) <span id="f-val">500 Hz</span></label>
+                <input type="range" id="f-input" min="200" max="1000" step="50" value="500">
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div class="math-eq" id="eq-main">$f_{obs} = f_{em} \frac{v}{v - v_s}$ (Approche)</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Célérité Onde ($v$) :</span> <span style="color:#38bdf8; font-weight:bold;">340 m/s</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Nombre de Mach ($M$) :</span> <span id="stat-mach" style="color:var(--accent-color); font-weight:bold;">0.5</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Fréq. Observateur (Devant) :</span> <span id="stat-f-avant" style="color:#10b981; font-weight:bold;">1000 Hz</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Fréq. Observateur (Derrière) :</span> <span id="stat-f-arriere" style="color:#ef4444; font-weight:bold;">333 Hz</span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div id="stat-desc" style="color:var(--text-muted); font-family:sans-serif; text-align:center; font-size:0.75rem;">
+                    La longueur d'onde est compressée à l'avant (son aigu) et étirée à l'arrière (son grave).
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button id="btn-play" class="action-btn btn-play">Lancer Source</button>
+                <button id="btn-reset" class="action-btn" style="color:#ef4444;">RAZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const vsInput = document.getElementById('vs-input');
+        const fInput = document.getElementById('f-input');
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Physics
+        const V_WAVE = 340; // m/s
+        let v_source = 170; // m/s
+        let f_em = 500; // Hz
+
+        let state = {
+            active: false,
+            x: 0,
+            t: 0,
+            waveFronts: [] // {x_origin, time_emitted}
+        };
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            if(!state.active) drawStatic();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            if(!state.active) drawStatic();
+        });
+
+        function updatePhysics() {
+            v_source = parseFloat(vsInput.value);
+            f_em = parseFloat(fInput.value);
+
+            document.getElementById('vs-val').textContent = v_source + ' m/s';
+            document.getElementById('f-val').textContent = f_em + ' Hz';
+
+            let M = v_source / V_WAVE;
+            document.getElementById('stat-mach').textContent = M.toFixed(2);
+
+            let f_avant = v_source >= V_WAVE ? Infinity : f_em * (V_WAVE / (V_WAVE - v_source));
+            let f_arriere = f_em * (V_WAVE / (V_WAVE + v_source));
+
+            document.getElementById('stat-f-avant').textContent = f_avant === Infinity ? 'Onde de Choc' : Math.round(f_avant) + ' Hz';
+            document.getElementById('stat-f-arriere').textContent = Math.round(f_arriere) + ' Hz';
+
+            let desc = document.getElementById('stat-desc');
+            if (M < 1) {
+                desc.textContent = "La longueur d'onde est compressée à l'avant (son aigu) et étirée à l'arrière (son grave).";
+                desc.style.color = 'var(--text-muted)';
+            } else if (M === 1) {
+                desc.textContent = "Mur du son : les fronts d'onde s'accumulent devant la source.";
+                desc.style.color = '#f59e0b';
+            } else {
+                desc.textContent = "Régime supersonique : Création d'un Cône de Mach (onde de choc).";
+                desc.style.color = '#ef4444';
+            }
+
+            if(!state.active) drawStatic();
+        }
+
+        vsInput.addEventListener('input', updatePhysics);
+        fInput.addEventListener('input', updatePhysics);
+
+        function drawStatic() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            const cy = ch / 2;
+            // Visual Scale: 1 meter = 0.5 pixel to fit on screen
+            const scale = 0.5;
+
+            // Draw wave fronts
+            ctx.strokeStyle = isDark ? 'rgba(139, 92, 246, 0.6)' : 'rgba(126, 34, 206, 0.6)';
+            ctx.lineWidth = 1.5;
+
+            for (let i=0; i<state.waveFronts.length; i++) {
+                let wf = state.waveFronts[i];
+                let time_lived = state.t - wf.time_emitted;
+                let radius = time_lived * V_WAVE * scale;
+
+                // Opacity fades over time
+                let alpha = Math.max(0, 1 - (time_lived / 3.0)); // lives for 3 seconds visually
+                ctx.strokeStyle = isDark ? `rgba(139, 92, 246, ${alpha})` : `rgba(126, 34, 206, ${alpha})`;
+
+                ctx.beginPath();
+                ctx.arc(wf.x_origin * scale, cy, radius, 0, Math.PI*2);
+                ctx.stroke();
+            }
+
+            // Draw Source
+            let sx = state.x * scale;
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath(); ctx.arc(sx, cy, 6, 0, Math.PI*2); ctx.fill();
+
+            // Draw Mach Cone if M > 1
+            if (v_source > V_WAVE && state.waveFronts.length > 1) {
+                // The cone starts from current source pos and goes back tangent to the waves.
+                // Angle sin(theta) = v_wave / v_source
+                let M = v_source / V_WAVE;
+                let theta = Math.asin(1 / M);
+
+                ctx.beginPath();
+                ctx.moveTo(sx, cy);
+                // Draw line backward at angle theta
+                let coneLen = 800; // arbitrary long line
+                ctx.lineTo(sx - coneLen * Math.cos(theta), cy - coneLen * Math.sin(theta));
+                ctx.moveTo(sx, cy);
+                ctx.lineTo(sx - coneLen * Math.cos(theta), cy + coneLen * Math.sin(theta));
+
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Glow
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+                ctx.beginPath();
+                ctx.moveTo(sx, cy);
+                ctx.lineTo(sx - coneLen * Math.cos(theta), cy - coneLen * Math.sin(theta));
+                ctx.lineTo(sx - coneLen * Math.cos(theta), cy + coneLen * Math.sin(theta));
+                ctx.fill();
+            }
+
+            // Draw Observers
+            let obsAvantX = Math.min(cw - 100, sx + 200); // just visual placement
+            let obsArrX = Math.max(100, sx - 200);
+
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath(); ctx.arc(cw - 50, cy, 5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#f8fafc'; ctx.font='10px sans-serif'; ctx.fillText('Obs. Avant', cw - 50, cy - 10);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath(); ctx.arc(50, cy, 5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#f8fafc'; ctx.fillText('Obs. Arrière', 50, cy - 10);
+        }
+
+        let lastTime = 0;
+        let emitTimer = 0;
+
+        btnPlay.addEventListener('click', () => {
+            if(!state.active && state.x > cw/0.5) {
+                // If it went off screen, reset
+                state.x = 0;
+                state.t = 0;
+                state.waveFronts = [];
+            }
+            state.active = !state.active;
+            btnPlay.textContent = state.active ? "Pause" : "Lancer Source";
+            if (state.active) {
+                lastTime = 0;
+                requestAnimationFrame(loop);
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            state.active = false;
+            state.x = 50 / 0.5; // Start a bit inside
+            state.t = 0;
+            state.waveFronts = [];
+            btnPlay.textContent = "Lancer Source";
+            drawStatic();
+        });
+
+        function loop(timestamp) {
+            if (!state.active) return;
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            // Visual slow down factor
+            let simDt = dt * 2.0;
+
+            state.x += v_source * simDt;
+            state.t += simDt;
+
+            // Emit wave fronts
+            // We can't draw 500 waves per second. We draw visual wavefronts (e.g. 5 per second)
+            // Visual emission frequency:
+            let f_vis = 5;
+            emitTimer += simDt;
+            if (emitTimer >= 1/f_vis) {
+                state.waveFronts.push({x_origin: state.x, time_emitted: state.t});
+                emitTimer = 0;
+            }
+
+            // Cleanup old wavefronts
+            state.waveFronts = state.waveFronts.filter(wf => state.t - wf.time_emitted < 4.0);
+
+            drawStatic();
+
+            if (state.x * 0.5 > cw + 200) {
+                state.active = false;
+                btnPlay.textContent = "Terminé";
+            } else {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        // Init
+        state.x = 100; // starting pos
+        resize();
+        updatePhysics();
+        drawStatic();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

@@ -224,20 +224,27 @@
             state.sumF = state.f_ext + state.f_fric;
         }
 
+        let lastEqStr = "";
         function updateStats() {
             statV.textContent = state.v.toFixed(2) + ' m/s';
             statSumF.textContent = state.sumF.toFixed(1) + ' N';
 
+            let newEqStr = "";
             if (Math.abs(state.sumF) < 0.1) {
-                eqMain.innerHTML = "$\\sum \\vec{F} = \\vec{0} \\iff \\vec{v} = \\vec{cst}$";
+                newEqStr = "$\\sum \\vec{F} = \\vec{0} \\iff \\vec{v} = \\vec{cst}$";
                 statDesc.innerHTML = Math.abs(state.v) < 0.1 ? "Repos. Les forces se compensent." : "Mouvement Rectiligne Uniforme (MRU). Les forces se compensent.";
                 statSumF.style.color = '#10b981';
             } else {
-                eqMain.innerHTML = "$\\sum \\vec{F} \\neq \\vec{0} \\iff \\vec{v} \\neq \\vec{cst}$";
+                newEqStr = "$\\sum \\vec{F} \\neq \\vec{0} \\iff \\vec{v} \\neq \\vec{cst}$";
                 statDesc.innerHTML = state.sumF * state.v > 0 ? "Mouvement accéléré." : "Mouvement ralenti (freinage).";
                 statSumF.style.color = '#ef4444';
             }
-            if(window.MathJax) MathJax.typesetPromise([eqMain]);
+
+            if (newEqStr !== lastEqStr) {
+                eqMain.innerHTML = newEqStr;
+                lastEqStr = newEqStr;
+                if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([eqMain]).catch(()=>{});
+            }
         }
 
         function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 3) {
