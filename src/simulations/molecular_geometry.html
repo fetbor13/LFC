@@ -46,7 +46,7 @@
         canvas { display: block; width: 100%; height: 100%; cursor: grab; }
         canvas:active { cursor: grabbing; }
 
-        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; }
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
         h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
 
         .control-group { display: flex; flex-direction: column; gap: 8px; }
@@ -58,6 +58,8 @@
         #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
         .badge { display: inline-block; padding: 4px 8px; background: rgba(14, 165, 233, 0.2); border: 1px solid var(--accent-color); border-radius: 4px; font-family: monospace; font-weight: bold; color: var(--accent-color); }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -333,33 +335,43 @@
 
             // Draw Atoms
             renderAtoms.forEach(a => {
+                let pScaleSafe = Math.max(0.01, a.pScale); // Prevent zero or negative scale
+
                 if (a.type === 'LP') {
                     // Draw lone pair lob
                     ctx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)';
-                    ctx.beginPath(); ctx.arc(a.px, a.py, 15 * a.pScale, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(a.px-4*a.pScale, a.py, 2*a.pScale, 0, Math.PI*2); ctx.fillStyle=isDark?'#fff':'#000'; ctx.fill();
-                    ctx.beginPath(); ctx.arc(a.px+4*a.pScale, a.py, 2*a.pScale, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(a.px, a.py, 15 * pScaleSafe, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(a.px-4*pScaleSafe, a.py, 2*pScaleSafe, 0, Math.PI*2); ctx.fillStyle=isDark?'#fff':'#000'; ctx.fill();
+                    ctx.beginPath(); ctx.arc(a.px+4*pScaleSafe, a.py, 2*pScaleSafe, 0, Math.PI*2); ctx.fill();
                     return;
                 }
 
                 let colorVar = `--atom-${a.type.toLowerCase()}`;
                 let color = getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim();
 
-                let radius = a.r * a.pScale;
+                let radius = Math.max(0.1, a.r * pScaleSafe);
 
                 // Sphere shading
                 ctx.beginPath();
                 ctx.arc(a.px, a.py, radius, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(a.px - radius*0.3, a.py - radius*0.3, radius*0.1, a.px, a.py, radius);
-                grad.addColorStop(0, '#ffffff'); // highlight
-                grad.addColorStop(0.4, color);
-                grad.addColorStop(1, isDark ? '#000' : '#888'); // shadow
-                ctx.fillStyle = grad;
+
+                // Ensure valid gradient parameters
+                try {
+                    let grad = ctx.createRadialGradient(a.px - radius*0.3, a.py - radius*0.3, radius*0.1, a.px, a.py, radius);
+                    grad.addColorStop(0, '#ffffff'); // highlight
+                    grad.addColorStop(0.4, color);
+                    grad.addColorStop(1, isDark ? '#000' : '#888'); // shadow
+                    ctx.fillStyle = grad;
+                } catch (e) {
+                    // Fallback if gradient fails
+                    ctx.fillStyle = color;
+                }
                 ctx.fill();
 
                 // Atom label
                 ctx.fillStyle = (a.type === 'H' || (!isDark && a.type === 'C')) ? '#000' : '#fff';
-                ctx.font = `bold ${14 * a.pScale}px sans-serif`;
+                let fontSize = Math.max(8, 14 * pScaleSafe);
+                ctx.font = `bold ${fontSize}px sans-serif`;
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(a.type, a.px, a.py);
             });
