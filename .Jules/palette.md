@@ -1,0 +1,3 @@
+## 2024-05-25 - Improved Modal Accessibility and Inputs
+**Learning:** This application uses custom modals built with HTML/CSS that were missing standard ARIA dialog attributes (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`), which meant screen readers might not identify them or trap focus correctly. Additionally, many form inputs rely entirely on `placeholder` text as their visible label without any `aria-label` or `<label>` attached.
+**Action:** When implementing new modals or inputs across the site, ALWAYS add the corresponding `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` attributes to custom modals, and ensure inputs that lack visible `<label>`s have an explicit `aria-label` to provide context for screen reader users.
