@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Collège: Transformation Chimique & Lavoisier</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #ec4899; /* Pink */
+            --accent-glow: 0 0 15px rgba(236, 72, 153, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --c-col: #475569; /* Carbon grey */
+            --h-col: #f8fafc; /* Hydrogen white */
+            --o-col: #ef4444; /* Oxygen red */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+
+            --c-col: #1e293b;
+            --h-col: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px; overflow:hidden;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; font-family: 'Fira Code', monospace; }
+        .math-eq { color: var(--accent-color); font-weight: bold; text-align: center; font-size: 1.1rem; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        button.action-btn { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-play { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+        .btn-danger { color: #ef4444 !important; border-color: rgba(239,68,68,0.3) !important; }
+
+        .balance-display { background: #cbd5e1; border: 2px solid #64748b; border-radius: 6px; padding: 10px; margin-top: 5px; text-align: center; }
+        [data-theme="dark"] .balance-display { background: #1e293b; border-color: #475569; }
+        .balance-val { font-family: 'Fira Code', monospace; font-size: 1.8rem; font-weight: bold; color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Enceinte fermée (Microscopique)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Transformation Chimique</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Loi de Lavoisier (4ème/3ème)</div>
+
+            <div class="control-group">
+                <label>Réaction étudiée</label>
+                <select id="reaction-select">
+                    <option value="ch4_combustion">Combustion du Méthane (CH₄ + 2O₂ → CO₂ + 2H₂O)</option>
+                </select>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Masse Totale (Balance)</div>
+                <div class="balance-display">
+                    <span class="balance-val" id="mass-val">80.0</span> <span style="color:var(--text-muted); font-weight:bold;">g</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:5px; font-family:sans-serif;">
+                    Dans une enceinte fermée, la masse totale du système ne varie pas.
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px; flex:1;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Bilan Atomique</div>
+
+                <div style="display:flex; justify-content:space-around; margin-top:10px;">
+                    <div style="text-align:center;">
+                        <div style="color:var(--c-col); font-size:1.5rem; font-weight:bold;">●</div>
+                        <div>Carbone</div>
+                        <div id="count-c" style="font-weight:bold;">1</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="color:var(--o-col); font-size:1.5rem; font-weight:bold;">●</div>
+                        <div>Oxygène</div>
+                        <div id="count-o" style="font-weight:bold;">4</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="color:var(--h-col); font-size:1.5rem; font-weight:bold;">●</div>
+                        <div>Hydrogène</div>
+                        <div id="count-h" style="font-weight:bold;">4</div>
+                    </div>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 10px 0;">
+                <div id="stat-desc" style="color:var(--text-muted); font-family:sans-serif; text-align:justify; font-size:0.8rem;">
+                    <strong>Avant la réaction :</strong> Les atomes forment des molécules de réactifs (CH₄ et O₂). <br>
+                    <strong>Après la réaction :</strong> Ces mêmes atomes se sont réarrangés pour former les produits (CO₂ et H₂O).
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-play" class="action-btn btn-play" style="flex:2;">Déclencher l'étincelle</button>
+                <button id="btn-reset" class="action-btn btn-danger" style="flex:1;">RAZ</button>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:5px; font-style:italic; font-family:sans-serif;">
+                "Rien ne se perd, rien ne se crée, tout se transforme." - A. Lavoisier
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+        const massVal = document.getElementById('mass-val');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Atom Data
+        // CH4 + 2 O2 -> CO2 + 2 H2O
+        // 1 C, 4 H, 4 O
+        let atoms = [];
+        let bonds = [];
+        let state = 'reactants'; // reactants, breaking, forming, products
+        let animTimer = 0;
+        let isRunning = false;
+        let lastTime = 0;
+
+        function initScene() {
+            atoms = [];
+            bonds = [];
+
+            // Set 1: CH4
+            let cx1 = cw/3; let cy1 = ch/2;
+            let aC = {id: 'c1', type: 'C', r: 18, x: cx1, y: cy1, tx: cx1, ty: cy1};
+            let aH1 = {id: 'h1', type: 'H', r: 10, x: cx1, y: cy1-30, tx: cx1, ty: cy1-30};
+            let aH2 = {id: 'h2', type: 'H', r: 10, x: cx1+30, y: cy1, tx: cx1+30, ty: cy1};
+            let aH3 = {id: 'h3', type: 'H', r: 10, x: cx1, y: cy1+30, tx: cx1, ty: cy1+30};
+            let aH4 = {id: 'h4', type: 'H', r: 10, x: cx1-30, y: cy1, tx: cx1-30, ty: cy1};
+            atoms.push(aC, aH1, aH2, aH3, aH4);
+            bonds.push({a1: aC, a2: aH1}, {a1: aC, a2: aH2}, {a1: aC, a2: aH3}, {a1: aC, a2: aH4});
+
+            // Set 2: O2 (1)
+            let cx2 = 2*cw/3; let cy2 = ch/3;
+            let aO1 = {id: 'o1', type: 'O', r: 15, x: cx2-15, y: cy2, tx: cx2-15, ty: cy2};
+            let aO2 = {id: 'o2', type: 'O', r: 15, x: cx2+15, y: cy2, tx: cx2+15, ty: cy2};
+            atoms.push(aO1, aO2);
+            bonds.push({a1: aO1, a2: aO2, double: true});
+
+            // Set 3: O2 (2)
+            let cx3 = 2*cw/3; let cy3 = 2*ch/3;
+            let aO3 = {id: 'o3', type: 'O', r: 15, x: cx3-15, y: cy3, tx: cx3-15, ty: cy3};
+            let aO4 = {id: 'o4', type: 'O', r: 15, x: cx3+15, y: cy3, tx: cx3+15, ty: cy3};
+            atoms.push(aO3, aO4);
+            bonds.push({a1: aO3, a2: aO4, double: true});
+
+            state = 'reactants';
+            animTimer = 0;
+            massVal.textContent = "80.0"; // 16g CH4 + 64g O2 -> 80g
+
+            drawScene();
+        }
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            if(!isRunning) initScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        btnReset.addEventListener('click', () => {
+            isRunning = false;
+            btnPlay.textContent = "Déclencher l'étincelle";
+            initScene();
+        });
+
+        btnPlay.addEventListener('click', () => {
+            if (state === 'reactants') {
+                isRunning = true;
+                state = 'breaking';
+                animTimer = 0;
+                lastTime = 0;
+
+                // Add an erratic visual effect on the mass reading to show it remains 80.0 overall
+                let massInterval = setInterval(() => {
+                    let noise = (Math.random() - 0.5) * 0.4;
+                    massVal.textContent = (80.0 + noise).toFixed(1);
+                }, 100);
+                setTimeout(() => { clearInterval(massInterval); massVal.textContent = "80.0"; }, 3000);
+
+                requestAnimationFrame(loop);
+            }
+        });
+
+        function getAtomColor(type) {
+            let colorVar = `--${type.toLowerCase()}-col`;
+            return getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim();
+        }
+
+        function drawScene() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Draw Beaker / Container
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)';
+            ctx.beginPath(); ctx.roundRect(40, 40, cw-80, ch-80, 20); ctx.fill();
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
+            ctx.lineWidth = 4; ctx.stroke();
+
+            // Spark effect
+            if (state === 'breaking' && animTimer < 0.5) {
+                ctx.beginPath(); ctx.arc(cw/2, ch/2, 100 * animTimer*2, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(252, 211, 77, ${1 - animTimer*2})`; // yellow flash
+                ctx.fill();
+            }
+
+            // Draw Bonds
+            ctx.strokeStyle = isDark ? '#94a3b8' : '#475569';
+            bonds.forEach(b => {
+                // If breaking, fade out bonds
+                let alpha = 1.0;
+                if (state === 'breaking') alpha = Math.max(0, 1 - animTimer);
+                if (state === 'forming') alpha = Math.min(1, animTimer); // Fade in new bonds
+
+                ctx.globalAlpha = alpha;
+
+                if (b.double) {
+                    let dx = b.a2.x - b.a1.x; let dy = b.a2.y - b.a1.y;
+                    let len = Math.hypot(dx, dy);
+                    let nx = -dy/len * 4; let ny = dx/len * 4;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(b.a1.x + nx, b.a1.y + ny); ctx.lineTo(b.a2.x + nx, b.a2.y + ny); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(b.a1.x - nx, b.a1.y - ny); ctx.lineTo(b.a2.x - nx, b.a2.y - ny); ctx.stroke();
+                } else {
+                    ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(b.a1.x, b.a1.y); ctx.lineTo(b.a2.x, b.a2.y); ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+            });
+
+            // Draw Atoms
+            atoms.forEach(a => {
+                let color = getAtomColor(a.type);
+
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, a.r, 0, Math.PI*2);
+
+                let grad = ctx.createRadialGradient(a.x - a.r*0.3, a.y - a.r*0.3, a.r*0.1, a.x, a.y, a.r);
+                grad.addColorStop(0, '#ffffff');
+                grad.addColorStop(0.4, color);
+                grad.addColorStop(1, isDark ? '#000' : '#888');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.fillStyle = (a.type === 'H' || (!isDark && a.type === 'C')) ? '#000' : '#fff';
+                ctx.font = `bold ${12}px sans-serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(a.type, a.x, a.y);
+            });
+        }
+
+        function loop(timestamp) {
+            if (!isRunning) return;
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            animTimer += dt * 0.8; // animation speed
+
+            if (state === 'breaking') {
+                // Atoms scatter randomly slightly
+                atoms.forEach(a => {
+                    a.x += (Math.random()-0.5) * 4;
+                    a.y += (Math.random()-0.5) * 4;
+                });
+
+                if (animTimer > 1.5) {
+                    state = 'forming';
+                    animTimer = 0;
+
+                    // Reassign targets for Products
+                    // CO2
+                    let cx1 = cw/2; let cy1 = ch/3;
+                    let aC = atoms.find(a=>a.id==='c1');
+                    let aO1 = atoms.find(a=>a.id==='o1');
+                    let aO2 = atoms.find(a=>a.id==='o2');
+
+                    aC.tx = cx1; aC.ty = cy1;
+                    aO1.tx = cx1 - 35; aO1.ty = cy1;
+                    aO2.tx = cx1 + 35; aO2.ty = cy1;
+
+                    // H2O (1)
+                    let cx2 = cw/3; let cy2 = 2*ch/3;
+                    let aO3 = atoms.find(a=>a.id==='o3');
+                    let aH1 = atoms.find(a=>a.id==='h1');
+                    let aH2 = atoms.find(a=>a.id==='h2');
+
+                    aO3.tx = cx2; aO3.ty = cy2;
+                    aH1.tx = cx2 - 20; aH1.ty = cy2 + 20;
+                    aH2.tx = cx2 + 20; aH2.ty = cy2 + 20;
+
+                    // H2O (2)
+                    let cx3 = 2*cw/3; let cy3 = 2*ch/3;
+                    let aO4 = atoms.find(a=>a.id==='o4');
+                    let aH3 = atoms.find(a=>a.id==='h3');
+                    let aH4 = atoms.find(a=>a.id==='h4');
+
+                    aO4.tx = cx3; aO4.ty = cy3;
+                    aH3.tx = cx3 - 20; aH3.ty = cy3 + 20;
+                    aH4.tx = cx3 + 20; aH4.ty = cy3 + 20;
+
+                    // New bonds
+                    bonds = [
+                        {a1: aC, a2: aO1, double: true}, {a1: aC, a2: aO2, double: true}, // CO2
+                        {a1: aO3, a2: aH1}, {a1: aO3, a2: aH2}, // H2O 1
+                        {a1: aO4, a2: aH3}, {a1: aO4, a2: aH4}  // H2O 2
+                    ];
+                }
+            } else if (state === 'forming') {
+                // Atoms move to target positions
+                atoms.forEach(a => {
+                    a.x += (a.tx - a.x) * dt * 2;
+                    a.y += (a.ty - a.y) * dt * 2;
+                });
+
+                if (animTimer > 2.0) {
+                    state = 'products';
+                    isRunning = false;
+                    btnPlay.textContent = "Terminé";
+                }
+            }
+
+            drawScene();
+
+            if (isRunning) requestAnimationFrame(loop);
+        }
+
+        resize();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>
