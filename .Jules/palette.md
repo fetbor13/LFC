@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing ARIA Labels on Core Navigation and Modals
+**Learning:** Found a consistent pattern across multiple HTML templates (`index.html`, `index_college.html`, `index2F.html`) where icon-only action buttons like "close modal" (`X`), "theme toggle" (`🌙`), and window controls lacked explicit `aria-label` attributes, relying entirely on visual indicators which hurts accessibility for screen readers.
+**Action:** Always verify that icon-only buttons (`.close`, `.theme-btn`, `.win-close`, etc.) include descriptive `aria-label`s when introducing new interactive components or templates to ensure parity with standard accessibility practices.
