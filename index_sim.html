@@ -893,11 +893,33 @@
             requestAnimationFrame(drawOrbital);
         }
 
+        // --- URL Parameter Integration ---
+        function handleUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const simId = params.get('sim');
+            const searchQ = params.get('search');
+
+            if (simId) {
+                const sim = SIMULATIONS.find(s => s.id === simId);
+                if (sim) {
+                    openSimulation(sim);
+                }
+            } else if (searchQ) {
+                const searchInput = document.getElementById('search-input');
+                searchInput.value = searchQ;
+                // Dispatch input event to trigger the existing filter logic
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        }
+
         // --- INIT ---
         resizeCanvas();
         buildOrbitalNodes();
         renderList();
         requestAnimationFrame(drawOrbital);
+
+        // Handle external linking after initial render
+        setTimeout(handleUrlParams, 100);
 
     </script>
 </body>
