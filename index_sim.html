@@ -300,6 +300,44 @@
             display: none; /* Only show when collapsed */
         }
     </style>
+    <!-- MathJax for rendering formulas in tooltips -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' },
+            startup: {
+                typeset: false,
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        window.mathJaxReady = true;
+                        if (typeof window.triggerMathJax === 'function') {
+                            window.triggerMathJax();
+                        }
+                    });
+                }
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        let mathJaxQueue = Promise.resolve();
+        window.renderMath = function(elements) {
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                mathJaxQueue = mathJaxQueue.then(() => {
+                    MathJax.typesetClear(elements);
+                    return MathJax.typesetPromise(elements);
+                }).catch(err => console.error(err));
+            }
+        };
+
+        window.triggerMathJax = function() {
+            const listContainer = document.getElementById('sim-list');
+            const winTitle = document.getElementById('win-title-text');
+            const ttFormula = document.getElementById('tt-formula');
+            window.renderMath([listContainer, winTitle, ttFormula]);
+        };
+    </script>
 </head>
 <body>
 
@@ -357,7 +395,7 @@
         <div class="tip-level" id="tt-level">Terminale</div>
         <div class="tip-title" id="tt-title">Titre de la simu</div>
         <div class="tip-desc" id="tt-desc">Description courte.</div>
-        <div class="tip-formula" id="tt-formula">F = m*a</div>
+        <div class="tip-formula" id="tt-formula">\( F = m \cdot a \)</div>
     </div>
 
     <!-- SCRIPT DATA & LOGIC -->
@@ -552,6 +590,7 @@
                 el.innerHTML = `
                     <div class="item-title">${sim.title}</div>
                     <div class="item-desc">${sim.desc}</div>
+                    <div class="item-formula" style="margin-top: 6px; color: var(--item-color);">\\(${sim.formula}\\)</div>
                 `;
 
                 el.addEventListener('click', () => {
@@ -565,7 +604,18 @@
 
                 listContainer.appendChild(el);
             });
+
+            // Typeset formulas in the list
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([listContainer]).catch(err => console.error(err));
+            }
         }
+
+        window.triggerMathJax = function() {
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([listContainer, winTitle, ttFormula]).catch(err => console.error(err));
+            }
+        };
 
         filterBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -611,7 +661,10 @@
         const winHeader = document.getElementById('win-header');
 
         function openSimulation(sim) {
-            winTitle.textContent = sim.title;
+            winTitle.innerHTML = sim.title + ' <span style="font-size: 0.8em; margin-left: 15px; font-weight: normal; color: rgba(255,255,255,0.6);">\\(' + sim.formula + '\\)</span>';
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([winTitle]).catch(err => console.error(err));
+            }
             winIcon.style.color = sim.color;
             winFrame.style.setProperty('--win-color', sim.color);
             winFrame.style.setProperty('--win-glow', `rgba(${sim.rgb}, 0.3)`);
@@ -774,7 +827,12 @@
                     ttLevel.style.color = n.sim.color;
                     ttTitle.textContent = n.sim.title;
                     ttDesc.textContent = n.sim.desc;
-                    ttFormula.textContent = n.sim.formula;
+
+                    // Wrap formula in MathJax syntax and render
+                    ttFormula.innerHTML = '\\(' + n.sim.formula + '\\)';
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        MathJax.typesetPromise([ttFormula]).catch(err => console.error(err));
+                    }
 
                     tooltip.style.setProperty('--tip-color', n.sim.color);
                     tooltip.style.setProperty('--tip-rgb', n.sim.rgb);
