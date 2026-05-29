@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility Enhancements for Modals and Placeholder Inputs
+**Learning:** In this project, custom modals are frequently created using `div` elements, and inputs often rely only on placeholders without visible `label` elements. This creates accessibility issues as screen readers won't recognize the modals correctly or provide context for the inputs.
+**Action:** When implementing or fixing custom modals, always add `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` referencing the modal title. For inputs without visible labels, use `aria-label` to provide the necessary context for screen readers.
