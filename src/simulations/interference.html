@@ -120,6 +120,9 @@
                 <input type="range" id="d-dist" min="0.5" max="5.0" step="0.1" value="2.0">
             </div>
 
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button id="btn-play" style="flex:1; background:#22c55e; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold; box-shadow:0 0 10px rgba(34,197,94,0.5);">▶ Animer Onde</button>
+            </div>
             <div class="stats-box" style="margin-top:20px; flex:1;">
                 <div class="math-eq">$$I(\theta) = I_0 \cdot \text{sinc}^2\left(\frac{\pi a \sin\theta}{\lambda}\right) \cdot \cos^2\left(\frac{\pi b \sin\theta}{\lambda}\right)$$</div>
                 <hr style="border-color: var(--glass-border); margin: 5px 0;">
@@ -167,6 +170,7 @@
         let lastMouseX = 0;
         let lastMouseY = 0;
         let time = 0;
+        let isRunning = false;
 
         function resize() {
             w3D = c3D.parentElement.clientWidth; h3D = c3D.parentElement.clientHeight;
@@ -363,7 +367,7 @@
             let pSlit2 = project3D(rotate3D(isDouble ? b/2 : 0, 0, zSlits));
 
             ctx3D.strokeStyle = `rgba(${r_col},${g_col},${b_col}, 0.5)`;
-            ctx3D.lineWidth = 4;
+            ctx3D.lineWidth = 2;
             ctx3D.beginPath(); ctx3D.moveTo(pStart.x, pStart.y); ctx3D.lineTo(pSlit1.x, pSlit1.y); ctx3D.stroke();
             if(isDouble) { ctx3D.beginPath(); ctx3D.moveTo(pStart.x, pStart.y); ctx3D.lineTo(pSlit2.x, pSlit2.y); ctx3D.stroke(); }
 
@@ -524,7 +528,7 @@
 
         function loop(timestamp) {
             let dt = 0.016;
-            time += dt;
+            if (isRunning) time += dt;
 
             render3D();
 
@@ -535,6 +539,13 @@
         resize();
         updateParams();
         render2D(); // 2D only updates on input change for performance
+
+        const btnPlay = document.getElementById('btn-play');
+        btnPlay.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnPlay.innerHTML = isRunning ? '⏸ Suspendre' : '▶ Animer Onde';
+            btnPlay.style.background = isRunning ? '#f59e0b' : '#22c55e';
+        });
 
         // Listeners for 2D update
         [lambdaInput, aInput, bInput, dInput, setupType].forEach(el => el.addEventListener('input', render2D));

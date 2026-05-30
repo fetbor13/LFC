@@ -325,6 +325,7 @@
                 <div>Veq théo: <span id="veq-theo">20.00</span> mL</div>
             </div>
 
+            <button id="btn-play" style="background:#22c55e; box-shadow:0 0 10px rgba(34,197,94,0.7); margin-bottom: 5px;">▶ Démarrer Titrage</button>
             <button id="btn-reset" style="background:#ef4444; box-shadow:0 0 10px rgba(239,68,68,0.7);">Vider le Bécher</button>
         </div>
 
@@ -410,8 +411,25 @@
         cbInput.addEventListener('input', updateInputs);
         indicator.addEventListener('change', drawSim);
 
+        const btnPlay = document.getElementById('btn-play');
+        btnPlay.addEventListener('click', () => {
+            isTitrating = !isTitrating;
+            valveSwitch.checked = isTitrating;
+            btnPlay.innerHTML = isTitrating ? "⏸ Suspendre Titrage" : "▶ Démarrer Titrage";
+            btnPlay.style.background = isTitrating ? "#f59e0b" : "#22c55e";
+            if (isTitrating && lastTime === 0) {
+                lastTime = performance.now();
+                requestAnimationFrame(loop);
+            } else if (isTitrating) {
+                lastTime = performance.now();
+                requestAnimationFrame(loop);
+            }
+        });
+
         valveSwitch.addEventListener('change', (e) => {
             isTitrating = e.target.checked;
+            btnPlay.innerHTML = isTitrating ? "⏸ Suspendre Titrage" : "▶ Démarrer Titrage";
+            btnPlay.style.background = isTitrating ? "#f59e0b" : "#22c55e";
             if (isTitrating && lastTime === 0) {
                 lastTime = performance.now();
                 requestAnimationFrame(loop);
@@ -425,6 +443,10 @@
             dataPoints = [];
             valveSwitch.checked = false;
             isTitrating = false;
+            if (typeof btnPlay !== 'undefined' && btnPlay) {
+                btnPlay.innerHTML = "▶ Démarrer Titrage";
+                btnPlay.style.background = "#22c55e";
+            }
             lastTime = 0;
             isDropping = false;
             updateVeqTheo();
@@ -604,7 +626,7 @@
             ctxSim.lineTo(beakerX + beakerW, beakerY + beakerH);
             ctxSim.lineTo(beakerX + beakerW, beakerY);
             ctxSim.strokeStyle = strokeCol;
-            ctxSim.lineWidth = 3;
+            ctxSim.lineWidth = 2;
             ctxSim.stroke();
             ctxSim.fillStyle = glassCol;
             ctxSim.fill();
@@ -684,7 +706,7 @@
             ctxSim.fillRect(cx + 80, beakerY - 160, 60, 40);
             ctxSim.strokeRect(cx + 80, beakerY - 160, 60, 40);
             ctxSim.fillStyle = '#2dd4bf';
-            ctxSim.font = '14px monospace';
+            ctxSim.font = '12px monospace';
             ctxSim.fillText(currentPH.toFixed(2), cx + 90, beakerY - 135);
         }
 
@@ -755,7 +777,7 @@
             if (dataPoints.length > 0) {
                 ctxGraph.beginPath();
                 ctxGraph.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-                ctxGraph.lineWidth = 3;
+                ctxGraph.lineWidth = 2;
 
                 for (let i = 0; i < dataPoints.length; i++) {
                     const pt = dataPoints[i];
