@@ -1,0 +1,3 @@
+## 2023-11-20 - Custom Modal Accessibility
+**Learning:** Custom modals (`.modal-overlay`) in this app's architecture frequently lack standard accessibility roles (`role="dialog"`, `aria-modal="true"`) and miss `aria-labelledby` linkages to their title headings. Furthermore, form inputs inside these modals typically rely solely on `placeholder` attributes for visual labels, missing corresponding `aria-label` or `<label>` associations for screen readers.
+**Action:** When creating or modifying custom modals, ensure `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` are explicitly defined. Form inputs without visible text labels must include descriptive `aria-label` attributes to ensure parity with visual `placeholder` text for screen readers.
