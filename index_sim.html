@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Hub des Simulations Interactives</title>
+    <style>
+        :root {
+            --bg-base: #030712;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #00e5ff;
+            --accent-glow: 0 0 20px rgba(0, 229, 255, 0.5);
+
+            /* Domain Colors */
+            --color-meca: #f59e0b; /* Orange/Gold */
+            --color-chimie: #ff6bd6; /* Pink/Magenta */
+            --color-elec: #8b5cf6; /* Purple */
+            --color-ondes: #10b981; /* Emerald */
+            --color-multi: #0ea5e9; /* Cyan */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --------------------------------------------------------
+           BACKGROUND CANVAS (ORBITAL ENGINE)
+           -------------------------------------------------------- */
+        #orbital-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+
+        /* --------------------------------------------------------
+           UI OVERLAYS
+           -------------------------------------------------------- */
+        .hud-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+        }
+
+        /* SIDEBAR (LIST & FILTERS) */
+        .sidebar {
+            width: 350px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(3,7,18,0.95), rgba(3,7,18,0.6));
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+            transform: translateX(0);
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 20;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-350px);
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-shadow: var(--accent-glow);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 12px 15px 12px 35px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .search-box input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px rgba(0,229,255,0.2);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .filter-btn.active {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        /* List */
+        .sim-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+        }
+        .sim-list::-webkit-scrollbar { width: 4px; }
+        .sim-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .list-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent squishing */
+        }
+        .list-item:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(5px);
+            border-color: var(--item-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .list-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 4px;
+            background: var(--item-color);
+        }
+
+        .item-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; color: #fff; }
+        .item-level { font-size: 0.7rem; color: var(--item-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: none; /* Hidden as per request */ }
+        .item-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* --------------------------------------------------------
+           WEBOS WINDOW (IFRAME)
+           -------------------------------------------------------- */
+        .desktop-area {
+            flex: 1;
+            position: relative;
+            pointer-events: none; /* Let clicks pass to canvas */
+        }
+
+        .window-frame {
+            position: absolute;
+            width: 90%;
+            max-width: 1400px;
+            height: 85%;
+            max-height: 900px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: rgba(8, 14, 36, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+        }
+
+        .window-frame.open {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 30px var(--win-glow);
+            border-color: var(--win-color);
+        }
+
+        .win-header {
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            user-select: none;
+            cursor: move;
+        }
+
+        .win-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .win-title span { color: var(--win-color); }
+
+        .win-controls { display: flex; gap: 8px; }
+        .win-btn { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer; }
+        .win-btn.close { background: #ff5f56; }
+        .win-btn.max { background: #27c93f; }
+
+        .win-body {
+            flex: 1;
+            background: #000; /* iframe bg */
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* --------------------------------------------------------
+           FLOATING TOOLTIP (HOVER ON ORBITAL NODE)
+           -------------------------------------------------------- */
+        .node-tooltip {
+            position: fixed;
+            background: rgba(8, 14, 36, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--tip-color);
+            padding: 15px;
+            border-radius: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -20px);
+            transition: 0.2s;
+            z-index: 50;
+            width: 260px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(var(--tip-rgb), 0.2);
+        }
+        .node-tooltip.visible {
+            opacity: 1;
+            transform: translate(-50%, -40px);
+        }
+        .node-tooltip::after {
+            content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+            width: 12px; height: 12px; background: rgba(8, 14, 36, 0.95);
+            border-right: 1px solid var(--tip-color); border-bottom: 1px solid var(--tip-color);
+        }
+        .tip-level { font-size: 0.65rem; text-transform: uppercase; color: var(--tip-color); letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+        .tip-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+        .tip-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px; }
+        .tip-formula { background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; font-family: monospace; font-size: 0.7rem; color: #fff; text-align: center; border-left: 2px solid var(--tip-color); }
+
+        /* Toggle Sidebar Btn */
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            z-index: 30;
+            cursor: pointer;
+            pointer-events: auto;
+            display: none; /* Only show when collapsed */
+        }
+    </style>
+    <!-- MathJax for rendering formulas in tooltips -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' },
+            startup: {
+                typeset: false,
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        window.mathJaxReady = true;
+                        if (typeof window.triggerMathJax === 'function') {
+                            window.triggerMathJax();
+                        }
+                    });
+                }
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        let mathJaxQueue = Promise.resolve();
+        window.renderMath = function(elements) {
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                mathJaxQueue = mathJaxQueue.then(() => {
+                    MathJax.typesetClear(elements);
+                    return MathJax.typesetPromise(elements);
+                }).catch(err => console.error(err));
+            }
+        };
+
+        window.triggerMathJax = function() {
+            const listContainer = document.getElementById('sim-list');
+            const winTitle = document.getElementById('win-title-text');
+            const ttFormula = document.getElementById('tt-formula');
+            window.renderMath([listContainer, winTitle, ttFormula]);
+        };
+    </script>
+</head>
+<body>
+
+    <!-- 1. ORBITAL ENGINE CANVAS -->
+    <canvas id="orbital-canvas"></canvas>
+
+    <!-- 2. HUD & SIDEBAR -->
+    <div class="hud-overlay">
+
+        <button class="toggle-sidebar" id="btn-toggle-sidebar" title="Ouvrir le menu">☰</button>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <span>⬡</span> NEXUS
+            </div>
+            <div class="brand-subtitle">Simulations Physiques & Chimiques</div>
+
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Rechercher une simulation...">
+            </div>
+
+            <div class="filters" id="domain-filters">
+                <button class="filter-btn active" data-filter="all">Tout</button>
+                <button class="filter-btn" data-filter="meca" style="color:var(--color-meca); border-color:rgba(245, 158, 11, 0.3);">Mécanique</button>
+                <button class="filter-btn" data-filter="chimie" style="color:var(--color-chimie); border-color:rgba(255, 107, 214, 0.3);">Chimie</button>
+                <button class="filter-btn" data-filter="ondes" style="color:var(--color-ondes); border-color:rgba(16, 185, 129, 0.3);">Ondes</button>
+                <button class="filter-btn" data-filter="elec" style="color:var(--color-elec); border-color:rgba(139, 92, 246, 0.3);">Élec</button>
+            </div>
+
+            <div class="sim-list" id="sim-list">
+                <!-- Generated via JS -->
+            </div>
+        </aside>
+
+        <div class="desktop-area" id="desktop">
+            <!-- WEBOS WINDOW -->
+            <div class="window-frame" id="sim-window">
+                <div class="win-header" id="win-header">
+                    <div class="win-title"><span id="win-icon">⬡</span> <span id="win-title-text" style="color:#fff; margin-left:5px;">Titre</span></div>
+                    <div class="win-controls">
+                        <button class="win-btn max" id="btn-win-max" title="Plein écran"></button>
+                        <button class="win-btn close" id="btn-win-close" title="Fermer"></button>
+                    </div>
+                </div>
+                <div class="win-body">
+                    <iframe id="sim-iframe" src=""></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOOLTIP -->
+    <div class="node-tooltip" id="tooltip">
+        <div class="tip-level" id="tt-level">Terminale</div>
+        <div class="tip-title" id="tt-title">Titre de la simu</div>
+        <div class="tip-desc" id="tt-desc">Description courte.</div>
+        <div class="tip-formula" id="tt-formula">\( F = m \cdot a \)</div>
+    </div>
+
+    <!-- SCRIPT DATA & LOGIC -->
+    <script>
+        // --- 1. DATA ---
+        const SIMULATIONS = [
+            {
+                id: 'uniform_field', title: 'Champ Uniforme', desc: 'Mouvement parabolique d\'un projectile (g) ou d\'une particule chargée (E).',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'a = qE/m \\quad a = -g',
+                file: 'src/simulations/uniform_field_motion.html'
+            },
+            {
+                id: 'kepler', title: 'Lois de Kepler', desc: 'Mécanique céleste : orbites, lois des aires, forces gravitationnelles.',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'T^2/a^3 = 4\\pi^2/GM',
+                file: 'src/simulations/kepler.html'
+            },
+            {
+                id: 'fluids', title: 'Mécanique des Fluides', desc: 'Tube de Venturi, principe de Bernoulli, conservation du débit.',
+                level: 'Terminale Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'P + \\frac{1}{2}\\rho v^2 + \\rho gz = Cte',
+                file: 'src/simulations/fluids.html'
+            },
+            {
+                id: 'interference', title: 'Interférences & Diffraction', desc: 'Fentes d\'Young. Modélisation de l\'intensité et de la figure d\'interférence.',
+                level: 'Terminale Spé', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: 'i = \\lambda D / b',
+                file: 'src/simulations/interference.html'
+            },
+            {
+                id: 'electrostatics', title: 'Champs Électrostatiques', desc: 'Lignes de champ, vecteurs et équipotentielles (Coulomb).',
+                level: 'Première Spé', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'E = k|q|/r^2',
+                file: 'src/simulations/electrostatics.html'
+            },
+            {
+                id: 'rc_circuit', title: 'Circuit RC', desc: 'Régime transitoire. Charge/décharge de condensateur avec oscilloscope.',
+                level: 'Terminale Spé', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'u_C(t) = E(1 - e^{-t/RC})',
+                file: 'src/simulations/rc_circuit.html'
+            },
+            {
+                id: 'ohms_law', title: 'Loi d\'Ohm & Puissance', desc: 'Comportement d\'une résistance. Relation Tension/Courant.',
+                level: 'Collège/Seconde', domain: 'elec', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'U = R \\cdot I',
+                file: 'src/simulations/ohms_law.html'
+            },
+            {
+                id: 'titration', title: 'Titrage pH-métrique', desc: 'Suivi d\'un dosage acide-base. Courbe pH=f(V), saut de pH.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'pH = pK_a + \\log([A^-]/[AH])',
+                file: 'src/simulations/titration.html'
+            },
+            {
+                id: 'kinetics', title: 'Cinétique Chimique', desc: 'Suivi temporel, ordres de réaction, temps de demi-vie et linéarisation.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'v = k[A]^p',
+                file: 'src/simulations/chemical_kinetics.html'
+            },
+            {
+                id: 'electrochem', title: 'Piles & Électrolyse', desc: 'Piles Daniell, transfert d\'électrons, pont salin, variation de masse.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'Ox + ne^- \\rightleftharpoons Red',
+                file: 'src/simulations/electrochemistry.html'
+            },
+            {
+                id: 'thermodynamics', title: 'Moteur de Carnot', desc: 'Machine thermique idéale. Diagramme de Clapeyron (P-V), intégration du travail et cycle thermodynamique.',
+                level: 'CPGE / Sup', domain: 'thermo', color: '#f43f5e', rgb: '244, 63, 94', formula: '\\eta = 1 - T_F/T_C',
+                file: 'src/simulations/thermodynamics.html'
+            },
+            {
+                id: 'lab_tech', title: 'Techniques de Labo', desc: 'Chauffage à reflux, décantation, filtration sous vide.',
+                level: 'Lycée', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: '\\eta = m_{exp} / m_{th}',
+                file: 'src/simulations/lab_techniques.html'
+            },
+            {
+                id: 'spectra', title: 'Spectres d\'Émission', desc: 'Spectroscopie de lampes à gaz. Quantification de l\'énergie.',
+                level: 'Seconde/Première', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: '\\Delta E = hc/\\lambda',
+                file: 'src/simulations/spectra.html'
+            },
+            {
+                id: 'spectroscopy_ir_nmr', title: 'Spectroscopie IR & RMN', desc: 'Analyse structurale organique. Spectres Infrarouge et RMN du proton interactifs.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'A = \\log(I_0/I)',
+                file: 'src/simulations/spectroscopy_ir_nmr.html'
+            },
+            {
+                id: 'reaction_mech', title: 'Mécanismes Réactionnels', desc: 'Visualisation moléculaire des transferts d\'électrons (flèches courbes) en chimie organique.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'Nu^- + E^+ \\rightarrow Nu-E',
+                file: 'src/simulations/reaction_mechanisms.html'
+            },
+            {
+                id: 'mol_geometry', title: 'Géométrie Moléculaire (VSEPR)', desc: 'Modélisation 3D interactive, théorie VSEPR et nomenclature IUPAC.',
+                level: 'Première / Term', domain: 'chimie', color: '#ff6bd6', rgb: '255, 107, 214', formula: 'AX_nE_m',
+                file: 'src/simulations/molecular_geometry.html'
+            },
+            {
+                id: 'refraction', title: 'Réfraction (Descartes)', desc: 'Lois de l\'optique géométrique, rayon laser et réflexion totale.',
+                level: 'Seconde', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: 'n_1\\sin(i_1) = n_2\\sin(i_2)',
+                file: 'src/simulations/refraction.html'
+            },
+            {
+                id: 'projectile', title: 'Balistique Simple', desc: 'Cinématique classique d\'un tir parabolique.',
+                level: 'Première Spé', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'y(x) = -g/(2v_0^2\\cos^2\\alpha)x^2 + \\tan\\alpha x',
+                file: 'src/simulations/projectile_motion.html'
+            },
+            {
+                id: 'states_matter', title: 'États de la Matière', desc: 'Modèle particulaire. Évolution de l\'agitation thermique selon la température (Solide, Liquide, Gaz).',
+                level: 'Collège', domain: 'chimie', color: '#38bdf8', rgb: '56, 189, 248', formula: 'E_c = \\frac{3}{2}kT',
+                file: 'src/simulations/states_of_matter.html'
+            },
+            {
+                id: 'weight_mass', title: 'Poids et Masse', desc: 'Différence entre Poids (N) et Masse (kg). Comparaison de la gravité sur différentes planètes.',
+                level: 'Collège', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: 'P = m \\cdot g',
+                file: 'src/simulations/weight_mass.html'
+            },
+            {
+                id: 'light_shadows', title: 'Ombres & Lumière', desc: 'Propagation rectiligne de la lumière. Formation des ombres propres, portées et de la pénombre.',
+                level: 'Collège', domain: 'ondes', color: '#fcd34d', rgb: '252, 211, 77', formula: 'v = c',
+                file: 'src/simulations/light_shadows.html'
+            },
+            {
+                id: 'sound_waves', title: 'Ondes Sonores', desc: 'Onde mécanique longitudinale. Signal au microphone et oscilloscope.',
+                level: 'Collège/Seconde', domain: 'ondes', color: '#38bdf8', rgb: '56, 189, 248', formula: 'T = 1/f',
+                file: 'src/simulations/sound_waves.html'
+            },
+            {
+                id: 'inertia', title: 'Principe d\'Inertie', desc: 'Banc à coussin d\'air. 1ère Loi de Newton, vecteur vitesse et forces.',
+                level: 'Seconde', domain: 'meca', color: '#f59e0b', rgb: '245, 158, 11', formula: '\\sum \\vec{F} = \\vec{0}',
+                file: 'src/simulations/inertia.html'
+            },
+            {
+                id: 'spectrophotometry', title: 'Spectrophotométrie', desc: 'Loi de Beer-Lambert. Cuve laser, transmittance et droite d\'étalonnage.',
+                level: 'Première Spé', domain: 'chimie', color: '#ec4899', rgb: '236, 72, 153', formula: 'A = \\varepsilon l C',
+                file: 'src/simulations/spectrophotometry.html'
+            },
+            {
+                id: 'radioactivity', title: 'Décroissance Radioactive', desc: 'Noyaux radioactifs, désintégration aléatoire, loi d\'évolution et demi-vie.',
+                level: 'Terminale Spé', domain: 'chimie', color: '#2dd4bf', rgb: '45, 212, 191', formula: 'N(t) = N_0 e^{-\\lambda t}',
+                file: 'src/simulations/radioactivity.html'
+            },
+            {
+                id: 'atom_builder', title: 'Bâtisseur d\'Atomes', desc: 'Structure de l\'atome, isotopes et ions. Construction des couches électroniques.',
+                level: 'Collège/Seconde', domain: 'chimie', color: '#38bdf8', rgb: '56, 189, 248', formula: 'A = Z + N',
+                file: 'src/simulations/atom_builder.html'
+            },
+            {
+                id: 'optics_lenses', title: 'Banc d\'Optique', desc: 'Lentilles minces convergentes, tracé des rayons et relation de conjugaison.',
+                level: 'Seconde/Première', domain: 'ondes', color: '#10b981', rgb: '16, 185, 129', formula: '\\frac{1}{\\overline{OA\'}} - \\frac{1}{\\overline{OA}} = \\frac{1}{f\'}',
+                file: 'src/simulations/optics_lenses.html'
+            },
+            {
+                id: 'doppler', title: 'Effet Doppler', desc: 'Source sonore en mouvement, compression des ondes et cône de Mach.',
+                level: 'Terminale Spé', domain: 'ondes', color: '#8b5cf6', rgb: '139, 92, 246', formula: 'f_{obs} = f_{em}\\frac{v}{v-v_s}',
+                file: 'src/simulations/doppler_effect.html'
+            },
+            {
+                id: 'equilibrium', title: 'Équilibre Chimique', desc: 'Évolution de Qr vers K, principe de Le Chatelier et perturbations.',
+                level: 'Lycée', domain: 'chimie', color: '#ec4899', rgb: '236, 72, 153', formula: 'Q_r = \\frac{[C]}{[A][B]}',
+                file: 'src/simulations/chemical_equilibrium.html'
+            },
+            {
+                id: 'ion_tests', title: 'Tests de Reconnaissance des Ions', desc: 'Précipitation des ions métalliques et halogénures. Formules et couleurs des précipités.',
+                level: 'Collège', domain: 'chimie', color: '#38bdf8', rgb: '56, 189, 248', formula: 'Cu^{2+} + 2HO^- \\rightarrow Cu(OH)_2',
+                file: 'src/simulations/ion_tests.html'
+            },
+            {
+                id: 'chemical_conservation', title: 'Réaction et Conservation de la Masse', desc: 'Loi de Lavoisier. Réarrangement des atomes lors d\'une combustion et conservation de la masse totale.',
+                level: 'Collège', domain: 'chimie', color: '#ec4899', rgb: '236, 72, 153', formula: 'CH_4 + 2O_2 \\rightarrow CO_2 + 2H_2O',
+                file: 'src/simulations/chemical_conservation.html'
+            }
+        ];
+
+        // --- 2. SIDEBAR LOGIC ---
+        const listContainer = document.getElementById('sim-list');
+        const searchInput = document.getElementById('search-input');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        let currentDomain = 'all';
+        let currentSearch = '';
+
+        function renderList() {
+            listContainer.innerHTML = '';
+
+            const filtered = SIMULATIONS.filter(s => {
+                const matchDomain = currentDomain === 'all' || s.domain === currentDomain;
+                const searchStr = `${s.title} ${s.desc} ${s.level}`.toLowerCase();
+                const matchSearch = currentSearch === '' || searchStr.includes(currentSearch.toLowerCase());
+                return matchDomain && matchSearch;
+            });
+
+            if(filtered.length === 0) {
+                listContainer.innerHTML = '<div style="color:var(--text-muted); padding:20px; text-align:center;">Aucune simulation trouvée.</div>';
+                return;
+            }
+
+            filtered.forEach(sim => {
+                const el = document.createElement('div');
+                el.className = 'list-item';
+                el.style.setProperty('--item-color', sim.color);
+
+                el.innerHTML = `
+                    <div class="item-title">${sim.title}</div>
+                    <div class="item-desc">${sim.desc}</div>
+                    <div class="item-formula" style="margin-top: 6px; color: var(--item-color);">\\(${sim.formula}\\)</div>
+                `;
+
+                el.addEventListener('click', () => {
+                    openSimulation(sim);
+                    focusOrbitalNode(sim.id);
+                });
+
+                // Hover effects for orbital canvas
+                el.addEventListener('mouseenter', () => hoverOrbitalNode(sim.id));
+                el.addEventListener('mouseleave', () => hoverOrbitalNode(null));
+
+                listContainer.appendChild(el);
+            });
+
+            // Typeset formulas in the list
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([listContainer]).catch(err => console.error(err));
+            }
+        }
+
+        window.triggerMathJax = function() {
+            if (window.mathJaxReady && window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([listContainer, winTitle, ttFormula]).catch(err => console.error(err));
+            }
+        };
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDomain = btn.dataset.filter;
+                renderList();
+                updateOrbitalVisibility();
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderList();
+            updateOrbitalVisibility();
+        });
+
+        // Sidebar Toggle
+        const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+
+        btnToggleSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            btnToggleSidebar.style.display = 'none';
+        });
+
+        // Click outside sidebar to close on small screens (or just a nice feature)
+        document.getElementById('orbital-canvas').addEventListener('click', () => {
+            if (window.innerWidth < 800) {
+                sidebar.classList.add('collapsed');
+                btnToggleSidebar.style.display = 'block';
+            }
+        });
+
+
+        // --- 3. WEBOS WINDOW LOGIC ---
+        const winFrame = document.getElementById('sim-window');
+        const winTitle = document.getElementById('win-title-text');
+        const winIcon = document.getElementById('win-icon');
+        const simIframe = document.getElementById('sim-iframe');
+        const btnWinClose = document.getElementById('btn-win-close');
+        const btnWinMax = document.getElementById('btn-win-max');
+        const winHeader = document.getElementById('win-header');
+
+        function openSimulation(sim) {
+            winTitle.innerHTML = sim.title + ' <span style="font-size: 0.8em; margin-left: 15px; font-weight: normal; color: rgba(255,255,255,0.6);">\\(' + sim.formula + '\\)</span>';
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([winTitle]).catch(err => console.error(err));
+            }
+            winIcon.style.color = sim.color;
+            winFrame.style.setProperty('--win-color', sim.color);
+            winFrame.style.setProperty('--win-glow', `rgba(${sim.rgb}, 0.3)`);
+
+            simIframe.src = sim.file;
+            winFrame.classList.add('open');
+
+            // Hide sidebar on small screens to show window
+            if(window.innerWidth < 1200) {
+                sidebar.classList.add('collapsed');
+                btnToggleSidebar.style.display = 'block';
+            }
+
+            // Force hide tooltip
+            hoveredNodeId = null;
+            tooltip.classList.remove('visible');
+        }
+
+        btnWinClose.addEventListener('click', () => {
+            winFrame.classList.remove('open');
+            setTimeout(() => { simIframe.src = ''; }, 300); // clear after animation
+        });
+
+        let isMaximized = false;
+        btnWinMax.addEventListener('click', () => {
+            isMaximized = !isMaximized;
+            if(isMaximized) {
+                winFrame.style.width = '100vw';
+                winFrame.style.height = '100vh';
+                winFrame.style.maxWidth = '100vw';
+                winFrame.style.maxHeight = '100vh';
+                winFrame.style.borderRadius = '0';
+            } else {
+                winFrame.style.width = '90vw';
+                winFrame.style.height = '85vh';
+                winFrame.style.maxWidth = '1400px';
+                winFrame.style.maxHeight = '900px';
+                winFrame.style.borderRadius = '16px';
+            }
+        });
+
+        // Window Dragging
+        let isDragging = false;
+        let startX, startY, initLeft, initTop;
+
+        winHeader.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('win-btn') || isMaximized) return;
+            isDragging = true;
+            startX = e.clientX; startY = e.clientY;
+
+            // Get current transform translate values
+            const rect = winFrame.getBoundingClientRect();
+            // Convert to absolute left/top instead of center translate
+            winFrame.style.transform = 'none';
+            winFrame.style.left = `${rect.left}px`;
+            winFrame.style.top = `${rect.top}px`;
+
+            initLeft = rect.left; initTop = rect.top;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            winFrame.style.left = `${initLeft + (e.clientX - startX)}px`;
+            winFrame.style.top = `${initTop + (e.clientY - startY)}px`;
+        });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
+
+        // --- 4. ORBITAL ENGINE CANVAS (CONSTELLATION/ORRERY) ---
+        const canvas = document.getElementById('orbital-canvas');
+        const ctx = canvas.getContext('2d');
+        let cw, ch;
+        let nodes = [];
+        let hoveredNodeId = null;
+        let activeNodeId = null;
+
+        // Tooltip elements
+        const tooltip = document.getElementById('tooltip');
+        const ttLevel = document.getElementById('tt-level');
+        const ttTitle = document.getElementById('tt-title');
+        const ttDesc = document.getElementById('tt-desc');
+        const ttFormula = document.getElementById('tt-formula');
+
+        function resizeCanvas() {
+            cw = canvas.width = window.innerWidth;
+            ch = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Build orbital nodes based on data
+        function buildOrbitalNodes() {
+            nodes = [];
+            // Center of the system (shift right if sidebar is open)
+            const centerX = window.innerWidth > 800 ? window.innerWidth/2 + 150 : window.innerWidth/2;
+            const centerY = window.innerHeight/2;
+
+            const domains = ['meca', 'chimie', 'ondes', 'elec'];
+
+            SIMULATIONS.forEach((sim, index) => {
+                // Group by domain for orbit rings
+                const domainIdx = domains.indexOf(sim.domain);
+                const radiusBase = 120 + (domainIdx * 100);
+                // Stagger slightly
+                const radius = radiusBase + (index % 2 === 0 ? 20 : -20);
+                const angleOffset = (index / SIMULATIONS.length) * Math.PI * 2;
+                const speed = 0.0005 + (Math.random() * 0.0005) * (index%2===0?1:-1);
+
+                nodes.push({
+                    sim: sim,
+                    r: radius,
+                    angle: angleOffset,
+                    speed: speed,
+                    x: 0, y: 0, // computed in loop
+                    visible: true
+                });
+            });
+        }
+
+        function updateOrbitalVisibility() {
+            nodes.forEach(n => {
+                const matchDomain = currentDomain === 'all' || n.sim.domain === currentDomain;
+                const searchStr = `${n.sim.title} ${n.sim.desc} ${n.sim.level}`.toLowerCase();
+                const matchSearch = currentSearch === '' || searchStr.includes(currentSearch.toLowerCase());
+                n.visible = matchDomain && matchSearch;
+            });
+        }
+
+        function hoverOrbitalNode(id) {
+            hoveredNodeId = id;
+        }
+        function focusOrbitalNode(id) {
+            activeNodeId = id;
+        }
+
+        // Mouse interaction for Canvas
+        let mouseX = -100, mouseY = -100;
+        canvas.addEventListener('mousemove', (e) => {
+            // If window is open, don't show tooltips behind it
+            if (winFrame.classList.contains('open')) {
+                hoveredNodeId = null;
+                tooltip.classList.remove('visible');
+                return;
+            }
+
+            mouseX = e.clientX; mouseY = e.clientY;
+
+            // Check collision with nodes
+            let found = false;
+            for(let n of nodes) {
+                if(!n.visible) continue;
+                const dist = Math.hypot(n.x - mouseX, n.y - mouseY);
+                if (dist < 20) { // Hover radius
+                    hoveredNodeId = n.sim.id;
+                    found = true;
+
+                    // Show Tooltip
+                    ttLevel.textContent = n.sim.level;
+                    ttLevel.style.color = n.sim.color;
+                    ttTitle.textContent = n.sim.title;
+                    ttDesc.textContent = n.sim.desc;
+
+                    // Wrap formula in MathJax syntax and render
+                    ttFormula.innerHTML = '\\(' + n.sim.formula + '\\)';
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        MathJax.typesetPromise([ttFormula]).catch(err => console.error(err));
+                    }
+
+                    tooltip.style.setProperty('--tip-color', n.sim.color);
+                    tooltip.style.setProperty('--tip-rgb', n.sim.rgb);
+
+                    tooltip.style.left = `${n.x}px`;
+                    tooltip.style.top = `${n.y - 20}px`;
+                    tooltip.classList.add('visible');
+                    break;
+                }
+            }
+            if (!found) {
+                hoveredNodeId = null;
+                tooltip.classList.remove('visible');
+            }
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            hoveredNodeId = null;
+            tooltip.classList.remove('visible');
+        });
+
+        canvas.addEventListener('click', () => {
+            if (hoveredNodeId) {
+                const node = nodes.find(n => n.sim.id === hoveredNodeId);
+                if (node) openSimulation(node.sim);
+            }
+        });
+
+
+        // Animation Loop
+        function drawOrbital() {
+            ctx.fillStyle = '#030712'; // Deep background
+            ctx.fillRect(0, 0, cw, ch);
+
+            const centerX = window.innerWidth > 800 ? window.innerWidth/2 + 150 : window.innerWidth/2;
+            const centerY = window.innerHeight/2;
+
+            // Draw Background grid/nebula effect subtly
+            const time = Date.now() * 0.001;
+
+            // Draw Center Star (The Nexus)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 30, 0, Math.PI*2);
+            const centerGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80);
+            centerGrad.addColorStop(0, '#fff');
+            centerGrad.addColorStop(0.2, '#00e5ff');
+            centerGrad.addColorStop(1, 'rgba(0,229,255,0)');
+            ctx.fillStyle = centerGrad;
+            ctx.fill();
+
+            // Draw Orbit Rings
+            const domains = ['meca', 'chimie', 'ondes', 'elec'];
+            domains.forEach((d, i) => {
+                const r = 120 + (i * 100);
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, r, 0, Math.PI*2);
+                ctx.strokeStyle = `rgba(255,255,255,0.03)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Update & Draw Nodes
+            nodes.forEach(n => {
+                if(!n.visible) return;
+
+                // Move orbit
+                n.angle += n.speed;
+                n.x = centerX + n.r * Math.cos(n.angle);
+                n.y = centerY + n.r * Math.sin(n.angle);
+
+                const isHovered = n.sim.id === hoveredNodeId;
+                const isActive = n.sim.id === activeNodeId;
+
+                // Draw Connecting Line to center if active/hovered
+                if (isHovered || isActive) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(n.x, n.y);
+                    ctx.strokeStyle = `rgba(${n.sim.rgb}, 0.3)`;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Draw Node Glow
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, isHovered ? 25 : 15, 0, Math.PI*2);
+                const nodeGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, isHovered ? 25 : 15);
+                nodeGrad.addColorStop(0, n.sim.color);
+                nodeGrad.addColorStop(1, `rgba(${n.sim.rgb}, 0)`);
+                ctx.fillStyle = nodeGrad;
+                ctx.fill();
+
+                // Draw Node Core
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, isHovered ? 6 : 4, 0, Math.PI*2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.strokeStyle = n.sim.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Permanent Label (Simulation Title)
+                ctx.fillStyle = (isHovered || isActive) ? '#fff' : 'rgba(255, 255, 255, 0.7)';
+                ctx.font = (isHovered || isActive) ? 'bold 13px sans-serif' : '500 11px sans-serif';
+                ctx.textAlign = 'center';
+
+                // Add a subtle background to make text readable over the mesh
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#000';
+                ctx.fillText(n.sim.title, n.x, n.y + (isHovered ? 28 : 18));
+                ctx.shadowBlur = 0;
+            });
+
+            requestAnimationFrame(drawOrbital);
+        }
+
+        // --- URL Parameter Integration ---
+        function handleUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const simId = params.get('sim');
+            const searchQ = params.get('search');
+
+            if (simId) {
+                const sim = SIMULATIONS.find(s => s.id === simId);
+                if (sim) {
+                    openSimulation(sim);
+                }
+            } else if (searchQ) {
+                const searchInput = document.getElementById('search-input');
+                searchInput.value = searchQ;
+                // Dispatch input event to trigger the existing filter logic
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // --- INIT ---
+        resizeCanvas();
+        buildOrbitalNodes();
+        renderList();
+        requestAnimationFrame(drawOrbital);
+
+        // Handle external linking after initial render
+        setTimeout(handleUrlParams, 100);
+
+    </script>
+</body>
+</html>

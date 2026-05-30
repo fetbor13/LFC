@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Spectroscopie IR & RMN</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #ec4899;
+            --accent-glow: 0 0 15px rgba(236, 72, 153, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --ir-color: #3b82f6;
+            --nmr-color: #10b981;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #ir-section { flex: 1; display: flex; justify-content: center; align-items: center; }
+        #nmr-section { flex: 1; display: flex; justify-content: center; align-items: center; }
+
+        canvas { display: block; width: 100%; height: 100%; background: #000; border-radius: 6px; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+        select:focus { border-color: var(--accent-color); }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        /* Tooltips for canvas hover */
+        .spec-tooltip {
+            position: fixed; background: rgba(15,23,42,0.95); border: 1px solid var(--accent-color);
+            color: #fff; padding: 10px; border-radius: 8px; font-size: 0.8rem;
+            pointer-events: none; opacity: 0; transition: 0.1s; z-index: 50;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .mol-render {
+            background: #fff; border-radius: 8px; padding: 10px; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center; min-height: 120px;
+        }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="ir-section" class="section-box">
+                <div class="section-title" style="color:var(--ir-color);">Spectre Infrarouge (IR) - Transmittance</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="irCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="nmr-section" class="section-box">
+                <div class="section-title" style="color:var(--nmr-color);">Spectre RMN ¹H - Déplacement Chimique</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="nmrCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Analyse Structurale</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Chimie Organique (Terminale Spé)</div>
+
+            <div class="control-group">
+                <label>Sélectionner une molécule</label>
+                <select id="mol-select">
+                    <option value="ethanol">Éthanol (CH₃-CH₂-OH)</option>
+                    <option value="ethanal">Éthanal (CH₃-CHO)</option>
+                    <option value="acide_ethanoique">Acide Éthanoïque (CH₃-COOH)</option>
+                    <option value="propan2one">Propan-2-one (CH₃-CO-CH₃)</option>
+                </select>
+            </div>
+
+            <div class="mol-render" id="mol-img-container">
+                <!-- SVG Molecule representation generated dynamically -->
+            </div>
+
+            <div class="stats-box" style="margin-top:10px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Analyse Infrarouge</div>
+                <div id="ir-analysis" style="color:var(--text-muted); font-family:sans-serif; line-height:1.4;">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Analyse RMN ¹H</div>
+                <div id="nmr-analysis" style="color:var(--text-muted); font-family:sans-serif; line-height:1.4;">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:auto; font-style:italic;">
+                Survolez les pics des spectres pour afficher les détails (Liaison, Multiplicité).
+            </div>
+        </div>
+    </div>
+
+    <div class="spec-tooltip" id="spec-tooltip"></div>
+
+    <script>
+        const irCanvas = document.getElementById('irCanvas');
+        const irCtx = irCanvas.getContext('2d');
+        const nmrCanvas = document.getElementById('nmrCanvas');
+        const nmrCtx = nmrCanvas.getContext('2d');
+        const molSelect = document.getElementById('mol-select');
+        const themeToggle = document.getElementById('theme-toggle');
+        const tooltip = document.getElementById('spec-tooltip');
+
+        let dpr = window.devicePixelRatio || 1;
+        let irW, irH, nmrW, nmrH;
+
+        // Spectroscopy Database
+        const DB = {
+            ethanol: {
+                name: "Éthanol",
+                formula: "CH₃-CH₂-OH",
+                svg: `<svg viewBox="0 0 100 50" stroke="black" stroke-width="2" stroke-linecap="round"><path d="M 20,30 L 50,15 L 80,30" fill="none"/><text x="10" y="40" font-size="12" stroke="none" fill="black">H₃C</text><text x="40" y="10" font-size="12" stroke="none" fill="black">CH₂</text><text x="85" y="40" font-size="12" stroke="none" fill="red">OH</text></svg>`,
+                ir: [
+                    { wave: 3300, width: 200, depth: 0.8, type: "O-H (lié)", desc: "Bande forte et très large" },
+                    { wave: 2950, width: 50, depth: 0.6, type: "C-H (alcane)", desc: "Bande forte juste sous 3000" },
+                    { wave: 1050, width: 30, depth: 0.7, type: "C-O", desc: "Bande forte" }
+                ],
+                nmr: [
+                    { shift: 1.2, integral: 3, mult: "Triplet", splits: 3, J: 0.05, desc: "CH₃ (voisin de CH₂)" },
+                    { shift: 3.7, integral: 2, mult: "Quadruplet", splits: 4, J: 0.05, desc: "CH₂ (voisin de CH₃, déblindé par O)" },
+                    { shift: 2.6, integral: 1, mult: "Singulet", splits: 1, J: 0, desc: "OH (pas de couplage visible)" }
+                ],
+                irText: "La large bande à 3300 cm⁻¹ indique la présence d'un groupement hydroxyle (O-H) avec liaisons hydrogène. Absence de bande C=O vers 1700 cm⁻¹.",
+                nmrText: "3 signaux : un triplet (3H) pour le CH₃, un quadruplet (2H) pour le CH₂ déblindé par l'oxygène, et un singulet large (1H) pour le OH."
+            },
+            ethanal: {
+                name: "Éthanal",
+                formula: "CH₃-CHO",
+                svg: `<svg viewBox="0 0 100 50" stroke="black" stroke-width="2" stroke-linecap="round"><path d="M 30,30 L 60,15" fill="none"/><path d="M 60,15 L 85,15" fill="none" stroke="red"/><path d="M 60,10 L 85,10" fill="none" stroke="red"/><text x="15" y="40" font-size="12" stroke="none" fill="black">H₃C</text><text x="55" y="40" font-size="12" stroke="none" fill="black">CH</text><text x="90" y="15" font-size="12" stroke="none" fill="red">O</text></svg>`,
+                ir: [
+                    { wave: 2950, width: 50, depth: 0.5, type: "C-H (alcane)", desc: "Bande moyenne" },
+                    { wave: 2720, width: 40, depth: 0.3, type: "C-H (aldéhyde)", desc: "Bande faible typique" },
+                    { wave: 1730, width: 30, depth: 0.9, type: "C=O", desc: "Bande très forte et fine" }
+                ],
+                nmr: [
+                    { shift: 2.2, integral: 3, mult: "Doublet", splits: 2, J: 0.02, desc: "CH₃ (voisin de CH)" },
+                    { shift: 9.8, integral: 1, mult: "Quadruplet", splits: 4, J: 0.02, desc: "CHO (très déblindé, voisin de CH₃)" }
+                ],
+                irText: "Bande fine et très intense à 1730 cm⁻¹ caractéristique du carbonyle (C=O). Absence de bande O-H large vers 3300 cm⁻¹.",
+                nmrText: "Signal très déblindé vers 9.8 ppm caractéristique du proton aldéhydique (CHO), apparaissant sous forme de quadruplet."
+            },
+            acide_ethanoique: {
+                name: "Acide Éthanoïque",
+                formula: "CH₃-COOH",
+                svg: `<svg viewBox="0 0 100 50" stroke="black" stroke-width="2" stroke-linecap="round"><path d="M 20,25 L 50,25" fill="none"/><path d="M 50,25 L 70,10" fill="none" stroke="red"/><path d="M 50,30 L 70,15" fill="none" stroke="red"/><path d="M 50,25 L 70,40" fill="none"/><text x="5" y="30" font-size="12" stroke="none" fill="black">H₃C</text><text x="45" y="25" font-size="12" stroke="none" fill="black">C</text><text x="75" y="15" font-size="12" stroke="none" fill="red">O</text><text x="75" y="45" font-size="12" stroke="none" fill="red">OH</text></svg>`,
+                ir: [
+                    { wave: 3000, width: 400, depth: 0.8, type: "O-H (acide)", desc: "Bande très très large recouvrant les C-H" },
+                    { wave: 1710, width: 40, depth: 0.9, type: "C=O", desc: "Bande très forte" },
+                    { wave: 1250, width: 30, depth: 0.6, type: "C-O", desc: "Bande forte" }
+                ],
+                nmr: [
+                    { shift: 2.1, integral: 3, mult: "Singulet", splits: 1, J: 0, desc: "CH₃ (isolé)" },
+                    { shift: 11.5, integral: 1, mult: "Singulet", splits: 1, J: 0, desc: "COOH (extrêmement déblindé)" }
+                ],
+                irText: "La superposition de la très large bande O-H (2500-3300) et de la bande C=O forte (1710) est la signature de l'acide carboxylique.",
+                nmrText: "Le proton acide (COOH) sort de façon caractéristique au-delà de 10 ppm en singulet large. Le CH₃ est un singulet (pas de voisin H)."
+            },
+            propan2one: {
+                name: "Propan-2-one (Acétone)",
+                formula: "CH₃-CO-CH₃",
+                svg: `<svg viewBox="0 0 100 50" stroke="black" stroke-width="2" stroke-linecap="round"><path d="M 20,35 L 50,20 L 80,35" fill="none"/><path d="M 47,20 L 47,5" fill="none" stroke="red"/><path d="M 53,20 L 53,5" fill="none" stroke="red"/><text x="5" y="45" font-size="12" stroke="none" fill="black">H₃C</text><text x="45" y="30" font-size="12" stroke="none" fill="black">C</text><text x="85" y="45" font-size="12" stroke="none" fill="black">CH₃</text><text x="46" y="-2" font-size="12" stroke="none" fill="red">O</text></svg>`,
+                ir: [
+                    { wave: 2950, width: 40, depth: 0.4, type: "C-H (alcane)", desc: "Bande moyenne" },
+                    { wave: 1715, width: 30, depth: 0.9, type: "C=O", desc: "Bande très forte" }
+                ],
+                nmr: [
+                    { shift: 2.1, integral: 6, mult: "Singulet", splits: 1, J: 0, desc: "2 x CH₃ (équivalents, pas de voisin H)" }
+                ],
+                irText: "Bande C=O très intense (1715). Contrairement à l'aldéhyde, pas de bande C-H d'aldéhyde, et contrairement à l'acide, pas de bande O-H.",
+                nmrText: "Molécule symétrique : les 6 protons des deux groupements méthyles sont équivalents et n'ont pas de voisin, d'où un unique grand singulet."
+            }
+        };
+
+        function resize() {
+            irW = irCanvas.parentElement.clientWidth;
+            irH = irCanvas.parentElement.clientHeight;
+            irCanvas.width = irW * dpr;
+            irCanvas.height = irH * dpr;
+            irCtx.scale(dpr, dpr);
+
+            nmrW = nmrCanvas.parentElement.clientWidth;
+            nmrH = nmrCanvas.parentElement.clientHeight;
+            nmrCanvas.width = nmrW * dpr;
+            nmrCanvas.height = nmrH * dpr;
+            nmrCtx.scale(dpr, dpr);
+
+            drawSpectra();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            updateUI();
+        });
+
+        molSelect.addEventListener('change', updateUI);
+
+        function updateUI() {
+            const m = DB[molSelect.value];
+            document.getElementById('mol-img-container').innerHTML = m.svg;
+            document.getElementById('ir-analysis').innerHTML = m.irText;
+            document.getElementById('nmr-analysis').innerHTML = m.nmrText;
+            drawSpectra();
+        }
+
+        // Generate Lorentzian/Gaussian peak
+        function peak(x, center, width, depth) {
+            // using a simple bell curve approximation
+            return depth * Math.exp(-Math.pow(x - center, 2) / (2 * Math.pow(width/2, 2)));
+        }
+
+        function drawIR() {
+            irCtx.clearRect(0, 0, irW, irH);
+            const m = DB[molSelect.value];
+
+            // IR typical scale: 4000 cm-1 (left) to 500 cm-1 (right)
+            const minW = 500, maxW = 4000;
+            const wRange = maxW - minW;
+
+            // Grid
+            irCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+            irCtx.lineWidth = 1;
+            irCtx.beginPath();
+            for(let w = 1000; w <= 4000; w += 500) {
+                let x = irW - ((w - minW) / wRange) * irW; // inverted X axis
+                irCtx.moveTo(x, 0); irCtx.lineTo(x, irH - 20);
+            }
+            irCtx.stroke();
+
+            // Spectrum Line (Transmittance, so 100% is top)
+            irCtx.beginPath();
+            const irCol = getComputedStyle(document.documentElement).getPropertyValue('--ir-color').trim();
+            irCtx.strokeStyle = irCol;
+            irCtx.lineWidth = 2.5;
+
+            // Generate points
+            const pts = [];
+            for(let px = 0; px <= irW; px++) {
+                let w = maxW - (px / irW) * wRange; // w at this pixel
+                let absorption = 0;
+
+                // Add baseline noise
+                absorption += Math.random() * 0.02;
+
+                // Add peaks
+                m.ir.forEach(p => {
+                    absorption += peak(w, p.wave, p.width, p.depth);
+                });
+
+                // Add some fingerprint region noise (below 1500)
+                if (w < 1500) {
+                    absorption += peak(w, 1400, 30, 0.1) + peak(w, 1100, 40, 0.15) + peak(w, 800, 50, 0.1);
+                }
+
+                if (absorption > 1) absorption = 1;
+
+                let transmittance = 1 - absorption; // 1 is top, 0 is bottom
+                let y = 10 + transmittance * (irH - 40);
+
+                pts.push({x: px, y: y, wave: w, abs: absorption});
+
+                if(px===0) irCtx.moveTo(px, y);
+                else irCtx.lineTo(px, y);
+            }
+            irCtx.stroke();
+
+            // Fill area slightly
+            irCtx.lineTo(irW, 10);
+            irCtx.lineTo(0, 10);
+            irCtx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+            irCtx.fill();
+
+            // Axis labels
+            irCtx.fillStyle = '#fff'; irCtx.font = '10px monospace'; irCtx.textAlign = 'center';
+            for(let w = 1000; w <= 4000; w += 1000) {
+                let x = irW - ((w - minW) / wRange) * irW;
+                irCtx.fillText(w, x, irH - 5);
+            }
+            irCtx.textAlign = 'right'; irCtx.fillText('Nombre d\'onde (cm⁻¹)', irW - 10, irH - 25);
+
+            // Store for hover
+            irCanvas.spectraData = {pts: pts, peaks: m.ir, type: 'IR', min: minW, max: maxW};
+        }
+
+        function drawNMR() {
+            nmrCtx.clearRect(0, 0, nmrW, nmrH);
+            const m = DB[molSelect.value];
+
+            // NMR typical scale: 12 ppm (left) to 0 ppm (right)
+            const minS = 0, maxS = 13;
+            const sRange = maxS - minS;
+
+            // Grid
+            nmrCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+            nmrCtx.lineWidth = 1;
+            nmrCtx.beginPath();
+            for(let s = 0; s <= 12; s += 2) {
+                let x = nmrW - ((s - minS) / sRange) * nmrW; // inverted X
+                nmrCtx.moveTo(x, 0); nmrCtx.lineTo(x, nmrH - 20);
+            }
+            nmrCtx.stroke();
+
+            // Spectrum Line
+            nmrCtx.beginPath();
+            const nmrCol = getComputedStyle(document.documentElement).getPropertyValue('--nmr-color').trim();
+            nmrCtx.strokeStyle = nmrCol;
+            nmrCtx.lineWidth = 1.5;
+
+            const pts = [];
+            // Base resolution
+            for(let px = 0; px <= nmrW; px++) {
+                let s = maxS - (px / nmrW) * sRange;
+                let intensity = 0;
+
+                // Add TMS peak at 0
+                intensity += peak(s, 0, 0.05, 0.5);
+
+                // Add multiplet peaks
+                m.nmr.forEach(p => {
+                    // Splitting logic (Pascal's triangle approx)
+                    let n = p.splits;
+                    let J = p.J;
+                    // Triplet: 1:2:1, Quad: 1:3:3:1
+                    let coeffs = [];
+                    if(n===1) coeffs = [1];
+                    if(n===2) coeffs = [1,1];
+                    if(n===3) coeffs = [1,2,1];
+                    if(n===4) coeffs = [1,3,3,1];
+
+                    let sumC = coeffs.reduce((a,b)=>a+b,0);
+
+                    for(let i=0; i<n; i++) {
+                        let shiftOffset = (i - (n-1)/2) * J;
+                        let height = (coeffs[i] / sumC) * (p.integral * 0.3); // Scale integral to height
+                        intensity += peak(s, p.shift + shiftOffset, 0.02, height);
+                    }
+                });
+
+                // Cap
+                if (intensity > 0.95) intensity = 0.95;
+
+                let y = (nmrH - 30) - intensity * (nmrH - 50);
+
+                pts.push({x: px, y: y, shift: s, intensity: intensity});
+
+                if(px===0) nmrCtx.moveTo(px, y);
+                else nmrCtx.lineTo(px, y);
+            }
+            nmrCtx.stroke();
+
+            // Draw Integrals (red curves above peaks)
+            nmrCtx.strokeStyle = '#ef4444';
+            nmrCtx.lineWidth = 1.5;
+            m.nmr.forEach(p => {
+                let pxC = nmrW - ((p.shift - minS) / sRange) * nmrW;
+                let iWidth = p.splits * p.J * 2; // rough width in ppm
+                let pxW = (iWidth / sRange) * nmrW;
+
+                nmrCtx.beginPath();
+                nmrCtx.moveTo(pxC - pxW, nmrH/3);
+                // Simple sigmoid-like curve
+                nmrCtx.bezierCurveTo(pxC - pxW/2, nmrH/3, pxC + pxW/2, nmrH/3 - p.integral*15, pxC + pxW, nmrH/3 - p.integral*15);
+                nmrCtx.stroke();
+
+                // Label
+                nmrCtx.fillStyle = '#ef4444'; nmrCtx.font = '10px sans-serif'; nmrCtx.textAlign='center';
+                nmrCtx.fillText(p.integral + 'H', pxC, nmrH/3 - p.integral*15 - 5);
+            });
+
+            // Axis labels
+            nmrCtx.fillStyle = '#fff'; nmrCtx.font = '10px monospace'; nmrCtx.textAlign = 'center';
+            for(let s = 0; s <= 12; s += 2) {
+                let x = nmrW - ((s - minS) / sRange) * nmrW;
+                nmrCtx.fillText(s, x, nmrH - 5);
+            }
+            nmrCtx.textAlign = 'right'; nmrCtx.fillText('δ (ppm)', nmrW - 10, nmrH - 25);
+
+            // TMS Label
+            let x0 = nmrW - ((0 - minS) / sRange) * nmrW;
+            nmrCtx.fillText('TMS', x0 + 10, nmrH - 35);
+
+            nmrCanvas.spectraData = {pts: pts, peaks: m.nmr, type: 'NMR'};
+        }
+
+        function drawSpectra() {
+            drawIR();
+            drawNMR();
+        }
+
+        // Hover Interaction logic
+        function handleHover(e, canvasObj) {
+            if(!canvasObj.spectraData) return;
+            const rect = canvasObj.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+
+            let data = canvasObj.spectraData;
+            let match = null;
+
+            if (data.type === 'IR') {
+                // Find wave at mx
+                let w = data.max - (mx / irW) * (data.max - data.min);
+                // Check if close to a peak
+                data.peaks.forEach(p => {
+                    if (Math.abs(w - p.wave) < 150) match = p;
+                });
+
+                if (match) {
+                    tooltip.innerHTML = `<strong>${match.type}</strong><br>~${match.wave} cm⁻¹<br><span style="color:#aaa">${match.desc}</span>`;
+                }
+            } else {
+                // NMR
+                let s = 13 - (mx / nmrW) * 13;
+                data.peaks.forEach(p => {
+                    if (Math.abs(s - p.shift) < 0.5) match = p;
+                });
+
+                if (match) {
+                    tooltip.innerHTML = `<strong>δ = ${match.shift} ppm</strong><br>Intégration: ${match.integral}H<br>Multiplicité: ${match.mult}<br><span style="color:#aaa">${match.desc}</span>`;
+                }
+            }
+
+            if (match) {
+                tooltip.style.left = `${e.clientX}px`;
+                tooltip.style.top = `${e.clientY - 10}px`;
+                tooltip.style.opacity = 1;
+            } else {
+                tooltip.style.opacity = 0;
+            }
+        }
+
+        irCanvas.addEventListener('mousemove', (e) => handleHover(e, irCanvas));
+        irCanvas.addEventListener('mouseleave', () => tooltip.style.opacity = 0);
+        nmrCanvas.addEventListener('mousemove', (e) => handleHover(e, nmrCanvas));
+        nmrCanvas.addEventListener('mouseleave', () => tooltip.style.opacity = 0);
+
+        // Init
+        updateUI();
+        resize();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Spectrophotométrie & Loi de Beer-Lambert</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #ec4899; /* Pink for chemistry/spectro */
+            --accent-glow: 0 0 15px rgba(236, 72, 153, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #e11d48;
+            --accent-glow: 0 0 15px rgba(225, 29, 72, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #cuvette-section { flex: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); }
+        #graph-section { height: 280px; background: #000; border: 4px solid #1e293b; border-radius: 12px; padding: 0; }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        .math-eq { font-style: italic; color: #10b981; font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        button.action-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="cuvette-section" class="section-box">
+                <div class="section-title">Spectrophotomètre & Cuve</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="cuvetteCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="graph-section" class="section-box">
+                <div class="section-title" style="top:10px; left:15px; z-index:20;">Droite d'Étalonnage A = f(C)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%;">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Loi de Beer-Lambert</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Dosage Spectrophotométrique (Première)</div>
+
+            <div class="control-group">
+                <label>Solution</label>
+                <select id="sol-select">
+                    <option value="kmno4">Permanganate de potassium (Magenta)</option>
+                    <option value="cuso4">Sulfate de cuivre (Bleu)</option>
+                    <option value="i2">Diiode (Jaune/Brun)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Longueur d'onde du laser ($\lambda$) <span id="l-val">530 nm</span></label>
+                <input type="range" id="l-input" min="400" max="750" step="10" value="530">
+                <div id="laser-color-preview" style="height:4px; width:100%; border-radius:2px; margin-top:5px;"></div>
+            </div>
+
+            <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
+
+            <div class="control-group">
+                <label>Concentration ($C$) <span id="c-val">1.00 mmol/L</span></label>
+                <input type="range" id="c-input" min="0.0" max="5.0" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label>Épaisseur de cuve ($l$) <span id="width-val">1.0 cm</span></label>
+                <input type="range" id="width-input" min="0.5" max="2.0" step="0.1" value="1.0">
+            </div>
+
+            <div class="stats-box" style="margin-top:10px; flex:1;">
+                <div class="math-eq">$A = \varepsilon_\lambda \cdot l \cdot C$</div>
+                <div class="math-eq" style="font-size:0.75rem;">$A = -\log(T) = -\log(I / I_0)$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Transmittance ($T$) :</span> <span id="stat-t" style="color:#fbbf24; font-weight:bold;">10.0 %</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Absorbance ($A$) :</span> <span id="stat-a" style="color:var(--accent-color); font-weight:bold;">1.000</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; text-align:center;" id="abs-feedback">
+                    L'absorbance est maximale à la longueur d'onde complémentaire de la solution.
+                </div>
+            </div>
+
+            <button id="btn-measure" class="action-btn" style="margin-top:auto; background:var(--accent-color); color:white; border-color:var(--accent-color);">Faire une mesure (Graphe)</button>
+            <button id="btn-clear" class="action-btn" style="margin-top:5px; color:#ef4444;">Effacer les points</button>
+        </div>
+    </div>
+
+    <script>
+        const cuvetteCanvas = document.getElementById('cuvetteCanvas');
+        const cCtx = cuvetteCanvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const gCtx = graphCanvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const solSelect = document.getElementById('sol-select');
+        const lInput = document.getElementById('l-input');
+        const cInput = document.getElementById('c-input');
+        const wInput = document.getElementById('width-input');
+        const colorPreview = document.getElementById('laser-color-preview');
+        const btnMeasure = document.getElementById('btn-measure');
+        const btnClear = document.getElementById('btn-clear');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cW, cH, gW, gH;
+        let points = []; // Array of measured {C, A}
+
+        const SOLUTIONS = {
+            kmno4: { name: 'KMnO4', r:236, g:72, b:153, lambdaMax: 530, epsilonMax: 2000 },
+            cuso4: { name: 'CuSO4', r:56, g:189, b:248, lambdaMax: 800, epsilonMax: 1500 }, // absorbs red/IR
+            i2: { name: 'I2', r:245, g:158, b:11, lambdaMax: 450, epsilonMax: 1800 } // absorbs blue
+        };
+
+        let currentA = 0;
+        let currentT = 1; // 100%
+        let laserRGB = [0,255,0];
+
+        function resize() {
+            cW = cuvetteCanvas.parentElement.clientWidth;
+            cH = cuvetteCanvas.parentElement.clientHeight;
+            cuvetteCanvas.width = cW * dpr;
+            cuvetteCanvas.height = cH * dpr;
+            cCtx.scale(dpr, dpr);
+
+            gW = graphCanvas.parentElement.clientWidth;
+            gH = graphCanvas.parentElement.clientHeight;
+            graphCanvas.width = gW * dpr;
+            graphCanvas.height = gH * dpr;
+            gCtx.scale(dpr, dpr);
+
+            drawScene();
+            drawGraph();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+            drawGraph();
+        });
+
+        function wavelengthToRGB(Wavelength) {
+            let R, G, B;
+            if (Wavelength >= 380 && Wavelength < 440) { R = -(Wavelength - 440) / (440 - 380); G = 0.0; B = 1.0; }
+            else if (Wavelength >= 440 && Wavelength < 490) { R = 0.0; G = (Wavelength - 440) / (490 - 440); B = 1.0; }
+            else if (Wavelength >= 490 && Wavelength < 510) { R = 0.0; G = 1.0; B = -(Wavelength - 510) / (510 - 490); }
+            else if (Wavelength >= 510 && Wavelength < 580) { R = (Wavelength - 510) / (580 - 510); G = 1.0; B = 0.0; }
+            else if (Wavelength >= 580 && Wavelength < 645) { R = 1.0; G = -(Wavelength - 645) / (645 - 580); B = 0.0; }
+            else if (Wavelength >= 645 && Wavelength <= 780) { R = 1.0; G = 0.0; B = 0.0; }
+            else { R = 0.0; G = 0.0; B = 0.0; }
+
+            let factor;
+            if (Wavelength >= 380 && Wavelength < 420) factor = 0.3 + 0.7 * (Wavelength - 380) / (420 - 380);
+            else if (Wavelength >= 420 && Wavelength < 700) factor = 1.0;
+            else if (Wavelength >= 700 && Wavelength <= 780) factor = 0.3 + 0.7 * (780 - Wavelength) / (780 - 700);
+            else factor = 0.0;
+
+            if (Wavelength > 750) { R=1; G=0; B=0; factor=0.5; } // Fake IR for CuSO4 visibility
+
+            const gamma = 0.80;
+            return [
+                Math.round(255 * Math.pow(R * factor, gamma)),
+                Math.round(255 * Math.pow(G * factor, gamma)),
+                Math.round(255 * Math.pow(B * factor, gamma))
+            ];
+        }
+
+        function calculatePhysics() {
+            const sol = SOLUTIONS[solSelect.value];
+            const L = parseFloat(lInput.value); // nm
+            const C = parseFloat(cInput.value) * 1e-3; // mol/L
+            const l_cm = parseFloat(wInput.value); // cm
+
+            document.getElementById('l-val').textContent = L + ' nm';
+            document.getElementById('c-val').textContent = (C*1000).toFixed(1) + ' mmol/L';
+            document.getElementById('width-val').textContent = l_cm.toFixed(1) + ' cm';
+
+            laserRGB = wavelengthToRGB(L);
+            colorPreview.style.background = `rgb(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]})`;
+            colorPreview.style.boxShadow = `0 0 10px rgb(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]})`;
+
+            // Gaussian absorption profile
+            // epsilon(L) = eps_max * exp( -(L - Lmax)^2 / 2sigma^2 )
+            const sigma = 60; // broadness
+            let eps = sol.epsilonMax * Math.exp(-Math.pow(L - sol.lambdaMax, 2) / (2 * sigma * sigma));
+
+            // A = eps * l * C
+            currentA = eps * l_cm * C;
+            currentT = Math.pow(10, -currentA); // T = 10^-A
+
+            document.getElementById('stat-a').textContent = currentA.toFixed(3);
+            document.getElementById('stat-t').textContent = (currentT * 100).toFixed(1) + ' %';
+
+            if (currentA > 2) document.getElementById('abs-feedback').textContent = "Attention, l'absorbance est > 2. Le capteur sature (solution trop concentrée).";
+            else document.getElementById('abs-feedback').textContent = "Mesure optimale.";
+
+            drawScene();
+        }
+
+        function drawScene() {
+            if(!cW) return;
+            cCtx.clearRect(0, 0, cW, cH);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            const cx = cW/2;
+            const cy = cH/2;
+            const l_cm = parseFloat(wInput.value);
+            const cuvetteWidth = l_cm * 80; // visual scaling
+            const cuvetteHeight = 150;
+
+            const sol = SOLUTIONS[solSelect.value];
+            const C = parseFloat(cInput.value);
+            // Visual opacity of solution based on concentration
+            const alpha = Math.min(0.9, C * 0.2);
+
+            // Laser Beam (Input)
+            let inColor = `rgb(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]})`;
+            cCtx.fillStyle = inColor;
+            cCtx.shadowBlur = 15; cCtx.shadowColor = inColor;
+            cCtx.fillRect(cx - 200, cy - 5, 200 - cuvetteWidth/2, 10);
+            cCtx.shadowBlur = 0;
+
+            // Cuvette Liquid
+            cCtx.fillStyle = `rgba(${sol.r}, ${sol.g}, ${sol.b}, ${alpha})`;
+            cCtx.fillRect(cx - cuvetteWidth/2, cy - cuvetteHeight/2, cuvetteWidth, cuvetteHeight);
+
+            // Cuvette Glass
+            cCtx.strokeStyle = isDark ? '#fff' : '#000';
+            cCtx.lineWidth = 2;
+            cCtx.beginPath();
+            cCtx.moveTo(cx - cuvetteWidth/2, cy - cuvetteHeight/2);
+            cCtx.lineTo(cx - cuvetteWidth/2, cy + cuvetteHeight/2);
+            cCtx.lineTo(cx + cuvetteWidth/2, cy + cuvetteHeight/2);
+            cCtx.lineTo(cx + cuvetteWidth/2, cy - cuvetteHeight/2);
+            cCtx.stroke();
+
+            // Laser Beam (Output inside liquid) - Gradient fade
+            let beamGrad = cCtx.createLinearGradient(cx - cuvetteWidth/2, 0, cx + cuvetteWidth/2, 0);
+            beamGrad.addColorStop(0, `rgba(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]}, 1)`);
+            beamGrad.addColorStop(1, `rgba(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]}, ${Math.max(0, currentT)})`);
+            cCtx.fillStyle = beamGrad;
+            cCtx.shadowBlur = 10; cCtx.shadowColor = inColor;
+            cCtx.fillRect(cx - cuvetteWidth/2, cy - 5, cuvetteWidth, 10);
+
+            // Laser Beam (Output)
+            cCtx.fillStyle = `rgba(${laserRGB[0]}, ${laserRGB[1]}, ${laserRGB[2]}, ${currentT})`;
+            cCtx.shadowBlur = 15 * currentT; cCtx.shadowColor = inColor;
+            cCtx.fillRect(cx + cuvetteWidth/2, cy - 5, 200, 10);
+            cCtx.shadowBlur = 0;
+
+            // Labels
+            cCtx.fillStyle = isDark ? '#fff' : '#000';
+            cCtx.font = '12px monospace';
+            cCtx.fillText('I₀ (100%)', cx - 180, cy - 15);
+            cCtx.fillText(`I (${(currentT*100).toFixed(1)}%)`, cx + cuvetteWidth/2 + 20, cy - 15);
+
+            // Sensor Box
+            cCtx.fillStyle = '#334155';
+            cCtx.fillRect(cx + cuvetteWidth/2 + 150, cy - 30, 40, 60);
+            cCtx.fillStyle = '#fff'; cCtx.fillText('Capteur', cx + cuvetteWidth/2 + 170, cy + 50);
+        }
+
+        function drawGraph() {
+            if(!gW) return;
+            gCtx.clearRect(0, 0, gW, gH);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)';
+            const padding = 40;
+            const pW = gW - padding*2;
+            const pH = gH - padding*2;
+
+            // Grid
+            gCtx.strokeStyle = gridCol;
+            gCtx.lineWidth = 1;
+            gCtx.beginPath();
+            for(let i=0; i<=5; i++) {
+                let x = padding + (i/5)*pW;
+                let y = padding + (i/5)*pH;
+                gCtx.moveTo(x, padding); gCtx.lineTo(x, gH - padding);
+                gCtx.moveTo(padding, y); gCtx.lineTo(gW - padding, y);
+            }
+            gCtx.stroke();
+
+            // Axes
+            gCtx.strokeStyle = isDark ? '#fff' : '#000';
+            gCtx.lineWidth = 1.5;
+            gCtx.beginPath();
+            gCtx.moveTo(padding, padding); gCtx.lineTo(padding, gH - padding); gCtx.lineTo(gW - padding, gH - padding);
+            gCtx.stroke();
+
+            // Labels
+            gCtx.fillStyle = isDark ? '#fff' : '#000';
+            gCtx.font = '12px "Fira Code"';
+            gCtx.textAlign = 'center';
+            gCtx.fillText('Absorbance A', padding, padding - 10);
+            gCtx.fillText('C (mmol/L)', gW - padding, gH - padding + 15);
+
+            // Origin
+            gCtx.fillText('0', padding - 10, gH - padding + 10);
+            // Max bounds
+            gCtx.fillText('5.0', gW - padding, gH - padding + 30);
+            gCtx.fillText('3.0', padding - 15, padding + 10);
+
+            // Scale factors
+            const maxC = 5.0;
+            const maxA = 3.0; // Saturates above 2 but graph goes to 3
+
+            // Draw points
+            points.forEach(p => {
+                let px = padding + (p.C / maxC) * pW;
+                let py = (gH - padding) - (p.A / maxA) * pH;
+
+                gCtx.beginPath(); gCtx.arc(px, py, 4, 0, Math.PI*2);
+                gCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                gCtx.fill();
+            });
+
+            // Draw current expected line if points exist
+            if (points.length > 1) {
+                // Linear regression or just origin to last point for simplicity
+                // Since it's Beer-Lambert, it's strictly proportional A = kC
+                let k = points[points.length-1].A / points[points.length-1].C;
+
+                gCtx.beginPath();
+                gCtx.moveTo(padding, gH - padding);
+                let endA = k * maxC;
+                let endY = (gH - padding) - (endA / maxA) * pH;
+                gCtx.lineTo(gW - padding, endY);
+                gCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+                gCtx.setLineDash([4,4]);
+                gCtx.stroke();
+                gCtx.setLineDash([]);
+            }
+
+            // Draw current active crosshair
+            let currPx = padding + (parseFloat(cInput.value) / maxC) * pW;
+            let currPy = (gH - padding) - (currentA / maxA) * pH;
+
+            gCtx.beginPath();
+            gCtx.moveTo(currPx, gH - padding); gCtx.lineTo(currPx, currPy);
+            gCtx.moveTo(padding, currPy); gCtx.lineTo(currPx, currPy);
+            gCtx.strokeStyle = 'rgba(236, 72, 153, 0.5)';
+            gCtx.lineWidth = 1;
+            gCtx.stroke();
+
+            gCtx.beginPath(); gCtx.arc(currPx, currPy, 5, 0, Math.PI*2);
+            gCtx.fillStyle = '#fff'; gCtx.fill();
+        }
+
+        solSelect.addEventListener('change', calculatePhysics);
+        lInput.addEventListener('input', calculatePhysics);
+        cInput.addEventListener('input', calculatePhysics);
+        wInput.addEventListener('input', calculatePhysics);
+
+        btnMeasure.addEventListener('click', () => {
+            const C = parseFloat(cInput.value);
+            // Don't add duplicate C
+            if (!points.find(p => p.C === C)) {
+                points.push({C: C, A: currentA});
+                points.sort((a,b) => a.C - b.C); // sort by conc
+                drawGraph();
+            }
+        });
+
+        btnClear.addEventListener('click', () => {
+            points = [];
+            drawGraph();
+        });
+
+        calculatePhysics();
+        resize();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

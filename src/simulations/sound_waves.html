@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Ondes Sonores & Périodicité</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #38bdf8;
+            --accent-glow: 0 0 15px rgba(56, 189, 248, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --osco-color: #10b981;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0284c7;
+            --accent-glow: 0 0 15px rgba(2, 132, 199, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --osco-color: #059669;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #wave-section { flex: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255,255,255,0.05), transparent); }
+        #osco-section { height: 250px; background: #000; border: 4px solid #1e293b; border-radius: 12px; padding: 0; }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        .math-eq { font-style: italic; color: #10b981; font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="wave-section" class="section-box">
+                <div class="section-title">Onde Mécanique Longitudinale (Air)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="waveCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="osco-section" class="section-box">
+                <div class="section-title" style="top:10px; left:15px; z-index:20;">Signal au Microphone (Oscilloscope)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%;">
+                    <canvas id="oscoCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Ondes Sonores</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Programme Collège & Seconde</div>
+
+            <div class="control-group">
+                <label>Fréquence ($f$) <span id="f-val">440 Hz</span></label>
+                <input type="range" id="f-input" min="100" max="1000" step="10" value="440">
+            </div>
+
+            <div class="control-group">
+                <label>Amplitude Sonore <span id="a-val">Moyenne</span></label>
+                <input type="range" id="a-input" min="10" max="100" step="5" value="50">
+            </div>
+
+            <div class="control-group" style="margin-top:10px;">
+                <label style="color:var(--osco-color);">Balayage (Oscilloscope) <span id="tb-val">1 ms/div</span></label>
+                <input type="range" id="tb-input" min="0.5" max="5" step="0.5" value="1.0">
+            </div>
+
+            <div class="stats-box" style="margin-top:20px; flex:1;">
+                <div class="math-eq">$T = \frac{1}{f} \quad ; \quad \lambda = v \cdot T$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Célérité ($v_{air}$) :</span> <span style="color:#f59e0b; font-weight:bold;">340 m/s</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Période ($T$) :</span> <span id="stat-t" style="color:var(--osco-color); font-weight:bold;">2.27 ms</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Long. d'onde ($\lambda$) :</span> <span id="stat-l" style="color:#ec4899; font-weight:bold;">0.77 m</span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div style="font-size:0.75rem; color:var(--text-muted); font-family:sans-serif;">
+                    Le son est une onde mécanique longitudinale. Les particules d'air oscillent d'avant en arrière (surpression/dépression) sans se déplacer globalement.
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button id="btn-pause" style="flex:1; background:transparent; border:1px solid var(--glass-border); color:#fff; padding:10px; border-radius:6px; cursor:pointer;">⏸ Pause (Geler l'image)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const waveCanvas = document.getElementById('waveCanvas');
+        const wCtx = waveCanvas.getContext('2d');
+        const oscoCanvas = document.getElementById('oscoCanvas');
+        const oCtx = oscoCanvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const fInput = document.getElementById('f-input');
+        const aInput = document.getElementById('a-input');
+        const tbInput = document.getElementById('tb-input');
+        const btnPause = document.getElementById('btn-pause');
+
+        let dpr = window.devicePixelRatio || 1;
+        let wW, wH, oW, oH;
+        let isRunning = true;
+
+        let freq = 440;
+        let amp = 50;
+        let timeBase = 0.001; // 1 ms/div
+        let t = 0;
+
+        const V_SON = 340; // m/s
+        const NUM_PARTICLES = 600;
+        let particles = [];
+
+        function initParticles() {
+            particles = [];
+            // Distribute particles evenly
+            for (let i = 0; i < NUM_PARTICLES; i++) {
+                particles.push({
+                    x0: Math.random(), // normalized 0 to 1
+                    y0: Math.random(), // normalized 0 to 1
+                    offset: Math.random() * Math.PI * 2 // random phase for natural look
+                });
+            }
+        }
+
+        function resize() {
+            wW = waveCanvas.parentElement.clientWidth;
+            wH = waveCanvas.parentElement.clientHeight;
+            waveCanvas.width = wW * dpr;
+            waveCanvas.height = wH * dpr;
+            wCtx.scale(dpr, dpr);
+
+            oW = oscoCanvas.parentElement.clientWidth;
+            oH = oscoCanvas.parentElement.clientHeight;
+            oscoCanvas.width = oW * dpr;
+            oscoCanvas.height = oH * dpr;
+            oCtx.scale(dpr, dpr);
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            if(!isRunning) { drawWave(); drawOsco(); }
+        });
+
+        function updatePhysics() {
+            freq = parseFloat(fInput.value);
+            amp = parseFloat(aInput.value);
+            timeBase = parseFloat(tbInput.value) * 0.001; // ms to s
+
+            document.getElementById('f-val').textContent = freq + ' Hz';
+            document.getElementById('a-val').textContent = amp === 50 ? 'Moyenne' : (amp > 50 ? 'Forte' : 'Faible');
+            document.getElementById('tb-val').textContent = (timeBase*1000).toFixed(1) + ' ms/div';
+
+            let T = 1 / freq;
+            let lambda = V_SON * T;
+
+            document.getElementById('stat-t').textContent = (T * 1000).toFixed(2) + ' ms';
+            document.getElementById('stat-l').textContent = lambda.toFixed(2) + ' m';
+        }
+
+        fInput.addEventListener('input', updatePhysics);
+        aInput.addEventListener('input', updatePhysics);
+        tbInput.addEventListener('input', updatePhysics);
+
+        btnPause.addEventListener('click', () => {
+            isRunning = !isRunning;
+            btnPause.textContent = isRunning ? "⏸ Pause (Geler l'image)" : "▶ Reprendre";
+            if (isRunning) requestAnimationFrame(loop);
+        });
+
+        function drawWave() {
+            wCtx.clearRect(0, 0, wW, wH);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Speaker
+            wCtx.fillStyle = isDark ? '#334155' : '#94a3b8';
+            wCtx.fillRect(10, wH/2 - 60, 30, 120);
+            wCtx.beginPath();
+            wCtx.moveTo(40, wH/2 - 40);
+            wCtx.lineTo(60, wH/2 - 60);
+            wCtx.lineTo(60, wH/2 + 60);
+            wCtx.lineTo(40, wH/2 + 40);
+            wCtx.fill();
+
+            // Speaker Cone animation
+            let speakerDisplacement = Math.sin(2 * Math.PI * freq * t) * (amp * 0.1);
+            wCtx.fillStyle = '#0f172a';
+            wCtx.beginPath();
+            wCtx.ellipse(60 + speakerDisplacement, wH/2, 5, 55, 0, 0, Math.PI*2);
+            wCtx.fill();
+
+            // Microphone
+            let micX = wW - 60;
+            wCtx.fillStyle = '#475569';
+            wCtx.fillRect(micX, wH/2 - 10, 40, 20);
+            wCtx.beginPath(); ctx.arc(micX, wH/2, 15, 0, Math.PI*2); wCtx.fill();
+
+            // Particles (Air)
+            // Visual scale: let's say the screen width represents 2 meters
+            const physicalWidth = 2.0;
+            const lambda = V_SON / freq;
+            const k = 2 * Math.PI / lambda;
+            const omega = 2 * Math.PI * freq;
+
+            wCtx.fillStyle = isDark ? '#f8fafc' : '#0f172a';
+
+            // Highlight a few specific particles in red to show they don't move globally
+            const numHighlights = 5;
+
+            for(let i=0; i<NUM_PARTICLES; i++) {
+                let p = particles[i];
+
+                // Physical rest position
+                let px_rest = 60 + p.x0 * (wW - 120);
+                let py = 20 + p.y0 * (wH - 40);
+
+                // Map px to physical x (0 to physicalWidth)
+                let phys_x = (px_rest / wW) * physicalWidth;
+
+                // Displacement: u(x,t) = A * cos(omega*t - k*x)
+                let displacement_phys = (amp / 100) * 0.05 * Math.cos(omega * t - k * phys_x);
+
+                // Map back to pixels
+                let displacement_px = (displacement_phys / physicalWidth) * wW;
+
+                let px = px_rest + displacement_px;
+
+                if (i < numHighlights) {
+                    wCtx.fillStyle = '#ef4444'; // Highlight
+                    wCtx.beginPath(); wCtx.arc(px, py, 4, 0, Math.PI*2); wCtx.fill();
+                    wCtx.fillStyle = isDark ? '#f8fafc' : '#0f172a'; // restore
+                } else {
+                    wCtx.globalAlpha = 0.6;
+                    wCtx.beginPath(); wCtx.arc(px, py, 1.5, 0, Math.PI*2); wCtx.fill();
+                    wCtx.globalAlpha = 1.0;
+                }
+            }
+
+            // Draw Ruler (Lambda)
+            wCtx.strokeStyle = '#ec4899';
+            wCtx.lineWidth = 2;
+            let lambdaPx = (lambda / physicalWidth) * wW;
+            if (lambdaPx < wW - 100) {
+                let startX = wW/2 - lambdaPx/2;
+                wCtx.beginPath();
+                wCtx.moveTo(startX, 20); wCtx.lineTo(startX + lambdaPx, 20);
+                wCtx.moveTo(startX, 15); wCtx.lineTo(startX, 25);
+                wCtx.moveTo(startX + lambdaPx, 15); wCtx.lineTo(startX + lambdaPx, 25);
+                wCtx.stroke();
+                wCtx.fillStyle = '#ec4899';
+                wCtx.font = '12px "Fira Code"';
+                wCtx.textAlign = 'center';
+                wCtx.fillText('λ', startX + lambdaPx/2, 15);
+            }
+        }
+
+        function drawOsco() {
+            oCtx.clearRect(0, 0, oW, oH);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)';
+            const subgridCol = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+            const hDivs = 10;
+            const vDivs = 8;
+            const stepX = oW / hDivs;
+            const stepY = oH / vDivs;
+
+            // Graticule
+            oCtx.lineWidth = 1;
+            oCtx.strokeStyle = subgridCol;
+            oCtx.beginPath();
+            for(let x=0; x<=oW; x+=stepX*0.2) { oCtx.moveTo(x,0); oCtx.lineTo(x,oH); }
+            for(let y=0; y<=oH; y+=stepY*0.2) { oCtx.moveTo(0,y); oCtx.lineTo(oW,y); }
+            oCtx.stroke();
+
+            oCtx.strokeStyle = gridCol;
+            oCtx.beginPath();
+            for(let i=0; i<=hDivs; i++) { oCtx.moveTo(i*stepX, 0); oCtx.lineTo(i*stepX, oH); }
+            for(let i=0; i<=vDivs; i++) { oCtx.moveTo(0, i*stepY); oCtx.lineTo(oW, i*stepY); }
+            oCtx.moveTo(0, oH/2); oCtx.lineTo(oW, oH/2);
+            oCtx.moveTo(oW/2, 0); oCtx.lineTo(oW/2, oH);
+            oCtx.stroke();
+
+            // Signal
+            let totalTime = hDivs * timeBase; // X axis total time
+
+            oCtx.beginPath();
+            const oscoCol = getComputedStyle(document.documentElement).getPropertyValue('--osco-color').trim();
+            oCtx.strokeStyle = oscoCol;
+            oCtx.lineWidth = 2;
+            oCtx.shadowBlur = 8;
+            oCtx.shadowColor = oscoCol;
+
+            // Assume microphone is at a fixed distance, so phase is constant.
+            // We draw the signal backwards from current time `t` to `t - totalTime`
+            // Actually, standard oscillo draws from left to right, triggering.
+            // Let's do a simple trigger on t=0 phase.
+
+            let triggerOffset = t % (1/freq); // to keep it stable on screen
+
+            for (let px = 0; px <= oW; px++) {
+                let timeOffset = (px / oW) * totalTime;
+                let signalT = timeOffset - triggerOffset;
+                // Math.sin(2*pi*f*t)
+                let val = Math.sin(2 * Math.PI * freq * signalT) * (amp / 100);
+
+                // Y maps from -1..1 to bottom..top
+                let py = oH/2 - val * (oH/2 * 0.8); // 80% max height
+
+                if(px===0) oCtx.moveTo(px, py);
+                else oCtx.lineTo(px, py);
+            }
+            oCtx.stroke();
+            oCtx.shadowBlur = 0;
+
+            // Labels
+            oCtx.fillStyle = oscoCol;
+            oCtx.font = '12px "Fira Code"';
+            oCtx.textAlign = 'left';
+            oCtx.fillText(`CH1`, 10, 20);
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            // In simulation, sounds are very fast. 440Hz = 0.002s period.
+            // If we run real time, it's a blur. We slow down time visually.
+            // Let's say 1 second real time = 0.001s simulation time.
+            let simDt = dt * 0.001;
+            t += simDt;
+
+            drawWave();
+            drawOsco();
+
+            if (isRunning) {
+                requestAnimationFrame(loop);
+            } else {
+                lastTime = 0;
+            }
+        }
+
+        initParticles();
+        resize();
+        updatePhysics();
+        requestAnimationFrame(loop);
+
+        // Inject MathJax
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

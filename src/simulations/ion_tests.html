@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Collège: Tests de Reconnaissance des Ions</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #38bdf8; /* Cyan */
+            --accent-glow: 0 0 15px rgba(56, 189, 248, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0284c7;
+            --accent-glow: 0 0 15px rgba(2, 132, 199, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px; overflow:hidden;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; font-family: 'Fira Code', monospace; }
+        .math-eq { color: var(--accent-color); font-weight: bold; text-align: center; font-size: 1.1rem; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        button.action-btn { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-add { background: var(--accent-color) !important; color: white !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+        .btn-danger { color: #ef4444 !important; border-color: rgba(239,68,68,0.3) !important; }
+        .btn-danger:hover { background: rgba(239,68,68,0.1) !important; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Laboratoire (Tubes à Essai)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Tests des Ions</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Reconnaissance par précipitation (3ème)</div>
+
+            <div class="control-group">
+                <label>Ion à tester (dans le tube)</label>
+                <select id="ion-select">
+                    <option value="cu2+">Ion Cuivre (II) : Cu²⁺</option>
+                    <option value="fe2+">Ion Fer (II) : Fe²⁺</option>
+                    <option value="fe3+">Ion Fer (III) : Fe³⁺</option>
+                    <option value="cl-">Ion Chlorure : Cl⁻</option>
+                    <option value="so42-">Ion Sulfate : SO₄²⁻</option>
+                </select>
+            </div>
+
+            <div class="control-group" style="margin-top:10px;">
+                <label>Réactif détecteur</label>
+                <select id="reagent-select">
+                    <option value="naoh">Soude (Hydroxyde de Sodium : Na⁺ + HO⁻)</option>
+                    <option value="agno3">Nitrate d'Argent (Ag⁺ + NO₃⁻)</option>
+                    <option value="bacl2">Chlorure de Baryum (Ba²⁺ + 2Cl⁻)</option>
+                </select>
+            </div>
+
+            <button id="btn-add" class="action-btn btn-add" style="margin-top:5px;">Verser quelques gouttes</button>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Observation & Bilan</div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span>Résultat :</span> <span id="stat-result" style="font-weight:bold;">Aucun précipité.</span>
+                </div>
+
+                <div id="eq-container" style="display:none; flex-direction:column; gap:8px; margin-top:10px;">
+                    <div style="font-size:0.75rem; color:gray; text-align:center;">Équation de Précipitation</div>
+                    <div class="math-eq" id="eq-main"></div>
+                </div>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:10px; font-family:sans-serif;">
+                Un précipité est un solide insoluble qui se forme dans un liquide lors d'une réaction chimique. Sa couleur permet d'identifier l'ion présent.
+            </div>
+
+            <button id="btn-reset" class="action-btn btn-danger" style="margin-top:auto;">Vider et Nettoyer le Tube</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const ionSelect = document.getElementById('ion-select');
+        const reagentSelect = document.getElementById('reagent-select');
+        const btnAdd = document.getElementById('btn-add');
+        const btnReset = document.getElementById('btn-reset');
+
+        const statResult = document.getElementById('stat-result');
+        const eqContainer = document.getElementById('eq-container');
+        const eqMain = document.getElementById('eq-main');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Data
+        const IONS = {
+            'cu2+': { name: 'Cu²⁺', initialColor: 'rgba(56, 189, 248, 0.4)' }, // Light blue
+            'fe2+': { name: 'Fe²⁺', initialColor: 'rgba(163, 230, 53, 0.2)' },  // Very pale green
+            'fe3+': { name: 'Fe³⁺', initialColor: 'rgba(251, 146, 60, 0.3)' },  // Pale orange/rust
+            'cl-':  { name: 'Cl⁻',  initialColor: 'rgba(255, 255, 255, 0.05)' },// Colorless
+            'so42-':{ name: 'SO₄²⁻',initialColor: 'rgba(255, 255, 255, 0.05)' } // Colorless
+        };
+
+        const PRECIPITATES = {
+            'cu2+_naoh': { name: "Précipité Bleu (Hydroxyde de Cuivre)", eq: "$$Cu^{2+} + 2HO^- \\rightarrow Cu(OH)_2(s)$$", color: '#0284c7' },
+            'fe2+_naoh': { name: "Précipité Vert (Hydroxyde de Fer II)", eq: "$$Fe^{2+} + 2HO^- \\rightarrow Fe(OH)_2(s)$$", color: '#15803d' },
+            'fe3+_naoh': { name: "Précipité Rouille (Hydroxyde de Fer III)", eq: "$$Fe^{3+} + 3HO^- \\rightarrow Fe(OH)_3(s)$$", color: '#b45309' },
+            'cl-_agno3': { name: "Précipité Blanc (Chlorure d'Argent)", eq: "$$Ag^+ + Cl^- \\rightarrow AgCl(s)$$", color: '#f8fafc', note: "(Noircit à la lumière)" },
+            'so42-_bacl2':{ name: "Précipité Blanc (Sulfate de Baryum)", eq: "$$Ba^{2+} + SO_4^{2-} \\rightarrow BaSO_4(s)$$", color: '#e2e8f0' }
+        };
+
+        let tubeState = {
+            ion: 'cu2+',
+            reagentAdded: false,
+            precipitateData: null,
+            particles: [], // For animation
+            liquidHeight: 120,
+            targetLiquidHeight: 120
+        };
+
+        let isAnimating = false;
+        let animTimer = 0;
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            drawScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        ionSelect.addEventListener('change', (e) => {
+            tubeState.ion = e.target.value;
+            resetTube();
+        });
+
+        btnReset.addEventListener('click', resetTube);
+
+        function resetTube() {
+            tubeState.reagentAdded = false;
+            tubeState.precipitateData = null;
+            tubeState.particles = [];
+            tubeState.liquidHeight = 120;
+            tubeState.targetLiquidHeight = 120;
+            isAnimating = false;
+            animTimer = 0;
+
+            statResult.textContent = "Aucun précipité.";
+            statResult.style.color = "inherit";
+            eqContainer.style.display = "none";
+
+            drawScene();
+        }
+
+        btnAdd.addEventListener('click', () => {
+            if (tubeState.reagentAdded) return;
+
+            tubeState.reagentAdded = true;
+            tubeState.targetLiquidHeight = 150; // liquid rises
+            isAnimating = true;
+            animTimer = 0;
+
+            // Check reaction
+            let key = tubeState.ion + '_' + reagentSelect.value;
+            let pData = PRECIPITATES[key];
+
+            if (pData) {
+                tubeState.precipitateData = pData;
+                statResult.textContent = pData.name;
+                statResult.style.color = pData.color;
+
+                eqMain.innerHTML = pData.eq;
+                eqContainer.style.display = "flex";
+                if(window.MathJax && MathJax.typesetPromise) { MathJax.typesetClear([eqMain]); MathJax.typesetPromise([eqMain]).catch(()=>{}); }
+
+                // Spawn particles
+                for(let i=0; i<300; i++) {
+                    tubeState.particles.push({
+                        x: (cw/2 - 25) + Math.random()*50,
+                        y: (ch/2) - Math.random()*50,
+                        vx: (Math.random()-0.5)*20,
+                        vy: 50 + Math.random()*100, // falling down
+                        size: Math.random()*3 + 1
+                    });
+                }
+            } else {
+                statResult.textContent = "Pas de réaction (Test Négatif).";
+                statResult.style.color = "var(--text-muted)";
+                // Spawn just some mixing bubbles/drops
+                for(let i=0; i<20; i++) {
+                    tubeState.particles.push({
+                        x: (cw/2 - 20) + Math.random()*40,
+                        y: (ch/2) - Math.random()*20,
+                        vx: (Math.random()-0.5)*10,
+                        vy: 20 + Math.random()*50,
+                        size: Math.random()*2 + 1,
+                        isDrop: true
+                    });
+                }
+            }
+
+            requestAnimationFrame(loop);
+        });
+
+        function drawScene() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            const cx = cw/2;
+            const cy = ch/2;
+            const tubeW = 60;
+            const tubeH = 250;
+
+            const tubeX = cx - tubeW/2;
+            const tubeY = cy - tubeH/2 + 50;
+
+            // Liquid
+            let ionData = IONS[tubeState.ion];
+            ctx.fillStyle = ionData.initialColor;
+
+            // Draw liquid body
+            ctx.beginPath();
+            ctx.moveTo(tubeX + 2, tubeY + tubeH - tubeState.liquidHeight);
+            ctx.lineTo(tubeX + tubeW - 2, tubeY + tubeH - tubeState.liquidHeight);
+            ctx.lineTo(tubeX + tubeW - 2, tubeY + tubeH - tubeW/2);
+            // bottom arc
+            ctx.arc(cx, tubeY + tubeH - tubeW/2, tubeW/2 - 2, 0, Math.PI);
+            ctx.fill();
+
+            // Particles (Precipitate falling)
+            if (tubeState.particles.length > 0) {
+                let pCol = tubeState.precipitateData ? tubeState.precipitateData.color : 'rgba(255,255,255,0.5)';
+                ctx.fillStyle = pCol;
+
+                tubeState.particles.forEach(p => {
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                });
+            }
+
+            // Accumulated Precipitate at bottom
+            if (tubeState.precipitateData && animTimer > 1.0) {
+                // Growth logic
+                let growth = Math.min(1.0, (animTimer - 1.0) / 2.0); // grows over 2 seconds
+                let pHeight = growth * 40;
+
+                ctx.fillStyle = tubeState.precipitateData.color;
+                ctx.beginPath();
+                ctx.moveTo(tubeX + 2, tubeY + tubeH - pHeight - 10);
+                ctx.lineTo(tubeX + tubeW - 2, tubeY + tubeH - pHeight - 10);
+                ctx.lineTo(tubeX + tubeW - 2, tubeY + tubeH - tubeW/2);
+                ctx.arc(cx, tubeY + tubeH - tubeW/2, tubeW/2 - 2, 0, Math.PI);
+                ctx.fill();
+            }
+
+            // Tube Glass (Draw over liquid)
+            ctx.strokeStyle = isDark ? '#fff' : '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(tubeX, tubeY);
+            ctx.lineTo(tubeX, tubeY + tubeH - tubeW/2);
+            ctx.arc(cx, tubeY + tubeH - tubeW/2, tubeW/2, Math.PI, 0, true);
+            ctx.lineTo(tubeX + tubeW, tubeY);
+            ctx.stroke();
+
+            // Tube Rim
+            ctx.beginPath(); ctx.ellipse(cx, tubeY, tubeW/2 + 3, 5, 0, 0, Math.PI*2); ctx.stroke();
+
+            // Highlight/Reflection on glass
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.beginPath();
+            ctx.moveTo(tubeX + 5, tubeY + 20);
+            ctx.lineTo(tubeX + 15, tubeY + 20);
+            ctx.lineTo(tubeX + 15, tubeY + tubeH - 40);
+            ctx.lineTo(tubeX + 5, tubeY + tubeH - 30);
+            ctx.fill();
+
+            // Reagent Pipette (Animated)
+            if (isAnimating && animTimer < 1.0) {
+                // Slide down then up
+                let pipY = cy - 200 + Math.sin(animTimer * Math.PI) * 50;
+                ctx.fillStyle = isDark ? '#475569' : '#cbd5e1';
+                // pipette body
+                ctx.beginPath(); ctx.moveTo(cx - 10, pipY - 100); ctx.lineTo(cx + 10, pipY - 100);
+                ctx.lineTo(cx + 5, pipY); ctx.lineTo(cx - 5, pipY); ctx.fill(); ctx.stroke();
+                // drop
+                if (animTimer > 0.2 && animTimer < 0.8) {
+                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                    ctx.beginPath(); ctx.arc(cx, pipY + 10 + (animTimer*100)%20, 3, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            if (isAnimating) {
+                animTimer += dt;
+
+                // Liquid rises
+                if(tubeState.liquidHeight < tubeState.targetLiquidHeight) {
+                    tubeState.liquidHeight += 30 * dt;
+                }
+
+                const bottomY = ch/2 - 250/2 + 50 + 250 - 30; // approx bottom of tube
+
+                // Particle physics
+                for(let i=tubeState.particles.length-1; i>=0; i--) {
+                    let p = tubeState.particles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+
+                    // Jiggle
+                    p.x += (Math.random()-0.5)*2;
+
+                    // If hit bottom
+                    if (p.y > bottomY) {
+                        tubeState.particles.splice(i, 1);
+                    }
+                }
+
+                if (animTimer > 4.0 && tubeState.particles.length === 0) {
+                    isAnimating = false; // Stop when settled
+                }
+            }
+
+            drawScene();
+
+            if (isAnimating) {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        resize();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

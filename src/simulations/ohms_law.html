@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Loi d'Ohm & Circuit Électrique</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #eab308; /* Yellow/Gold for electricity */
+            --accent-glow: 0 0 10px rgba(234, 179, 8, 0.7);
+            --wire-color: #94a3b8;
+            --electron-color: #38bdf8;
+            --component-bg: #1e293b;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 10px rgba(217, 119, 6, 0.4);
+            --wire-color: #475569;
+            --electron-color: #0284c7;
+            --component-bg: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        #canvas-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Cyberpunk circuit grid background */
+            background-image:
+                linear-gradient(var(--glass-border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #controls-pane {
+            width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid var(--glass-border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            overflow-y: auto; overflow-x: hidden;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: var(--accent-glow);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        label {
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin-top: 10px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: var(--accent-glow);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(128, 128, 128, 0.5);
+            border-radius: 2px;
+        }
+
+        .stats-box {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            font-family: monospace;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .formula {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #10b981;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 5px;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .val-highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Switch */
+        .switch-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ef4444;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px; width: 22px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(30px); }
+
+        #theme-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 20;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Changer Thème</button>
+
+    <div id="app-container">
+
+        <div id="canvas-container">
+            <canvas id="simCanvas"></canvas>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Loi d'Ohm</h2>
+
+            <div class="control-group switch-control">
+                <span>Interrupteur</span>
+                <label class="switch">
+                    <input type="checkbox" id="circuit-switch" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>Tension Générateur (U) <span id="u-val">12.0 V</span></label>
+                <input type="range" id="voltage" min="0" max="24" step="0.5" value="12">
+            </div>
+
+            <div class="control-group">
+                <label>Résistance (R) <span id="r-val">100 Ω</span></label>
+                <input type="range" id="resistance" min="10" max="1000" step="10" value="100">
+            </div>
+
+            <div class="stats-box">
+                <div class="formula">U = R × I</div>
+
+                <div class="stat-row">
+                    <span>Tension (U)</span>
+                    <span class="val-highlight" id="stat-u">12.00 V</span>
+                </div>
+                <div class="stat-row">
+                    <span>Résistance (R)</span>
+                    <span class="val-highlight" id="stat-r">100 Ω</span>
+                </div>
+                <div class="stat-row" style="color:#38bdf8;">
+                    <span>Intensité (I)</span>
+                    <span class="val-highlight" id="stat-i" style="color:#38bdf8;">0.120 A</span>
+                </div>
+                <div class="stat-row" style="color:#f43f5e; margin-top:10px;">
+                    <span>Puissance (P=UI)</span>
+                    <span class="val-highlight" id="stat-p" style="color:#f43f5e;">1.44 W</span>
+                </div>
+            </div>
+
+            <div style="font-size:0.8rem; color:gray; text-align:center;">
+                Note: L'animation des électrons représente le sens réel (du - vers le +). L'intensité I est dans le sens conventionnel (+ vers -).
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI
+        const voltageInput = document.getElementById('voltage');
+        const resistanceInput = document.getElementById('resistance');
+        const switchInput = document.getElementById('circuit-switch');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const uVal = document.getElementById('u-val');
+        const rVal = document.getElementById('r-val');
+
+        const statU = document.getElementById('stat-u');
+        const statR = document.getElementById('stat-r');
+        const statI = document.getElementById('stat-i');
+        const statP = document.getElementById('stat-p');
+
+        // State
+        let width, height;
+        let isClosed = true;
+        let U = 12.0;
+        let R = 100;
+        let I = 0.120;
+        let electronOffset = 0; // For animation
+
+        // Circuit Geometry bounds
+        const cWidth = 400;
+        const cHeight = 300;
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        });
+
+        function updatePhysics() {
+            U = parseFloat(voltageInput.value);
+            R = parseFloat(resistanceInput.value);
+            isClosed = switchInput.checked;
+
+            if (isClosed && R > 0) {
+                I = U / R;
+            } else {
+                I = 0;
+            }
+
+            // Update UI
+            uVal.textContent = U.toFixed(1) + ' V';
+            rVal.textContent = R + ' Ω';
+
+            statU.textContent = (isClosed ? U : 0).toFixed(2) + ' V';
+            statR.textContent = R + ' Ω';
+            statI.textContent = I.toFixed(3) + ' A';
+            statP.textContent = ((isClosed ? U : 0) * I).toFixed(2) + ' W';
+        }
+
+        voltageInput.addEventListener('input', updatePhysics);
+        resistanceInput.addEventListener('input', updatePhysics);
+        switchInput.addEventListener('change', updatePhysics);
+
+        // --- DRAWING ---
+
+        // Helper: draw resistor component
+        function drawResistor(x, y, w, h, power) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Glow based on power dissipated
+            // Max power in this sim (24V, 10ohm = 57.6W)
+            const heatRatio = Math.min(power / 50, 1.0);
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            if (heatRatio > 0 && isClosed) {
+                ctx.shadowBlur = 20 * heatRatio;
+                ctx.shadowColor = `rgba(239, 68, 68, ${heatRatio})`;
+            }
+
+            // Ceramic body
+            ctx.fillStyle = isDark ? '#cbd5e1' : '#e2e8f0';
+            ctx.strokeStyle = isDark ? '#334155' : '#64748b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(-w/2, -h/2, w, h, 5);
+            ctx.fill();
+            ctx.stroke();
+
+            // Color bands (decoration)
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(-w/2 + 10, -h/2, 5, h);
+            ctx.fillStyle = '#22c55e'; ctx.fillRect(-w/2 + 20, -h/2, 5, h);
+            ctx.fillStyle = '#eab308'; ctx.fillRect(-w/2 + 30, -h/2, 5, h);
+            ctx.fillStyle = '#d4af37'; ctx.fillRect(w/2 - 15, -h/2, 5, h); // Gold tolerance
+
+            // Heat overlay (redness)
+            if (heatRatio > 0 && isClosed) {
+                ctx.fillStyle = `rgba(239, 68, 68, ${heatRatio * 0.7})`;
+                ctx.beginPath();
+                ctx.roundRect(-w/2, -h/2, w, h, 5);
+                ctx.fill();
+            }
+
+            // Label
+            ctx.fillStyle = isDark ? '#0f172a' : '#0f172a';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 0;
+            ctx.fillText(`${R} Ω`, 0, h/2 + 20);
+
+            ctx.restore();
+        }
+
+        // Helper: draw generator
+        function drawGenerator(x, y, radius) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Circle
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--component-bg').trim();
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Symbols
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('G', 0, 0);
+
+            // Polarities
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillStyle = '#ef4444'; // Red for +
+            ctx.fillText('+', 0, -radius - 15);
+            ctx.fillStyle = '#3b82f6'; // Blue for -
+            ctx.fillText('-', 0, radius + 15);
+
+            // Value label
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.font = '12px sans-serif';
+            ctx.fillText(`${U.toFixed(1)} V`, -radius - 30, 0);
+
+            ctx.restore();
+        }
+
+        // Helper: draw switch
+        function drawSwitchComp(x, y, size, closed) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const col = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Terminals
+            ctx.fillStyle = col;
+            ctx.beginPath(); ctx.arc(-size/2, 0, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(size/2, 0, 4, 0, Math.PI*2); ctx.fill();
+
+            // Switch blade
+            ctx.strokeStyle = col;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-size/2, 0);
+            if (closed) {
+                ctx.lineTo(size/2, 0);
+            } else {
+                ctx.lineTo(size/2 - 10, -20); // Open position
+            }
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Helper: draw ammeter/voltmeter
+        function drawMeter(x, y, radius, type, val, unit) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--component-bg').trim();
+            ctx.strokeStyle = type === 'A' ? '#38bdf8' : '#f43f5e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(type, 0, -10);
+
+            ctx.font = '12px monospace';
+            ctx.fillText(`${val} ${unit}`, 0, 10);
+
+            ctx.restore();
+        }
+
+        function drawCircuit() {
+            ctx.clearRect(0, 0, width, height);
+
+            const cx = width / 2;
+            const cy = height / 2;
+
+            const halfW = cWidth / 2;
+            const halfH = cHeight / 2;
+
+            const left = cx - halfW;
+            const right = cx + halfW;
+            const top = cy - halfH;
+            const bottom = cy + halfH;
+
+            const wireColor = getComputedStyle(document.documentElement).getPropertyValue('--wire-color').trim();
+            const electronColor = getComputedStyle(document.documentElement).getPropertyValue('--electron-color').trim();
+
+            // 1. Draw Wires (Background)
+            ctx.strokeStyle = wireColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Top wire
+            ctx.moveTo(left, top); ctx.lineTo(right, top);
+            // Right wire
+            ctx.moveTo(right, top); ctx.lineTo(right, bottom);
+            // Bottom wire
+            ctx.moveTo(right, bottom); ctx.lineTo(left, bottom);
+            // Left wire
+            ctx.moveTo(left, bottom); ctx.lineTo(left, top);
+            ctx.stroke();
+
+            // Draw parallel branch for Voltmeter
+            const vOffset = 60;
+            ctx.beginPath();
+            ctx.moveTo(cx - 80, bottom); ctx.lineTo(cx - 80, bottom + vOffset);
+            ctx.lineTo(cx + 80, bottom + vOffset); ctx.lineTo(cx + 80, bottom);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 2. Draw Electrons (Animation)
+            if (isClosed && I > 0) {
+                // Determine path length
+                const perimeter = 2 * cWidth + 2 * cHeight;
+                // Speed depends on Current (I)
+                // Max I in sim ~ 2.4A
+                const speed = I * 20;
+                electronOffset = (electronOffset + speed) % perimeter;
+
+                const numElectrons = 30;
+                const spacing = perimeter / numElectrons;
+
+                ctx.fillStyle = electronColor;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = electronColor;
+
+                for (let i = 0; i < numElectrons; i++) {
+                    let d = (electronOffset + i * spacing) % perimeter;
+                    let ex, ey;
+
+                    // Electrons move from - (bottom left in this drawing) to + (top left)
+                    // Generator is on the left. + is top, - is bottom.
+                    // So real path: Left(bottom->top) -> Top(left->right) -> Right(top->bottom) -> Bottom(right->left)
+                    // Let's map d to perimeter
+
+                    if (d < cHeight) {
+                        // Left wire, moving up
+                        ex = left;
+                        ey = bottom - d;
+                    } else if (d < cHeight + cWidth) {
+                        // Top wire, moving right
+                        ex = left + (d - cHeight);
+                        ey = top;
+                    } else if (d < 2*cHeight + cWidth) {
+                        // Right wire, moving down
+                        ex = right;
+                        ey = top + (d - (cHeight + cWidth));
+                    } else {
+                        // Bottom wire, moving left
+                        ex = right - (d - (2*cHeight + cWidth));
+                        ey = bottom;
+                    }
+
+                    // Skip drawing electrons under components for cleanliness
+                    const inGen = (ex === left && ey > cy - 30 && ey < cy + 30);
+                    const inSwitch = (ey === top && ex > cx - 40 && ex < cx + 40);
+                    const inRes = (ey === bottom && ex > cx - 50 && ex < cx + 50);
+                    const inAmp = (ex === right && ey > cy - 30 && ey < cy + 30);
+
+                    if (!inGen && !inSwitch && !inRes && !inAmp) {
+                        ctx.beginPath();
+                        ctx.arc(ex, ey, 4, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
+                ctx.shadowBlur = 0;
+            }
+
+            // 3. Draw Components
+
+            // Generator (Left center)
+            // Clear wire behind
+            ctx.clearRect(left - 30, cy - 30, 60, 60);
+            drawGenerator(left, cy, 25);
+
+            // Switch (Top center)
+            ctx.clearRect(cx - 30, top - 20, 60, 40);
+            drawSwitchComp(cx, top, 50, isClosed);
+
+            // Ammeter (Right center)
+            ctx.clearRect(right - 30, cy - 30, 60, 60);
+            const dispI = isClosed ? I.toFixed(3) : "0.000";
+            drawMeter(right, cy, 25, 'A', dispI, 'A');
+
+            // Resistor (Bottom center)
+            ctx.clearRect(cx - 50, bottom - 20, 100, 40);
+            const power = isClosed ? U * I : 0;
+            drawResistor(cx, bottom, 80, 24, power);
+
+            // Voltmeter (Parallel to resistor)
+            ctx.clearRect(cx - 30, bottom + vOffset - 30, 60, 60);
+            const dispU = isClosed ? U.toFixed(2) : "0.00";
+            drawMeter(cx, bottom + vOffset, 25, 'V', dispU, 'V');
+        }
+
+        function loop() {
+            drawCircuit();
+            requestAnimationFrame(loop);
+        }
+
+        // Init
+        resize();
+        updatePhysics();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

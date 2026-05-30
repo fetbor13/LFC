@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Collège: États de la Matière</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #3b82f6;
+            --accent-glow: 0 0 15px rgba(59, 130, 246, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --atom-color: #94a3b8;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #2563eb;
+            --accent-glow: 0 0 15px rgba(37, 99, 235, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --atom-color: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Modèle Particulaire (Eau H₂O)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2 style="color:#3b82f6;">États de la Matière</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Programme du Collège (5ème / 4ème)</div>
+
+            <div class="control-group">
+                <label>Température (T) <span id="t-val">-20 °C</span></label>
+                <input type="range" id="t-input" min="-100" max="200" step="1" value="-20">
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:gray;">
+                    <span>Froid (Solide)</span>
+                    <span>Chaud (Gaz)</span>
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Analyse de l'État</div>
+
+                <div style="display:flex; justify-content:space-between; font-weight:bold; margin-top:5px; font-size:1.1rem;">
+                    <span>État :</span> <span id="state-name" style="color:#3b82f6;">Solide</span>
+                </div>
+
+                <div id="state-desc" style="color:var(--text-muted); margin-top:10px;">
+                    Les particules sont très proches, fortement liées et ordonnées. Elles vibrent sur place. Le solide a une forme propre.
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:20px; flex:1;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Propriétés Microscopiques</div>
+                <ul style="padding-left:20px; margin-top:5px; color:var(--text-muted); display:flex; flex-direction:column; gap:5px;">
+                    <li>Agitation : <strong id="prop-agitation">Faible (vibration)</strong></li>
+                    <li>Liaisons : <strong id="prop-liaisons">Fortes</strong></li>
+                    <li>Organisation : <strong id="prop-ordre">Ordonné</strong></li>
+                    <li>Distance : <strong id="prop-dist">Très proches</strong></li>
+                </ul>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:auto; font-style:italic;">
+                * L'agitation thermique augmente avec la température. À 0°C, la glace fond. À 100°C, l'eau bout.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const tInput = document.getElementById('t-input');
+        const tVal = document.getElementById('t-val');
+        const stateName = document.getElementById('state-name');
+        const stateDesc = document.getElementById('state-desc');
+        const propAgitation = document.getElementById('prop-agitation');
+        const propLiaisons = document.getElementById('prop-liaisons');
+        const propOrdre = document.getElementById('prop-ordre');
+        const propDist = document.getElementById('prop-dist');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+        let particles = [];
+        let temperature = -20; // Celsius
+        let state = 'solid'; // solid, liquid, gas
+
+        const N_PARTICLES = 100;
+        const R = 6; // particle radius
+
+        function initParticles() {
+            particles = [];
+            // Initialize in a tight grid (solid state)
+            let cols = 10;
+            let rows = 10;
+            let spacing = R * 2.2;
+            let startX = cw/2 - (cols*spacing)/2;
+            let startY = ch - 50 - (rows*spacing);
+
+            for (let i=0; i<N_PARTICLES; i++) {
+                let col = i % cols;
+                let row = Math.floor(i / cols);
+                particles.push({
+                    id: i,
+                    gridX: startX + col * spacing,
+                    gridY: startY + row * spacing,
+                    x: startX + col * spacing,
+                    y: startY + row * spacing,
+                    vx: (Math.random()-0.5)*2,
+                    vy: (Math.random()-0.5)*2
+                });
+            }
+        }
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            if(particles.length===0) initParticles();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        });
+
+        function updateState() {
+            temperature = parseInt(tInput.value);
+            tVal.textContent = temperature + ' °C';
+
+            // Determine state
+            if (temperature < 0) {
+                state = 'solid';
+                stateName.textContent = 'Solide (Glace)';
+                stateName.style.color = '#38bdf8';
+                stateDesc.textContent = "Les particules sont très proches, fortement liées et ordonnées. Elles vibrent sur place. Le solide a une forme propre.";
+                propAgitation.textContent = "Faible (vibration)";
+                propLiaisons.textContent = "Fortes";
+                propOrdre.textContent = "Ordonné (Compact)";
+                propDist.textContent = "Très proches";
+            } else if (temperature >= 0 && temperature < 100) {
+                state = 'liquid';
+                stateName.textContent = 'Liquide (Eau)';
+                stateName.style.color = '#3b82f6';
+                stateDesc.textContent = "Les particules sont proches mais glissent les unes sur les autres. Le liquide n'a pas de forme propre, il prend la forme du récipient.";
+                propAgitation.textContent = "Moyenne (glissement)";
+                propLiaisons.textContent = "Faibles";
+                propOrdre.textContent = "Désordonné (Compact)";
+                propDist.textContent = "Proches";
+            } else {
+                state = 'gas';
+                stateName.textContent = 'Gaz (Vapeur d\'eau)';
+                stateName.style.color = '#94a3b8';
+                stateDesc.textContent = "Les particules sont très éloignées et bougent rapidement dans toutes les directions. Le gaz occupe tout l'espace disponible (expansible).";
+                propAgitation.textContent = "Très forte (aléatoire)";
+                propLiaisons.textContent = "Quasi-nulles";
+                propOrdre.textContent = "Très désordonné (Dispersé)";
+                propDist.textContent = "Très éloignées";
+            }
+        }
+
+        tInput.addEventListener('input', updateState);
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            // Cap dt
+            if (dt > 0.1) dt = 0.1;
+
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Draw Beaker
+            const bWidth = 250;
+            const bHeight = 300;
+            const bX = cw/2 - bWidth/2;
+            const bY = ch - 50 - bHeight;
+
+            ctx.beginPath();
+            ctx.moveTo(bX, bY); ctx.lineTo(bX, bY + bHeight); ctx.lineTo(bX + bWidth, bY + bHeight); ctx.lineTo(bX + bWidth, bY);
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            ctx.fill();
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Thermometer
+            const thX = bX - 40;
+            const thY = ch - 50;
+            ctx.fillStyle = isDark ? '#fff' : '#000';
+            ctx.fillRect(thX - 4, thY - 200, 8, 200);
+            ctx.beginPath(); ctx.arc(thX, thY, 15, 0, Math.PI*2); ctx.fill();
+            // Red liquid
+            let tempRatio = (temperature + 100) / 300; // -100 to 200 mapped to 0..1
+            let thH = 20 + tempRatio * 170;
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath(); ctx.arc(thX, thY, 12, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(thX - 2, thY - thH, 4, thH);
+
+            // Physics Update
+            let speedFactor = (temperature + 150) * 0.5; // Base speed based on T
+            if (speedFactor < 10) speedFactor = 10;
+
+            // Interaction forces
+            const kSpring = 500; // solid bonds
+            const kRepel = 20000;
+            const gravity = 500;
+            const damping = state === 'solid' ? 0.9 : (state === 'liquid' ? 0.98 : 0.999);
+
+            for(let i=0; i<N_PARTICLES; i++) {
+                let p = particles[i];
+
+                let fx = 0, fy = gravity; // Gravity always pushes down
+
+                if (state === 'solid') {
+                    // Pull to grid position
+                    fx += (p.gridX - p.x) * kSpring;
+                    fy += (p.gridY - p.y) * kSpring;
+                }
+
+                // Particle collisions & interactions
+                for(let j=i+1; j<N_PARTICLES; j++) {
+                    let p2 = particles[j];
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let distSq = dx*dx + dy*dy;
+                    let dist = Math.sqrt(distSq);
+
+                    if (dist < R*2.5 && dist > 0) {
+                        let force = 0;
+                        if (state === 'gas') {
+                            // Only hard collisions
+                            if(dist < R*2) force = kRepel / distSq;
+                        } else {
+                            // Liquid/Solid: slight attraction (Van der Waals) at specific distance, hard repulsion if closer
+                            if(dist < R*2) force = kRepel / distSq;
+                            else if(dist < R*2.5 && state==='liquid') force = -100; // cohesion
+                        }
+
+                        let fxa = (dx/dist) * force;
+                        let fya = (dy/dist) * force;
+                        fx += fxa; fy += fya;
+                        p2.vx -= fxa * dt; p2.vy -= fya * dt;
+                    }
+                }
+
+                // Random thermal agitation
+                let thermalForce = (state === 'solid') ? speedFactor * 5 : speedFactor * 20;
+                fx += (Math.random()-0.5) * thermalForce;
+                fy += (Math.random()-0.5) * thermalForce;
+
+                // Update V
+                p.vx += fx * dt;
+                p.vy += fy * dt;
+
+                // Damping
+                p.vx *= damping;
+                p.vy *= damping;
+
+                // Position
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+
+                // Boundaries
+                let bounce = 0.8;
+                if (p.x < bX + R + 2) { p.x = bX + R + 2; p.vx *= -bounce; }
+                if (p.x > bX + bWidth - R - 2) { p.x = bX + bWidth - R - 2; p.vx *= -bounce; }
+                if (p.y > bY + bHeight - R - 2) { p.y = bY + bHeight - R - 2; p.vy *= -bounce; }
+
+                if (state === 'gas') {
+                    // Can fly out if they go very high, but let's keep them on screen
+                    if (p.y < R) { p.y = R; p.vy *= -bounce; }
+                    if (p.x < R) { p.x = R; p.vx *= -bounce; }
+                    if (p.x > cw - R) { p.x = cw - R; p.vx *= -bounce; }
+                } else {
+                    // Keep roughly in beaker
+                    if (p.y < bY - 200) { p.y = bY - 200; p.vy *= -bounce; } // evaporate limit
+                }
+            }
+
+            // Draw particles
+            let particleCol = getComputedStyle(document.documentElement).getPropertyValue('--atom-color').trim();
+            if(state === 'solid') particleCol = '#38bdf8';
+            if(state === 'liquid') particleCol = '#3b82f6';
+
+            ctx.fillStyle = particleCol;
+            for(let i=0; i<N_PARTICLES; i++) {
+                let p = particles[i];
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, R, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        updateState();
+        resize();
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>

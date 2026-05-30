@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Mécanique Céleste (Lois de Kepler)</title>
+    <style>
+        :root {
+            --bg-color: #020617;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #f59e0b;
+            --accent-glow: 0 0 15px rgba(245, 158, 11, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --v-color: #10b981;
+            --a-color: #ef4444;
+            --grid-color: rgba(255, 255, 255, 0.05);
+            --axis-color: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 15px rgba(217, 119, 6, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --grid-color: rgba(0, 0, 0, 0.05);
+            --axis-color: rgba(0, 0, 0, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #canvas-container {
+            flex-grow: 1; position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 20px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 500; color: var(--text-muted); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--text-color); cursor: pointer; margin-top: -5px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: var(--glass-border); border-radius: 1px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .math-eq { font-style: italic; color: #38bdf8; font-weight: bold; }
+
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .switch-container { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; }
+        input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent-color); cursor: pointer; }
+
+        .btn { padding: 8px 12px; border: 1px solid var(--glass-border); border-radius: 4px; background: transparent; color: var(--text-color); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; text-align: center; }
+        .btn:hover { background: rgba(255,255,255,0.1); }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="canvas-container">
+            <canvas id="simCanvas"></canvas>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Mécanique Céleste</h2>
+
+            <div class="control-group">
+                <label>Vitesse Initiale (v₀) <span id="v-val">1.000 v_c</span></label>
+                <input type="range" id="v-input" min="0.500" max="1.414" step="0.005" value="1.000">
+            </div>
+
+            <div class="control-group">
+                <label>Masse de l'Astre Central (M) <span id="m-val">1.00 M_0</span></label>
+                <input type="range" id="m-input" min="0.5" max="3.0" step="0.1" value="1.0">
+            </div>
+
+            <div style="height: 1px; background: var(--glass-border); margin: 10px 0;"></div>
+
+            <div class="control-group">
+                <div class="switch-container">
+                    <label for="show-v" style="color:var(--v-color);">Vecteur Vitesse $\vec{v}$</label>
+                    <input type="checkbox" id="show-v" checked>
+                </div>
+                <div class="switch-container">
+                    <label for="show-a" style="color:var(--a-color);">Vecteur Accélération $\vec{a}$</label>
+                    <input type="checkbox" id="show-a" checked>
+                </div>
+                <div class="switch-container">
+                    <label for="show-area">Loi des Aires (Kepler II)</label>
+                    <input type="checkbox" id="show-area">
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <div class="math-eq">$\vec{a} = - \frac{GM}{r^2} \vec{u}_r$</div>
+                <div class="math-eq" style="font-size:0.75rem;">$E_m = \frac{1}{2}mv^2 - \frac{GMm}{r} = Cte$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div style="display:flex; justify-content:space-between;"><span>Distance $r$:</span> <span id="stat-r" style="color:#fbbf24;">1.000 AU</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Vitesse $\|\vec{v}\|$:</span> <span id="stat-v" style="color:var(--v-color);">1.000 u.a.</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Énergie $\mathcal{E}_m$:</span> <span id="stat-e">-0.500 J</span></div>
+                <div id="orbit-type" style="text-align:right; margin-top:5px; font-weight:bold; color:var(--accent-color);">Orbite Circulaire</div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button class="btn" id="btn-play" style="flex:1; background:#22c55e; color:white; border:none; box-shadow:0 0 10px rgba(34,197,94,0.5);">▶ Démarrer</button>
+                <button class="btn" id="btn-reset" style="flex:1; background:transparent; border:1px solid #ef4444; color:#ef4444;">Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const vInput = document.getElementById('v-input');
+        const mInput = document.getElementById('m-input');
+        const showV = document.getElementById('show-v');
+        const showA = document.getElementById('show-a');
+        const showArea = document.getElementById('show-area');
+        const btnReset = document.getElementById('btn-reset');
+        const btnPlay = document.getElementById('btn-play');
+
+        let width, height;
+        let dpr = window.devicePixelRatio || 1;
+
+        let G = 10000;
+        let M = 1.0;
+        let scale = 250; // pixels per AU
+
+        let planet = { x: 0, y: 0, vx: 0, vy: 0 };
+        let sun = { x: 0, y: 0 };
+
+        let path = [];
+        let areas = [];
+        let areaTimer = 0;
+        let currentAreaPts = [];
+
+        function initSim() {
+            M = parseFloat(mInput.value);
+            let v0 = parseFloat(vInput.value);
+
+            planet.x = scale;
+            planet.y = 0;
+
+            let v_base = Math.sqrt(G * M / planet.x);
+            planet.vx = 0;
+            planet.vy = -v_base * v0;
+
+            path = [];
+            areas = [];
+            areaTimer = 0;
+            currentAreaPts = [];
+        }
+
+        function resize() {
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+
+            // High DPI scaling for crisp university-level rendering
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+
+            sun.x = width / 2;
+            sun.y = height / 2;
+            if(path.length===0) initSim();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        });
+
+        vInput.addEventListener('input', (e) => {
+            document.getElementById('v-val').textContent = parseFloat(e.target.value).toFixed(3) + ' v_c';
+            initSim();
+        });
+        mInput.addEventListener('input', (e) => {
+            document.getElementById('m-val').textContent = parseFloat(e.target.value).toFixed(2) + ' M_0';
+            initSim();
+        });
+        btnReset.addEventListener('click', initSim);
+
+        // Utility to draw precise arrows
+        function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth = 2.5) {
+            const headlen = 14; // Bigger head
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const angle = Math.atan2(dy, dx);
+
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.lineTo(toX, toY);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawGridAndAxes() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = getComputedStyle(document.documentElement).getPropertyValue('--grid-color').trim();
+            const axisCol = getComputedStyle(document.documentElement).getPropertyValue('--axis-color').trim();
+
+            ctx.strokeStyle = gridCol;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+
+            // Polar/Cartesian hybrid grid
+            const step = scale / 4; // 0.25 AU
+
+            // Cartesian grid
+            for(let x = (sun.x % step); x < width; x += step) {
+                ctx.moveTo(x, 0); ctx.lineTo(x, height);
+            }
+            for(let y = (sun.y % step); y < height; y += step) {
+                ctx.moveTo(0, y); ctx.lineTo(width, y);
+            }
+            ctx.stroke();
+
+            // Concentric circles
+            ctx.beginPath();
+            for(let r = step; r < Math.max(width, height); r += step) {
+                ctx.arc(sun.x, sun.y, r, 0, Math.PI*2);
+            }
+            ctx.stroke();
+
+            // Axes
+            ctx.strokeStyle = axisCol;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, sun.y); ctx.lineTo(width, sun.y);
+            ctx.moveTo(sun.x, 0); ctx.lineTo(sun.x, height);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+            ctx.font = '10px "Fira Code", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('1.0 AU', sun.x + scale, sun.y + 15);
+            ctx.beginPath(); ctx.moveTo(sun.x + scale, sun.y - 5); ctx.lineTo(sun.x + scale, sun.y + 5); ctx.stroke();
+        }
+
+        let lastTime = 0;
+        function loop(timestamp) {
+            if(!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            let steps = 40; // High precision integration
+            let dts = dt / steps;
+
+            for(let i=0; i<steps; i++) {
+                let dx = -planet.x;
+                let dy = -planet.y;
+                let r2 = dx*dx + dy*dy;
+                let r = Math.sqrt(r2);
+
+                if (r < 5) continue; // Singularity avoidance
+
+                let a = (G * M) / r2;
+                let ax = a * (dx/r);
+                let ay = a * (dy/r);
+
+                planet.vx += ax * dts;
+                planet.vy += ay * dts;
+
+                planet.x += planet.vx * dts;
+                planet.y += planet.vy * dts;
+            }
+
+            // High resolution path recording
+            if (path.length === 0 || Math.hypot(path[path.length-1].x - planet.x, path[path.length-1].y - planet.y) > 1) {
+                path.push({x: planet.x, y: planet.y});
+                if (path.length > 2000) path.shift();
+            }
+
+            if (showArea.checked) {
+                areaTimer += dt;
+                currentAreaPts.push({x: planet.x, y: planet.y});
+                if (areaTimer > 1.0) {
+                    areas.push([...currentAreaPts]);
+                    if (areas.length > 6) areas.shift();
+                    currentAreaPts = [];
+                    areaTimer = 0;
+                }
+            } else {
+                areas = []; currentAreaPts = [];
+            }
+
+            // Stats
+            let r_disp = Math.sqrt(planet.x*planet.x + planet.y*planet.y) / scale;
+            let v_disp = Math.sqrt(planet.vx*planet.vx + planet.vy*planet.vy) / Math.sqrt(G*1.0/scale);
+            let e = 0.5*v_disp*v_disp - M/r_disp;
+
+            document.getElementById('stat-r').textContent = r_disp.toFixed(3) + ' AU';
+            document.getElementById('stat-v').textContent = v_disp.toFixed(3) + ' v_c';
+            document.getElementById('stat-e').textContent = e.toFixed(3) + ' J';
+
+            let type = "";
+            if (e > 0) type = "Orbite Hyperbolique";
+            else if (Math.abs(e) < 0.005) type = "Orbite Parabolique";
+            else if (Math.abs(e + 0.5) < 0.02 && Math.abs(M-1.0) < 0.02) type = "Orbite Circulaire";
+            else type = "Orbite Elliptique";
+            document.getElementById('orbit-type').textContent = type;
+
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            drawGridAndAxes();
+
+            ctx.save();
+            ctx.translate(sun.x, sun.y);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Areas
+            if (showArea.checked) {
+                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                for (let a of areas) {
+                    if (a.length < 2) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    for (let p of a) ctx.lineTo(p.x, p.y);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+                if (currentAreaPts.length > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    for (let p of currentAreaPts) ctx.lineTo(p.x, p.y);
+                    ctx.lineTo(planet.x, planet.y);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+                    ctx.fill();
+                }
+            }
+
+            // Path (Fine, anti-aliased)
+            if (path.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(path[0].x, path[0].y);
+                for(let i=1; i<path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+                ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // Central Mass
+            ctx.beginPath();
+            const sunRadius = Math.max(6, 15 * Math.sqrt(M));
+            ctx.arc(0, 0, sunRadius, 0, Math.PI*2);
+            let sunColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+            ctx.fillStyle = sunColor;
+            ctx.fill();
+
+            // Central Mass crosshair
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.5;
+            ctx.beginPath(); ctx.moveTo(-sunRadius-5, 0); ctx.lineTo(sunRadius+5, 0); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, -sunRadius-5); ctx.lineTo(0, sunRadius+5); ctx.stroke();
+
+            // Orbiting Body
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, 4, 0, Math.PI*2);
+            ctx.fillStyle = isDark ? '#fff' : '#000';
+            ctx.fill();
+
+            // Precision Vectors
+            if (showV.checked) {
+                // Increased visual scale for velocity
+                let vScale = 1.5;
+                let vColor = getComputedStyle(document.documentElement).getPropertyValue('--v-color').trim();
+                drawArrow(ctx, planet.x, planet.y, planet.x + planet.vx * vScale, planet.y + planet.vy * vScale, vColor, 2.5);
+            }
+
+            if (showA.checked) {
+                let dx = -planet.x;
+                let dy = -planet.y;
+                let r2 = dx*dx + dy*dy;
+                let r = Math.sqrt(r2);
+                let a = (G * M) / r2;
+                let ax = a * (dx/r);
+                let ay = a * (dy/r);
+
+                // Increased visual scale for acceleration
+                let aScale = 0.4;
+                let aColor = getComputedStyle(document.documentElement).getPropertyValue('--a-color').trim();
+                drawArrow(ctx, planet.x, planet.y, planet.x + ax * aScale, planet.y + ay * aScale, aColor, 2.5);
+            }
+
+            ctx.restore();
+        }
+
+        resize();
+        requestAnimationFrame(loop);
+
+        // Inject MathJax dynamically for formulas in UI
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Banc d'Optique (Lentilles Minces)</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #10b981; /* Green for optics */
+            --accent-glow: 0 0 15px rgba(16, 185, 129, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+            --ray-color: #fcd34d; /* Laser yellow */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #059669;
+            --accent-glow: 0 0 15px rgba(5, 150, 105, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+            --ray-color: #d97706;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px;}
+        canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; font-family: 'Fira Code', monospace; }
+        .math-eq { color: var(--accent-color); font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Banc d'optique virtuel</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+                <div style="position:absolute; bottom:15px; right:15px; font-size:0.75rem; color:gray;">Glissez l'objet (AB) sur l'axe optique.</div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Lentilles Minces</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Optique Géométrique (Lycée)</div>
+
+            <div class="control-group">
+                <label>Distance Focale ($f'$) <span id="f-val">20 cm</span></label>
+                <input type="range" id="f-input" min="5" max="50" step="1" value="20">
+            </div>
+
+            <div class="control-group">
+                <label>Position de l'objet ($\overline{OA}$) <span id="oa-val">-40 cm</span></label>
+                <input type="range" id="oa-input" min="-100" max="-5" step="1" value="-40">
+            </div>
+
+            <div class="control-group">
+                <label>Taille de l'objet ($\overline{AB}$) <span id="ab-val">10 cm</span></label>
+                <input type="range" id="ab-input" min="-20" max="20" step="1" value="10">
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div class="math-eq" id="eq-main">$\frac{1}{\overline{OA'}} - \frac{1}{\overline{OA}} = \frac{1}{f'}$</div>
+                <div class="math-eq" style="font-size:0.75rem; color:#f59e0b;">$\gamma = \frac{\overline{A'B'}}{\overline{AB}} = \frac{\overline{OA'}}{\overline{OA}}$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Position Image $\overline{OA'}$:</span> <span id="stat-oap" style="color:#10b981; font-weight:bold;">40.0 cm</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Taille Image $\overline{A'B'}$:</span> <span id="stat-abp" style="color:#ef4444; font-weight:bold;">-10.0 cm</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Grandissement $\gamma$:</span> <span id="stat-gamma" style="color:#f59e0b; font-weight:bold;">-1.0</span>
+                </div>
+
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div id="stat-desc" style="color:var(--text-muted); font-family:sans-serif; text-align:center;">
+                    L'image est réelle et renversée.
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:auto;">
+                <button id="btn-reset" style="flex:1; padding:10px; background:transparent; border:1px solid var(--glass-border); color:var(--text-color); border-radius:5px; cursor:pointer;">Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const fInput = document.getElementById('f-input');
+        const oaInput = document.getElementById('oa-input');
+        const abInput = document.getElementById('ab-input');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        let focal = 20; // cm
+        let oa = -40; // cm
+        let ab = 10; // cm
+
+        let oap = 0; // OA'
+        let abp = 0; // A'B'
+        let gamma = 0;
+
+        let isDragging = false;
+        const SCALE = 4; // pixels per cm
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            drawScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        function calculateOptics() {
+            focal = parseFloat(fInput.value);
+            oa = parseFloat(oaInput.value);
+            ab = parseFloat(abInput.value);
+
+            document.getElementById('f-val').textContent = focal + ' cm';
+            document.getElementById('oa-val').textContent = oa + ' cm';
+            document.getElementById('ab-val').textContent = ab + ' cm';
+
+            // Descartes relation: 1/OA' - 1/OA = 1/f'
+            // 1/OA' = 1/f' + 1/OA
+            let invOAP = (1 / focal) + (1 / oa);
+
+            if (Math.abs(invOAP) < 0.0001) {
+                oap = Infinity; // Infinite distance (image at infinity)
+                abp = Infinity;
+                gamma = Infinity;
+            } else {
+                oap = 1 / invOAP;
+                gamma = oap / oa;
+                abp = gamma * ab;
+            }
+
+            document.getElementById('stat-oap').textContent = oap === Infinity ? '∞' : oap.toFixed(1) + ' cm';
+            document.getElementById('stat-abp').textContent = abp === Infinity ? '∞' : abp.toFixed(1) + ' cm';
+            document.getElementById('stat-gamma').textContent = gamma === Infinity ? '∞' : gamma.toFixed(2);
+
+            let desc = "";
+            if (oap === Infinity) desc = "L'image est à l'infini (l'objet est au foyer objet F).";
+            else if (oap > 0) desc = "L'image est réelle (récupérable sur un écran) et " + (gamma < 0 ? "renversée." : "droite.");
+            else desc = "L'image est virtuelle (visible à travers la lentille, effet loupe) et droite.";
+
+            document.getElementById('stat-desc').textContent = desc;
+
+            drawScene();
+        }
+
+        fInput.addEventListener('input', calculateOptics);
+        oaInput.addEventListener('input', calculateOptics);
+        abInput.addEventListener('input', calculateOptics);
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            fInput.value = 20; oaInput.value = -40; abInput.value = 10;
+            calculateOptics();
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+
+            // Check if clicking near Object A
+            let pxA = cw/2 + oa * SCALE;
+            if (Math.abs(mx - pxA) < 15) isDragging = true;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const rect = canvas.getBoundingClientRect();
+            let mx = e.clientX - rect.left;
+
+            // Recompute OA based on mouse X
+            let newOA = (mx - cw/2) / SCALE;
+            if (newOA > -5) newOA = -5; // Limit so it stays on left or doesn't crash focal
+            if (newOA < -100) newOA = -100;
+
+            oaInput.value = newOA;
+            calculateOptics();
+        });
+
+        document.addEventListener('mouseup', () => isDragging = false);
+
+        function drawArrow(x, y, h, color, text) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y - h);
+            ctx.stroke();
+
+            // Arrowhead
+            ctx.beginPath();
+            let sign = h > 0 ? 1 : -1;
+            ctx.moveTo(x, y - h);
+            ctx.lineTo(x - 4, y - h + sign*6);
+            ctx.lineTo(x + 4, y - h + sign*6);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            if (text) {
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText(text, x + 5, y - h - sign*10);
+            }
+        }
+
+        function drawScene() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const cx = cw/2;
+            const cy = ch/2;
+
+            // Draw Axis
+            ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(cw, cy); ctx.stroke();
+            // Ticks
+            for(let x=0; x<cw; x+=10*SCALE) {
+                ctx.beginPath(); ctx.moveTo(x, cy-3); ctx.lineTo(x, cy+3); ctx.stroke();
+            }
+
+            // Draw Lens (Thin Converging)
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(cx, cy - 100); ctx.lineTo(cx, cy + 100); ctx.stroke();
+            // Arrow heads (converging)
+            ctx.beginPath(); ctx.moveTo(cx, cy-100); ctx.lineTo(cx-5, cy-90); ctx.moveTo(cx, cy-100); ctx.lineTo(cx+5, cy-90); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, cy+100); ctx.lineTo(cx-5, cy+90); ctx.moveTo(cx, cy+100); ctx.lineTo(cx+5, cy+90); ctx.stroke();
+            ctx.fillStyle = '#38bdf8'; ctx.font='bold 14px sans-serif'; ctx.fillText('O', cx+5, cy+15);
+
+            // Draw Foci
+            let fPx = focal * SCALE;
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath(); ctx.arc(cx - fPx, cy, 3, 0, Math.PI*2); ctx.fill(); ctx.fillText('F', cx - fPx - 5, cy + 15);
+            ctx.beginPath(); ctx.arc(cx + fPx, cy, 3, 0, Math.PI*2); ctx.fill(); ctx.fillText("F'", cx + fPx - 5, cy + 15);
+
+            // Object A B
+            let pxA = cx + oa * SCALE;
+            let hPxAB = ab * SCALE;
+            drawArrow(pxA, cy, hPxAB, '#10b981', 'B');
+            ctx.fillStyle = '#10b981'; ctx.fillText('A', pxA - 15, cy + 15);
+
+            const rayCol = getComputedStyle(document.documentElement).getPropertyValue('--ray-color').trim();
+
+            if (oap !== Infinity) {
+                let pxAp = cx + oap * SCALE;
+                let hPxABp = abp * SCALE;
+
+                // Rays
+                ctx.strokeStyle = rayCol;
+                ctx.lineWidth = 1.5;
+
+                // 1. Ray parallel to axis -> passes through F'
+                ctx.beginPath();
+                ctx.moveTo(pxA, cy - hPxAB);
+                ctx.lineTo(cx, cy - hPxAB); // to lens
+                ctx.lineTo(pxAp, cy - hPxABp); // to image
+                if(oap < 0) {
+                    // Virtual extension
+                    ctx.setLineDash([5,5]);
+                    ctx.lineTo(cx + (cx - pxA)*2, cy - hPxAB + ((cy-hPxABp)-(cy-hPxAB))/(pxAp-cx) * (cx + (cx - pxA)*2 - cx)); // extend right
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                } else {
+                    ctx.lineTo(cw, cy - hPxABp + ((cy-hPxABp)-(cy-hPxAB))/(pxAp-cx) * (cw - pxAp)); // extend right
+                    ctx.stroke();
+                }
+
+                // 2. Ray through optical center O -> undeflected
+                ctx.beginPath();
+                ctx.moveTo(pxA, cy - hPxAB);
+                ctx.lineTo(cx, cy);
+                ctx.lineTo(pxAp, cy - hPxABp);
+                ctx.lineTo(oap>0?cw:0, oap>0 ? cy + (cy-(cy-hPxABp))/(cx-pxAp)*(cw-cx) : cy - (cy-(cy-hPxABp))/(cx-pxAp)*cx);
+                ctx.stroke();
+
+                // 3. Ray through F -> parallel to axis after lens
+                let intersectY = cy - hPxAB + ((cy)-(cy-hPxAB))/(cx-fPx - pxA) * (cx - pxA);
+                ctx.beginPath();
+                ctx.moveTo(pxA, cy - hPxAB);
+                ctx.lineTo(cx, intersectY);
+                ctx.lineTo(pxAp, cy - hPxABp);
+                ctx.stroke();
+
+                // Image A' B'
+                if (oap < 0) ctx.setLineDash([4,4]); // Virtual image
+                drawArrow(pxAp, cy, hPxABp, '#f43f5e', "B'");
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#f43f5e'; ctx.fillText("A'", pxAp + 5, cy + 15);
+
+            } else {
+                // Infinity case (Object on F)
+                ctx.strokeStyle = rayCol;
+                ctx.beginPath(); ctx.moveTo(pxA, cy - hPxAB); ctx.lineTo(cx, cy - hPxAB); ctx.lineTo(cw, cy - hPxAB + ((cy)-(cy-hPxAB))/(fPx)*(cw-cx)); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(pxA, cy - hPxAB); ctx.lineTo(cx, cy); ctx.lineTo(cw, cy + (cy-(cy-hPxAB))/(pxA-cx)*(cw-cx)); ctx.stroke();
+            }
+        }
+
+        // Init
+        calculateOptics();
+        resize();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

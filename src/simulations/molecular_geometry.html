@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Géométrie Moléculaire & Nomenclature</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #0ea5e9;
+            --accent-glow: 0 0 15px rgba(14, 165, 233, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --atom-c: #475569; /* Grey Carbon */
+            --atom-o: #ef4444; /* Red Oxygen */
+            --atom-h: #f8fafc; /* White Hydrogen */
+            --atom-n: #3b82f6; /* Blue Nitrogen */
+            --bond-col: #94a3b8;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0284c7;
+            --accent-glow: 0 0 15px rgba(2, 132, 199, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+
+            --atom-c: #1e293b;
+            --atom-h: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px;}
+        canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+        canvas:active { cursor: grabbing; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+        select:focus { border-color: var(--accent-color); }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .badge { display: inline-block; padding: 4px 8px; background: rgba(14, 165, 233, 0.2); border: 1px solid var(--accent-color); border-radius: 4px; font-family: monospace; font-weight: bold; color: var(--accent-color); }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Visualisation 3D (Théorie VSEPR)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="molCanvas"></canvas>
+                </div>
+                <div style="position:absolute; bottom:15px; right:15px; font-size:0.75rem; color:var(--text-muted);">Glissez pour tourner</div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Structure Moléculaire</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Géométrie & Nomenclature (Première/Terminale)</div>
+
+            <div class="control-group">
+                <label>Molécule / Géométrie type</label>
+                <select id="mol-select">
+                    <option value="ch4">Méthane (Tétraédrique AX₄)</option>
+                    <option value="nh3">Ammoniac (Pyramide trigonale AX₃E₁)</option>
+                    <option value="h2o">Eau (Coudée AX₂E₂)</option>
+                    <option value="co2">Dioxyde de carbone (Linéaire AX₂)</option>
+                    <option value="c2h4">Éthène (Plane AX₃)</option>
+                    <option value="ethanol">Éthanol (Alcool primaire)</option>
+                </select>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Nomenclature IUPAC</div>
+                <div style="font-size:1.1rem; font-weight:bold; margin-top:5px;" id="mol-name">Méthane</div>
+                <div style="font-family:monospace; color:var(--text-muted);" id="mol-formula">CH₄</div>
+
+                <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;" id="mol-tags">
+                    <span class="badge">Alcane</span>
+                    <span class="badge">AX₄</span>
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px; flex:1;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Analyse VSEPR & Propriétés</div>
+                <div id="mol-desc" style="color:var(--text-muted); margin-top:5px;">
+                    Le carbone central forme 4 liaisons simples. La répulsion maximale des doublets liants donne une structure tétraédrique avec des angles de 109.5°. Molécule apolaire.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('molCanvas');
+        const ctx = canvas.getContext('2d');
+        const molSelect = document.getElementById('mol-select');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const molName = document.getElementById('mol-name');
+        const molFormula = document.getElementById('mol-formula');
+        const molTags = document.getElementById('mol-tags');
+        const molDesc = document.getElementById('mol-desc');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Simple 3D Engine
+        let cameraZ = 400;
+        let angleX = 0.5; // Rotation around X axis
+        let angleY = 0.5; // Rotation around Y axis
+
+        // Molecule Database
+        const DB = {
+            ch4: {
+                name: "Méthane", formula: "CH₄", tags: ["Alcane", "AX₄", "Tétraédrique", "Apolaire"],
+                desc: "Le carbone central forme 4 liaisons simples. La répulsion maximale des doublets liants donne une structure tétraédrique avec des angles de 109.5°. La symétrie annule les moments dipolaires locaux, rendant la molécule globale apolaire.",
+                atoms: [
+                    {id: 0, type: 'C', r: 25, x: 0, y: 0, z: 0},
+                    {id: 1, type: 'H', r: 15, x: 60, y: 60, z: 60},
+                    {id: 2, type: 'H', r: 15, x: -60, y: -60, z: 60},
+                    {id: 3, type: 'H', r: 15, x: -60, y: 60, z: -60},
+                    {id: 4, type: 'H', r: 15, x: 60, y: -60, z: -60}
+                ],
+                bonds: [[0,1], [0,2], [0,3], [0,4]]
+            },
+            nh3: {
+                name: "Ammoniac", formula: "NH₃", tags: ["Amine", "AX₃E₁", "Pyramide à base triangulaire", "Polaire"],
+                desc: "L'azote possède 3 doublets liants et 1 doublet non liant (AX₃E₁). Le doublet non liant, plus volumineux, repousse les liaisons N-H, fermant l'angle à environ 107°. Molécule polaire.",
+                atoms: [
+                    {id: 0, type: 'N', r: 22, x: 0, y: -20, z: 0},
+                    {id: 1, type: 'H', r: 15, x: 0, y: 50, z: 70},
+                    {id: 2, type: 'H', r: 15, x: -60, y: 50, z: -35},
+                    {id: 3, type: 'H', r: 15, x: 60, y: 50, z: -35},
+                    {id: 4, type: 'LP', r: 0, x: 0, y: -70, z: 0} // Lone pair visual placeholder
+                ],
+                bonds: [[0,1], [0,2], [0,3]]
+            },
+            h2o: {
+                name: "Eau", formula: "H₂O", tags: ["Oxyde", "AX₂E₂", "Coudée", "Très Polaire"],
+                desc: "L'oxygène possède 2 doublets liants et 2 non liants (AX₂E₂). La forte répulsion des deux doublets non liants ferme l'angle H-O-H à 104.5°. La différence d'électronégativité et la géométrie coudée en font un solvant très polaire.",
+                atoms: [
+                    {id: 0, type: 'O', r: 24, x: 0, y: 0, z: 0},
+                    {id: 1, type: 'H', r: 15, x: -50, y: 50, z: 0},
+                    {id: 2, type: 'H', r: 15, x: 50, y: 50, z: 0},
+                    {id: 3, type: 'LP', r: 0, x: 0, y: -40, z: 40},
+                    {id: 4, type: 'LP', r: 0, x: 0, y: -40, z: -40}
+                ],
+                bonds: [[0,1], [0,2]]
+            },
+            co2: {
+                name: "Dioxyde de carbone", formula: "CO₂", tags: ["AX₂", "Linéaire", "Apolaire", "Double liaison"],
+                desc: "Le carbone central forme 2 doubles liaisons (AX₂). Répulsion maximale à 180°, structure linéaire. Bien que les liaisons C=O soient polarisées, la symétrie de la molécule annule le moment dipolaire global.",
+                atoms: [
+                    {id: 0, type: 'C', r: 25, x: 0, y: 0, z: 0},
+                    {id: 1, type: 'O', r: 24, x: -80, y: 0, z: 0},
+                    {id: 2, type: 'O', r: 24, x: 80, y: 0, z: 0}
+                ],
+                bonds: [[0,1, 2], [0,2, 2]] // 3rd param is bond count (double)
+            },
+            c2h4: {
+                name: "Éthène", formula: "C₂H₄", tags: ["Alcène", "AX₃", "Plane", "Insaturée"],
+                desc: "Les deux atomes de carbone sont liés par une double liaison. Chaque carbone a un environnement AX₃, conduisant à une géométrie plane avec des angles proches de 120°.",
+                atoms: [
+                    {id: 0, type: 'C', r: 25, x: -30, y: 0, z: 0},
+                    {id: 1, type: 'C', r: 25, x: 30, y: 0, z: 0},
+                    {id: 2, type: 'H', r: 15, x: -70, y: 50, z: 0},
+                    {id: 3, type: 'H', r: 15, x: -70, y: -50, z: 0},
+                    {id: 4, type: 'H', r: 15, x: 70, y: 50, z: 0},
+                    {id: 5, type: 'H', r: 15, x: 70, y: -50, z: 0}
+                ],
+                bonds: [[0,1, 2], [0,2], [0,3], [1,4], [1,5]]
+            },
+            ethanol: {
+                name: "Éthanol", formula: "C₂H₆O", tags: ["Alcool primaire", "Chaîne carbonée", "Polaire"],
+                desc: "Molécule comportant une chaîne de deux atomes de carbone sp³ (géométrie tétraédrique locale) et un groupe caractéristique hydroxyle -OH (géométrie coudée locale). Molécule amphiphile (partie polaire OH, partie apolaire éthyle).",
+                atoms: [
+                    {id: 0, type: 'C', r: 25, x: -50, y: 20, z: 0}, // C1
+                    {id: 1, type: 'C', r: 25, x: 10, y: -20, z: 0}, // C2
+                    {id: 2, type: 'O', r: 24, x: 70, y: 20, z: 0}, // O
+                    {id: 3, type: 'H', r: 15, x: -50, y: 80, z: 0}, // H on C1
+                    {id: 4, type: 'H', r: 15, x: -80, y: -10, z: -40}, // H on C1
+                    {id: 5, type: 'H', r: 15, x: -80, y: -10, z: 40}, // H on C1
+                    {id: 6, type: 'H', r: 15, x: 10, y: -80, z: 0}, // H on C2
+                    {id: 7, type: 'H', r: 15, x: 30, y: 0, z: -50}, // H on C2
+                    {id: 8, type: 'H', r: 15, x: 100, y: -10, z: 0} // H on O
+                ],
+                bonds: [[0,1], [1,2], [0,3], [0,4], [0,5], [1,6], [1,7], [2,8]]
+            }
+        };
+
+        let currentMol = null;
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            drawScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        molSelect.addEventListener('change', loadMolecule);
+
+        function loadMolecule() {
+            const key = molSelect.value;
+            currentMol = JSON.parse(JSON.stringify(DB[key])); // deep copy to mutate 3D coords safely
+
+            molName.textContent = currentMol.name;
+            molFormula.textContent = currentMol.formula;
+            molDesc.textContent = currentMol.desc;
+
+            molTags.innerHTML = '';
+            currentMol.tags.forEach(t => {
+                let badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.textContent = t;
+                molTags.appendChild(badge);
+            });
+
+            // Reset rotation
+            angleX = 0.3;
+            angleY = 0.5;
+
+            drawScene();
+        }
+
+        // 3D rotation math
+        function rotate3D(x, y, z, ax, ay) {
+            // Rotate around X
+            let y1 = y * Math.cos(ax) - z * Math.sin(ax);
+            let z1 = y * Math.sin(ax) + z * Math.cos(ax);
+            // Rotate around Y
+            let x2 = x * Math.cos(ay) + z1 * Math.sin(ay);
+            let z2 = -x * Math.sin(ay) + z1 * Math.cos(ay);
+            return {x: x2, y: y1, z: z2};
+        }
+
+        function project3D(x, y, z) {
+            // Simple perspective projection
+            const fov = 600;
+            const scale = fov / (fov + z + cameraZ);
+            const xp = (x * scale) + (cw / 2);
+            const yp = (y * scale) + (ch / 2);
+            return {x: xp, y: yp, scale: scale};
+        }
+
+        function drawScene() {
+            if (!currentMol) return;
+            ctx.clearRect(0, 0, cw, ch);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            // Calculate 3D positions
+            let renderAtoms = [];
+            currentMol.atoms.forEach(a => {
+                let r3d = rotate3D(a.x, a.y, a.z, angleX, angleY);
+                let proj = project3D(r3d.x, r3d.y, r3d.z);
+                renderAtoms.push({
+                    ...a,
+                    rx: r3d.x, ry: r3d.y, rz: r3d.z,
+                    px: proj.x, py: proj.y, pScale: proj.scale
+                });
+            });
+
+            // Sort atoms by Z depth for proper occlusion
+            renderAtoms.sort((a, b) => b.rz - a.rz);
+
+            // Draw Bonds
+            // We should ideally draw bonds behind/in front based on Z, but for simple molecules
+            // drawing all bonds first then atoms over them usually works okay, or sorting bonds.
+            // Let's draw bonds by taking average Z of the two atoms.
+            let renderBonds = [];
+            currentMol.bonds.forEach(b => {
+                let a1 = renderAtoms.find(a => a.id === b[0]);
+                let a2 = renderAtoms.find(a => a.id === b[1]);
+                if(a1 && a2) {
+                    renderBonds.push({a1: a1, a2: a2, z: (a1.rz + a2.rz)/2, double: b[2]===2});
+                }
+            });
+            renderBonds.sort((a, b) => b.z - a.z);
+
+            const bondCol = getComputedStyle(document.documentElement).getPropertyValue('--bond-col').trim();
+
+            renderBonds.forEach(b => {
+                ctx.strokeStyle = bondCol;
+                // Vary opacity by depth
+                let alpha = Math.min(1, Math.max(0.2, 1 - (b.z + 100)/400));
+                ctx.globalAlpha = alpha;
+
+                if (b.double) {
+                    // Draw two parallel lines
+                    let dx = b.a2.px - b.a1.px; let dy = b.a2.py - b.a1.py;
+                    let len = Math.hypot(dx, dy);
+                    let nx = -dy/len * 5; let ny = dx/len * 5;
+                    ctx.lineWidth = 2 * b.a1.pScale;
+                    ctx.beginPath(); ctx.moveTo(b.a1.px + nx, b.a1.py + ny); ctx.lineTo(b.a2.px + nx, b.a2.py + ny); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(b.a1.px - nx, b.a1.py - ny); ctx.lineTo(b.a2.px - nx, b.a2.py - ny); ctx.stroke();
+                } else {
+                    ctx.lineWidth = 6 * b.a1.pScale;
+                    ctx.beginPath(); ctx.moveTo(b.a1.px, b.a1.py); ctx.lineTo(b.a2.px, b.a2.py); ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+            });
+
+            // Draw Atoms
+            renderAtoms.forEach(a => {
+                let pScaleSafe = Math.max(0.01, a.pScale); // Prevent zero or negative scale
+
+                if (a.type === 'LP') {
+                    // Draw lone pair lob
+                    ctx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)';
+                    ctx.beginPath(); ctx.arc(a.px, a.py, 15 * pScaleSafe, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(a.px-4*pScaleSafe, a.py, 2*pScaleSafe, 0, Math.PI*2); ctx.fillStyle=isDark?'#fff':'#000'; ctx.fill();
+                    ctx.beginPath(); ctx.arc(a.px+4*pScaleSafe, a.py, 2*pScaleSafe, 0, Math.PI*2); ctx.fill();
+                    return;
+                }
+
+                let colorVar = `--atom-${a.type.toLowerCase()}`;
+                let color = getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim();
+
+                let radius = Math.max(0.1, a.r * pScaleSafe);
+
+                // Sphere shading
+                ctx.beginPath();
+                ctx.arc(a.px, a.py, radius, 0, Math.PI*2);
+
+                // Ensure valid gradient parameters
+                try {
+                    let grad = ctx.createRadialGradient(a.px - radius*0.3, a.py - radius*0.3, radius*0.1, a.px, a.py, radius);
+                    grad.addColorStop(0, '#ffffff'); // highlight
+                    grad.addColorStop(0.4, color);
+                    grad.addColorStop(1, isDark ? '#000' : '#888'); // shadow
+                    ctx.fillStyle = grad;
+                } catch (e) {
+                    // Fallback if gradient fails
+                    ctx.fillStyle = color;
+                }
+                ctx.fill();
+
+                // Atom label
+                ctx.fillStyle = (a.type === 'H' || (!isDark && a.type === 'C')) ? '#000' : '#fff';
+                let fontSize = Math.max(8, 14 * pScaleSafe);
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(a.type, a.px, a.py);
+            });
+        }
+
+        // Mouse Drag interaction for 3D rotation
+        let isDragging = false;
+        let lastMouseX, lastMouseY;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - lastMouseX;
+            const dy = e.clientY - lastMouseY;
+
+            angleY += dx * 0.01;
+            angleX += dy * 0.01;
+
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+
+            drawScene();
+        });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        });
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const dx = e.touches[0].clientX - lastMouseX;
+            const dy = e.touches[0].clientY - lastMouseY;
+            angleY += dx * 0.01; angleX += dy * 0.01;
+            lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY;
+            drawScene();
+        }, {passive: true});
+        document.addEventListener('touchend', () => { isDragging = false; });
+
+        // Auto rotation
+        function animate() {
+            if (!isDragging) {
+                angleY += 0.005;
+                drawScene();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // Init
+        loadMolecule();
+        resize();
+        animate();
+
+    </script>
+</body>
+</html>

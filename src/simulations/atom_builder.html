@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation: Bâtisseur d'Atomes et Ions</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #38bdf8; /* Cyan */
+            --accent-glow: 0 0 15px rgba(56, 189, 248, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --proton-col: #ef4444; /* Red */
+            --neutron-col: #94a3b8; /* Grey */
+            --electron-col: #3b82f6; /* Blue */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0284c7;
+            --accent-glow: 0 0 15px rgba(2, 132, 199, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #canvas-wrapper { flex: 1; position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 8px;}
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+
+        .part-control { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--glass-border); }
+        .part-control button { width: 28px; height: 28px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .part-control button:hover { filter: brightness(1.2); }
+        .part-val { font-size: 1.1rem; font-weight: bold; width: 30px; text-align: center; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .sym-box { font-family: 'Fira Code', monospace; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 2rem; margin: 10px 0; }
+        .sym-numbers { display: flex; flex-direction: column; align-items: flex-end; font-size: 1rem; line-height: 1; }
+        .sym-element { font-weight: bold; }
+        .sym-charge { font-size: 1rem; position: relative; top: -10px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="canvas-wrapper" class="section-box">
+                <div class="section-title">Modèle de Bohr (Nuage & Couches)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="simCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Bâtisseur d'Atome</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Structure de la matière (Collège/Seconde)</div>
+
+            <div class="control-group">
+                <div class="part-control">
+                    <span style="color:var(--proton-col); font-weight:bold;">Protons (p⁺)</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button onclick="change('p', -1)" style="background:var(--proton-col); color:white;">-</button>
+                        <span class="part-val" id="val-p">1</span>
+                        <button onclick="change('p', 1)" style="background:var(--proton-col); color:white;">+</button>
+                    </div>
+                </div>
+                <div class="part-control">
+                    <span style="color:var(--neutron-col); font-weight:bold;">Neutrons (n⁰)</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button onclick="change('n', -1)" style="background:var(--neutron-col); color:white;">-</button>
+                        <span class="part-val" id="val-n">0</span>
+                        <button onclick="change('n', 1)" style="background:var(--neutron-col); color:white;">+</button>
+                    </div>
+                </div>
+                <div class="part-control">
+                    <span style="color:var(--electron-col); font-weight:bold;">Électrons (e⁻)</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <button onclick="change('e', -1)" style="background:var(--electron-col); color:white;">-</button>
+                        <span class="part-val" id="val-e">1</span>
+                        <button onclick="change('e', 1)" style="background:var(--electron-col); color:white;">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px; text-align:center;">Symbole Isotopique</div>
+
+                <div class="sym-box">
+                    <div class="sym-numbers">
+                        <span id="sym-a" style="color:#f59e0b;">1</span>
+                        <span id="sym-z" style="color:#ef4444;">1</span>
+                    </div>
+                    <div class="sym-element" id="sym-el">H</div>
+                    <div class="sym-charge" id="sym-charge" style="color:#38bdf8;"></div>
+                </div>
+            </div>
+
+            <div class="stats-box" style="margin-top:10px; flex:1;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Propriétés</div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span>Élément :</span> <span id="prop-name" style="font-weight:bold;">Hydrogène</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Masse ($A$) :</span> <span id="prop-a">1 nucléons</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Charge Nette :</span> <span id="prop-charge" style="font-weight:bold; color:#10b981;">0 (Neutre)</span>
+                </div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+                <div id="prop-desc" style="color:var(--text-muted); font-size:0.8rem; text-align:justify;">
+                    L'atome est neutre car il possède autant de protons que d'électrons.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Atom state
+        let protons = 1;
+        let neutrons = 0;
+        let electrons = 1;
+
+        const ELEMENTS = [
+            "", "Hydrogène", "Hélium", "Lithium", "Béryllium", "Bore", "Carbone", "Azote", "Oxygène", "Fluor", "Néon",
+            "Sodium", "Magnésium", "Aluminium", "Silicium", "Phosphore", "Soufre", "Chlore", "Argon"
+        ];
+        const SYMBOLS = [
+            "", "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+            "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar"
+        ];
+
+        let nucleusParticles = []; // For rendering nucleus
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            buildNucleus();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        });
+
+        window.change = function(type, delta) {
+            if (type === 'p') protons = Math.max(1, Math.min(18, protons + delta));
+            if (type === 'n') neutrons = Math.max(0, Math.min(22, neutrons + delta));
+            if (type === 'e') electrons = Math.max(0, Math.min(20, electrons + delta));
+
+            updateUI();
+        };
+
+        function buildNucleus() {
+            nucleusParticles = [];
+            let total = protons + neutrons;
+            if(total === 0) return;
+
+            // Distribute in a small clump
+            let r = 5; // particle radius
+            let clumpRadius = Math.sqrt(total) * r * 0.8;
+
+            let p_count = 0;
+            let n_count = 0;
+
+            for(let i=0; i<total; i++) {
+                let type;
+                if(p_count < protons && n_count < neutrons) {
+                    type = Math.random() > 0.5 ? 'p' : 'n';
+                } else if (p_count < protons) {
+                    type = 'p';
+                } else {
+                    type = 'n';
+                }
+
+                if(type === 'p') p_count++; else n_count++;
+
+                // Random pos in circle
+                let angle = Math.random() * Math.PI * 2;
+                let dist = Math.random() * clumpRadius;
+                nucleusParticles.push({
+                    type: type,
+                    x: Math.cos(angle) * dist,
+                    y: Math.sin(angle) * dist,
+                    targetX: Math.cos(angle) * dist,
+                    targetY: Math.sin(angle) * dist
+                });
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('val-p').textContent = protons;
+            document.getElementById('val-n').textContent = neutrons;
+            document.getElementById('val-e').textContent = electrons;
+
+            let A = protons + neutrons;
+            let charge = protons - electrons;
+
+            document.getElementById('sym-z').textContent = protons;
+            document.getElementById('sym-a').textContent = A;
+            document.getElementById('sym-el').textContent = SYMBOLS[protons];
+
+            let chargeStr = "";
+            if(charge > 0) chargeStr = (charge===1 ? "+" : charge+"+");
+            else if(charge < 0) chargeStr = (Math.abs(charge)===1 ? "-" : Math.abs(charge)+"-");
+            document.getElementById('sym-charge').textContent = chargeStr;
+
+            document.getElementById('prop-name').textContent = ELEMENTS[protons];
+            document.getElementById('prop-a').textContent = A + " nucléons";
+
+            let chargeEl = document.getElementById('prop-charge');
+            let descEl = document.getElementById('prop-desc');
+
+            if (charge === 0) {
+                chargeEl.textContent = "0 (Neutre)"; chargeEl.style.color = "#10b981";
+                descEl.textContent = "L'atome est électriquement neutre : il possède autant de protons (charges +) que d'électrons (charges -).";
+            } else if (charge > 0) {
+                chargeEl.textContent = `+${charge} (Cation)`; chargeEl.style.color = "#ef4444";
+                descEl.textContent = "C'est un cation (ion positif) car il a perdu des électrons. Il y a plus de protons que d'électrons.";
+            } else {
+                chargeEl.textContent = `${charge} (Anion)`; chargeEl.style.color = "#38bdf8";
+                descEl.textContent = "C'est un anion (ion négatif) car il a gagné des électrons. Il y a plus d'électrons que de protons.";
+            }
+
+            buildNucleus();
+        }
+
+        let time = 0;
+        function loop(timestamp) {
+            let dt = 1/60;
+            time += dt;
+
+            if(cw) {
+                ctx.clearRect(0, 0, cw, ch);
+                const cx = cw/2;
+                const cy = ch/2;
+
+                // Draw Shells (K, L, M)
+                const shells = [
+                    { capacity: 2, radius: 60 },
+                    { capacity: 8, radius: 120 },
+                    { capacity: 8, radius: 180 } // simplified M for up to Ar
+                ];
+
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 1;
+
+                let e_drawn = 0;
+
+                for(let s=0; s<shells.length; s++) {
+                    if (e_drawn >= electrons && s > 0) break; // Don't draw empty outer shells
+
+                    let shellRadius = shells[s].radius;
+                    ctx.beginPath(); ctx.arc(cx, cy, shellRadius, 0, Math.PI*2); ctx.stroke();
+
+                    // Draw electrons in this shell
+                    let e_in_shell = Math.min(electrons - e_drawn, shells[s].capacity);
+                    for(let i=0; i<e_in_shell; i++) {
+                        // Spread evenly, rotate over time
+                        let angle = (i / e_in_shell) * Math.PI * 2 + time * (1.5 - s*0.3);
+                        let ex = cx + Math.cos(angle) * shellRadius;
+                        let ey = cy + Math.sin(angle) * shellRadius;
+
+                        ctx.beginPath(); ctx.arc(ex, ey, 6, 0, Math.PI*2);
+                        ctx.fillStyle = '#3b82f6'; ctx.fill();
+                        ctx.shadowBlur = 10; ctx.shadowColor = '#3b82f6'; ctx.fill(); ctx.shadowBlur = 0;
+
+                        // Small minus
+                        ctx.fillStyle = '#fff'; ctx.fillRect(ex - 3, ey - 1, 6, 2);
+                    }
+                    e_drawn += e_in_shell;
+                }
+
+                // Draw Nucleus
+                const pCol = getComputedStyle(document.documentElement).getPropertyValue('--proton-col').trim();
+                const nCol = getComputedStyle(document.documentElement).getPropertyValue('--neutron-col').trim();
+
+                nucleusParticles.forEach(p => {
+                    // Jiggle slightly
+                    p.x += (Math.random()-0.5)*0.5;
+                    p.y += (Math.random()-0.5)*0.5;
+                    // pull to target
+                    p.x += (p.targetX - p.x)*0.1;
+                    p.y += (p.targetY - p.y)*0.1;
+
+                    ctx.beginPath(); ctx.arc(cx + p.x, cy + p.y, 5, 0, Math.PI*2);
+                    ctx.fillStyle = p.type === 'p' ? pCol : nCol;
+                    ctx.fill();
+
+                    if (p.type === 'p') {
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(cx + p.x - 2, cy + p.y - 0.5, 4, 1);
+                        ctx.fillRect(cx + p.x - 0.5, cy + p.y - 2, 1, 4);
+                    }
+                });
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        updateUI();
+        resize();
+        requestAnimationFrame(loop);
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>

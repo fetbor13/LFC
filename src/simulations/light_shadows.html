@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Collège: Ombres et Lumière</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #fcd34d; /* Light yellow */
+            --accent-glow: 0 0 15px rgba(252, 211, 77, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #d97706;
+            --accent-glow: 0 0 15px rgba(217, 119, 6, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; position: relative; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; flex: 1; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        canvas { display: block; width: 100%; height: 100%; border-radius: 8px; cursor: crosshair; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div class="section-box" style="background:#000; border:none; padding:0;">
+                <canvas id="simCanvas"></canvas>
+                <div style="position:absolute; bottom:15px; right:15px; font-size:0.75rem; color:gray;">Glissez la source de lumière ou l'objet</div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2 style="color:#fcd34d;">Ombres et Lumière</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Programme du Collège (4ème)</div>
+
+            <div class="control-group">
+                <label>Type de Source</label>
+                <select id="source-type">
+                    <option value="point">Ponctuelle (ex: Laser, LED lointaine)</option>
+                    <option value="extended" selected>Étendue (ex: Soleil, Néon)</option>
+                </select>
+            </div>
+
+            <div class="control-group" id="size-control">
+                <label>Taille de la source <span id="s-val">40 cm</span></label>
+                <input type="range" id="s-input" min="10" max="100" step="5" value="40">
+            </div>
+
+            <div class="stats-box" style="margin-top:20px;">
+                <div style="font-weight:bold; color:var(--accent-color); border-bottom:1px solid var(--glass-border); padding-bottom:5px;">Vocabulaire</div>
+
+                <div style="margin-top:5px; color:var(--text-muted);">
+                    <ul style="padding-left:15px; display:flex; flex-direction:column; gap:5px;">
+                        <li><span style="color:#fff; font-weight:bold;">Ombre propre :</span> La partie de l'objet qui n'est pas éclairée.</li>
+                        <li><span style="color:#94a3b8; font-weight:bold;">Ombre portée :</span> La zone sombre projetée sur l'écran.</li>
+                        <li><span style="color:#64748b; font-weight:bold;">Cône d'ombre :</span> L'espace sombre entre l'objet et l'écran.</li>
+                        <li id="penumbra-text" style="color:#cbd5e1; font-weight:bold;">Pénombre : <span style="font-weight:normal; color:var(--text-muted);">Zone partiellement éclairée par une source étendue.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="font-size:0.75rem; color:gray; text-align:center; margin-top:auto; font-style:italic;">
+                La lumière se propage en ligne droite. Approchez la source de l'objet pour agrandir l'ombre portée.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const sourceType = document.getElementById('source-type');
+        const sizeControl = document.getElementById('size-control');
+        const sInput = document.getElementById('s-input');
+        const penumbraText = document.getElementById('penumbra-text');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cw, ch;
+
+        // Scene objects
+        let source = { x: 100, y: 300, radius: 20 };
+        let obstacle = { x: 400, y: 300, radius: 40 };
+        let screenX = 0; // set in resize
+
+        let dragging = null;
+
+        function resize() {
+            cw = canvas.parentElement.clientWidth;
+            ch = canvas.parentElement.clientHeight;
+            canvas.width = cw * dpr;
+            canvas.height = ch * dpr;
+            ctx.scale(dpr, dpr);
+            screenX = cw - 100;
+            drawScene();
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawScene();
+        });
+
+        sourceType.addEventListener('change', (e) => {
+            if (e.target.value === 'point') {
+                sizeControl.style.opacity = '0.5';
+                sInput.disabled = true;
+                source.radius = 2; // point source
+                penumbraText.style.display = 'none';
+            } else {
+                sizeControl.style.opacity = '1';
+                sInput.disabled = false;
+                source.radius = parseInt(sInput.value) / 2;
+                penumbraText.style.display = 'list-item';
+            }
+            drawScene();
+        });
+
+        sInput.addEventListener('input', (e) => {
+            document.getElementById('s-val').textContent = e.target.value + ' cm';
+            source.radius = parseInt(e.target.value) / 2;
+            drawScene();
+        });
+
+        // Dragging logic
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (Math.hypot(mx - source.x, my - source.y) < Math.max(source.radius, 20)) {
+                dragging = 'source';
+            } else if (Math.hypot(mx - obstacle.x, my - obstacle.y) < obstacle.radius) {
+                dragging = 'obstacle';
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            if (dragging === 'source') {
+                source.x = Math.max(20, Math.min(mx, obstacle.x - source.radius - obstacle.radius - 10));
+                source.y = Math.max(20, Math.min(my, ch - 20));
+            } else if (dragging === 'obstacle') {
+                obstacle.x = Math.max(source.x + source.radius + obstacle.radius + 10, Math.min(mx, screenX - obstacle.radius - 10));
+                obstacle.y = Math.max(20, Math.min(my, ch - 20));
+            }
+            drawScene();
+        });
+
+        window.addEventListener('mouseup', () => { dragging = null; });
+
+        // Math for tangents between two circles
+        function getTangents(c1, r1, c2, r2, internal) {
+            // c1: source, c2: obstacle
+            let dx = c2.x - c1.x;
+            let dy = c2.y - c1.y;
+            let d = Math.hypot(dx, dy);
+            if(d <= Math.abs(r1 - r2)) return []; // Inside
+
+            let angle = Math.atan2(dy, dx);
+            let tangents = [];
+
+            // Internal (crossed) or External (straight)
+            let r_diff = internal ? r1 + r2 : r1 - r2;
+            if (d < Math.abs(r_diff)) return [];
+
+            let a = Math.asin(r_diff / d);
+
+            for (let sign of [1, -1]) {
+                let theta = angle + sign * a;
+                let theta1 = theta + sign * Math.PI/2;
+                let theta2 = theta + (internal ? -sign * Math.PI/2 : sign * Math.PI/2);
+
+                let p1 = { x: c1.x + r1 * Math.cos(theta1), y: c1.y + r1 * Math.sin(theta1) };
+                let p2 = { x: c2.x + r2 * Math.cos(theta2), y: c2.y + r2 * Math.sin(theta2) };
+                tangents.push({p1, p2});
+            }
+            return tangents;
+        }
+
+        // Raycast intersection with vertical screen
+        function getScreenY(p1, p2, targetX) {
+            let m = (p2.y - p1.y) / (p2.x - p1.x);
+            let b = p1.y - m * p1.x;
+            return m * targetX + b;
+        }
+
+        function drawScene() {
+            if(!cw) return;
+            ctx.clearRect(0, 0, cw, ch);
+
+            // Light rays calculations
+            let isExtended = sourceType.value === 'extended';
+
+            // External tangents (Umbra boundaries)
+            let extTans = getTangents(source, source.radius, obstacle, obstacle.radius, false);
+            // Internal tangents (Penumbra boundaries)
+            let intTans = isExtended ? getTangents(source, source.radius, obstacle, obstacle.radius, true) : extTans;
+
+            let uTop, uBot, pTop, pBot;
+
+            if (extTans.length === 2) {
+                let y1 = getScreenY(extTans[0].p1, extTans[0].p2, screenX);
+                let y2 = getScreenY(extTans[1].p1, extTans[1].p2, screenX);
+                uTop = Math.min(y1, y2);
+                uBot = Math.max(y1, y2);
+            }
+
+            if (intTans.length === 2) {
+                let y1 = getScreenY(intTans[0].p1, intTans[0].p2, screenX);
+                let y2 = getScreenY(intTans[1].p1, intTans[1].p2, screenX);
+                pTop = Math.min(y1, y2);
+                pBot = Math.max(y1, y2);
+            } else {
+                pTop = uTop; pBot = uBot;
+            }
+
+            // Draw Background Light
+            ctx.fillStyle = 'rgba(252, 211, 77, 0.1)';
+            ctx.fillRect(0, 0, cw, ch);
+
+            // Draw Penumbra (cône de pénombre)
+            if (isExtended && intTans.length===2 && extTans.length===2) {
+                ctx.beginPath();
+                ctx.moveTo(intTans[0].p2.x, intTans[0].p2.y);
+                ctx.lineTo(screenX, pTop < pBot ? pTop : pBot); // top penumbra ray
+                ctx.lineTo(screenX, uTop); // down to umbra top
+                ctx.lineTo(extTans[0].p2.x, extTans[0].p2.y); // back to obstacle top
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // dim light
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(intTans[1].p2.x, intTans[1].p2.y);
+                ctx.lineTo(screenX, pBot > pTop ? pBot : pTop); // bottom penumbra ray
+                ctx.lineTo(screenX, uBot); // up to umbra bot
+                ctx.lineTo(extTans[1].p2.x, extTans[1].p2.y); // back to obstacle bot
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fill();
+            }
+
+            // Draw Umbra (cône d'ombre propre)
+            if (extTans.length === 2) {
+                ctx.beginPath();
+                ctx.moveTo(extTans[0].p2.x, extTans[0].p2.y);
+                ctx.lineTo(screenX, uTop);
+                ctx.lineTo(screenX, uBot);
+                ctx.lineTo(extTans[1].p2.x, extTans[1].p2.y);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.9)'; // deep shadow
+                ctx.fill();
+            }
+
+            // Draw Source
+            ctx.beginPath();
+            ctx.arc(source.x, source.y, source.radius, 0, Math.PI*2);
+            ctx.fillStyle = '#fef08a';
+            ctx.fill();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#fcd34d';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Draw Obstacle (with shadow side)
+            // Left side lit, right side shadow
+            ctx.beginPath();
+            ctx.arc(obstacle.x, obstacle.y, obstacle.radius, 0, Math.PI*2);
+            let grad = ctx.createLinearGradient(obstacle.x - obstacle.radius, obstacle.y, obstacle.x + obstacle.radius, obstacle.y);
+            grad.addColorStop(0, '#94a3b8');
+            grad.addColorStop(0.5, '#334155');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Draw Screen
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(screenX, 0, 10, ch);
+
+            // Draw Rays (Construction lines)
+            ctx.strokeStyle = 'rgba(252, 211, 77, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+
+            extTans.forEach(t => {
+                ctx.beginPath(); ctx.moveTo(t.p1.x, t.p1.y); ctx.lineTo(screenX, getScreenY(t.p1, t.p2, screenX)); ctx.stroke();
+            });
+            if (isExtended) {
+                intTans.forEach(t => {
+                    ctx.beginPath(); ctx.moveTo(t.p1.x, t.p1.y); ctx.lineTo(screenX, getScreenY(t.p1, t.p2, screenX)); ctx.stroke();
+                });
+            }
+            ctx.setLineDash([]);
+        }
+
+        // Init
+        resize();
+
+    </script>
+</body>
+</html>

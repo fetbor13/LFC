@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Supérieure: Décroissance Radioactive</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-color: #2dd4bf; /* Teal/Cyan for radiation */
+            --accent-glow: 0 0 15px rgba(45, 212, 191, 0.6);
+            --panel-bg: rgba(0,0,0,0.6);
+
+            --n0-color: #3b82f6; /* Blue for parent nuclei */
+            --decay-color: #64748b; /* Grey for daughter nuclei */
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.2);
+            --accent-color: #0d9488;
+            --accent-glow: 0 0 15px rgba(13, 148, 136, 0.4);
+            --panel-bg: rgba(255,255,255,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow: hidden; display: flex; height: 100vh; width: 100vw; transition: background-color 0.3s, color 0.3s; }
+        #app-container { display: flex; width: 100%; height: 100%; }
+
+        #visual-pane { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 20px; }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; position: relative; display: flex; flex-direction: column; }
+        .section-title { position: absolute; top: 12px; left: 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); opacity: 0.8; z-index: 10; }
+
+        #grid-section { flex: 1; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%); }
+        #graph-section { height: 280px; background: #000; border: 4px solid #1e293b; border-radius: 12px; padding: 0; }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #controls-pane { width: 380px; background: var(--glass-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10; box-shadow: -10px 0 30px rgba(0,0,0,0.5); overflow-y: auto; overflow-x: hidden; }
+        h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-color); font-weight: 700; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-bottom: 5px; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display:flex; justify-content:space-between; }
+        select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--glass-border); padding: 10px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; outline: none; }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; margin-top: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; box-shadow: var(--accent-glow); }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(128, 128, 128, 0.4); border-radius: 2px; }
+
+        .stats-box { background: var(--panel-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; line-height: 1.5; }
+        .math-eq { font-style: italic; color: #10b981; font-weight: bold; text-align: center; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; z-index: 20; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); color: var(--text-color); padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        .btn-group { display: flex; gap: 8px; margin-top: auto; }
+        button.action-btn { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; text-align: center; }
+        button.action-btn:hover { background: rgba(255,255,255,0.1); }
+        .btn-play { background: var(--accent-color) !important; color: #030712 !important; border-color: var(--accent-color) !important; box-shadow: var(--accent-glow); }
+        .btn-play:hover { filter: brightness(1.1); }
+        #controls-pane::-webkit-scrollbar { width: 6px; }
+        #controls-pane::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle">Thème</button>
+
+    <div id="app-container">
+        <div id="visual-pane">
+            <div id="grid-section" class="section-box">
+                <div class="section-title">Échantillon Radioactif ($N_0$ noyaux)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%; margin-top:20px;">
+                    <canvas id="gridCanvas"></canvas>
+                </div>
+            </div>
+
+            <div id="graph-section" class="section-box">
+                <div class="section-title" style="top:10px; left:15px; z-index:20;">Évolution de la Population N(t)</div>
+                <div style="flex:1; position:relative; width:100%; height:100%;">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="controls-pane">
+            <h2>Radioactivité</h2>
+            <div style="text-align:center; font-size:0.8rem; color:gray; margin-top:-10px; margin-bottom:10px;">Loi de Décroissance (Terminale Spé)</div>
+
+            <div class="control-group">
+                <label>Isotope (Demi-vie $t_{1/2}$)</label>
+                <select id="isotope-select">
+                    <option value="1">Rapide ($t_{1/2}$ = 1.0 s)</option>
+                    <option value="3" selected>Moyen ($t_{1/2}$ = 3.0 s)</option>
+                    <option value="8">Lent ($t_{1/2}$ = 8.0 s)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Population Initiale ($N_0$) <span id="n0-val">400</span></label>
+                <input type="range" id="n0-input" min="100" max="1000" step="50" value="400">
+            </div>
+
+            <div class="stats-box" style="margin-top:20px; flex:1;">
+                <div class="math-eq">$N(t) = N_0 \cdot e^{-\lambda t}$</div>
+                <div class="math-eq" style="font-size:0.75rem;">$\lambda = \frac{\ln(2)}{t_{1/2}}$</div>
+                <hr style="border-color: var(--glass-border); margin: 5px 0;">
+
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Temps ($t$) :</span> <span id="stat-t" style="color:#fbbf24; font-weight:bold;">0.0 s</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Noyaux Pères ($N$) :</span> <span id="stat-n" style="color:var(--n0-color); font-weight:bold;">400</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Noyaux Fils ($N_{fils}$) :</span> <span id="stat-nfils" style="color:var(--decay-color);">0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <span>Activité ($A$) :</span> <span id="stat-a" style="color:var(--accent-color); font-weight:bold;">0 Bq</span>
+                </div>
+
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:10px; text-align:center; font-family:sans-serif; line-height:1.4;">
+                    La désintégration d'un noyau est un phénomène aléatoire et inéluctable. La loi d'évolution macroscopique est statistique.
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button id="btn-play" class="action-btn btn-play">Démarrer</button>
+                <button id="btn-reset" class="action-btn" style="color:#ef4444;">RAZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gridCanvas = document.getElementById('gridCanvas');
+        const cCtx = gridCanvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const gCtx = graphCanvas.getContext('2d');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        const isotopeSelect = document.getElementById('isotope-select');
+        const n0Input = document.getElementById('n0-input');
+        const btnPlay = document.getElementById('btn-play');
+        const btnReset = document.getElementById('btn-reset');
+
+        let dpr = window.devicePixelRatio || 1;
+        let cW, cH, gW, gH;
+
+        let N0 = 400;
+        let t_half = 3.0;
+        let lambda = Math.LN2 / t_half;
+
+        let nuclei = [];
+        let dataPoints = []; // {t, N}
+        let t = 0;
+        let N_current = 400;
+        let isRunning = false;
+        let lastTime = 0;
+
+        function resize() {
+            cW = gridCanvas.parentElement.clientWidth;
+            cH = gridCanvas.parentElement.clientHeight;
+            gridCanvas.width = cW * dpr;
+            gridCanvas.height = cH * dpr;
+            cCtx.scale(dpr, dpr);
+
+            gW = graphCanvas.parentElement.clientWidth;
+            gH = graphCanvas.parentElement.clientHeight;
+            graphCanvas.width = gW * dpr;
+            graphCanvas.height = gH * dpr;
+            gCtx.scale(dpr, dpr);
+
+            if(!isRunning && t === 0) initNuclei();
+            else { drawGrid(); drawGraph(); }
+        }
+        window.addEventListener('resize', resize);
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.setAttribute('data-theme',
+                document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            drawGrid();
+            drawGraph();
+        });
+
+        function initNuclei() {
+            N0 = parseInt(n0Input.value);
+            t_half = parseFloat(isotopeSelect.value);
+            lambda = Math.LN2 / t_half;
+            document.getElementById('n0-val').textContent = N0;
+
+            nuclei = [];
+            // Calculate grid size to fit N0 dots
+            let cols = Math.ceil(Math.sqrt(N0 * (cW/cH)));
+            let rows = Math.ceil(N0 / cols);
+
+            let paddingX = cW * 0.1;
+            let paddingY = cH * 0.1;
+            let usableW = cW - 2*paddingX;
+            let usableH = cH - 2*paddingY;
+
+            let stepX = usableW / cols;
+            let stepY = usableH / rows;
+
+            for(let i=0; i<N0; i++) {
+                let col = i % cols;
+                let row = Math.floor(i / cols);
+                nuclei.push({
+                    x: paddingX + col*stepX + (Math.random()-0.5)*stepX*0.5,
+                    y: paddingY + row*stepY + (Math.random()-0.5)*stepY*0.5,
+                    decayed: false,
+                    flash: 0 // animation timer when decaying
+                });
+            }
+
+            t = 0;
+            N_current = N0;
+            dataPoints = [{t: 0, N: N0}];
+            updateStats();
+            drawGrid();
+            drawGraph();
+        }
+
+        isotopeSelect.addEventListener('change', () => { if(!isRunning) initNuclei(); });
+        n0Input.addEventListener('input', () => { if(!isRunning) initNuclei(); });
+
+        btnPlay.addEventListener('click', () => {
+            if(N_current === 0) initNuclei(); // auto restart
+            isRunning = !isRunning;
+            btnPlay.textContent = isRunning ? "Pause" : "Démarrer";
+            if (isRunning) {
+                lastTime = 0;
+                requestAnimationFrame(loop);
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            isRunning = false;
+            btnPlay.textContent = "Démarrer";
+            initNuclei();
+        });
+
+        function updateStats() {
+            document.getElementById('stat-t').textContent = t.toFixed(1) + ' s';
+            document.getElementById('stat-n').textContent = N_current;
+            document.getElementById('stat-nfils').textContent = (N0 - N_current);
+            // Activity A = lambda * N
+            let A = lambda * N_current;
+            document.getElementById('stat-a').textContent = Math.round(A) + ' Bq';
+        }
+
+        function drawGrid() {
+            if(!cW) return;
+            cCtx.clearRect(0, 0, cW, cH);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const colParent = getComputedStyle(document.documentElement).getPropertyValue('--n0-color').trim();
+            const colDaughter = getComputedStyle(document.documentElement).getPropertyValue('--decay-color').trim();
+            const colFlash = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+            nuclei.forEach(n => {
+                cCtx.beginPath();
+                cCtx.arc(n.x, n.y, 4, 0, Math.PI*2);
+
+                if (n.flash > 0) {
+                    // Flash animation
+                    cCtx.fillStyle = colFlash;
+                    cCtx.fill();
+                    cCtx.shadowBlur = 10;
+                    cCtx.shadowColor = colFlash;
+                    cCtx.fill();
+                    cCtx.shadowBlur = 0;
+                } else if (!n.decayed) {
+                    cCtx.fillStyle = colParent;
+                    cCtx.fill();
+                } else {
+                    cCtx.fillStyle = colDaughter;
+                    cCtx.fill();
+                }
+            });
+        }
+
+        function drawGraph() {
+            if(!gW) return;
+            gCtx.clearRect(0, 0, gW, gH);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridCol = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)';
+            const padding = 40;
+            const pW = gW - padding*2;
+            const pH = gH - padding*2;
+
+            // X scale: 5 half-lives
+            let tMax = 5 * t_half;
+
+            // Grid
+            gCtx.strokeStyle = gridCol;
+            gCtx.lineWidth = 1;
+            gCtx.beginPath();
+            // Vertical lines for half-lives
+            for(let i=0; i<=5; i++) {
+                let x = padding + (i/5)*pW;
+                gCtx.moveTo(x, padding); gCtx.lineTo(x, gH - padding);
+            }
+            // Horizontal lines
+            for(let i=0; i<=4; i++) {
+                let y = padding + (i/4)*pH;
+                gCtx.moveTo(padding, y); gCtx.lineTo(gW - padding, y);
+            }
+            gCtx.stroke();
+
+            // Axes
+            gCtx.strokeStyle = isDark ? '#fff' : '#000';
+            gCtx.lineWidth = 1.5;
+            gCtx.beginPath();
+            gCtx.moveTo(padding, padding); gCtx.lineTo(padding, gH - padding); gCtx.lineTo(gW - padding, gH - padding);
+            gCtx.stroke();
+
+            if (dataPoints.length === 0) return;
+
+            // Draw Theoretical Curve
+            gCtx.beginPath();
+            gCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+            gCtx.lineWidth = 2;
+            gCtx.setLineDash([4, 4]);
+            for(let px=0; px<=pW; px+=2) {
+                let currT = (px/pW) * tMax;
+                let theoN = N0 * Math.exp(-lambda * currT);
+                let x = padding + px;
+                let y = (gH - padding) - (theoN / N0) * pH;
+                if(px===0) gCtx.moveTo(x, y);
+                else gCtx.lineTo(x, y);
+            }
+            gCtx.stroke();
+            gCtx.setLineDash([]);
+
+            // Draw Statistical Measured Curve
+            gCtx.beginPath();
+            gCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--n0-color').trim();
+            gCtx.lineWidth = 2;
+            for(let i=0; i<dataPoints.length; i++) {
+                let pt = dataPoints[i];
+                let x = padding + (pt.t / tMax) * pW;
+                let y = (gH - padding) - (pt.N / N0) * pH;
+                if (x > gW - padding) break; // Don't draw past graph
+                if(i===0) gCtx.moveTo(x, y);
+                else gCtx.lineTo(x, y);
+            }
+            gCtx.stroke();
+
+            // Labels
+            gCtx.fillStyle = isDark ? '#fff' : '#000';
+            gCtx.font = '12px "Fira Code"';
+            gCtx.textAlign = 'center';
+            gCtx.fillText('N(t)', padding, padding - 10);
+            gCtx.fillText('t (s)', gW - padding, gH - padding + 15);
+
+            // X axis marks (t_half)
+            for(let i=1; i<=5; i++) {
+                let x = padding + (i/5)*pW;
+                gCtx.fillText(`${i} t₁/₂`, x, gH - padding + 15);
+            }
+            // Y axis origin
+            gCtx.textAlign = 'right';
+            gCtx.fillText('N₀', padding - 5, padding + 5);
+            gCtx.fillText('N₀/2', padding - 5, padding + pH/2 + 5);
+        }
+
+        function loop(timestamp) {
+            if (!isRunning) return;
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            if (dt > 0.1) dt = 0.1;
+            t += dt;
+
+            // Decay logic (Monte Carlo simulation)
+            // Probability of decay in dt is P = lambda * dt
+            let pDecay = lambda * dt;
+            let decayedThisStep = 0;
+
+            nuclei.forEach(n => {
+                if (n.flash > 0) {
+                    n.flash -= dt; // reduce flash timer
+                }
+                if (!n.decayed) {
+                    if (Math.random() < pDecay) {
+                        n.decayed = true;
+                        n.flash = 0.2; // flash for 0.2 seconds
+                        decayedThisStep++;
+                    }
+                }
+            });
+
+            if (decayedThisStep > 0) {
+                N_current -= decayedThisStep;
+                dataPoints.push({t: t, N: N_current});
+            } else if (Math.random() < 0.1) {
+                // Periodically add point even if no decay to keep graph smooth
+                dataPoints.push({t: t, N: N_current});
+            }
+
+            updateStats();
+            drawGrid();
+            drawGraph();
+
+            // Stop if all decayed or graph full (5 half-lives)
+            if (N_current === 0 || t > 5 * t_half) {
+                isRunning = false;
+                btnPlay.textContent = "Terminé";
+            } else {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        initNuclei();
+        resize();
+
+        // Inject MathJax
+        const script = document.createElement('script');
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+        script.async = true;
+        document.head.appendChild(script);
+
+    </script>
+</body>
+</html>
