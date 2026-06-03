@@ -1,0 +1,3 @@
+## 2026-06-03 - Adding missing aria-labels to buttons
+**Learning:** Because the application uses duplicated HTML files instead of templates, simple a11y issues like missing aria-labels on icon-only buttons (like theme toggles and modal closes) require global search-and-replace scripts across many files. When doing this, one must open the files in binary mode to preserve exact original line endings (CRLF vs LF) to prevent giant Git diffs.
+**Action:** Created a python script to automatically append `aria-label` to `#themeBtn` and any button containing the '✕' character without disturbing file encodings or line endings.
