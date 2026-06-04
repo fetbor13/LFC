@@ -1,0 +1,3 @@
+## 2025-02-23 - Add French ARIA Labels to Icon-Only Buttons
+**Learning:** Icon-only buttons (like `🌙` for theme toggle, `✕` for close) require explicit, localized `aria-label` attributes for accessibility.
+**Action:** When adding or updating icon-only buttons in the UI, always provide a descriptive, localized `aria-label` (e.g., `aria-label="Fermer"` instead of "Close") to ensure screen reader users understand their purpose in this French language site.
