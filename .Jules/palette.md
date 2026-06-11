@@ -1,0 +1,3 @@
+## 2024-10-24 - Missing localized ARIA labels on duplicated components
+**Learning:** Due to the static HTML nature of this project without a templating engine, UI components like modals and top bars are heavily duplicated. Consequently, accessibility attributes like `aria-label` for icon-only buttons (e.g., `✕` for close or `🌙` for theme toggling) are frequently missing or inconsistently applied across files. Since the interface is in French, it is critical to ensure that labels like `aria-label="Fermer"` or `aria-label="Changer de thème"` are uniformly injected.
+**Action:** Always verify that icon-only buttons have localized French `aria-label` attributes, particularly when modifying or creating new static HTML pages or duplicated UI elements.
