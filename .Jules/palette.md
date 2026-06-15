@@ -1,0 +1,3 @@
+## 2024-05-18 - Accessibility issue pattern in custom modals
+**Learning:** Custom vanilla HTML modals in this application's static templates consistently omit `role="dialog"`, `aria-modal="true"`, and `aria-labelledby`, while their inputs frequently rely exclusively on visual placeholders without semantic labels. Icon-only buttons (like the theme toggle or close buttons) are also frequently missing `aria-label`s.
+**Action:** Establish a standard pattern where any new or existing vanilla modal markup must be audited for these specific ARIA attributes, ensuring screen-reader users can successfully navigate and understand form contexts without visible labels.
