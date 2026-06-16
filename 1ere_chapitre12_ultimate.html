@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 12 — Mouvement d'un système | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+
+<section class="hero">
+  <div class="hero-card">
+    <div class="eyebrow">🏃 Thème 2 — Mouvement et interactions</div>
+    <div class="instructor">Cours rédigé pour la Première Spécialité</div>
+    <h2>Mouvement <span>d'un système</span></h2>
+    <p class="hero-copy">Décrire un mouvement exige un <strong>référentiel</strong>, une <strong>trajectoire</strong> et le <strong>vecteur vitesse</strong>. Sa variation \(\Delta\vec v\) révèle l'action des forces : c'est le cœur des <strong>lois de Newton</strong>.</p>
+    <div class="hero-grid">
+      <div class="metric"><b>\(\vec v\)</b><span>tangent à la traj.</span></div>
+      <div class="metric"><b>\(\Delta\vec v\parallel\sum\vec F\)</b><span>lien clé</span></div>
+      <div class="metric"><b>\(\sum\vec F=m\vec a\)</b><span>2ᵉ loi</span></div>
+    </div>
+  </div>
+  <div class="hero-canvas-wrap"><canvas id="heroCv"></canvas></div>
+</section>
+
+<div class="useful-strip">
+  <div class="useful-card mission-1"><small>OBJECTIF 1</small><b>Choisir un référentiel</b><span>La trajectoire dépend du référentiel.</span></div>
+  <div class="useful-card mission-2"><small>OBJECTIF 2</small><b>Construire \(\vec v\) et \(\Delta\vec v\)</b><span>Méthode des milieux sur chronophoto.</span></div>
+  <div class="useful-card mission-3"><small>OBJECTIF 3</small><b>Appliquer Newton</b><span>Inertie, \(\sum\vec F=m\vec a\), action–réaction.</span></div>
+</div>
+
+<!-- ====================== COURS ====================== -->
+<section class="panel active" id="p-cours">
+<div class="course-grid">
+  <aside class="toc">
+    <div class="toc-title">Plan du cours</div>
+    <a href="#c1">I · Décrire un mouvement</a>
+    <a href="#c2">II · Vecteur vitesse</a>
+    <a href="#c3">III · Variation Δv⃗</a>
+    <a href="#c4">IV · Lois de Newton</a>
+    <a href="#c5">V · Méthodes</a>
+    <a href="#c6">Bilan &amp; pièges</a>
+  </aside>
+  <div class="course-body">
+
+    <h2 id="c1">I · Décrire un mouvement</h2>
+    <div class="def-box"><div class="lab">Système, référentiel, trajectoire</div>
+      <p>— <strong>Système</strong> : objet étudié, modélisé par un <strong>point matériel</strong> (son centre de masse) si ses dimensions sont négligeables devant le mouvement.<br>
+         — <strong>Référentiel</strong> : solide de référence muni d'une horloge, par rapport auquel on décrit le mouvement.<br>
+         — <strong>Trajectoire</strong> : ensemble des positions successives du point au cours du temps.</p>
+    </div>
+    <div class="warn-box"><div class="lab">⚠️ La trajectoire dépend du référentiel</div>
+      <p>Un point sur la roue d'un vélo décrit un cercle dans le référentiel du cycliste, mais une cycloïde dans le référentiel du sol. <strong>Toujours préciser le référentiel.</strong> Référentiels usuels : terrestre, géocentrique, héliocentrique.</p>
+    </div>
+    <table class="data">
+      <thead><tr><th>Trajectoire</th><th>Mouvement</th><th>Condition (forces)</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td>Rectiligne</td><td>Uniforme (\(v\) constante)</td><td>\(\sum\vec F=\vec 0\)</td><td>Voiture en régulateur</td></tr>
+        <tr><td>Rectiligne</td><td>Accéléré / freiné</td><td>\(\sum\vec F\neq\vec 0\), colinéaire à \(\vec v\)</td><td>Freinage d'urgence</td></tr>
+        <tr><td>Parabolique</td><td>—</td><td>Champ de pesanteur uniforme</td><td>Lancer oblique, chute libre</td></tr>
+        <tr><td>Circulaire</td><td>Uniforme ou non</td><td>Force centripète</td><td>Satellite, manège</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="c2">II · Le vecteur vitesse</h2>
+    <p>Le vecteur vitesse \(\vec v\) est toujours <strong>tangent à la trajectoire</strong> et orienté dans le sens du mouvement.</p>
+    <div class="def-box"><div class="lab">Méthode des milieux (chronophotographie)</div>
+      <div class="formula">$$\vec v_i\approx\dfrac{\overrightarrow{M_{i-1}M_{i+1}}}{2\,\Delta t}\qquad v_i=\dfrac{M_{i-1}M_{i+1}}{2\,\Delta t}$$</div>
+      <p>\(\Delta t\) = durée entre deux positions successives (en \(\mathrm s\)). Le vecteur vitesse en \(M_i\) s'estime à partir des points qui l'<strong>encadrent</strong>.</p>
+    </div>
+    <table class="data">
+      <thead><tr><th>Grandeur</th><th>Signification</th><th>Unité</th></tr></thead>
+      <tbody>
+        <tr><td>\(\vec v_i\)</td><td>Vecteur vitesse au point \(M_i\)</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+        <tr><td>\(M_{i-1}M_{i+1}\)</td><td>Distance entre les points encadrants</td><td>\(\mathrm m\)</td></tr>
+        <tr><td>\(\Delta t\)</td><td>Durée entre deux positions</td><td>\(\mathrm s\)</td></tr>
+      </tbody>
+    </table>
+    <div class="example"><div class="ex-lab">💡 Exemple corrigé — lecture de chronophotographie</div>
+      <p>\(\Delta t=40\,\mathrm{ms}=0{,}040\,\mathrm s\), \(M_0M_2=8{,}0\,\mathrm{cm}=0{,}080\,\mathrm m\).</p>
+      <div class="formula">$$v_1=\dfrac{M_0M_2}{2\Delta t}=\dfrac{0{,}080}{2\times0{,}040}=1{,}0\ \mathrm{m\,s^{-1}}$$</div>
+      <p>Si les points sont équidistants, \(v\) est constante : mouvement uniforme. Conversion : \(1\ \mathrm{m\,s^{-1}}=3{,}6\ \mathrm{km\,h^{-1}}\).</p>
+    </div>
+
+    <h2 id="c3">III · Le vecteur variation de vitesse \(\Delta\vec v\)</h2>
+    <div class="def-box"><div class="lab">Définition</div>
+      <div class="formula">$$\Delta\vec v_i=\vec v_{i+1}-\vec v_i$$</div>
+      <p>— \(\Delta\vec v=\vec 0\) ⇒ \(\vec v\) constant ⇒ mouvement rectiligne uniforme.<br>
+         — \(\Delta\vec v\neq\vec 0\) ⇒ la vitesse change (norme et/ou direction) : le mouvement est modifié.</p>
+    </div>
+    <div class="prop-box"><div class="lab">Lien fondamental forces ↔ mouvement</div>
+      <p>Le vecteur \(\Delta\vec v\) a la <strong>même direction et le même sens</strong> que la résultante des forces \(\sum\vec F\). C'est ce qui permet, à partir d'une chronophotographie, de remonter à la direction des forces.</p>
+    </div>
+    <div class="ok-box"><div class="lab">Construction graphique de Δv⃗</div>
+      <p>① Reporter \(\vec v_i\) et \(\vec v_{i+1}\) à partir d'une même origine.<br>
+         ② \(\Delta\vec v\) joint l'extrémité de \(\vec v_i\) à celle de \(\vec v_{i+1}\).<br>
+         ③ Sa direction donne celle de \(\sum\vec F\).</p>
+    </div>
+
+    <h2 id="c4">IV · Les lois de Newton</h2>
+    <div class="def-box"><div class="lab">1ʳᵉ loi — Principe d'inertie</div>
+      <p>Dans un référentiel galiléen : \(\sum\vec F=\vec 0\ \Longleftrightarrow\ \vec v=\overrightarrow{\text{constante}}\). Le système est au repos ou en mouvement rectiligne uniforme. <strong>La réciproque est vraie.</strong></p>
+    </div>
+    <div class="def-box"><div class="lab">2ᵉ loi — Principe fondamental de la dynamique</div>
+      <div class="formula">$$\boxed{\;\sum\vec F=m\,\vec a=m\,\dfrac{\Delta\vec v}{\Delta t}\;}$$</div>
+      <p>\(\sum\vec F\) en \(\mathrm N\), \(m\) en \(\mathrm{kg}\), \(\vec a\) en \(\mathrm{m\,s^{-2}}\). La résultante est <strong>proportionnelle</strong> à l'accélération : si \(\sum\vec F\) double, \(\vec a\) double.</p>
+    </div>
+    <div class="prop-box"><div class="lab">3ᵉ loi — Action et réaction</div>
+      <p>Si \(A\) exerce \(\vec F_{A/B}\) sur \(B\), alors \(B\) exerce sur \(A\) : \(\vec F_{B/A}=-\vec F_{A/B}\). Même droite d'action, même norme, sens opposés. <strong>Les deux forces s'appliquent sur des objets différents</strong> (elles ne se compensent donc pas).</p>
+    </div>
+
+    <h2 id="c5">V · Méthode d'étude d'un mouvement</h2>
+    <div class="ok-box"><div class="lab">Démarche type</div>
+      <p>① Définir le <strong>système</strong>. ② Choisir le <strong>référentiel</strong> (supposé galiléen). ③ Faire le <strong>bilan des forces</strong>. ④ Construire \(\vec v\) puis \(\Delta\vec v\) (échelle imposée). ⑤ Conclure sur \(\sum\vec F\) (direction, sens) et la nature du mouvement.</p>
+    </div>
+
+    <h2 id="c6">Bilan &amp; pièges à éviter</h2>
+    <div class="ok-box"><div class="lab">L'essentiel</div>
+      <p>— \(\vec v\) tangent à la trajectoire ; méthode des milieux \(v_i=M_{i-1}M_{i+1}/(2\Delta t)\).<br>
+         — \(\Delta\vec v\) même direction/sens que \(\sum\vec F\).<br>
+         — Inertie : \(\sum\vec F=\vec 0\Leftrightarrow\vec v\) constant.<br>
+         — 2ᵉ loi : \(\sum\vec F=m\vec a\). 3ᵉ loi : \(\vec F_{A/B}=-\vec F_{B/A}\).</p>
+    </div>
+    <div class="warn-box"><div class="lab">⚠️ Erreurs classiques</div>
+      <p>— Croire que \(\vec v\) constant ⇒ \(v\) constante : faux si la <strong>direction</strong> change (mouvement circulaire uniforme : \(\vec v\) varie !).<br>
+         — Confondre vitesse (\(\mathrm{m\,s^{-1}}\)) et accélération (\(\mathrm{m\,s^{-2}}\)).<br>
+         — Oublier de préciser le référentiel.<br>
+         — Croire qu'action et réaction se compensent (elles agissent sur deux corps distincts).</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ====================== RELATIONS ====================== -->
+<section class="panel" id="p-relations">
+<div class="content-card">
+  <h3>🧮 Relations, grandeurs &amp; dimensions</h3>
+  <table class="data">
+    <thead><tr><th>Relation</th><th>Énoncé</th><th>Unités</th></tr></thead>
+    <tbody>
+      <tr><td>\(\vec v_i=\dfrac{\overrightarrow{M_{i-1}M_{i+1}}}{2\Delta t}\)</td><td>Vecteur vitesse (méthode des milieux)</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+      <tr><td>\(\Delta\vec v=\vec v_{i+1}-\vec v_i\)</td><td>Vecteur variation de vitesse</td><td>\(\mathrm{m\,s^{-1}}\)</td></tr>
+      <tr><td>\(\vec a=\dfrac{\Delta\vec v}{\Delta t}\)</td><td>Vecteur accélération</td><td>\(\mathrm{m\,s^{-2}}\)</td></tr>
+      <tr><td>\(\sum\vec F=m\,\vec a\)</td><td>2ᵉ loi de Newton</td><td>\(\mathrm N\) ; \(m\) en \(\mathrm{kg}\)</td></tr>
+      <tr><td>\(\vec F_{A/B}=-\vec F_{B/A}\)</td><td>3ᵉ loi (action–réaction)</td><td>\(\mathrm N\)</td></tr>
+    </tbody>
+  </table>
+  <div class="prop-box"><div class="lab">Méthode d'isolement</div>
+    <p>De \(\sum F=m\,a\) : \(a=\dfrac{\sum F}{m}\) ou \(m=\dfrac{\sum F}{a}\). De \(v=\dfrac{d}{2\Delta t}\) : \(\Delta t=\dfrac{d}{2v}\). Toujours convertir cm→m, ms→s avant le calcul.</p>
+  </div>
+  <div class="warn-box"><div class="lab">⚠️ Conversions vitesses</div>
+    <p>\(1\ \mathrm{m\,s^{-1}}=3{,}6\ \mathrm{km\,h^{-1}}\) · \(1\ \mathrm{km\,h^{-1}}=\dfrac{1}{3{,}6}\approx0{,}278\ \mathrm{m\,s^{-1}}\). Ex : \(72\ \mathrm{km\,h^{-1}}=20\ \mathrm{m\,s^{-1}}\).</p>
+  </div>
+</div>
+</section>
+
+<!-- ====================== EXERCICES ====================== -->
+<section class="panel" id="p-exos">
+<div class="content-card">
+  <h3>✏️ Exercices progressifs</h3>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-1">S'entraîner</span><span class="exo-title">1 · Référentiel et trajectoire</span><span class="exo-comp">APP</span></div>
+    <div class="exo-body">
+      <p>Un voyageur assis dans un train laisse tomber une bille. Décrire la trajectoire de la bille : (a) dans le référentiel du wagon ; (b) dans le référentiel du quai (train à vitesse constante).</p>
+      <details><summary>Voir la correction</summary>
+        <p>(a) Dans le wagon : trajectoire <strong>rectiligne verticale</strong> (chute droite). (b) Sur le quai : trajectoire <strong>parabolique</strong> (la bille garde la vitesse horizontale du train). <em>La trajectoire dépend du référentiel.</em></p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-1">S'entraîner</span><span class="exo-title">2 · Conversions de vitesse</span><span class="exo-comp">APP</span></div>
+    <div class="exo-body">
+      <p>Convertir : (a) \(90\ \mathrm{km\,h^{-1}}\) en \(\mathrm{m\,s^{-1}}\) ; (b) \(15\ \mathrm{m\,s^{-1}}\) en \(\mathrm{km\,h^{-1}}\).</p>
+      <details><summary>Voir la correction</summary>
+        <p>(a) \(90/3{,}6=25\ \mathrm{m\,s^{-1}}\). (b) \(15\times3{,}6=54\ \mathrm{km\,h^{-1}}\).</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-2">Appliquer</span><span class="exo-title">3 · Vitesse par méthode des milieux</span><span class="exo-comp">REA · VAL</span></div>
+    <div class="exo-body">
+      <p>Sur une chronophotographie, \(\Delta t=60\,\mathrm{ms}\). On mesure \(M_2M_4=9{,}0\,\mathrm{cm}\). Calculer \(v_3\).</p>
+      <details><summary>Voir la correction</summary>
+        <div class="formula">$$v_3=\dfrac{M_2M_4}{2\Delta t}=\dfrac{0{,}090}{2\times0{,}060}=0{,}75\ \mathrm{m\,s^{-1}}$$</div>
+        <p><em>Méthode : convertir cm→m (0,090 m) et ms→s (0,060 s) avant le calcul.</em></p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-2">Appliquer</span><span class="exo-title">4 · Deuxième loi de Newton</span><span class="exo-comp">APP · REA</span></div>
+    <div class="exo-body">
+      <p>Un chariot de masse \(m=3{,}0\,\mathrm{kg}\) est soumis à une résultante \(\sum F=12\,\mathrm N\). 1) Calculer l'accélération. 2) Si on double la force, que devient \(a\) ?</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) \(a=\dfrac{\sum F}{m}=\dfrac{12}{3{,}0}=4{,}0\ \mathrm{m\,s^{-2}}\).</p>
+        <p>2) \(\sum F\) doublée ⇒ \(a\) doublée \(=8{,}0\ \mathrm{m\,s^{-2}}\) (proportionnalité).</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-3">Approfondir</span><span class="exo-title">5 · Δv⃗ et direction des forces</span><span class="exo-comp">ANA · VAL</span></div>
+    <div class="exo-body">
+      <p>Une bille décrit une trajectoire courbe. En un point, \(\vec v_i\) (vers la droite, \(2{,}0\,\mathrm{m\,s^{-1}}\)) et \(\vec v_{i+1}\) (vers le haut-droite, \(2{,}0\,\mathrm{m\,s^{-1}}\)). 1) La norme change-t-elle ? 2) \(\Delta\vec v\) est-il nul ? 3) Que peut-on dire de \(\sum\vec F\) ?</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) Non, la norme reste \(2{,}0\,\mathrm{m\,s^{-1}}\). 2) \(\Delta\vec v=\vec v_{i+1}-\vec v_i\neq\vec 0\) car la <strong>direction</strong> change. 3) \(\sum\vec F\) est non nulle, dirigée selon \(\Delta\vec v\) (vers l'intérieur de la courbe). <em>Vitesse de norme constante ≠ mouvement sans force.</em></p>
+      </details>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-head"><span class="exo-lvl lvl-3">Approfondir</span><span class="exo-title">6 · Chute libre — chronophotographie</span><span class="exo-comp">ANA · REA · VAL</span></div>
+    <div class="exo-body">
+      <p>Bille lâchée sans vitesse, \(\Delta t=40\,\mathrm{ms}\). Positions (cm) : \(M_0=0\), \(M_1=0{,}8\), \(M_2=3{,}1\), \(M_3=7{,}1\), \(M_4=12{,}5\). 1) Calculer \(v_1\) et \(v_3\). 2) Le mouvement est-il uniforme ? 3) Estimer l'accélération.</p>
+      <details><summary>Voir la correction</summary>
+        <p>1) \(v_1=\dfrac{M_0M_2}{2\Delta t}=\dfrac{0{,}031}{0{,}080}\approx0{,}39\ \mathrm{m\,s^{-1}}\) ; \(v_3=\dfrac{M_2M_4}{2\Delta t}=\dfrac{0{,}125-0{,}031}{0{,}080}\approx1{,}18\ \mathrm{m\,s^{-1}}\).</p>
+        <p>2) Non : \(v\) augmente ⇒ mouvement <strong>rectiligne accéléré</strong>.</p>
+        <p>3) \(a\approx\dfrac{\Delta v}{\Delta t}=\dfrac{1{,}18-0{,}39}{2\times0{,}040}\approx 9{,}9\ \mathrm{m\,s^{-2}}\approx g\). Cohérent avec une chute libre.</p>
+      </details>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ====================== FLASHCARDS ====================== -->
+<section class="panel" id="p-fc">
+<div class="content-card">
+  <h3>🃏 Flashcards — 15 cartes · 3 modes</h3>
+  <div class="fc-toolbar">
+    <button class="fc-mode on" onclick="fcMode('libre',this)">📖 Révision libre</button>
+    <button class="fc-mode" onclick="fcMode('comp',this)">✍️ Complétion</button>
+    <button class="fc-mode" onclick="fcMode('chrono',this)">⏱️ Chrono 2 min</button>
+  </div>
+  <div class="fc-stage on" id="fc-libre">
+    <div class="fc-count" id="fcCount">Carte 1 / 15</div>
+    <div class="fc-scene" onclick="fcFlip()"><div class="fc-3d" id="fc3d">
+      <div class="fc-face fc-front"><div class="fc-ico" id="fcIco">🏃</div><div class="fc-q" id="fcQ">—</div><div class="fc-hint">Cliquez pour retourner</div></div>
+      <div class="fc-face fc-back"><div class="fc-a" id="fcA">—</div><div class="fc-hint">Cliquez pour revenir</div></div>
+    </div></div>
+    <div class="fc-nav"><button onclick="fcPrev()">← Préc.</button><button onclick="fcFlip()">↻ Retourner</button><button onclick="fcNext()">Suiv. →</button><button onclick="fcShuffle()">🔀 Mélanger</button></div>
+  </div>
+  <div class="fc-stage" id="fc-comp">
+    <div class="fc-count">Score : <b id="compScore">0</b></div>
+    <div class="comp-card" id="compCard"></div>
+  </div>
+  <div class="fc-stage" id="fc-chrono">
+    <div class="chrono-top"><div class="chrono-time" id="chTime">2:00</div><div style="font-weight:760;color:var(--faint)" id="chCount">0 / 10</div></div>
+    <div class="chrono-card" id="chCard"><div style="text-align:center"><div style="font-size:17px;font-weight:760;margin-bottom:18px">Prêt ?</div><div><button class="sim-btn" onclick="chStart()">▶ Démarrer</button></div></div></div>
+  </div>
+</div>
+</section>
+
+<!-- ====================== QUIZ ====================== -->
+<section class="panel" id="p-quiz">
+<div class="content-card">
+  <h3>🤖 Quiz — 12 questions</h3>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div style="flex:1;height:7px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden"><span id="qBar" style="display:block;height:100%;width:0;background:linear-gradient(90deg,var(--active),#ffb86b);transition:.3s"></span></div>
+    <span style="font-size:13px;font-weight:760;color:var(--faint)" id="qProg">Q 1 / 12</span>
+    <span class="pill-btn" id="qScore">Score 0</span>
+  </div>
+  <div id="qBox"></div>
+  <div id="qEnd" style="display:none;text-align:center;padding:30px">
+    <div style="font-size:46px;font-weight:800;color:var(--active)" id="qFinal">—</div>
+    <p style="color:var(--muted)" id="qMsg">—</p>
+    <button class="sim-btn" onclick="quizStart()">🔄 Recommencer</button>
+  </div>
+</div>
+<div class="content-card">
+  <h3>💬 Chatbot — réviser avec une IA</h3>
+  <p style="color:var(--muted);font-size:13.5px">Copie ce prompt dans <strong>Claude</strong>, <strong>ChatGPT</strong>, <strong>Gemini</strong> ou <strong>Copilot</strong>.</p>
+  <div class="formula" style="text-align:left;font-size:13px" id="botPrompt">Tu es professeur de physique-chimie en Première Spécialité. Aide-moi sur le chapitre « Mouvement d'un système » : système et point matériel, référentiel, trajectoire, vecteur vitesse (méthode des milieux \(v_i=M_{i-1}M_{i+1}/2\Delta t\)), vecteur variation de vitesse \(\Delta\vec v\), lois de Newton (inertie, \(\sum\vec F=m\vec a\), action–réaction). Donne définitions, méthode, formules en LaTeX, unités, un exemple corrigé et les pièges fréquents. Mon niveau : Première Spé.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="sim-btn" onclick="copyBot()">📋 Copier le prompt</button>
+    <a class="pill-btn" href="https://claude.ai/" target="_blank" rel="noopener">Claude ↗</a>
+    <a class="pill-btn" href="https://chat.openai.com/" target="_blank" rel="noopener">ChatGPT ↗</a>
+    <a class="pill-btn" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a>
+    <a class="pill-btn" href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Copilot ↗</a>
+  </div>
+</div>
+</section>
+
+<!-- ====================== CARTE MENTALE ====================== -->
+<section class="panel" id="p-mm">
+<div class="content-card">
+  <h3>🧠 Carte mentale</h3>
+  <div style="display:flex;gap:8px;margin-bottom:14px"><button class="sim-btn" onclick="drawMM()">🗺️ Afficher</button><button class="pill-btn" onclick="dlMM()">⬇️ PNG</button></div>
+  <div class="mm-wrap"><canvas id="mmCv" width="980" height="560" style="width:100%;display:block"></canvas></div>
+</div>
+</section>
+
+<!-- ====================== SIMULATIONS ====================== -->
+<section class="panel" id="p-sim">
+<div class="sim-card">
+  <h4>📐 Simulateur — Vitesse par méthode des milieux</h4>
+  <div class="sim-grid">
+    <div class="sim-field"><label>M(i-1)M(i+1) (cm)</label><input id="v-d" value="8.0"></div>
+    <div class="sim-field"><label>Δt (ms)</label><input id="v-dt" value="40"></div>
+  </div>
+  <button class="sim-btn" onclick="calcV()">Calculer v</button>
+  <div class="sim-out" id="vOut">Le vecteur vitesse est tangent à la trajectoire.</div>
+  <canvas class="neon" id="vCv"></canvas>
+</div>
+
+<div class="sim-card">
+  <h4>⚖️ Simulateur — 2ᵉ loi de Newton</h4>
+  <div class="sim-grid">
+    <div class="sim-field"><label>ΣF (N)</label><input id="n-f" value="12"></div>
+    <div class="sim-field"><label>m (kg)</label><input id="n-m" value="3"></div>
+  </div>
+  <button class="sim-btn" onclick="calcN()">Calculer a</button>
+  <div class="sim-out" id="nOut">ΣF = m·a : la résultante est proportionnelle à l'accélération.</div>
+  <canvas class="neon" id="nCv"></canvas>
+</div>
+
+<div class="content-card">
+  <h3>🔬 Simulations PhET</h3>
+  <div class="pheT-grid">
+    <div class="phet-card">
+      <div class="phet-top"><span style="font-size:20px">🏃</span><b>Forces et mouvement</b><span>PhET</span></div>
+      <div class="phet-frame"><iframe src="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_fr.html" allowfullscreen loading="lazy"></iframe></div>
+      <div class="phet-cap"><strong>Mission :</strong> appliquez une force et observez \(\sum\vec F=m\vec a\) ; force nulle ⇒ vitesse constante.</div>
+    </div>
+    <div class="phet-card">
+      <div class="phet-top"><span style="font-size:20px">🎯</span><b>Mouvement de projectile</b><span>PhET</span></div>
+      <div class="phet-frame"><iframe src="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion_fr.html" allowfullscreen loading="lazy"></iframe></div>
+      <div class="phet-cap"><strong>Mission :</strong> repérez la trajectoire parabolique et le vecteur vitesse tangent.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ====================== ECE ====================== -->
+<section class="panel" id="p-ece">
+<div class="content-card">
+  <h3>⚗️ ECE — Étude chronophotographique d'un mouvement</h3>
+  <div class="def-box"><div class="lab">Objectif</div><p>Déterminer le vecteur vitesse et le vecteur variation de vitesse à partir d'un enregistrement vidéo, et en déduire la direction des forces.</p></div>
+  <h4 style="margin:18px 0 8px;font-weight:760">Protocole</h4>
+  <p style="color:var(--muted)">1. Filmer le mouvement avec une référence d'échelle visible.<br>
+     2. Pointer les positions successives image par image (logiciel de pointage).<br>
+     3. Relever \(\Delta t\) (= 1 / fréquence d'acquisition).<br>
+     4. Calculer \(v_i=\dfrac{M_{i-1}M_{i+1}}{2\Delta t}\) puis tracer les vecteurs \(\vec v\) à l'échelle.<br>
+     5. Construire \(\Delta\vec v\) et en déduire la direction de \(\sum\vec F\).</p>
+  <div class="prop-box"><div class="lab">Exploitation</div><p>Si les \(\vec v\) sont égaux ⇒ MRU ⇒ \(\sum\vec F=\vec 0\). Sinon, \(\Delta\vec v\) pointe dans la direction de la résultante des forces (ex : vers le bas en chute libre).</p></div>
+  <canvas class="neon" id="eceCv"></canvas>
+  <div class="warn-box"><div class="lab">⚠️ Précautions</div><p>Caméra fixe et perpendiculaire au plan du mouvement. Échelle bien mesurée. Incertitudes de pointage ⇒ ne pas surinterpréter de petites variations.</p></div>
+</div>
+</section>
+
+<!-- ====================== VERS TERMINALE ====================== -->
+<section class="panel" id="p-term">
+<div class="terminale-card">
+  <h4>🚀 Ce qui sera réutilisé en Terminale</h4>
+  <p style="color:var(--muted)">— Le <strong>vecteur accélération</strong> \(\vec a=\dfrac{d\vec v}{dt}\) et les équations horaires.<br>
+     — La <strong>2ᵉ loi de Newton</strong> appliquée aux chutes, projectiles et satellites.<br>
+     — Les <strong>mouvements dans un champ uniforme</strong> (pesanteur, électrique).<br>
+     — Les <strong>théorèmes énergétiques</strong> (énergie cinétique, mécanique).</p>
+</div>
+<div class="content-card">
+  <h3>🎯 Mini-défi anticipé</h3>
+  <p style="color:var(--muted)">Un palet sur une table à coussin d'air est lancé puis n'est soumis qu'à des forces qui se compensent. En anticipant la 1ʳᵉ loi de Newton, quelle est la nature de son mouvement ? Que vaut \(\Delta\vec v\) ?</p>
+  <details class="exo-body"><summary style="cursor:pointer;font-weight:760;color:#ff6bd6">Voir la piste</summary>
+    <p>\(\sum\vec F=\vec 0\) ⇒ principe d'inertie ⇒ mouvement <strong>rectiligne uniforme</strong>, \(\vec v\) constant donc \(\Delta\vec v=\vec 0\). En Terminale, on le confirmera par \(\sum\vec F=m\vec a\Rightarrow\vec a=\vec 0\).</p>
+  </details>
+</div>
+</section>
+
+<div class="foot">PhysiChem Omnis · 1ère Spé · Chapitre 12 — Mouvement d'un système</div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

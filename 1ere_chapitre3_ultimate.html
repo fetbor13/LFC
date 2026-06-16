@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 3 — Tableau d'avancement | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="crumb">Première Spé › Transformations chimiques › <b>Tableau d'avancement</b></div>
+    <div class="top-actions">
+      <button class="pill-btn" onclick="switchTab('outils')">Relations clés</button>
+      <button class="pill-btn" onclick="switchTab('simulations')">Simuler</button>
+    </div>
+  </div>
+  <div class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Première Spé · Chapitre 3</div>
+        <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+        <h2>Tableau <span>d'avancement</span></h2>
+        <p class="hero-copy">Maîtriser l'outil central de la stœchiométrie : construire un tableau d'avancement, déterminer l'avancement maximal x_max, identifier le réactif limitant et calculer le taux d'avancement τ d'une transformation chimique.</p>
+        <div class="hero-grid">
+          <div class="metric"><b>6</b><span>sections de cours</span></div>
+          <div class="metric"><b>15</b><span>flashcards</span></div>
+          <div class="metric"><b>2</b><span>simulateurs neon</span></div>
+        </div>
+      </div>
+      <div class="hero-canvas-wrap"><canvas id="heroCanvas" width="440" height="220"></canvas></div>
+    </section>
+
+    <section class="useful-strip">
+      <article class="useful-card mission-1"><small>Mission 01</small><b>Construire le tableau</b><span>Remplir les lignes initial, en cours, final pour chaque espèce à partir de l'équation ajustée.</span></article>
+      <article class="useful-card mission-2"><small>Mission 02</small><b>Trouver x_max</b><span>Calculer n₀/coef pour chaque réactif et prendre le minimum → réactif limitant.</span></article>
+      <article class="useful-card mission-3"><small>Mission 03</small><b>Calculer τ</b><span>Taux d'avancement : τ = x_f / x_max. 100 % = transformation totale ; &lt; 100 % = équilibre.</span></article>
+    </section>
+
+    <!-- ==================== COURS ==================== -->
+    <section class="panel active" id="tab-cours">
+      <article class="content-card course-grid">
+        <aside class="toc">
+          <div class="toc-title">Plan du cours</div>
+          <a href="#sec-transfo">I. Transformation chimique</a>
+          <a href="#sec-tableau">II. Tableau d'avancement</a>
+          <a href="#sec-xmax">III. Avancement maximal</a>
+          <a href="#sec-taux">IV. Taux d'avancement τ</a>
+          <a href="#sec-reactif">V. Réactif limitant</a>
+          <a href="#sec-appli">VI. Applications</a>
+        </aside>
+        <div class="course-body">
+
+          <h2 id="sec-transfo">I. La transformation chimique</h2>
+          <p>Une <strong>transformation chimique</strong> modifie la nature des espèces : des réactifs disparaissent et des produits apparaissent. L'équation de réaction bilan traduit cette transformation avec des <strong>coefficients stœchiométriques</strong>.</p>
+          <div class="box def"><div class="box-label">Équation de réaction</div>
+          <p>Pour la réaction \(a\,A+b\,B\to c\,C+d\,D\) :</p>
+          <ul>
+            <li>\(a, b\) = coefficients stœchiométriques des <strong>réactifs</strong> A, B</li>
+            <li>\(c, d\) = coefficients stœchiométriques des <strong>produits</strong> C, D</li>
+            <li>Les coefficients indiquent les <strong>proportions molaires</strong> : a mol de A réagissent avec b mol de B</li>
+          </ul></div>
+          <div class="box prop"><div class="box-label">Transformation totale vs partielle</div>
+          <p><strong>Transformation totale :</strong> au moins un réactif est entièrement consommé (réactif limitant). La réaction va jusqu'à sa fin. Ex : combustion, neutralisation acide fort + base forte.</p>
+          <p><strong>Transformation partielle (équilibre) :</strong> la réaction s'arrête avant la consommation totale d'un réactif. Un état d'équilibre est atteint. Ex : dissolution du CO₂ dans l'eau, réactions acide-base faibles.</p>
+          <p>Dans ce chapitre, on se limite aux <strong>transformations totales</strong>.</p></div>
+
+          <h2 id="sec-tableau">II. Tableau d'avancement</h2>
+          <p>Le <strong>tableau d'avancement</strong> permet de suivre rigoureusement l'évolution des quantités de matière de chaque espèce au cours d'une transformation chimique. Il comporte trois lignes.</p>
+          <div class="box def"><div class="box-label">Structure du tableau d'avancement</div>
+          <p>Pour \(a\,A+b\,B\to c\,C+d\,D\), en supposant C et D absents initialement :</p>
+          <div class="tab-wrap"><table>
+            <thead><tr><th>État</th><th>x (mol)</th><th>n(A) (mol)</th><th>n(B) (mol)</th><th>n(C) (mol)</th><th>n(D) (mol)</th></tr></thead>
+            <tbody>
+              <tr><td>Initial</td><td>0</td><td>\(n_0(A)\)</td><td>\(n_0(B)\)</td><td>0</td><td>0</td></tr>
+              <tr><td>En cours</td><td>x</td><td>\(n_0(A)-ax\)</td><td>\(n_0(B)-bx\)</td><td>\(cx\)</td><td>\(dx\)</td></tr>
+              <tr><td>Final</td><td>\(x_{max}\)</td><td>\(n_0(A)-ax_{max}\)</td><td>\(n_0(B)-bx_{max}\)</td><td>\(cx_{max}\)</td><td>\(dx_{max}\)</td></tr>
+            </tbody>
+          </table></div></div>
+          <div class="box ok"><div class="box-label">Règle de remplissage</div>
+          <ul>
+            <li><strong>Réactifs :</strong> quantité = \(n_0 - \text{coef}\times x\) (diminue avec x)</li>
+            <li><strong>Produits :</strong> quantité = \(\text{coef}\times x\) (augmente avec x, si absents au départ)</li>
+            <li><strong>Espèces spectatrices</strong> (catalyseurs, solvant) : ne figurent pas dans le tableau</li>
+          </ul></div>
+          <div class="box warn"><div class="box-label">Contrainte physique</div>
+          <p>Les quantités de matière ne peuvent pas être <strong>négatives</strong>. On doit toujours avoir \(n(A)\geq 0\) et \(n(B)\geq 0\). C'est cette contrainte qui impose la valeur maximale de x.</p></div>
+
+          <h2 id="sec-xmax">III. Avancement maximal x_max</h2>
+          <div class="box def"><div class="box-label">Définition de x_max</div>
+          <p>L'<strong>avancement maximal \(x_{max}\)</strong> est atteint quand la transformation est totale : au moins un réactif est épuisé (\(n = 0\)). Pour chaque réactif, on pose :</p>
+          \[n_0(\text{réactif})-\text{coef}\times x_{max}=0\implies x_{max}=\frac{n_0(\text{réactif})}{\text{coef stœchiométrique}}\]
+          <p>On calcule \(x_{max}\) pour chaque réactif et on prend le <strong>minimum</strong> : c'est l'avancement réel de la réaction.</p></div>
+          <div class="box prop"><div class="box-label">Méthode en 4 étapes</div>
+          <ol>
+            <li>Écrire l'équation ajustée et noter les coefficients stœchiométriques.</li>
+            <li>Convertir toutes les données en moles.</li>
+            <li>Calculer \(x_{max}(A)=n_0(A)/a\) et \(x_{max}(B)=n_0(B)/b\).</li>
+            <li>\(x_{max}=\min(x_{max}(A),x_{max}(B))\) → le réactif limitant correspond au minimum.</li>
+          </ol></div>
+
+          <h3>Exemple — Zn + 2HCl → ZnCl₂ + H₂</h3>
+          <p>Données : \(n_0(\text{Zn})=0{,}15\,\text{mol}\) et \(n_0(\text{HCl})=0{,}20\,\text{mol}\).</p>
+          <div class="formula">\[x_{max}(\text{Zn})=\frac{0{,}15}{1}=0{,}15\,\text{mol}\qquad x_{max}(\text{HCl})=\frac{0{,}20}{2}=0{,}10\,\text{mol}\]</div>
+          <p>\(x_{max}=\min(0{,}15;0{,}10)=\boxed{0{,}10\,\text{mol}}\) → réactif limitant : <strong>HCl</strong></p>
+          <div class="tab-wrap"><table>
+            <thead><tr><th>État</th><th>x (mol)</th><th>n(Zn)</th><th>n(HCl)</th><th>n(ZnCl₂)</th><th>n(H₂)</th></tr></thead>
+            <tbody>
+              <tr><td>Initial</td><td>0</td><td>0,15</td><td>0,20</td><td>0</td><td>0</td></tr>
+              <tr><td>Final</td><td>0,10</td><td>0,05</td><td>0 (épuisé)</td><td>0,10</td><td>0,10</td></tr>
+            </tbody>
+          </table></div>
+
+          <h2 id="sec-taux">IV. Taux d'avancement τ</h2>
+          <div class="box def"><div class="box-label">Taux d'avancement τ</div>
+          \[\tau=\frac{x_{final}}{x_{max}}\quad(\text{sans unité, entre 0 et 1})\]
+          <p>\(\tau=1\) (100 %) : transformation <strong>totale</strong> — au moins un réactif est épuisé.</p>
+          <p>\(\tau<1\) : transformation <strong>partielle</strong> — aucun réactif n'est entièrement consommé, la réaction a atteint un état d'équilibre.</p></div>
+          <div class="box ok"><div class="box-label">Exemple</div>
+          <p>Si l'avancement réel est \(x_f=0{,}08\,\text{mol}\) et \(x_{max}=0{,}10\,\text{mol}\) :</p>
+          \[\tau=\frac{0{,}08}{0{,}10}=0{,}80=80\%\quad\to\text{transformation partielle}\]</div>
+
+          <h2 id="sec-reactif">V. Réactif limitant et en excès</h2>
+          <div class="box prop"><div class="box-label">Mélange stœchiométrique</div>
+          <p>Un mélange est <strong>stœchiométrique</strong> lorsque les réactifs sont présents en proportions exactes selon les coefficients :</p>
+          \[\frac{n_0(A)}{a}=\frac{n_0(B)}{b}\]
+          <p>Dans ce cas, les deux réactifs s'épuisent simultanément : aucun n'est en excès, \(x_{max}(A)=x_{max}(B)\).</p></div>
+          <div class="box ok"><div class="box-label">Réactif en excès</div>
+          <p>Le réactif en excès est celui dont \(x_{max}\) est le plus grand. Sa quantité restante en fin de réaction est :</p>
+          \[n_{excès}=n_0(\text{réactif en excès})-\text{coef}\times x_{max}\]</div>
+          <div class="box warn"><div class="box-label">Erreur classique</div>
+          <p>Ne pas comparer directement les quantités initiales \(n_0(A)\) et \(n_0(B)\) si les coefficients stœchiométriques sont différents ! Il faut impérativement comparer les rapports \(n_0(A)/a\) et \(n_0(B)/b\).</p></div>
+
+          <h2 id="sec-appli">VI. Applications — Synthèse et rendement</h2>
+          <h3>Synthèse de l'eau : 2H₂ + O₂ → 2H₂O</h3>
+          <p>Données : \(n_0(\text{H}_2)=0{,}30\,\text{mol}\) et \(n_0(\text{O}_2)=0{,}10\,\text{mol}\).</p>
+          <div class="formula">\[x_{max}(\text{H}_2)=\frac{0{,}30}{2}=0{,}15\,\text{mol}\qquad x_{max}(\text{O}_2)=\frac{0{,}10}{1}=0{,}10\,\text{mol}\]</div>
+          <p>Réactif limitant : O₂ (\(x_{max}=0{,}10\,\text{mol}\))</p>
+          <p>\(n(\text{H}_2\text{O})=2\times0{,}10=0{,}20\,\text{mol}\) → \(m(\text{H}_2\text{O})=0{,}20\times18=3{,}6\,\text{g}\)</p>
+          <p>\(n_{excès}(\text{H}_2)=0{,}30-2\times0{,}10=0{,}10\,\text{mol}\)</p>
+
+          <h3>Rendement d'une synthèse</h3>
+          <div class="box def"><div class="box-label">Rendement η</div>
+          \[\eta=\frac{n_{\text{obtenu}}}{n_{\text{théorique}}}\times 100\%=\frac{m_{\text{obtenue}}}{m_{\text{théorique}}}\times 100\%\]
+          <p>Où \(n_{\text{théorique}}\) est la quantité calculée par le tableau d'avancement (si transformation totale).</p>
+          <p>Un rendement inférieur à 100 % traduit des pertes expérimentales, des réactions parasites ou un équilibre non atteint.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ==================== RELATIONS & DIMENSIONS ==================== -->
+    <section class="panel" id="tab-outils">
+      <article class="content-card">
+        <h3>Relations essentielles — Tableau d'avancement</h3>
+        <div class="cards">
+          <div class="card"><h4>Quantité d'un réactif</h4>
+          \[n(A)=n_0(A)-a\cdot x\]
+          <p style="font-size:12px;margin-top:8px">\(a\) : coeff. stœchiométrique de A · \(x\) : avancement en mol</p></div>
+          <div class="card"><h4>Quantité d'un produit</h4>
+          \[n(C)=c\cdot x\quad(\text{si absent au départ})\]
+          <p style="font-size:12px;margin-top:8px">\(c\) : coeff. stœchiométrique de C</p></div>
+          <div class="card"><h4>Avancement maximal x_max</h4>
+          \[x_{max}=\min\!\left(\frac{n_0(A)}{a},\frac{n_0(B)}{b}\right)\]
+          <p style="font-size:12px;margin-top:8px">Le réactif qui donne le minimum est le réactif limitant.</p></div>
+          <div class="card"><h4>Taux d'avancement τ</h4>
+          \[\tau=\frac{x_{final}}{x_{max}}\in[0;1]\]
+          <p style="font-size:12px;margin-top:8px">\(\tau=1\) : totale · \(\tau&lt;1\) : partielle (équilibre)</p></div>
+          <div class="card"><h4>Mélange stœchiométrique</h4>
+          \[\frac{n_0(A)}{a}=\frac{n_0(B)}{b}\]
+          <p style="font-size:12px;margin-top:8px">Rapport de quantités initiales = rapport des coefficients.</p></div>
+          <div class="card"><h4>Rendement de synthèse</h4>
+          \[\eta=\frac{n_{\text{obtenu}}}{n_{\text{théorique}}}\times 100\%\]
+          <p style="font-size:12px;margin-top:8px">\(n_{\text{théorique}}\) = calculé par tableau d'avancement.</p></div>
+        </div>
+        <h3 style="margin-top:20px">Analyse dimensionnelle</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Grandeur</th><th>Symbole</th><th>Unité SI</th></tr></thead>
+          <tbody>
+            <tr><td>Avancement de la réaction</td><td>\(x\)</td><td>mol</td></tr>
+            <tr><td>Avancement maximal</td><td>\(x_{max}\)</td><td>mol</td></tr>
+            <tr><td>Quantité de matière</td><td>\(n\)</td><td>mol</td></tr>
+            <tr><td>Taux d'avancement</td><td>\(\tau\)</td><td>sans unité (ou %)</td></tr>
+            <tr><td>Rendement</td><td>\(\eta\)</td><td>sans unité (ou %)</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+    </section>
+
+    <!-- ==================== EXERCICES ==================== -->
+    <section class="panel" id="tab-exercices">
+      <article class="content-card">
+        <h3>Exercices progressifs</h3>
+
+        <div class="exercise">
+          <h4>Exercice 1 — S'entraîner · Tableau simple <span class="chip blue">APP</span></h4>
+          <p>On fait réagir \(n_0(\text{Fe})=0{,}20\,\text{mol}\) avec \(n_0(\text{S})=0{,}25\,\text{mol}\) selon : \(\text{Fe}+\text{S}\to\text{FeS}\).</p>
+          <p>a) Calculer \(x_{max}(\text{Fe})\) et \(x_{max}(\text{S})\).</p>
+          <p>b) Identifier le réactif limitant.</p>
+          <p>c) Dresser le tableau d'avancement complet (états initial et final).</p>
+          <details><summary>Correction</summary>
+            <p>a) \(x_{max}(\text{Fe})=0{,}20/1=0{,}20\,\text{mol}\) · \(x_{max}(\text{S})=0{,}25/1=0{,}25\,\text{mol}\)</p>
+            <p>b) \(x_{max}=\min(0{,}20;0{,}25)=\boxed{0{,}20\,\text{mol}}\) → réactif limitant : <strong>Fe</strong></p>
+            <div class="tab-wrap"><table>
+              <thead><tr><th>État</th><th>x (mol)</th><th>n(Fe)</th><th>n(S)</th><th>n(FeS)</th></tr></thead>
+              <tbody>
+                <tr><td>Initial</td><td>0</td><td>0,20</td><td>0,25</td><td>0</td></tr>
+                <tr><td>Final</td><td>0,20</td><td>0 (épuisé)</td><td>0,05</td><td>0,20</td></tr>
+              </tbody>
+            </table></div>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4>Exercice 2 — Appliquer · Zn + 2HCl <span class="chip blue">REA</span> <span class="chip amber">ANA</span></h4>
+          <p>On dissout 9,75 g de zinc dans un excès d'acide chlorhydrique. La réaction est : \(\text{Zn}+2\,\text{HCl}\to\text{ZnCl}_2+\text{H}_2\).</p>
+          <p>Données : \(M(\text{Zn})=65{,}4\,\text{g·mol}^{-1}\) · \(M(\text{H}_2)=2{,}0\,\text{g·mol}^{-1}\)</p>
+          <p>a) Calculer \(n_0(\text{Zn})\).</p>
+          <p>b) HCl est en excès. Quel est le réactif limitant ?</p>
+          <p>c) Calculer la masse de H₂ produite.</p>
+          <details><summary>Correction</summary>
+            <p>a) \(n_0(\text{Zn})=9{,}75/65{,}4=\underline{0{,}149\,\text{mol}}\)</p>
+            <p>b) Réactif limitant : <strong>Zn</strong> (HCl est en excès)</p>
+            <p>c) \(x_{max}=0{,}149\,\text{mol}\) · \(n(\text{H}_2)=1\times0{,}149=0{,}149\,\text{mol}\)</p>
+            <div class="formula">\[m(\text{H}_2)=0{,}149\times2{,}0=\boxed{0{,}30\,\text{g}}\]</div>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4>Exercice 3 — Appliquer · Mélange stœchiométrique <span class="chip blue">REA</span></h4>
+          <p>Pour la réaction \(2\,\text{H}_2+\text{O}_2\to 2\,\text{H}_2\text{O}\), on dispose de 0,30 mol de H₂ et 0,10 mol de O₂.</p>
+          <p>a) Ce mélange est-il stœchiométrique ?</p>
+          <p>b) Identifier le réactif limitant et calculer \(x_{max}\).</p>
+          <p>c) Calculer la masse d'eau produite. (\(M(\text{H}_2\text{O})=18\,\text{g·mol}^{-1}\))</p>
+          <details><summary>Correction</summary>
+            <p>a) Stœchiométrique si \(n_0(\text{H}_2)/2 = n_0(\text{O}_2)/1\), soit \(0{,}30/2=0{,}15\) et \(0{,}10/1=0{,}10\). Ils sont différents → <strong>pas stœchiométrique</strong>.</p>
+            <p>b) \(x_{max}(\text{H}_2)=0{,}30/2=0{,}15\,\text{mol}\) · \(x_{max}(\text{O}_2)=0{,}10/1=0{,}10\,\text{mol}\). Réactif limitant : <strong>O₂</strong> · \(x_{max}=0{,}10\,\text{mol}\)</p>
+            <p>c) \(n(\text{H}_2\text{O})=2\times0{,}10=0{,}20\,\text{mol}\)</p>
+            <div class="formula">\[m(\text{H}_2\text{O})=0{,}20\times18=\boxed{3{,}6\,\text{g}}\]</div>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4>Exercice 4 — Approfondir · Taux d'avancement et transformation partielle <span class="chip amber">ANA</span> <span class="chip green">VAL</span></h4>
+          <p>On mélange 0,10 mol d'acide éthanoïque CH₃COOH et 0,10 mol d'eau pour former des ions CH₃COO⁻ et H₃O⁺. À l'équilibre, la concentration des ions H₃O⁺ est \(1{,}3\times10^{-3}\,\text{mol·L}^{-1}\) dans 1 L de solution.</p>
+          <p>a) Écrire l'équation de la réaction.</p>
+          <p>b) Calculer \(x_{max}\) si la réaction était totale.</p>
+          <p>c) Calculer le taux d'avancement τ et conclure.</p>
+          <details><summary>Correction</summary>
+            <p>a) \(\text{CH}_3\text{COOH}+\text{H}_2\text{O}\rightleftharpoons\text{CH}_3\text{COO}^-+\text{H}_3\text{O}^+\)</p>
+            <p>b) Si totale : réactif limitant = CH₃COOH (1:1 avec H₂O, même quantité). \(x_{max}=0{,}10\,\text{mol}\).</p>
+            <p>c) \(x_f=n(\text{H}_3\text{O}^+)=1{,}3\times10^{-3}\,\text{mol}\)</p>
+            <div class="formula">\[\tau=\frac{1{,}3\times10^{-3}}{0{,}10}=0{,}013=1{,}3\%\ll 100\%\]</div>
+            <p>→ Transformation très partielle : l'acide éthanoïque est un <strong>acide faible</strong>.</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4>Exercice 5 — Approfondir · Rendement de synthèse <span class="chip amber">ANA</span></h4>
+          <p>La réaction de synthèse de l'aspirine donne théoriquement 10,8 g d'aspirine (\(M=180\,\text{g·mol}^{-1}\)). En pratique on obtient 8,6 g après purification. Calculer le rendement η.</p>
+          <details><summary>Correction</summary>
+            <p>\(n_{\text{théorique}}=10{,}8/180=0{,}060\,\text{mol}\)</p>
+            <p>\(n_{\text{obtenu}}=8{,}6/180=0{,}0478\,\text{mol}\)</p>
+            <div class="formula">\[\eta=\frac{0{,}0478}{0{,}060}\times100\%=\boxed{79{,}7\%}\]</div>
+            <p>Ou directement : \(\eta=8{,}6/10{,}8\times100\%=79{,}6\%\)</p>
+          </details>
+        </div>
+      </article>
+    </section>
+
+    <!-- ==================== FLASHCARDS ==================== -->
+    <section class="panel" id="tab-flashcards">
+      <article class="content-card">
+        <h3>Flashcards — Tableau d'avancement</h3>
+        <div class="btn-row" style="margin-bottom:14px">
+          <button class="btn primary" onclick="shuffleFC()">🔀 Mélanger</button>
+          <button class="btn" onclick="resetFC()">↺ Réinitialiser</button>
+          <small style="align-self:center;color:var(--muted);font-size:12px">Cliquer pour retourner</small>
+        </div>
+        <div class="flashcard-grid" id="fcGrid"></div>
+      </article>
+    </section>
+
+    <!-- ==================== QUIZ ==================== -->
+    <section class="panel" id="tab-quiz">
+      <div class="ai-grid">
+        <article class="content-card">
+          <h3>Quiz — 12 questions</h3>
+          <div id="quizContainer"></div>
+          <div class="btn-row" style="margin-top:16px">
+            <button class="btn primary" onclick="resetQuiz()">↺ Recommencer</button>
+            <span id="quizScore" style="align-self:center;font-weight:700;color:var(--active)"></span>
+          </div>
+        </article>
+        <article class="content-card">
+          <h3>Chatbot IA — Aide au chapitre</h3>
+          <p style="color:var(--muted);font-size:13px">Copiez le prompt puis ouvrez l'IA de votre choix :</p>
+          <textarea class="prompt-box" id="aiPrompt" readonly>Tu es un professeur de physique-chimie. Aide-moi à comprendre le chapitre de Première spécialité "Tableau d'avancement". Explique : 1) la structure et le remplissage du tableau 2) comment calculer x_max pour identifier le réactif limitant 3) la différence transformation totale / partielle 4) le taux d'avancement τ 5) le mélange stœchiométrique. Donne deux exemples numériques complets avec le tableau. Signale les pièges fréquents. Niveau Première spécialité.</textarea>
+          <div class="btn-row">
+            <button class="btn primary" onclick="copyPrompt()">📋 Copier</button>
+            <a href="https://chat.openai.com" target="_blank" class="btn">ChatGPT</a>
+            <a href="https://claude.ai" target="_blank" class="btn">Claude</a>
+            <a href="https://gemini.google.com" target="_blank" class="btn">Gemini</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== CARTE MENTALE ==================== -->
+    <section class="panel" id="tab-mindmap">
+      <article class="content-card">
+        <h3>Carte mentale — Tableau d'avancement</h3>
+        <div class="mindmap">
+          <div class="map-center">📊 Tableau d'avancement</div>
+          <div class="map-branches">
+            <div class="map-branch"><h4 style="color:var(--active)">🔵 Tableau</h4><ul><li>x = avancement (mol)</li><li>Réactifs : n₀ − coef·x</li><li>Produits : coef·x</li><li>3 états : initial, en cours, final</li></ul></div>
+            <div class="map-branch"><h4 style="color:#ffb86b">📝 x_max</h4><ul><li>n₀/coef pour chaque réactif</li><li>x_max = minimum</li><li>Réactif limitant → n_final = 0</li><li>Contrainte n ≥ 0</li></ul></div>
+            <div class="map-branch"><h4 style="color:#a3ff5f">✅ Taux τ</h4><ul><li>τ = x_f / x_max</li><li>τ = 100 % → totale</li><li>τ &lt; 100 % → partielle</li><li>Équilibre chimique si τ &lt; 1</li></ul></div>
+            <div class="map-branch"><h4 style="color:#ff6bd6">⚖️ Stœchiométrie</h4><ul><li>Mélange stœchiométrique</li><li>n₀(A)/a = n₀(B)/b</li><li>Pas de réactif en excès</li><li>Optimisation des synthèses</li></ul></div>
+            <div class="map-branch"><h4 style="color:#00ffb3">🏭 Applications</h4><ul><li>n(produit) = coef·x_max</li><li>m = n × M</li><li>Rendement η</li><li>V(gaz) = n × Vm</li></ul></div>
+            <div class="map-branch"><h4 style="color:var(--red)">⚠️ Pièges</h4><ul><li>Comparer n₀/coef, pas n₀ !</li><li>Unités en mol partout</li><li>Produire &lt; prévu → η &lt; 100 %</li><li>Ajuster l'équation avant tout</li></ul></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ==================== SIMULATIONS ==================== -->
+    <section class="panel" id="tab-simulations">
+      <article class="content-card">
+        <h3>Simulateurs interactifs</h3>
+
+        <div class="neon-sim" style="margin-bottom:20px">
+          <canvas id="simTab" height="240"></canvas>
+          <div class="sim-body">
+            <h4>Simulateur — Tableau d'avancement aA + bB → cC</h4>
+            <p>Entrez les quantités initiales et les coefficients pour obtenir le tableau complet.</p>
+            <div class="sim-inputs">
+              <div><label class="neon-label">n₀(A) (mol)</label><input class="neon-input" id="s-na" type="number" value="0.15" step="0.05" min="0.01" oninput="calcSimTab()"></div>
+              <div><label class="neon-label">Coef. a</label><input class="neon-input" id="s-a" type="number" value="1" step="1" min="1" oninput="calcSimTab()"></div>
+              <div><label class="neon-label">n₀(B) (mol)</label><input class="neon-input" id="s-nb" type="number" value="0.20" step="0.05" min="0.01" oninput="calcSimTab()"></div>
+              <div><label class="neon-label">Coef. b</label><input class="neon-input" id="s-b" type="number" value="2" step="1" min="1" oninput="calcSimTab()"></div>
+              <div><label class="neon-label">Coef. c (produit)</label><input class="neon-input" id="s-c" type="number" value="1" step="1" min="1" oninput="calcSimTab()"></div>
+            </div>
+            <div class="neon-result" id="simTabResult">—</div>
+          </div>
+        </div>
+
+        <div class="sim-grid-2">
+          <div class="sim-card">
+            <div class="sim-body"><h4>⚗️ Réactants, Produits et Restes — PhET</h4><p style="font-size:13px;color:var(--muted)">Visualiser le réactif limitant et les quantités restantes.</p></div>
+            <iframe src="https://phet.colorado.edu/sims/html/reactants-products-and-leftovers/latest/reactants-products-and-leftovers_fr.html" title="PhET Réactants Produits Restes" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="sim-card">
+            <div class="sim-body"><h4>⚖️ Équilibrage des équations chimiques — PhET</h4><p style="font-size:13px;color:var(--muted)">Comprendre les coefficients stœchiométriques.</p></div>
+            <iframe src="https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_fr.html" title="PhET Équilibrage" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ==================== ECE ==================== -->
+    <section class="panel" id="tab-ece">
+      <article class="content-card">
+        <h3>ECE — Réaction entre le zinc et l'acide chlorhydrique</h3>
+        <div class="box def"><div class="box-label">Réaction étudiée</div>
+        <p>\(\text{Zn}+2\,\text{HCl}\longrightarrow\text{ZnCl}_2+\text{H}_2\)</p>
+        <p>Le zinc (réducteur) réagit avec l'acide chlorhydrique (source de H⁺) en produisant du dihydrogène gazeux (effervescence visible).</p></div>
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Matériel et réactifs</b><ul>
+            <li>Zinc en grenaille : peser \(m\) g</li>
+            <li>Solution HCl à 1 mol·L⁻¹</li>
+            <li>Bécher, balance, éprouvette graduée</li>
+            <li>Balance numérique (±0,01 g)</li>
+          </ul></div>
+          <div class="ece-step"><b>2. Protocole</b><ul>
+            <li>Peser exactement la masse de zinc (\(m_i\))</li>
+            <li>Verser un volume mesuré de HCl</li>
+            <li>Observer l'effervescence (H₂ dégagé)</li>
+            <li>Attendre la fin de la réaction</li>
+          </ul></div>
+          <div class="ece-step"><b>3. Observations</b><ul>
+            <li>Bulles de H₂ dégagées</li>
+            <li>La lame de zinc diminue (ou disparaît si limitant)</li>
+            <li>Solution devient trouble (ZnCl₂ dissous)</li>
+            <li>Température légèrement augmentée</li>
+          </ul></div>
+          <div class="ece-step"><b>4. Exploitation</b><ul>
+            <li>Calculer n₀(Zn) et n₀(HCl)</li>
+            <li>Comparer n₀(Zn)/1 et n₀(HCl)/2</li>
+            <li>Dresser le tableau d'avancement</li>
+            <li>Vérifier expérimentalement (masse Zn restante)</li>
+          </ul></div>
+        </div>
+        <div class="box ok" style="margin-top:14px"><div class="box-label">Exemple numérique ECE</div>
+        <p>On utilise \(m(\text{Zn})=0{,}65\,\text{g}\) et \(V(\text{HCl})=20{,}0\,\text{mL}\) à \(c=1{,}0\,\text{mol·L}^{-1}\).</p>
+        <p>\(n_0(\text{Zn})=0{,}65/65{,}4=9{,}9\times10^{-3}\,\text{mol}\) · \(n_0(\text{HCl})=1{,}0\times0{,}020=0{,}020\,\text{mol}\)</p>
+        <p>\(x_{max}(\text{Zn})=9{,}9\times10^{-3}\,\text{mol}\) · \(x_{max}(\text{HCl})=0{,}020/2=0{,}010\,\text{mol}\)</p>
+        <p>Réactif limitant : <strong>Zn</strong> · \(n(\text{H}_2)=9{,}9\times10^{-3}\,\text{mol}\) · \(V(\text{H}_2)=9{,}9\times10^{-3}\times24=0{,}24\,\text{L}\) (à 20 °C)</p></div>
+        <canvas id="eceCanvas" height="160" style="margin-top:16px;border-radius:14px;background:var(--bg);border:1px solid rgba(240,163,186,.15);width:100%"></canvas>
+      </article>
+    </section>
+
+    <!-- ==================== VERS TERMINALE ==================== -->
+    <section class="panel" id="tab-terminale">
+      <article class="content-card">
+        <h3>Vers la Terminale — Ce chapitre prépare…</h3>
+        <div class="cards">
+          <div class="card"><h4>⚗️ Titrages (Terminale)</h4>
+          <p>La notion de réactif limitant est centrale dans les titrages : à l'équivalence, le réactif titrant est introduit en quantité stœchiométrique par rapport au réactif titré. Le tableau d'avancement permet de calculer les concentrations.</p></div>
+          <div class="card"><h4>📈 Transformations partielles — Constante K (Terminale)</h4>
+          <p>En Terminale, les transformations partielles sont quantifiées par la constante d'équilibre K et le taux d'avancement τ. La connaissance de τ permet de prévoir si une réaction est favorable.</p></div>
+          <div class="card"><h4>⚡ Électrochimie (Terminale)</h4>
+          <p>Dans les piles et l'électrolyse, les calculs de quantités de matière (loi de Faraday) font appel à la même logique : relier quantité d'espèce déposée ou consommée à la stœchiométrie de la demi-équation.</p></div>
+          <div class="card"><h4>🧬 Cinétique (Terminale)</h4>
+          <p>La cinétique chimique étudie la vitesse à laquelle x augmente. La variable x (avancement) est celle du tableau d'avancement, et sa dérivée en temps est la vitesse de réaction.</p></div>
+        </div>
+        <div class="box ok" style="margin-top:18px"><div class="box-label">Mini-défi Terminale</div>
+        <p>On mélange \(V_A=10{,}0\,\text{mL}\) d'acide chlorhydrique \(c_A=0{,}100\,\text{mol·L}^{-1}\) avec \(V_B\,\text{mL}\) de soude \(c_B=0{,}050\,\text{mol·L}^{-1}\). La réaction est \(\text{H}^++\text{HO}^-\to\text{H}_2\text{O}\).</p>
+        <p><strong>Question :</strong> quel volume \(V_B\) correspond à l'équivalence (mélange stœchiométrique) ?</p>
+        <details style="margin-top:10px"><summary style="cursor:pointer;color:var(--active);font-weight:700">Voir la solution</summary>
+          <p>À l'équivalence : \(n(\text{H}^+)=n(\text{HO}^-)\)</p>
+          <p>\(c_A\cdot V_A=c_B\cdot V_B\implies V_B=\dfrac{c_A\cdot V_A}{c_B}=\dfrac{0{,}100\times10{,}0}{0{,}050}=\boxed{20{,}0\,\text{mL}}\)</p>
+          <p>Cette relation est directement issue du tableau d'avancement à l'état final !</p>
+        </details></div>
+      </article>
+    </section>
+
+  </div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

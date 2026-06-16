@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 5 — Structure et polarité des molécules | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+  <div class="topbar">
+    <div class="crumb">Première Spé › Constitution de la matière › <b>Structure et polarité des molécules</b></div>
+    <div class="top-actions">
+      <button class="pill-btn" onclick="switchTab('outils')">Relations clés</button>
+      <button class="pill-btn" onclick="switchTab('simulations')">Simuler</button>
+    </div>
+  </div>
+  <div class="page">
+
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Première Spé · Chapitre 5</div>
+        <div class="instructor">M Borsali · Enseignant PC · LFC</div>
+        <h2>Structure et <span>polarité</span> des molécules</h2>
+        <p class="hero-copy">Construire le schéma de Lewis, déterminer la géométrie par VSEPR, relier l'électronégativité à la polarisation des liaisons et conclure sur la polarité globale de la molécule.</p>
+        <div class="hero-grid">
+          <div class="metric"><b>5</b><span>sections</span></div>
+          <div class="metric"><b>15</b><span>flashcards</span></div>
+          <div class="metric"><b>12</b><span>quiz</span></div>
+        </div>
+      </div>
+      <div class="hero-canvas-wrap"><canvas id="heroCanvas"></canvas></div>
+    </section>
+
+    <div class="useful-strip">
+      <div class="useful-card mission-1"><small>Essentiel</small><b>Lewis → VSEPR → Polarité</b><span>Chaîne logique du chapitre</span></div>
+      <div class="useful-card mission-2"><small>Méthode</small><b>Compter e⁻ de valence</b><span>Puis répartir doublets liants et non liants</span></div>
+      <div class="useful-card mission-3"><small>Piège</small><b>Liaison polarisée ≠ molécule polaire</b><span>La géométrie peut compenser les dipôles</span></div>
+    </div>
+
+    <!-- ====================== COURS ====================== -->
+    <section class="panel active" id="panel-cours">
+      <div class="content-card">
+        <div class="course-grid">
+          <nav class="toc">
+            <div class="toc-title">Plan</div>
+            <a href="#s1">I · Schéma de Lewis</a>
+            <a href="#s2">II · Géométrie VSEPR</a>
+            <a href="#s3">III · Électronégativité</a>
+            <a href="#s4">IV · Polarité des liaisons</a>
+            <a href="#s5">V · Polarité des molécules</a>
+            <a href="#s6">VI · Conséquences : solubilité</a>
+          </nav>
+          <div class="course-body">
+
+<h2 id="s1">I · Schéma de Lewis</h2>
+
+<div class="box def"><div class="box-label">Définition</div>
+<p>Le <strong>schéma de Lewis</strong> d'une molécule représente tous les <strong>doublets d'électrons</strong> de la couche de valence de chaque atome :</p>
+<ul>
+<li><strong>Doublet liant</strong> (trait —) : 2 électrons partagés entre deux atomes → liaison covalente.</li>
+<li><strong>Doublet non liant</strong> (paire isolée) : 2 électrons restant sur un seul atome.</li>
+</ul>
+</div>
+
+<div class="box prop"><div class="box-label">Règles de stabilité</div>
+<p><strong>Règle du duet</strong> : l'hydrogène H s'entoure de 2 électrons (1 liaison max).</p>
+<p><strong>Règle de l'octet</strong> : C, N, O, F, Cl s'entourent de 8 électrons (4 doublets).</p>
+</div>
+
+<div class="box ok"><div class="box-label">Méthode en 4 étapes</div>
+<p><strong>1.</strong> Compter les électrons de valence de chaque atome (colonne du tableau).</p>
+<p><strong>2.</strong> Calculer le nombre total d'électrons dans la molécule.</p>
+<p><strong>3.</strong> Répartir les doublets liants (liaisons) pour que chaque atome respecte octet/duet.</p>
+<p><strong>4.</strong> Placer les doublets non liants restants.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Atome</th><th>Colonne</th><th>e⁻ de valence</th><th>Liaisons typiques</th><th>Doublets non liants</th></tr></thead>
+<tbody>
+<tr><td><strong>H</strong></td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td><strong>C</strong></td><td>14</td><td>4</td><td>4</td><td>0</td></tr>
+<tr><td><strong>N</strong></td><td>15</td><td>5</td><td>3</td><td>1</td></tr>
+<tr><td><strong>O</strong></td><td>16</td><td>6</td><td>2</td><td>2</td></tr>
+<tr><td><strong>F, Cl</strong></td><td>17</td><td>7</td><td>1</td><td>3</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Exemples fondamentaux</h3>
+<div class="cards">
+<div class="card"><h4>H₂O</h4><p>O : 6 e⁻ valence → 2 liaisons O—H + 2 doublets non liants. Total sur O : 2×2 + 2×2 = 8 e⁻ → octet respecté.</p></div>
+<div class="card"><h4>NH₃</h4><p>N : 5 e⁻ valence → 3 liaisons N—H + 1 doublet non liant. Total sur N : 3×2 + 1×2 = 8 e⁻ → octet respecté.</p></div>
+<div class="card"><h4>CO₂</h4><p>C : 4 e⁻, O : 6 e⁻. 2 doubles liaisons O=C=O. Chaque O a 2 doublets non liants. Octet respecté pour tous.</p></div>
+<div class="card"><h4>CH₄</h4><p>C : 4 e⁻ → 4 liaisons C—H, 0 doublet non liant. Chaque H : duet respecté.</p></div>
+</div>
+
+<div class="box warn"><div class="box-label">Piège fréquent</div>
+<p>Ne pas oublier les <strong>doublets non liants</strong> : ils sont invisibles dans la formule brute mais essentiels pour la géométrie VSEPR. Exemple : H₂O a 4 doublets autour de O (2 liants + 2 non liants), pas 2.</p>
+</div>
+
+<h2 id="s2">II · Géométrie VSEPR</h2>
+
+<div class="box def"><div class="box-label">Modèle VSEPR</div>
+<p><strong>VSEPR</strong> (<em>Valence Shell Electron Pair Repulsion</em>) : les doublets (liants et non liants) autour d'un atome central se repoussent et s'éloignent le plus possible les uns des autres, déterminant la <strong>géométrie</strong> de la molécule.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Doublets liants</th><th>Non liants</th><th>Type AX_nE_m</th><th>Géométrie</th><th>Angle</th><th>Exemple</th></tr></thead>
+<tbody>
+<tr><td>2</td><td>0</td><td>AX₂</td><td><strong>Linéaire</strong></td><td>180°</td><td>CO₂, BeCl₂</td></tr>
+<tr><td>3</td><td>0</td><td>AX₃</td><td><strong>Triangulaire plane</strong></td><td>120°</td><td>BF₃, CH₂O</td></tr>
+<tr><td>4</td><td>0</td><td>AX₄</td><td><strong>Tétraédrique</strong></td><td>109,5°</td><td>CH₄, CCl₄</td></tr>
+<tr><td>3</td><td>1</td><td>AX₃E</td><td><strong>Pyramidale</strong></td><td>≈ 107°</td><td>NH₃, PCl₃</td></tr>
+<tr><td>2</td><td>2</td><td>AX₂E₂</td><td><strong>Coudée</strong></td><td>≈ 104,5°</td><td>H₂O, H₂S</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="box prop"><div class="box-label">Effet des doublets non liants</div>
+<p>Les doublets non liants occupent plus d'espace que les liants → ils <strong>compriment</strong> les angles entre liaisons. C'est pourquoi l'angle dans NH₃ (≈ 107°) est inférieur à 109,5° et dans H₂O (≈ 104,5°) encore plus petit.</p>
+</div>
+
+<h2 id="s3">III · Électronégativité \(\chi\)</h2>
+
+<div class="box def"><div class="box-label">Définition</div>
+<p>L'<strong>électronégativité</strong> \(\chi\) (échelle de Pauling) mesure la capacité d'un atome engagé dans une liaison covalente à <strong>attirer vers lui les électrons de liaison</strong>.</p>
+</div>
+
+<div class="box prop"><div class="box-label">Variation dans le tableau périodique</div>
+<p>\(\chi\) <strong>augmente de gauche à droite</strong> dans une période et <strong>de bas en haut</strong> dans une colonne.</p>
+<p>L'atome le plus électronégatif est le <strong>fluor</strong> \(\chi(\mathrm{F}) = 3{,}98\).</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Atome</th><th>H</th><th>C</th><th>N</th><th>O</th><th>F</th><th>Cl</th><th>S</th></tr></thead>
+<tbody>
+<tr><td>\(\chi\) (Pauling)</td><td>2,20</td><td>2,55</td><td>3,04</td><td>3,44</td><td>3,98</td><td>3,16</td><td>2,58</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="formula">\[ \mathrm{F} > \mathrm{O} > \mathrm{Cl} > \mathrm{N} > \mathrm{S} \approx \mathrm{C} > \mathrm{H} \]</div>
+
+<h2 id="s4">IV · Polarité des liaisons</h2>
+
+<div class="box def"><div class="box-label">Liaison polarisée</div>
+<p>Si deux atomes A et B liés ont des électronégativités différentes (\(\chi_A \neq \chi_B\)), la liaison A—B est <strong>polarisée</strong> : le doublet liant est attiré vers l'atome le plus électronégatif.</p>
+<p>On note : \(\mathrm{A}^{\delta+}\text{—}\mathrm{B}^{\delta-}\) si \(\chi_B > \chi_A\).</p>
+</div>
+
+<div class="box prop"><div class="box-label">Moment dipolaire de liaison</div>
+<p>On modélise la polarisation par un <strong>vecteur moment dipolaire</strong> \(\vec{p}\), dirigé de \(\delta^+\) vers \(\delta^-\), de norme :</p>
+</div>
+
+<div class="formula">\[ p = q \times d \]</div>
+<p>avec \(q\) la charge partielle (en C) et \(d\) la distance interatomique (en m). Unité : \(\mathrm{C\cdot m}\) ou debye (D), avec \(1\;\mathrm{D} = 3{,}34 \times 10^{-30}\;\mathrm{C\cdot m}\).</p>
+
+<div class="cards">
+<div class="card"><h4>Liaison O—H</h4><p>\(\chi(\mathrm{O}) = 3{,}44 > \chi(\mathrm{H}) = 2{,}20\) → \(\Delta\chi = 1{,}24\) → liaison fortement polarisée : \(\mathrm{H}^{\delta+}\text{—}\mathrm{O}^{\delta-}\).</p></div>
+<div class="card"><h4>Liaison C—H</h4><p>\(\chi(\mathrm{C}) = 2{,}55\), \(\chi(\mathrm{H}) = 2{,}20\) → \(\Delta\chi = 0{,}35\) → liaison faiblement polarisée, souvent considérée comme quasi non polaire.</p></div>
+</div>
+
+<h2 id="s5">V · Polarité des molécules</h2>
+
+<div class="box def"><div class="box-label">Molécule polaire vs apolaire</div>
+<p>Une molécule est <strong>polaire</strong> si le barycentre des charges partielles positives \(G^+\) et celui des charges négatives \(G^-\) ne coïncident pas : \(G^+ \neq G^- \Rightarrow \vec{\mu} \neq \vec{0}\).</p>
+<p>Une molécule est <strong>apolaire</strong> si \(G^+ = G^- \Rightarrow \vec{\mu} = \vec{0}\), ce qui arrive quand les dipôles de liaison se compensent par symétrie.</p>
+</div>
+
+<div class="formula">\[ \vec{\mu}_{\text{mol}} = \sum_i \vec{p}_i \]</div>
+
+<div class="box ok"><div class="box-label">Méthode pour conclure</div>
+<p><strong>1.</strong> Construire le Lewis → identifier les liaisons polarisées.</p>
+<p><strong>2.</strong> Déterminer la géométrie (VSEPR).</p>
+<p><strong>3.</strong> Tracer les vecteurs \(\vec{p}\) de chaque liaison polarisée.</p>
+<p><strong>4.</strong> Additionner vectoriellement : si \(\sum \vec{p}_i = \vec{0}\) → apolaire, sinon → polaire.</p>
+</div>
+
+<h3>Exemples clés</h3>
+<div class="cards">
+<div class="card"><h4>H₂O — POLAIRE</h4><p>Géométrie coudée (AX₂E₂). Les deux dipôles O—H ne se compensent pas (angle 104,5°) → \(G^+ \neq G^-\) → \(\mu = 1{,}85\;\mathrm{D}\).</p></div>
+<div class="card"><h4>CO₂ — APOLAIRE</h4><p>Linéaire (AX₂). Les deux dipôles C=O sont opposés et de même norme → se compensent parfaitement → \(\mu = 0\).</p></div>
+<div class="card"><h4>NH₃ — POLAIRE</h4><p>Pyramidale (AX₃E). 3 dipôles N—H + doublet non liant créent une asymétrie → \(G^+ \neq G^-\) → \(\mu = 1{,}47\;\mathrm{D}\).</p></div>
+<div class="card"><h4>CH₄ — APOLAIRE</h4><p>Tétraédrique parfait (AX₄). 4 dipôles C—H identiques et symétriques → se compensent → \(\mu = 0\).</p></div>
+</div>
+
+<div class="box warn"><div class="box-label">Piège classique</div>
+<p><strong>Une liaison polarisée ne suffit pas à rendre la molécule polaire.</strong> CO₂ a des liaisons C=O très polarisées (\(\Delta\chi = 0{,}89\)), mais sa géométrie linéaire symétrique annule les dipôles. Il faut toujours raisonner sur la <strong>géométrie</strong>.</p>
+</div>
+
+<h2 id="s6">VI · Conséquences : solubilité et miscibilité</h2>
+
+<div class="box prop"><div class="box-label">Similibus similibus solvuntur</div>
+<p>« Les semblables dissolvent les semblables » :</p>
+<ul>
+<li>Un soluté <strong>polaire</strong> ou <strong>ionique</strong> se dissout dans un solvant <strong>polaire</strong> (eau, éthanol).</li>
+<li>Un soluté <strong>apolaire</strong> se dissout dans un solvant <strong>apolaire</strong> (cyclohexane, hexane).</li>
+</ul>
+</div>
+
+<div class="cards">
+<div class="card"><h4>NaCl dans l'eau</h4><p>NaCl est ionique, l'eau est polaire → dissolution : les molécules d'eau entourent les ions Na⁺ et Cl⁻ (solvatation).</p></div>
+<div class="card"><h4>Huile dans l'eau</h4><p>L'huile est constituée de molécules apolaires. L'eau est polaire → non miscibles. L'huile se dissout dans l'hexane (apolaire).</p></div>
+</div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== RELATIONS & DIMENSIONS ====================== -->
+    <section class="panel" id="panel-outils">
+      <div class="content-card">
+        <h3>Relations essentielles — Structure et polarité</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Relation</th><th>Signification</th><th>Unités</th></tr></thead>
+        <tbody>
+        <tr><td>\(p = q \times d\)</td><td>Moment dipolaire d'une liaison</td><td>\(p\) en C·m ou D, \(q\) en C, \(d\) en m</td></tr>
+        <tr><td>\(\vec{\mu}_{\text{mol}} = \sum_i \vec{p}_i\)</td><td>Moment dipolaire total (somme vectorielle)</td><td>\(\mu\) en D (debye)</td></tr>
+        <tr><td>\(\mu = 0 \Rightarrow\) apolaire</td><td>Les dipôles se compensent par symétrie</td><td>—</td></tr>
+        <tr><td>\(\mu \neq 0 \Rightarrow\) polaire</td><td>Asymétrie des dipôles</td><td>—</td></tr>
+        <tr><td>\(1\;\mathrm{D} = 3{,}34 \times 10^{-30}\;\mathrm{C\cdot m}\)</td><td>Conversion debye / SI</td><td>—</td></tr>
+        </tbody>
+        </table>
+        </div>
+
+        <h3>Électronégativités (Pauling)</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>H</th><th>C</th><th>N</th><th>O</th><th>F</th><th>Cl</th><th>S</th><th>Br</th></tr></thead>
+        <tbody><tr><td>2,20</td><td>2,55</td><td>3,04</td><td>3,44</td><td>3,98</td><td>3,16</td><td>2,58</td><td>2,96</td></tr></tbody>
+        </table>
+        </div>
+
+        <h3>Tableau VSEPR de référence</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Liants</th><th>Non liants</th><th>Géométrie</th><th>Angle</th><th>Polaire ?</th></tr></thead>
+        <tbody>
+        <tr><td>2</td><td>0</td><td>Linéaire</td><td>180°</td><td>Non si symétrique</td></tr>
+        <tr><td>3</td><td>0</td><td>Triangulaire</td><td>120°</td><td>Dépend des liaisons</td></tr>
+        <tr><td>4</td><td>0</td><td>Tétraédrique</td><td>109,5°</td><td>Non si AX₄ identiques</td></tr>
+        <tr><td>3</td><td>1</td><td>Pyramidale</td><td>≈ 107°</td><td>Oui (asymétrie)</td></tr>
+        <tr><td>2</td><td>2</td><td>Coudée</td><td>≈ 104,5°</td><td>Oui (asymétrie)</td></tr>
+        </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== EXERCICES ====================== -->
+    <section class="panel" id="panel-exercices">
+      <div class="content-card">
+        <h3>Exercices — Structure et polarité</h3>
+        <p style="margin-bottom:18px"><span class="chip green">S'entraîner</span> Application directe &nbsp; <span class="chip amber">Appliquer</span> Raisonnement guidé &nbsp; <span class="chip blue">Approfondir</span> Problème complet</p>
+
+        <div class="exercise">
+          <h4><span class="chip green">S'entraîner</span> Exercice 1 — Lewis de HCl (5 min · REA)</h4>
+          <p><strong>1.</strong> Donner le nombre d'électrons de valence de H et Cl.</p>
+          <p><strong>2.</strong> Écrire le schéma de Lewis de HCl.</p>
+          <p><strong>3.</strong> Combien de doublets non liants porte Cl ?</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> H : 1 e⁻, Cl : 7 e⁻.</p>
+          <p><strong>2.</strong> H—Cl avec 3 doublets non liants sur Cl. Total : 1+7 = 8 e⁻ = 4 doublets.</p>
+          <p><strong>3.</strong> Cl porte 3 doublets non liants (6 e⁻ non partagés + 2 e⁻ en liaison = 8 → octet).</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip green">S'entraîner</span> Exercice 2 — Géométrie VSEPR (5 min · APP)</h4>
+          <p>Pour chaque molécule, indiquer le nombre de doublets liants et non liants autour de l'atome central, puis la géométrie VSEPR :</p>
+          <p>a) CH₄ &nbsp; b) NH₃ &nbsp; c) H₂O &nbsp; d) CO₂</p>
+          <details><summary>Correction</summary>
+          <p>a) CH₄ : 4 liants, 0 non liant → <strong>tétraédrique</strong> (109,5°)</p>
+          <p>b) NH₃ : 3 liants, 1 non liant → <strong>pyramidale</strong> (≈ 107°)</p>
+          <p>c) H₂O : 2 liants, 2 non liants → <strong>coudée</strong> (≈ 104,5°)</p>
+          <p>d) CO₂ : 2 liants (doubles), 0 non liant → <strong>linéaire</strong> (180°)</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip amber">Appliquer</span> Exercice 3 — Polarité comparée (15 min · APP · ANA)</h4>
+          <p>On considère les molécules : H₂O, CO₂, NH₃, CH₄, HCl.</p>
+          <p><strong>1.</strong> Classer les liaisons par \(\Delta\chi\) croissant.</p>
+          <p><strong>2.</strong> Pour chaque molécule, conclure sur la polarité. Justifier par la géométrie.</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> C—H (0,35) < N—H (0,84) < Cl—H (0,96) < O—H (1,24). C=O : Δχ = 0,89.</p>
+          <p><strong>2.</strong> H₂O : coudée, liaisons polarisées → <strong>polaire</strong>. CO₂ : linéaire symétrique → <strong>apolaire</strong>. NH₃ : pyramidale → <strong>polaire</strong>. CH₄ : tétraédrique symétrique → <strong>apolaire</strong>. HCl : diatomique, Δχ ≠ 0 → <strong>polaire</strong>.</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip amber">Appliquer</span> Exercice 4 — Lewis et polarité de CH₃OH (15 min · APP · REA · ANA)</h4>
+          <p><strong>1.</strong> Écrire le Lewis de CH₃OH (méthanol).</p>
+          <p><strong>2.</strong> Géométrie autour de C ? Autour de O ?</p>
+          <p><strong>3.</strong> Placer les charges partielles δ⁺ et δ⁻.</p>
+          <p><strong>4.</strong> Le méthanol est-il polaire ? Est-il miscible à l'eau ?</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> C fait 4 liaisons (3 C—H + 1 C—O), O fait 2 liaisons (O—C + O—H) + 2 doublets non liants.</p>
+          <p><strong>2.</strong> Autour de C : 4 liants → tétraédrique. Autour de O : 2 liants + 2 non liants → coudée.</p>
+          <p><strong>3.</strong> O—H : \(\mathrm{H}^{\delta+}\text{—}\mathrm{O}^{\delta-}\). C—O : \(\mathrm{C}^{\delta+}\text{—}\mathrm{O}^{\delta-}\).</p>
+          <p><strong>4.</strong> Oui, polaire (géométrie non symétrique, liaisons O—H et C—O polarisées). Polaire ↔ polaire → miscible à l'eau.</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip blue">Approfondir</span> Exercice 5 — Isomères éthanol / diméthyléther (20 min · APP · ANA · VAL · COM)</h4>
+          <p>Éthanol (CH₃CH₂OH) et diméthyléther (CH₃OCH₃) ont la même formule brute C₂H₆O.</p>
+          <p><strong>1.</strong> Écrire le Lewis de chaque molécule.</p>
+          <p><strong>2.</strong> Comparer la polarité de chacune.</p>
+          <p><strong>3.</strong> L'éthanol est miscible à l'eau, le diméthyléther beaucoup moins. Expliquer avec similibus similibus.</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> Éthanol : CH₃—CH₂—O—H avec 2 doublets non liants sur O. Diméthyléther : CH₃—O—CH₃ avec 2 doublets non liants sur O.</p>
+          <p><strong>2.</strong> Les deux sont polaires (liaison O—H ou C—O polarisées + géométrie non symétrique). L'éthanol est plus polaire grâce au groupe O—H qui forme des liaisons hydrogène avec l'eau.</p>
+          <p><strong>3.</strong> L'éthanol, fortement polaire avec un groupe —OH, interagit efficacement avec l'eau (polaire) → miscible. Le diméthyléther est moins polaire (pas de groupe O—H) → moins miscible.</p>
+          </details>
+        </div>
+
+        <div class="exercise">
+          <h4><span class="chip blue">Approfondir</span> Exercice 6 — CCl₄ vs CHCl₃ (15 min · APP · ANA)</h4>
+          <p><strong>1.</strong> Écrire le Lewis de CCl₄ et CHCl₃.</p>
+          <p><strong>2.</strong> Géométrie de chacune ?</p>
+          <p><strong>3.</strong> CCl₄ est apolaire, CHCl₃ (chloroforme) est polaire. Expliquer.</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> CCl₄ : C central + 4 liaisons C—Cl. CHCl₃ : C central + 1 C—H + 3 C—Cl.</p>
+          <p><strong>2.</strong> Les deux sont tétraédriques (4 liants, 0 non liant).</p>
+          <p><strong>3.</strong> CCl₄ : 4 liaisons C—Cl <strong>identiques</strong> et <strong>symétriques</strong> → dipôles se compensent → \(\mu = 0\) → apolaire. CHCl₃ : 3 C—Cl + 1 C—H → les 4 liaisons ne sont plus identiques → pas de compensation parfaite → \(\mu \neq 0\) → polaire.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== FLASHCARDS ====================== -->
+    <section class="panel" id="panel-flashcards">
+      <div class="content-card">
+        <h3>Flashcards — Structure et polarité</h3>
+        <p style="color:var(--muted);margin-bottom:14px">15 cartes · Cliquez pour retourner · <button class="btn" onclick="shuffleFC()">Mélanger</button></p>
+        <div class="flashcard-grid" id="fcGrid"></div>
+      </div>
+    </section>
+
+    <!-- ====================== QUIZ & CHATBOT ====================== -->
+    <section class="panel" id="panel-quiz">
+      <div class="content-card">
+        <h3>Quiz — Structure et polarité</h3>
+        <p style="color:var(--muted);margin-bottom:14px">Score : <strong id="quizScore">0 / 0</strong></p>
+        <div id="quizBox"></div>
+        <div id="quizEnd" style="display:none;text-align:center;padding:30px">
+          <p style="font-size:32px;font-weight:800;color:var(--active)" id="quizFinal"></p>
+          <button class="btn primary" onclick="startQuiz()">Recommencer</button>
+        </div>
+      </div>
+      <div class="content-card" style="margin-top:16px">
+        <h3>Chatbot IA — Structure et polarité</h3>
+        <p style="color:var(--muted);margin-bottom:14px">Copie le prompt et ouvre l'IA de ton choix.</p>
+        <textarea class="prompt-box" id="promptBox">Tu es un professeur de physique-chimie de Première Spécialité. Aide-moi à comprendre le chapitre « Structure et polarité des molécules ». Explique avec : schéma de Lewis (octet/duet), géométrie VSEPR, électronégativité χ, polarité des liaisons (δ+/δ-), polarité moléculaire (G+/G-, μ), conséquences sur la solubilité. Formules LaTeX, unités, exemples corrigés et pièges fréquents. Mon niveau est Première Spécialité.</textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="copyPrompt()">Copier le prompt</button>
+          <a class="btn" href="https://chat.openai.com" target="_blank">ChatGPT</a>
+          <a class="btn" href="https://claude.ai" target="_blank">Claude</a>
+          <a class="btn" href="https://copilot.microsoft.com" target="_blank">Copilot</a>
+          <a class="btn" href="https://gemini.google.com" target="_blank">Gemini</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== CARTE MENTALE ====================== -->
+    <section class="panel" id="panel-mindmap">
+      <div class="content-card">
+        <h3>Carte mentale — Structure et polarité</h3>
+        <div class="mindmap">
+          <div class="map-center">STRUCTURE & POLARITÉ</div>
+          <div class="map-branches">
+            <div class="map-branch" style="border-left:4px solid var(--active)">
+              <h4 style="color:var(--active)">Schéma de Lewis</h4>
+              <ul>
+                <li>Doublets liants (traits)</li>
+                <li>Doublets non liants (paires)</li>
+                <li>Duet (H) / Octet (C,N,O,F)</li>
+                <li>e⁻ de valence = colonne</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #ffb86b">
+              <h4 style="color:#ffb86b">VSEPR</h4>
+              <ul>
+                <li>AX₂ → linéaire 180°</li>
+                <li>AX₄ → tétraédrique 109,5°</li>
+                <li>AX₃E → pyramidale ≈107°</li>
+                <li>AX₂E₂ → coudée ≈104,5°</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #a3ff5f">
+              <h4 style="color:#a3ff5f">Électronégativité</h4>
+              <ul>
+                <li>F > O > Cl > N > C > H</li>
+                <li>Augmente → et ↑</li>
+                <li>Δχ ≠ 0 → liaison polarisée</li>
+                <li>δ⁻ sur atome le plus χ</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #ff6bd6">
+              <h4 style="color:#ff6bd6">Polarité moléculaire</h4>
+              <ul>
+                <li>\(\vec{\mu} = \sum \vec{p}_i\)</li>
+                <li>μ = 0 → apolaire</li>
+                <li>μ ≠ 0 → polaire</li>
+                <li>Symétrie annule les dipôles</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid #00ffb3">
+              <h4 style="color:#00ffb3">Exemples clés</h4>
+              <ul>
+                <li>H₂O : coudée → polaire</li>
+                <li>CO₂ : linéaire → apolaire</li>
+                <li>NH₃ : pyramidale → polaire</li>
+                <li>CH₄ : tétra → apolaire</li>
+              </ul>
+            </div>
+            <div class="map-branch" style="border-left:4px solid var(--red)">
+              <h4 style="color:var(--red)">Solubilité</h4>
+              <ul>
+                <li>Similibus similibus</li>
+                <li>Polaire ↔ eau</li>
+                <li>Apolaire ↔ cyclohexane</li>
+                <li>Extraction liquide-liquide</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== SIMULATIONS ====================== -->
+    <section class="panel" id="panel-simulations">
+      <div class="content-card">
+        <h3>Simulations PhET</h3>
+        <div class="sim-grid-2">
+          <div class="sim-card">
+            <iframe src="https://phet.colorado.edu/sims/html/molecule-shapes/latest/molecule-shapes_fr.html" allowfullscreen loading="lazy"></iframe>
+            <div class="sim-body">
+              <h4 style="margin:0 0 4px">Formes des molécules (VSEPR)</h4>
+              <p style="color:var(--muted);font-size:13px;margin:0">Explorer la géométrie 3D en ajoutant des doublets liants et non liants. Observer les angles et les formes.</p>
+            </div>
+          </div>
+          <div class="sim-card">
+            <iframe src="https://phet.colorado.edu/sims/html/molecule-polarity/latest/molecule-polarity_fr.html" allowfullscreen loading="lazy"></iframe>
+            <div class="sim-body">
+              <h4 style="margin:0 0 4px">Polarité moléculaire</h4>
+              <p style="color:var(--muted);font-size:13px;margin:0">Visualiser G⁺, G⁻ et le moment dipolaire μ. Comparer molécules polaires et apolaires.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card" style="margin-top:16px">
+        <h3>Visualisation interactive — Molécules et dipôles</h3>
+        <div class="neon-sim">
+          <canvas id="simCanvas" height="380"></canvas>
+          <div class="sim-body">
+            <h4>Géométrie et dipôles : H₂O vs CO₂</h4>
+            <p>Animation comparant les vecteurs moment dipolaire dans H₂O (coudée, polaire) et CO₂ (linéaire, apolaire).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== ECE ====================== -->
+    <section class="panel" id="panel-ece">
+      <div class="content-card">
+        <h3>ECE — Miscibilité et polarité</h3>
+        <div class="box def"><div class="box-label">Objectif</div>
+        <p>Vérifier expérimentalement la règle « similibus similibus » en testant la miscibilité de solvants polaires et apolaires avec différents solutés.</p>
+        </div>
+
+        <h3>Protocole</h3>
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Préparer les tubes à essai</b><p>Tube 1 : eau + huile. Tube 2 : eau + éthanol. Tube 3 : cyclohexane + huile. Tube 4 : cyclohexane + éthanol.</p></div>
+          <div class="ece-step"><b>2. Agiter</b><p>Boucher et agiter vigoureusement chaque tube pendant 30 s. Laisser reposer 2 min.</p></div>
+          <div class="ece-step"><b>3. Observer</b><p>Tube 1 : 2 phases (huile apolaire ≠ eau polaire). Tube 2 : 1 phase (éthanol polaire ↔ eau polaire). Tube 3 : 1 phase (huile apolaire ↔ cyclohexane apolaire). Tube 4 : 2 phases.</p></div>
+          <div class="ece-step"><b>4. Conclure</b><p>Polaire ↔ polaire : miscible. Apolaire ↔ apolaire : miscible. Polaire ↔ apolaire : non miscible → similibus similibus vérifié.</p></div>
+        </div>
+
+        <h3>Visualisation</h3>
+        <div class="neon-sim">
+          <canvas id="eceCanvas" height="280"></canvas>
+          <div class="sim-body">
+            <h4>Tubes à essai — Miscibilité</h4>
+            <p>4 tubes montrant les résultats : mélange homogène ou séparation de phases.</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:18px">ECE variante — Extraction liquide-liquide</h3>
+        <div class="ece-steps">
+          <div class="ece-step"><b>1. Principe</b><p>Séparer un soluté d'un mélange en utilisant un solvant extracteur non miscible avec le solvant initial. Le soluté migre vers le solvant où il est le plus soluble.</p></div>
+          <div class="ece-step"><b>2. Exemple</b><p>Extraire le diiode I₂ (apolaire) d'une solution aqueuse à l'aide de cyclohexane (apolaire). I₂ passe dans le cyclohexane (phase organique supérieure, rosée).</p></div>
+          <div class="ece-step"><b>3. Ampoule à décanter</b><p>Verser les deux liquides, agiter, dégazer, laisser décanter, puis récupérer la phase inférieure (aqueuse).</p></div>
+          <div class="ece-step"><b>4. Conclusion</b><p>I₂ apolaire → plus soluble dans cyclohexane (apolaire) que dans eau (polaire). Confirmation de similibus similibus.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== VERS TERMINALE ====================== -->
+    <section class="panel" id="panel-terminale">
+      <div class="content-card">
+        <h3>Vers la Terminale — Ce qui vous attend</h3>
+        <div class="cards">
+          <div class="card"><h4 style="color:var(--active)">Interactions intermoléculaires</h4>
+          <p>En Terminale, la polarité permet d'expliquer les <strong>forces de Van der Waals</strong> (entre molécules polaires et/ou apolaires) et les <strong>liaisons hydrogène</strong> (entre un H lié à N, O ou F et un doublet non liant de N, O ou F). Ces interactions gouvernent les températures de changement d'état.</p></div>
+          <div class="card"><h4 style="color:#ffb86b">Cohésion de la matière</h4>
+          <p>La polarité et les interactions intermoléculaires expliquent pourquoi l'eau bout à 100°C (liaisons H) alors que H₂S (même géométrie, pas de liaison H forte) bout à -60°C. Plus les interactions sont fortes, plus T_éb est élevée.</p></div>
+        </div>
+        <div class="cards" style="margin-top:14px">
+          <div class="card"><h4 style="color:#a3ff5f">Spectroscopie IR</h4>
+          <p>Les liaisons polaires absorbent le rayonnement infrarouge. La spectroscopie IR permet d'identifier les groupes fonctionnels (O—H, N—H, C=O) d'une molécule organique. La polarité de la liaison détermine l'intensité de l'absorption.</p></div>
+          <div class="card"><h4 style="color:#ff6bd6">Chromatographie et solubilité</h4>
+          <p>La polarité d'une molécule détermine son comportement en chromatographie (CCM, HPLC). Un éluant polaire entraîne les molécules polaires, un éluant apolaire entraîne les apolaires.</p></div>
+        </div>
+
+        <h3 style="margin-top:18px">Mini-défi — Vers la Terminale</h3>
+        <div class="exercise">
+          <h4>Liaisons hydrogène et température d'ébullition</h4>
+          <p>H₂O (M = 18 g/mol) bout à 100°C. H₂S (M = 34 g/mol) bout à -60°C.</p>
+          <p><strong>1.</strong> Comparer les géométries de H₂O et H₂S (VSEPR).</p>
+          <p><strong>2.</strong> Les deux sont polaires. Pourquoi H₂O bout-elle beaucoup plus haut malgré une masse molaire plus faible ?</p>
+          <details><summary>Correction</summary>
+          <p><strong>1.</strong> Les deux sont coudées (AX₂E₂). H₂O : ≈ 104,5°. H₂S : ≈ 92° (S plus gros).</p>
+          <p><strong>2.</strong> H₂O forme des <strong>liaisons hydrogène</strong> très fortes (O très électronégatif, petit, avec doublets non liants bien exposés). H₂S ne peut pas former de liaisons H aussi fortes (S est moins électronégatif, plus gros). Les liaisons H supplémentaires dans H₂O renforcent considérablement la cohésion → T_éb beaucoup plus élevée.</p>
+          </details>
+        </div>
+
+        <h3 style="margin-top:18px">Liens entre chapitres</h3>
+        <div class="table-wrap">
+        <table>
+        <thead><tr><th>Ce chapitre (1ère)</th><th>En Terminale</th></tr></thead>
+        <tbody>
+        <tr><td>Lewis, VSEPR, géométrie</td><td>Prérequis pour comprendre les interactions</td></tr>
+        <tr><td>Polarité moléculaire</td><td>Forces de Van der Waals, liaison hydrogène</td></tr>
+        <tr><td>Similibus similibus</td><td>Chromatographie, extraction, solubilité</td></tr>
+        <tr><td>Moment dipolaire</td><td>Spectroscopie IR (absorption par liaisons polaires)</td></tr>
+        </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+    </main>
+  </div>
+</div>
+<script>
+
+(function(){
+  function _scrollToPanel(){
+    var p=document.querySelector('.panel.active');
+    if(!p)return;
+    var nb=document.querySelector('.topbar,.top-nav,.nav-bar,header');
+    var off=nb?nb.offsetHeight+6:70;
+    var y=p.getBoundingClientRect().top+window.scrollY-off;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.tab,[data-tab],[data-t],button[onclick]');
+    if(b)setTimeout(_scrollToPanel,60);
+  },true);
+})();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1ʳᵉ Spé · Chapitre 7 — Structure des entités organiques | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>Première · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+    </main>
+  </div>
+</div>
+<script>
+
+/* ═══ THEME ═══ */
+(function(){const t=localStorage.getItem('pc_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'☀️':'🌙'})();
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'☀️':'🌙';localStorage.setItem('pc_theme',n)}
+
+/* ═══ TABS ═══ */
+const visited=new Set(['cours']);
+function switchTab(id){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));const panel=document.getElementById('p-'+id);if(panel)panel.classList.add('active');const tab=document.querySelector(`.tab[data-t="${id}"]`);if(tab)tab.classList.add('active');updateMastery(id)}
+function updateMastery(id){visited.add(id);const pct=Math.round(visited.size/9*100);document.getElementById('masterBar').style.width=pct+'%';document.getElementById('pctLabel').textContent=pct+' %'}
+
+/* ═══ HERO CANVAS ═══ */
+const heroC=document.getElementById('heroCanvas'),heroCtx=heroC.getContext('2d');
+const molecules=[
+{name:'Éthanol',atoms:[{x:0.18,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.35,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.52,y:0.5,label:'O',col:'rgba(139,214,228,.8)'},{x:0.66,y:0.5,label:'H',col:'rgba(255,255,255,.6)'}],bonds:[[0,1],[1,2],[2,3]],group:'-OH'},
+{name:'Propanone',atoms:[{x:0.15,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.32,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.49,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.32,y:0.3,label:'O',col:'rgba(139,214,228,.8)'}],bonds:[[0,1],[1,2],[1,3]],group:'C=O'},
+{name:'Acide éthanoïque',atoms:[{x:0.18,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.36,y:0.5,label:'C',col:'rgba(240,163,186,.8)'},{x:0.53,y:0.5,label:'O',col:'rgba(139,214,228,.8)'},{x:0.36,y:0.3,label:'O',col:'rgba(139,214,228,.8)'}],bonds:[[0,1],[1,2],[1,3]],group:'-COOH'}
+];
+let molIdx=0;
+function drawHero(){const W=heroC.width,H=heroC.height,t=performance.now()/1000;heroCtx.fillStyle='#0a0612';heroCtx.fillRect(0,0,W,H);
+const grd=heroCtx.createRadialGradient(W/2,H/2,20,W/2,H/2,200);grd.addColorStop(0,'rgba(159,79,104,.12)');grd.addColorStop(1,'transparent');heroCtx.fillStyle=grd;heroCtx.fillRect(0,0,W,H);
+const mol=molecules[Math.floor(t/4)%molecules.length];
+mol.bonds.forEach(b=>{const a=mol.atoms[b[0]],c=mol.atoms[b[1]];heroCtx.strokeStyle='rgba(240,163,186,.35)';heroCtx.lineWidth=2;heroCtx.beginPath();heroCtx.moveTo(a.x*W,a.y*H);heroCtx.lineTo(c.x*W,c.y*H);heroCtx.stroke()});
+mol.atoms.forEach((a,i)=>{const r=14+Math.sin(t*2+i)*2;heroCtx.beginPath();heroCtx.arc(a.x*W,a.y*H,r,0,Math.PI*2);heroCtx.fillStyle=a.col;heroCtx.fill();heroCtx.shadowColor=a.col;heroCtx.shadowBlur=18;heroCtx.fill();heroCtx.shadowBlur=0;heroCtx.font='bold 10px IBM Plex Mono';heroCtx.fillStyle='#0a0612';heroCtx.textAlign='center';heroCtx.fillText(a.label,a.x*W,a.y*H+4)});
+heroCtx.font='bold 13px Inter';heroCtx.fillStyle='rgba(240,163,186,.7)';heroCtx.textAlign='center';heroCtx.fillText(mol.name,W/2,H-20);heroCtx.fillStyle='rgba(240,163,186,.4)';heroCtx.font='11px IBM Plex Mono';heroCtx.fillText('Groupe: '+mol.group,W/2,H-5);
+requestAnimationFrame(drawHero)}
+drawHero();
+
+/* ═══ SIM FAMILLES ═══ */
+const simC=document.getElementById('simCanvas'),simCtx=simC.getContext('2d');
+const familles={
+alcool:{name:'Alcool (-OH)',ex:'CH₃-CH₂-OH (éthanol)',color:'rgba(240,163,186,.8)',atoms:[{x:0.25,y:0.5,l:'C'},{x:0.42,y:0.5,l:'C'},{x:0.59,y:0.5,l:'O'},{x:0.73,y:0.5,l:'H'}],bonds:[[0,1,1],[1,2,1],[2,3,1]]},
+aldehyde:{name:'Aldéhyde (-CHO)',ex:'CH₃-CHO (éthanal)',color:'rgba(241,179,117,.8)',atoms:[{x:0.25,y:0.5,l:'C'},{x:0.42,y:0.5,l:'C'},{x:0.59,y:0.35,l:'O'},{x:0.59,y:0.65,l:'H'}],bonds:[[0,1,1],[1,2,2],[1,3,1]]},
+cetone:{name:'Cétone (C=O)',ex:'CH₃-CO-CH₃ (propanone)',color:'rgba(182,163,241,.8)',atoms:[{x:0.2,y:0.5,l:'C'},{x:0.38,y:0.5,l:'C'},{x:0.56,y:0.5,l:'C'},{x:0.38,y:0.3,l:'O'}],bonds:[[0,1,1],[1,2,1],[1,3,2]]},
+acide:{name:'Acide carboxylique (-COOH)',ex:'CH₃-COOH (ac. éthanoïque)',color:'rgba(139,217,170,.8)',atoms:[{x:0.2,y:0.5,l:'C'},{x:0.38,y:0.5,l:'C'},{x:0.55,y:0.35,l:'O'},{x:0.55,y:0.65,l:'O'},{x:0.7,y:0.65,l:'H'}],bonds:[[0,1,1],[1,2,2],[1,3,1],[3,4,1]]},
+ester:{name:'Ester (-COO-)',ex:'CH₃-COO-C₂H₅',color:'rgba(139,214,228,.8)',atoms:[{x:0.18,y:0.5,l:'C'},{x:0.35,y:0.5,l:'C'},{x:0.52,y:0.35,l:'O'},{x:0.52,y:0.65,l:'O'},{x:0.68,y:0.65,l:'C'}],bonds:[[0,1,1],[1,2,2],[1,3,1],[3,4,1]]}
+};
+function drawSim(){const f=familles[document.getElementById('familleSelect').value];document.getElementById('simInfo').textContent=f.ex;const W=simC.width,H=simC.height,t=performance.now()/1000;simCtx.fillStyle='#0a0612';simCtx.fillRect(0,0,W,H);
+const grd=simCtx.createRadialGradient(W/2,H/2,10,W/2,H/2,220);grd.addColorStop(0,'rgba(159,79,104,.1)');grd.addColorStop(1,'transparent');simCtx.fillStyle=grd;simCtx.fillRect(0,0,W,H);
+f.bonds.forEach(b=>{const a=f.atoms[b[0]],c=f.atoms[b[1]];if(b[2]===2){simCtx.strokeStyle=f.color.replace('.8','.5');simCtx.lineWidth=5;simCtx.beginPath();simCtx.moveTo(a.x*W-3,a.y*H-3);simCtx.lineTo(c.x*W-3,c.y*H-3);simCtx.stroke();simCtx.beginPath();simCtx.moveTo(a.x*W+3,a.y*H+3);simCtx.lineTo(c.x*W+3,c.y*H+3);simCtx.stroke();}
+simCtx.strokeStyle=f.color.replace('.8','.4');simCtx.lineWidth=3;simCtx.beginPath();simCtx.moveTo(a.x*W,a.y*H);simCtx.lineTo(c.x*W,c.y*H);simCtx.stroke()});
+f.atoms.forEach((a,i)=>{const r=16+Math.sin(t*2+i)*2;simCtx.beginPath();simCtx.arc(a.x*W,a.y*H,r,0,Math.PI*2);simCtx.fillStyle=f.color;simCtx.fill();simCtx.shadowColor=f.color;simCtx.shadowBlur=20;simCtx.fill();simCtx.shadowBlur=0;simCtx.font='bold 11px IBM Plex Mono';simCtx.fillStyle='#0a0612';simCtx.textAlign='center';simCtx.fillText(a.l,a.x*W,a.y*H+4)});
+simCtx.font='bold 14px Inter';simCtx.fillStyle=f.color;simCtx.textAlign='center';simCtx.fillText(f.name,W/2,H-15);
+requestAnimationFrame(drawSim)}
+drawSim();
+
+/* ═══ IR CANVAS ═══ */
+const irC=document.getElementById('irCanvas'),irCtx=irC.getContext('2d');
+const irData={
+ethanol:{name:'Éthanol CH₃CH₂OH',bands:[{nu:3300,h:0.82,w:120,label:'O–H alcool',col:'rgba(240,163,186,.9)'},{nu:2930,h:0.55,w:60,label:'C–H',col:'rgba(241,179,117,.7)'},{nu:1050,h:0.65,w:50,label:'C–O',col:'rgba(139,217,170,.7)'}]},
+acide:{name:'Acide éthanoïque CH₃COOH',bands:[{nu:2900,h:0.75,w:280,label:'O–H acide',col:'rgba(240,163,186,.9)'},{nu:2930,h:0.45,w:50,label:'C–H',col:'rgba(241,179,117,.7)'},{nu:1710,h:0.88,w:50,label:'C=O',col:'rgba(182,163,241,.9)'}]},
+propanone:{name:'Propanone CH₃COCH₃',bands:[{nu:1715,h:0.90,w:50,label:'C=O',col:'rgba(182,163,241,.9)'},{nu:2920,h:0.50,w:55,label:'C–H',col:'rgba(241,179,117,.7)'}]},
+ester:{name:'Éthanoate d\'éthyle',bands:[{nu:1735,h:0.92,w:50,label:'C=O ester',col:'rgba(182,163,241,.9)'},{nu:2930,h:0.48,w:55,label:'C–H',col:'rgba(241,179,117,.7)'},{nu:1240,h:0.70,w:60,label:'C–O–C',col:'rgba(139,214,228,.7)'},{nu:1050,h:0.60,w:45,label:'C–O',col:'rgba(139,214,228,.6)'}]}
+};
+function drawIR(){const d=irData[document.getElementById('irSelect').value];const W=irC.width,H=irC.height;irCtx.fillStyle='#0a0612';irCtx.fillRect(0,0,W,H);
+const pad={l:50,r:30,t:30,b:50};const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+irCtx.strokeStyle='rgba(240,163,186,.2)';irCtx.lineWidth=1;
+for(let nu=500;nu<=4000;nu+=500){const x=pad.l+((4000-nu)/3500)*gW;irCtx.beginPath();irCtx.moveTo(x,pad.t);irCtx.lineTo(x,pad.t+gH);irCtx.stroke();irCtx.font='10px IBM Plex Mono';irCtx.fillStyle='rgba(240,163,186,.4)';irCtx.textAlign='center';irCtx.fillText(nu,x,H-10)}
+irCtx.font='10px IBM Plex Mono';irCtx.fillStyle='rgba(240,163,186,.4)';irCtx.textAlign='right';irCtx.fillText('T%',pad.l-5,pad.t+5);
+irCtx.strokeStyle='rgba(240,163,186,.15)';irCtx.beginPath();irCtx.moveTo(pad.l,pad.t+gH);irCtx.lineTo(pad.l+gW,pad.t+gH);irCtx.stroke();
+const baseline=new Float32Array(W);baseline.fill(0.08);
+d.bands.forEach(b=>{const cx=pad.l+((4000-b.nu)/3500)*gW;for(let i=0;i<gW;i++){const x=i,nuX=4000-(x/gW)*3500,dist=(nuX-b.nu)/b.w;baseline[i]+=b.h*Math.exp(-dist*dist)}});
+irCtx.strokeStyle='rgba(240,163,186,.8)';irCtx.lineWidth=2;irCtx.beginPath();for(let i=0;i<gW;i++){const y=pad.t+gH*(1-Math.min(0.95,baseline[i]));if(i===0)irCtx.moveTo(pad.l+i,y);else irCtx.lineTo(pad.l+i,y)}irCtx.stroke();
+d.bands.forEach(b=>{const cx=pad.l+((4000-b.nu)/3500)*gW;const cy=pad.t+gH*(1-b.h);irCtx.strokeStyle=b.col;irCtx.lineWidth=1;irCtx.setLineDash([3,3]);irCtx.beginPath();irCtx.moveTo(cx,cy);irCtx.lineTo(cx,pad.t+gH);irCtx.stroke();irCtx.setLineDash([]);
+irCtx.font='bold 9px Inter';irCtx.fillStyle=b.col;irCtx.textAlign='center';irCtx.fillText(b.label,cx,cy-5);irCtx.fillText(b.nu+' cm⁻¹',cx,cy-16)});
+irCtx.font='bold 12px Inter';irCtx.fillStyle='rgba(240,163,186,.6)';irCtx.textAlign='center';irCtx.fillText(d.name,W/2,20)}
+drawIR();
+
+/* ═══ FLASHCARDS ═══ */
+const FC_DATA=[
+{q:"Valence du carbone ?",a:"4 liaisons covalentes. Peut former C–C simples, C=C doubles, C≡C triples. Tétravalent."},
+{q:"Règle de la formule topologique ?",a:"Sommet (angle, extrémité) = 1 carbone. H liés aux C : implicites. Hétéroatomes (O, N...) et leurs H : écrits explicitement."},
+{q:"Groupe –OH → famille ?",a:"Alcool (suffixe –ol). Ex : éthanol CH₃CH₂OH. Bande IR O–H large à 3200–3400 cm⁻¹."},
+{q:"Groupe –CHO → famille ?",a:"Aldéhyde (suffixe –al). Carbonyle en bout de chaîne. Ex : éthanal CH₃CHO. IR : C=O vers 1720 cm⁻¹."},
+{q:"Groupe C=O central → famille ?",a:"Cétone (suffixe –one). Ex : propanone CH₃COCH₃. Différence avec aldéhyde : C=O entre deux C."},
+{q:"Groupe –COOH → famille ?",a:"Acide carboxylique (acide…–oïque). Contient C=O + O–H. Ex : CH₃COOH. IR : bande O–H très large 2500–3300 + C=O 1710."},
+{q:"Groupe –COO– → famille ?",a:"Ester (…–oate de …–yle). Résulte d'estérification acide + alcool. IR : C=O ~1735, deux bandes C–O."},
+{q:"Bande IR O–H alcool ?",a:"Large et intense entre 3200 et 3400 cm⁻¹. Largeur due aux liaisons hydrogène intermoléculaires."},
+{q:"Bande IR C=O carbonyle ?",a:"Fine et très intense entre 1700 et 1750 cm⁻¹. Présente dans aldéhydes, cétones, acides, esters."},
+{q:"Bande IR O–H acide carboxylique ?",a:"Très large entre 2500 et 3300 cm⁻¹. Plus large et plus basse que O–H alcool. Combinée avec C=O → acide."},
+{q:"Isomères de constitution ?",a:"Même formule brute, enchaînements différents. Ex : éthanol et diméthyléther ont C₂H₆O. Propriétés très différentes."},
+{q:"Formule générale des alcanes ?",a:"CₙH₂ₙ₊₂. Ex : propane (n=3) → C₃H₈. Chaîne saturée acyclique."},
+{q:"Différence aldéhyde/cétone ?",a:"Aldéhyde : C=O en bout de chaîne (–CHO). Cétone : C=O au milieu de la chaîne (R–CO–R'). Même bande C=O en IR."},
+{q:"Comment identifier un acide carboxylique par IR ?",a:"Présence de DEUX bandes : C=O fine (~1710 cm⁻¹) ET O–H très large (2500–3300 cm⁻¹). Les deux ensemble = acide."},
+{q:"Degré d'insaturation I pour C₆H₆ (benzène) ?",a:"I = (2×6+2–6)/2 = 4. Cycle aromatique = 3 doubles liaisons + 1 cycle → I=4."}
+];
+let fcOrder=[...Array(FC_DATA.length).keys()];
+function renderFC(){const g=document.getElementById('fcGrid');g.innerHTML=fcOrder.map(i=>{const c=FC_DATA[i];return`<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flash-front"><b>${c.q}</b></div><div class="flash-back">${c.a}</div></div></div>`}).join('')}
+function shuffleFC(){for(let i=fcOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcOrder[i],fcOrder[j]]=[fcOrder[j],fcOrder[i]]}renderFC()}
+renderFC();
+
+/* ═══ QUIZ ═══ */
+const QUIZ=[
+{q:"Le carbone est :",o:["Tétravalent (forme 4 liaisons)","Divalent (forme 2 liaisons)","Monovalent","Trivalent"],c:0,e:"Le carbone forme toujours exactement 4 liaisons covalentes (tétravalent)."},
+{q:"La formule brute C₂H₆O correspond à :",o:["Deux isomères possibles (éthanol et diméthyléther)","Une seule molécule","Trois isomères","Un acide carboxylique"],c:0,e:"C₂H₆O correspond à l'éthanol (CH₃CH₂OH) et au diméthyléther (CH₃OCH₃) : deux isomères de constitution."},
+{q:"Le groupe –OH dans une molécule organique désigne :",o:["Un alcool (groupe hydroxyle)","Un acide carboxylique","Un aldéhyde","Un ester"],c:0,e:"–OH (hydroxyle) = alcool. Attention : dans –COOH, le OH est aussi présent mais c'est un acide carboxylique."},
+{q:"Quelle bande IR caractérise un groupe C=O carbonyle ?",o:["1700–1750 cm⁻¹ (fine et intense)","3200–3400 cm⁻¹ (large)","2800–3000 cm⁻¹","500–1500 cm⁻¹"],c:0,e:"C=O : fine et intense entre 1700 et 1750 cm⁻¹. C'est la bande la plus caractéristique en chimie organique."},
+{q:"Un spectre IR montre une bande large à 3300 cm⁻¹ et AUCUNE bande à 1700–1750 cm⁻¹. La molécule est :",o:["Un alcool","Un acide carboxylique","Un aldéhyde ou cétone","Un ester"],c:0,e:"Bande O–H large (alcool) sans C=O → alcool confirmé. Un acide aurait aussi une bande C=O à 1710 cm⁻¹."},
+{q:"La différence entre un aldéhyde et une cétone est :",o:["Position du C=O : terminal (aldéhyde) vs central (cétone)","La présence ou non de O","La longueur de chaîne","La présence de N"],c:0,e:"Aldéhyde : C=O en bout de chaîne (–CHO). Cétone : C=O entre deux carbones. Même bande IR vers 1700–1750."},
+{q:"Dans une formule topologique, que représente chaque sommet ?",o:["Un atome de carbone","Un atome d'hydrogène","Un hétéroatome","Une liaison double"],c:0,e:"Chaque angle ou extrémité = 1 carbone. Les H sur les C sont implicites (calculés par tétravalence)."},
+{q:"La formule générale des alcanes est :",o:["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙHₙ","CₙH₂ₙ₋₂"],c:0,e:"Alcane = chaîne saturée acyclique → CₙH₂ₙ₊₂. Ex : propane C₃H₈ = C₃H₂×₃₊₂ ✓"},
+{q:"L'acide éthanoïque se reconnaît en IR par :",o:["Bande O–H très large (2500–3300) + bande C=O (~1710)","Bande O–H à 3200–3400 sans C=O","Bande N–H à 3300","Seule bande C=O"],c:0,e:"L'acide carboxylique possède DEUX bandes caractéristiques : O–H très large et C=O fine. La combinaison des deux = acide."},
+{q:"Éthanol (T_éb=78°C) vs diméthyléther (T_éb=-24°C) : pourquoi cette différence malgré C₂H₆O ?",o:["Éthanol forme des liaisons H (O–H), pas le diméthyléther","Éthanol est plus lourd","Diméthyléther est ionique","Mêmes interactions"],c:0,e:"L'éthanol possède un O–H → liaisons H entre molécules → cohésion forte → T_éb élevée. Le diméthyléther n'a que VdW."},
+{q:"Le degré d'insaturation I=1 dans une molécule CₙHₘO signifie :",o:["1 double liaison ou 1 cycle","2 doubles liaisons","1 cycle benzénique","Pas d'insaturation"],c:0,e:"I=1 → une seule insaturation : soit 1 double liaison (C=C ou C=O), soit 1 cycle. I=4 = benzène."},
+{q:"Dans la nomenclature IUPAC, quel est le nom du CH₃CH₂CH₂OH ?",o:["Propan-1-ol","Propan-2-ol","Éthanol","Méthanol"],c:0,e:"3 carbones (propane) + alcool (–ol) + –OH en position 1 → propan-1-ol."}
+];
+let qIdx=0,qScore=0;
+function startQuiz(){qIdx=0;qScore=0;document.getElementById('quizEnd').style.display='none';document.getElementById('quizBox').style.display='block';renderQ()}
+function renderQ(){if(qIdx>=QUIZ.length){document.getElementById('quizBox').style.display='none';document.getElementById('quizEnd').style.display='block';document.getElementById('quizFinal').textContent=qScore+'/'+QUIZ.length+' — '+Math.round(qScore/QUIZ.length*100)+'%';return}const q=QUIZ[qIdx];document.getElementById('quizScore').textContent='Question '+(qIdx+1)+' / '+QUIZ.length;document.getElementById('quizBox').innerHTML='<p style="font-weight:700;margin-bottom:12px">'+q.q+'</p>'+q.o.map((o,i)=>'<button class="option" onclick="answerQ('+i+')">'+o+'</button>').join('')+'<div id="quizExpl" style="display:none;margin-top:12px;padding:12px;border-radius:12px;background:var(--panel2);color:var(--muted);font-size:13px;line-height:1.7"></div>'}
+function answerQ(i){const q=QUIZ[qIdx];const btns=document.querySelectorAll('.option');btns.forEach((b,j)=>{b.disabled=true;if(j===q.c)b.classList.add('correct');if(j===i&&i!==q.c)b.classList.add('wrong')});if(i===q.c)qScore++;const expl=document.getElementById('quizExpl');expl.style.display='block';expl.innerHTML='<strong>💡</strong> '+q.e;setTimeout(()=>{qIdx++;renderQ()},2200)}
+startQuiz();
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

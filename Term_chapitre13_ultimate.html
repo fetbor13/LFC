@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terminale Spé · Chapitre 13 — Oscillations mécaniques | PhysiChem (2026 Ultimate Edition)</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root{
+  --bg0:#02030a;
+  --bg1:#050816;
+  --ink:#f8fbff;
+  --muted:#9aa7c7;
+  --soft:#dce6ff;
+  --line:rgba(255,255,255,.105);
+  --line2:rgba(255,255,255,.18);
+  --glass:rgba(8,12,30,.55);
+  --glass2:rgba(255,255,255,.055);
+  --active:#00eaff;
+  --active-rgb:0,234,255;
+  --active-glow:rgba(0,234,255,.38);
+  --radius:26px;
+  --x:50%;
+  --y:42%;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at var(--x) var(--y), rgba(var(--active-rgb),.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(0,234,255,.13), transparent 30rem),
+    radial-gradient(circle at 82% 22%, rgba(255,107,214,.10), transparent 28rem),
+    radial-gradient(circle at 55% 100%, rgba(124,140,255,.14), transparent 33rem),
+    linear-gradient(142deg,#02030a 0%,#050816 48%,#10071f 100%);
+  overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-3;
+  background:
+    linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(circle at center, black 0%, transparent 78%);
+}
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 320 320' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  opacity:.075; mix-blend-mode:screen;
+}
+#starfield{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.76}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.shell{height:100vh;width:min(1480px,calc(100vw - 28px));margin:0 auto;padding:16px 0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.topbar{
+  display:grid; grid-template-columns:1fr minmax(240px,520px) auto; gap:14px; align-items:center;
+  padding:9px 10px; border:1px solid var(--line); border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.028));
+  backdrop-filter:blur(32px) saturate(180%); box-shadow: 0 18px 60px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -1px 1px rgba(0,0,0,.3); box-shadow:0 18px 60px rgba(0,0,0,.24);
+}
+.brand{display:flex;align-items:center;gap:11px;padding-left:7px;min-width:0}.brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#041016;background:conic-gradient(from 180deg,var(--active),#fff,#ff6bd6,var(--active));box-shadow:0 0 21px var(--active-glow),inset 0 0 0 1px rgba(255,255,255,.7);font-weight:820;letter-spacing:-.05em}.brand small{display:block;color:var(--muted);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase}.brand strong{display:block;font-size:.94rem;font-weight:520;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.search{display:flex;align-items:center;gap:10px;min-height:42px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(0,0,0,.20);padding:0 13px}.search span{color:var(--active);text-shadow:0 0 14px var(--active-glow)}.search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:.9rem}.search input::placeholder{color:#7c89a8}.top-actions{display:flex;gap:8px}.ghost-btn{border:1px solid rgba(255,255,255,.14);color:var(--soft);background:rgba(255,255,255,.045);padding:.66rem .86rem;border-radius:999px;cursor:pointer;transition:.2s ease}.ghost-btn:hover{border-color:var(--active);box-shadow:0 0 18px var(--active-glow)}
+.workspace{min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr);gap:14px}.side{
+  min-height:0; border:1px solid var(--line); border-radius:28px; padding:12px;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(30px) saturate(160%); box-shadow: 0 22px 70px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.12); box-shadow:0 22px 70px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-title{padding:8px 8px 4px}.side-title small{display:block;color:var(--muted);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}.side-title strong{display:block;font-size:.92rem;font-weight:520}.level-list{display:flex;flex-direction:column;gap:8px}.level-btn{
+  width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;text-align:left;cursor:pointer;
+  border:1px solid rgba(255,255,255,.095);border-radius:12px;font-size:0.8rem;line-height:1.4;background:rgba(255,255,255,.035);color:var(--soft);padding:8px;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.level-btn:hover{transform:translateX(3px);border-color:color-mix(in srgb,var(--lvl) 48%,white 8%);background:rgba(255,255,255,.055)}.level-btn.active{border-color:color-mix(in srgb,var(--lvl) 72%,white 5%);background:linear-gradient(135deg,color-mix(in srgb,var(--lvl) 18%,transparent),rgba(255,255,255,.035));box-shadow:0 0 24px color-mix(in srgb,var(--lvl) 28%,transparent)}.level-icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;color:#031017;font-family:Georgia,serif;font-size:1.05rem;font-weight:520;line-height:1;background:linear-gradient(135deg,var(--lvl),rgba(255,255,255,.92));box-shadow:0 0 18px color-mix(in srgb,var(--lvl) 31%,transparent),inset 0 0 0 1px rgba(255,255,255,.45)}.level-text b{display:block;font-size:.86rem;font-weight:455;letter-spacing:-.012em}.level-text span{display:block;color:var(--muted);font-size:.69rem;font-weight:360;margin-top:1px}.side-note{margin-top:auto;border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:0.8rem;line-height:1.4;padding:11px;background:rgba(0,0,0,.18);color:#9eabc9;font-size:.72rem;line-height:1.45}.side-note b{color:var(--soft);font-weight:520}
+.main{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:14px}.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:22px 24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.092),rgba(255,255,255,.028));
+  backdrop-filter:blur(40px) saturate(170%); box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.18);box-shadow:0 22px 80px rgba(0,0,0,.28);
+  display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:24px;align-items:center;
+}
+.hero::before{content:"";position:absolute;inset:-1px;background:radial-gradient(circle at 78% 42%,rgba(var(--active-rgb),.20),transparent 18rem),linear-gradient(90deg,rgba(255,255,255,.08),transparent 30%,rgba(var(--active-rgb),.06));pointer-events:none}.hero-copy,.seal{position:relative;z-index:1}.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--muted);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--active);box-shadow:0 0 12px var(--active)}.hero h1{margin:8px 0 8px;font-size:clamp(2.05rem,4vw,4.1rem);line-height:.95;font-weight:360;letter-spacing:-.075em}.hero h1 span{font-weight:590;background:linear-gradient(90deg,#fff,var(--active),#ffecff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px var(--active-glow)}.intro{margin:0;max-width:880px;color:#cbd6f4;font-size:clamp(.86rem,1.05vw,1rem);line-height:1.62}.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+margin:8px 0 0;max-width:640px;color:#f2f6ff;font-size:.78rem;line-height:1.55;padding:8px 12px;border-left:2px solid var(--active);border-radius:0 8px 8px 0;background:linear-gradient(90deg, rgba(var(--active-rgb), 0.08), transparent);}.active-sentence cite{display:block;color:var(--muted);font-style:normal;font-size:.72rem;margin-top:5px}.seal{width:146px;height:146px;border-radius:50%;display:grid;place-items:center;justify-self:end;isolation:isolate;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.11),rgba(255,255,255,.025) 53%,transparent 54%),conic-gradient(from 90deg,transparent,var(--active),transparent 38%,rgba(255,255,255,.22),transparent 78%,var(--active));box-shadow:0 0 30px color-mix(in srgb,var(--active) 22%,transparent),inset 0 0 0 1px rgba(255,255,255,.12)}.seal::before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 30px rgba(255,255,255,.035)}.seal-ring{position:absolute;inset:8px;width:130px;height:130px;overflow:visible;animation:sealSpin 28s linear infinite;opacity:.86;filter:drop-shadow(0 0 7px var(--active-glow))}.seal-ring text{fill:color-mix(in srgb,var(--active) 58%,white 28%);font-size:7.2px;font-weight:470;letter-spacing:2.2px;text-transform:uppercase}.seal-symbol{position:relative;z-index:1;font-size:3rem;font-family:Georgia,serif;font-weight:430;color:#fff;text-shadow:0 0 24px var(--active-glow);transform:translateY(-1px)}@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealSpin{to{transform:rotate(360deg)}}
+.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+min-height:0;overflow:auto;border:1px solid var(--line);border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.070),rgba(255,255,255,.024));backdrop-filter:blur(35px) saturate(150%); box-shadow: 0 25px 80px rgba(0,0,0,.3), inset 0 1px 1px rgba(255,255,255,.1);box-shadow:0 22px 80px rgba(0,0,0,.25);padding:18px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}.level-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}.level-title{display:flex;gap:12px;align-items:flex-start}.level-symbol{width:48px;height:48px;border-radius:12px;font-size:0.8rem;line-height:1.4;display:grid;place-items:center;color:#041016;background:linear-gradient(135deg,var(--active),#fff);box-shadow:0 0 23px var(--active-glow);font-weight:760;font-size:1.15rem}.level-title h2{margin:0;font-size:clamp(1.3rem,2vw,2.05rem);font-weight:420;letter-spacing:-.04em}.level-title p{margin:.25rem 0 0;max-width:800px;color:var(--muted);font-size:.91rem;line-height:1.55}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{border:1px solid rgba(255,255,255,.105);border-radius:999px;padding:.45rem .66rem;color:var(--soft);background:rgba(0,0,0,.16);font-size:.74rem}.theme{--theme:var(--active);border:1px solid rgba(255,255,255,.095);border-radius:24px;background:rgba(0,0,0,.13);padding:14px;margin-top:12px;overflow:hidden;position:relative}.theme::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,color-mix(in srgb,var(--theme) 18%,transparent),transparent 30%);pointer-events:none}.theme-head{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(255,255,255,.085);padding-bottom:10px;margin-bottom:12px}.theme-kicker{display:block;color:color-mix(in srgb,var(--theme) 75%,white 15%);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}.theme h3{margin:0;font-size:1.03rem;font-weight:520}.count{color:var(--muted);font-size:.78rem;white-space:nowrap}.chapter-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}.card{--card:var(--active);position:relative;min-height:155px;display:flex;flex-direction:column;padding:13px;border:1px solid rgba(255,255,255,.095);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.064),rgba(255,255,255,.021));overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--card) 21%,transparent),transparent 45%);opacity:.8;transition:.2s ease}
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+  perspective: 1000px;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02) rotateX(2deg) rotateY(-2deg);
+  box-shadow: -5px 15px 36px rgba(0,0,0,0.35), 0 0 25px color-mix(in srgb, var(--card) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--card) 40%, transparent);
+}
+
+.card-dummy:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--card) 55%,white 10%);box-shadow:0 15px 36px rgba(0,0,0,.25),0 0 20px color-mix(in srgb,var(--card) 20%,transparent)}.card>*{position:relative;z-index:1}.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.num{font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.mini-icon{font-size:1.05rem;color:color-mix(in srgb,var(--card) 78%,white 10%);text-shadow:0 0 13px color-mix(in srgb,var(--card) 35%,transparent)}.card h4{margin:0 0 6px;font-size:.94rem;line-height:1.25;font-weight:570}.card p{margin:0;color:#aebadb;font-size:.78rem;line-height:1.44;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}.tag{font-size:.62rem;color:#dce6ff;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.055);border-radius:99px;padding:.14rem .42rem}.open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;color:color-mix(in srgb,var(--card) 72%,white 20%);font-size:.75rem;font-weight:640}.empty{padding:26px;border:1px dashed rgba(255,255,255,.16);border-radius:22px;color:var(--muted);text-align:center}.compact .hero{grid-template-columns:1fr;padding:16px 20px}.compact .seal{display:none}.compact .hero h1{font-size:clamp(1.65rem,3vw,2.5rem)}.compact .intro{display:none}.compact .active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+font-size:.82rem;margin-top:8px}
+
+/* Centrage du bloc d’accueil demandé */
+.hero{
+  display:block;
+  min-height:170px;
+  padding:24px 172px 24px 34px;
+}
+.hero-copy{
+  max-width:940px;
+  margin:0 auto;
+  text-align:center;
+}
+.eyebrow{
+  justify-content:center;
+}
+.hero h1{
+  margin:7px 0 7px;
+  text-align:center;
+}
+.intro{
+  max-width:850px;
+  margin:0 auto;
+  text-align:center;
+  font-size:clamp(.80rem,.98vw,.93rem);
+  line-height:1.55;
+}
+.active-sentence{
+  box-shadow: 0 0 20px rgba(var(--active-rgb), 0.15), inset 0 0 10px rgba(var(--active-rgb), 0.05);
+  backdrop-filter: blur(10px);
+
+  max-width:640px;
+  margin:8px auto 0;
+  padding:6px 12px;
+  border-left:0;
+  border-top:1px solid color-mix(in srgb,var(--active) 42%,transparent);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  border-radius:12px;font-size:0.8rem;line-height:1.4;
+  background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  text-align:center;
+  font-size:.82rem;
+}
+.seal{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%);
+  width:118px;
+  height:118px;
+}
+.seal::before{width:82px;height:82px}
+.seal-ring{inset:6px;width:106px;height:106px}.seal-ring text{font-size:6.4px;letter-spacing:1.9px}.seal-symbol{font-size:2.38rem}
+@media(max-width:980px){
+  .hero{padding:20px 22px;min-height:auto}
+  .hero-copy{padding:0}
+}
+
+@media(max-width:980px){body{overflow:auto}.shell{height:auto;min-height:100vh}.topbar{grid-template-columns:1fr}.top-actions{display:none}.workspace{grid-template-columns:1fr}.side{position:sticky;top:8px;z-index:7;border-radius:22px}.side-title,.side-note{display:none}.level-list{flex-direction:row;overflow:auto;padding-bottom:2px}.level-btn{min-width:118px;grid-template-columns:30px 1fr}.hero{grid-template-columns:1fr}.seal{display:none}.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+max-height:none;overflow:visible}}
+@media(max-width:560px){.shell{width:calc(100vw - 18px);padding:10px 0}.topbar{border-radius:22px}.brand strong{white-space:normal}.hero,.panel{
+  animation: fadeUp 0.4s ease-out backwards;
+border-radius:22px;padding:16px}.chapter-grid{grid-template-columns:1fr}.level-head{flex-direction:column}.stats{justify-content:flex-start}}
+</style>
+
+<style>
+.workspace { grid-template-columns: minmax(220px, 1fr) 3.5fr; }
+.tablist { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.tab {
+  width: 100%; display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px; padding: 12px; color: var(--muted); font-size: 0.85rem; font-weight: 600;
+  text-align: left; cursor: pointer; transition: all 0.2s ease;
+}
+.tab:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); color: var(--ink); transform: translateX(3px); }
+.tab.active {
+  background: rgba(var(--active-rgb), .1); border-color: rgba(var(--active-rgb), .4); color: var(--active);
+  box-shadow: inset 3px 0 0 var(--active);
+}
+.tab-icon { font-size: 1.1rem; display: grid; place-items: center; }
+.page { padding: 24px; }
+.main { overflow-y: auto; max-height: calc(100vh - 80px); }
+
+.course-body { color: var(--ink); line-height: 1.6; }
+.hero-card { background: rgba(255,255,255,0.05); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px;}
+.hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero h2 span { color: var(--active); }
+.metric { background: rgba(0,0,0,0.3); border: 1px solid var(--line); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column;}
+.metric b { font-size: 1.2rem; color: var(--active); }
+.metric span { font-size: 0.8rem; color: var(--muted); }
+.useful-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px;}
+.content-card { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 24px; backdrop-filter: blur(10px); }
+.toc { position: sticky; top: 20px; }
+.toc a { display: block; padding: 8px 12px; color: var(--muted); text-decoration: none; border-radius: 8px; font-size: 0.9rem; }
+.toc a:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+.course-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; }
+.hero-grid { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;}
+.real-hero-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+.useful-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; margin-bottom: 32px; }
+.course-body h3 { color: var(--active); margin-top: 32px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.formula { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px; border-left: 3px solid var(--active); margin: 16px 0; overflow-x: auto; }
+.topbar { background: transparent; padding: 0; height: auto; margin-bottom: 24px; border: none; display: flex; justify-content: space-between; align-items: center; }
+.crumb { color: var(--muted); font-size: 0.9rem; }
+.crumb b { color: var(--ink); }
+.pill-btn { background: rgba(var(--active-rgb), 0.1); border: 1px solid var(--active); color: var(--active); cursor: pointer; transition: 0.2s; border-radius: 999px; font-size: 12px; font-weight: 800; padding: 8px 12px;}
+.pill-btn:hover { background: var(--active); color: var(--bg1); }
+.box { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 16px 0;}
+.box-green { border-left: 4px solid #a3ff5f; }
+.box-yellow { border-left: 4px solid #ffb86b; }
+.box-blue { border-left: 4px solid var(--active); }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: rgba(255,255,255,0.05); color: var(--active); }
+</style>
+
+
+<style id="ultimate-2026-features">
+/* --- 1. 3D FLASHCARDS --- */
+.cards {
+    perspective: 1000px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin-top: 24px;
+}
+.fc-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 220px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.fc-card.flipped .fc-inner {
+    transform: rotateY(180deg);
+}
+.fc-front, .fc-back {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.fc-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.1), rgba(0,0,0,0.4));
+    border-color: rgba(var(--active-rgb), 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(var(--active-rgb), 0.15);
+}
+.fc-front strong { font-size: 1.2rem; color: var(--ink); }
+.fc-front p { font-size: 0.9rem; color: var(--muted); margin-top: 8px;}
+.fc-back p { font-size: 1.1rem; color: var(--ink); font-weight: 500; }
+
+/* Magnetic hover effect for cards */
+.fc-card:hover .fc-inner {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(var(--active-rgb), 0.15);
+}
+.fc-card.flipped:hover .fc-inner {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+}
+
+/* --- 2. CHATBOT COPILOT UI --- */
+.ai-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ai-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.2);
+}
+.ai-header-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(var(--active-rgb), 0.2);
+    border: 1px solid var(--active);
+    display: grid; place-items: center;
+    color: var(--active); font-weight: bold;
+    box-shadow: 0 0 15px rgba(var(--active-rgb), 0.4);
+}
+.chat-window {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.chat-msg {
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease-out;
+}
+.msg-user {
+    align-self: flex-end;
+    background: rgba(255,255,255,0.08);
+    border-bottom-right-radius: 4px;
+    color: var(--ink);
+}
+.msg-ai {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(var(--active-rgb), 0.15), rgba(var(--active-rgb), 0.05));
+    border: 1px solid rgba(var(--active-rgb), 0.3);
+    border-bottom-left-radius: 4px;
+    color: var(--soft);
+    box-shadow: 0 4px 15px rgba(var(--active-rgb), 0.1);
+}
+.ai-input-area {
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.3);
+}
+.chat-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    color: var(--ink) !important;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.2s;
+}
+.chat-textarea:focus {
+    border-color: var(--active) !important;
+    box-shadow: 0 0 10px rgba(var(--active-rgb), 0.2) !important;
+    outline: none;
+}
+.sug-chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: var(--muted) !important;
+    border-radius: 99px !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s !important;
+}
+.sug-chip:hover {
+    background: rgba(var(--active-rgb), 0.15) !important;
+    color: var(--active) !important;
+    border-color: var(--active) !important;
+}
+
+/* --- 3. SIMULATION/CANVAS UPGRADES --- */
+.sim-card, .canvas-box, .titrage-grid {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(var(--active-rgb), 0.2) !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+.sim-card input[type="range"] {
+    accent-color: var(--active);
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+.typing-indicator span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--active);
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: typing 1s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+</style>
+
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="shell" id="app">
+  <header class="topbar" style="border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 16px;">
+    <div class="brand"><div class="brand-mark">EA</div><div><small>Lycée Français du Caire · M. Borsali</small><strong>TERM · Chapitre</strong></div></div>
+    <div class="top-actions">
+      <button class="ghost-btn" type="button" onclick="window.location.href='index_cercle_2026.html'">Retour à l'accueil</button>
+    </div>
+  </header>
+  <div class="workspace">
+    <aside class="side">
+      <div class="side-title"><small>Navigation du chapitre</small><strong>Sommaire</strong></div>
+      <nav aria-label="Onglets du chapitre" class="tablist" role="tablist">
+
+<button class="tab active" data-tab="cours" role="tab"><span class="tab-icon">📘</span><span class="tab-text">Cours</span></button>
+<button class="tab" data-tab="outils" role="tab"><span class="tab-icon">∑</span><span class="tab-text">Relations § Dimensions</span></button>
+<button class="tab" data-tab="exercices" role="tab"><span class="tab-icon">🎯</span><span class="tab-text">Exercices</span></button>
+<button class="tab" data-tab="flashcards" role="tab"><span class="tab-icon">🃏</span><span class="tab-text">Flashcards</span></button>
+<button class="tab" data-tab="mindmap" role="tab"><span class="tab-icon">🧠</span><span class="tab-text">Carte mentale</span></button>
+<button class="tab" data-tab="simulations" role="tab"><span class="tab-icon">🎛️</span><span class="tab-text">Simulations</span></button>
+<button class="tab" data-tab="quiz" role="tab"><span class="tab-icon">✅</span><span class="tab-text">Quiz § Chatbot</span></button>
+<button class="tab" data-tab="ece" role="tab"><span class="tab-icon">🧪</span><span class="tab-text">ECE</span></button>
+<button class="tab" data-tab="prepa" role="tab"><span class="tab-icon">🎓</span><span class="tab-text">Vers prépa PCSI</span></button>
+
+      </nav>
+    </aside>
+    <main class="main panel" id="main">
+
+<div class="topbar"><div class="progress-top" id="progressTop"></div><div class="crumb">Terminale Spé › Oscillations mécaniques · <b>Science OS Pastel</b></div><div class="top-actions"><span class="pct-label" id="pctLbl"></span><button class="pill-btn" onclick="openFirstMatching(['essentiel','synthese','cours'])">Réviser vite</button><button class="pill-btn" onclick="openFirstMatching(['exercices','annales','quiz'])">S’entraîner</button></div></div>
+<div class="page">
+<section class="hero" aria-label="Introduction du chapitre">
+<div class="hero-card"><div class="eyebrow">Terminale Spé · Chap. 13</div><div class="instructor">M Borsali · Enseignant PC · LFC</div><h2>Oscillations mécaniques</h2><p class="hero-copy">Cours restructuré en interface professionnelle : contenu conservé, écritures mathématiques renforcées, méthodes, entraînement et passerelles vers la suite.</p></div>
+<div class="real-hero-img"><img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1000&q=82" alt="Support scientifique — Oscillations mécaniques" loading="lazy"><span class="img-label">Support scientifique</span></div>
+</section>
+<section class="useful-strip" aria-label="Objectifs utiles du chapitre"><article class="useful-card"><b>1. Comprendre</b><span>Comprendre le modèle scientifique du chapitre</span></article><article class="useful-card"><b>2. Savoir</b><span>Savoir exploiter les relations avec unités</span></article><article class="useful-card"><b>3. Réussir</b><span>Réussir les exercices type Bac / ECE</span></article></section>
+<section class="panel active" id="tab-cours"><div class="imported-content"><div class="math-fix-panel"><h3>Relations utiles — notation mathématique propre</h3><p>Les relations suivantes sont réécrites en MathJax avec fractions, indices, grandeurs et unités explicites.</p><div class="math-fix-grid"><div class="math-fix-item"><b>Période</b>\(T_0 = 2\pi\sqrt{m/k}\)</div><div class="math-fix-item"><b>Pulsation</b>\(\omega_0 = \sqrt{k/m}\)</div><div class="math-fix-item"><b>Énergie</b>\(E_m = \frac{1}{2}kx_m^2 = \text{cte}\)</div></div></div>
+<div class="cours-wrap">
+<aside class="toc">
+<div class="toc-title">Plan du chapitre</div>
+<ul>
+<li><a href="#s1">I. Oscillateur harmonique</a></li>
+<li><a href="#s2">II. Pendule simple</a></li>
+<li><a href="#s3">III. Système masse-ressort</a></li>
+<li><a href="#s4">IV. Amortissement et régimes</a></li>
+<li><a href="#s5">V. Résonance</a></li>
+<li><a href="#s6">VI. Aspects énergétiques</a></li>
+</ul>
+</aside>
+<div class="cours-body">
+<h2 id="s1">1. Oscillateur harmonique — Système masse-ressort</h2>
+
+<p>Un oscillateur harmonique est un système idéal qui effectue un mouvement de va-et-vient périodique autour d'une position d'équilibre stable, sous l'effet d'une force de rappel proportionnelle à l'écart par rapport à cette position. Le modèle le plus fondamental est le système masse-ressort horizontal : un solide de masse \(m\) attaché à un ressort de raideur \(k\), se déplaçant sans frottement sur un support horizontal. Lorsque le ressort est étiré ou comprimé d'une longueur \(x\) par rapport à sa position de repos, il exerce une force de rappel \(\vec{F} = -kx\,\hat{\imath}\) (loi de Hooke), qui tend à ramener le système vers l'équilibre. L'application de la deuxième loi de Newton conduit à l'équation différentielle du mouvement.</p>
+
+<div class="formula-block key-formula">$$m\ddot{x} + kx = 0 \qquad \text{ou} \qquad \ddot{x} + \omega_0^2 x = 0 \qquad \text{avec} \quad \omega_0 = \sqrt{\frac{k}{m}}$$</div>
+
+<p>La solution de cette équation différentielle du second ordre est une fonction sinusoïdale du temps. Dans le cas général, on écrit \(x(t) = x_m\cos(\omega_0 t + \varphi)\), où \(x_m\) est l'amplitude (élongation maximale), \(\omega_0\) est la pulsation propre et \(\varphi\) est la phase à l'origine des temps. Les constantes \(x_m\) et \(\varphi\) sont déterminées par les conditions initiales (position et vitesse à \(t = 0\)). La période propre du mouvement est \(T_0 = \frac{2\pi}{\omega_0} = 2\pi\sqrt{\frac{m}{k}}\) et la fréquence propre est \(f_0 = \frac{1}{T_0} = \frac{\omega_0}{2\pi}\). Une propriété remarquable est que \(T_0\) est indépendante de l'amplitude : c'est l'isochronisme des petites oscillations, caractéristique de l'oscillateur harmonique idéal.</p>
+
+<div class="box def">
+<div class="box-label">Définition</div>
+<p><strong>Oscillateur harmonique</strong> : système dont l'évolution est régie par l'équation \(\ddot{x} + \omega_0^2 x = 0\), dont la solution est \(x(t) = x_m\cos(\omega_0 t + \varphi)\). La <strong>pulsation propre</strong> \(\omega_0 = \sqrt{k/m}\), la <strong>période propre</strong> \(T_0 = 2\pi/\omega_0\) et la <strong>fréquence propre</strong> \(f_0 = 1/T_0\) ne dépendent que des caractéristiques du système (masse et raideur), pas de l'amplitude.</p>
+</div>
+
+<p>La vitesse du solide s'obtient par dérivation : \(v(t) = \dot{x}(t) = -x_m\omega_0\sin(\omega_0 t + \varphi)\). La vitesse est en quadrature avance par rapport à la position : lorsque \(x\) est maximal (aux extrémités), la vitesse est nulle ; lorsque \(x = 0\) (passage par l'équilibre), la vitesse est maximale en valeur absolue : \(v_{\max} = x_m\omega_0\). Cette relation est fondamentale pour l'étude énergétique de l'oscillateur. L'accélération vaut \(\ddot{x}(t) = -x_m\omega_0^2\cos(\omega_0 t + \varphi) = -\omega_0^2 x(t)\), ce qui montre qu'elle est toujours opposée au déplacement (force de rappel).</p>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un ressort de raideur \(k = 50\;\text{N/m}\) est attaché à un solide de masse \(m = 200\;\text{g}\). La période propre vaut \(T_0 = 2\pi\sqrt{\frac{0{,}2}{50}} = 2\pi \times 0{,}0632 \approx 0{,}397\;\text{s}\), soit \(f_0 \approx 2{,}52\;\text{Hz}\). Si le solide est écarté de \(x_m = 5\;\text{cm}\) et lâché sans vitesse initiale, la vitesse maximale au passage à l'équilibre est \(v_{\max} = x_m\omega_0 = 0{,}05 \times \sqrt{50/0{,}2} = 0{,}05 \times 15{,}8 \approx 0{,}79\;\text{m/s}\).</p>
+</div>
+
+<div class="box warn">
+<div class="box-label">Attention</div>
+<p>L'oscillateur harmonique est un modèle idéal qui suppose un ressort parfait (force de rappel strictement proportionnelle à l'allongement) et l'absence de frottement. Dans la réalité, les frottements amortissent le mouvement et la loi de Hooke n'est valide que pour de faibles déformations. Le modèle harmonique est une excellente approximation pour les <strong>petites oscillations</strong> autour de l'équilibre.</p>
+</div>
+
+<details class="demo-accordion">
+<summary>🧭 Démonstration — Équation du mouvement de l'oscillateur masse-ressort</summary>
+<div class="demo-steps">
+<p><strong>Étape 1 — Bilan des forces.</strong> Un solide de masse \(m\) sur plan horizontal sans frottement, relié à un ressort de raideur \(k\). La seule force selon l'axe x est la force de rappel : \(\vec F = -kx\,\vec e_x\).</p>
+<p><strong>Étape 2 — Appliquer le PFD.</strong> \(\sum F_x = m\ddot{x}\) ⟹ \(-kx = m\ddot{x}\) ⟹ \(m\ddot{x} + kx = 0\).</p>
+<p><strong>Étape 3 — Identifier la forme canonique.</strong> En posant \(\omega_0^2 = k/m\), on obtient \(\ddot{x} + \omega_0^2 x = 0\). La solution générale est \(x(t) = x_m\cos(\omega_0 t + \varphi)\) avec \(\omega_0 = \sqrt{k/m}\) et \(T_0 = 2\pi/\omega_0 = 2\pi\sqrt{m/k}\). ✓</p>
+</div>
+</details>
+<h2 id="s2">2. Pendule simple</h2>
+
+<p>Le pendule simple est constitué d'un point matériel de masse \(m\) suspendu à un fil inextensible de longueur \(\ell\), mobile sans frottement dans un plan vertical. À l'équilibre, le fil est vertical et la masse est au point le plus bas. Écarté d'un angle \(\theta\) de cette position, la masse est soumise à son poids \(\vec{P}\) et à la tension \(\vec{T}\) du fil. En appliquant le théorème du moment cinétique ou en projetant la deuxième loi de Newton sur la direction tangentielle, on obtient l'équation du mouvement : \(m\ell\ddot{\theta} + mg\sin\theta = 0\), soit \(\ddot{\theta} + \frac{g}{\ell}\sin\theta = 0\). Cette équation n'est pas linéaire en raison du terme \(\sin\theta\).</p>
+
+<div class="formula-block key-formula">$$\ddot{\theta} + \frac{g}{\ell}\sin\theta = 0 \qquad \text{Approximation harmonique : } \ddot{\theta} + \frac{g}{\ell}\theta = 0 \qquad T_0 = 2\pi\sqrt{\frac{\ell}{g}}$$</div>
+
+<p>Pour les petites oscillations (\(\theta \lesssim 15°\)), on peut effectuer l'approximation \(\sin\theta \approx \theta\) (en radians). L'équation devient alors \(\ddot{\theta} + \frac{g}{\ell}\theta = 0\), qui est formellement identique à l'équation de l'oscillateur harmonique. La pulsation propre est \(\omega_0 = \sqrt{g/\ell}\) et la période propre est \(T_0 = 2\pi\sqrt{\ell/g}\). Cette période ne dépend que de la longueur du fil et de l'intensité de la pesanteur, et pas de la masse ni de l'amplitude (isochronisme). On remarquera l'analogie avec le système masse-ressort : le rôle de \(k/m\) est joué par \(g/\ell\).</p>
+
+<div class="box def">
+<div class="box-label">Définition</div>
+<p><strong>Pendule simple</strong> : point matériel de masse \(m\) suspendu à un fil de longueur \(\ell\). Pour les petites oscillations (\(|\theta| < 15°\)), le mouvement est harmonique avec \(T_0 = 2\pi\sqrt{\ell/g}\). La période ne dépend ni de la masse ni de l'amplitude, mais uniquement de \(\ell\) et de \(g\).</p>
+</div>
+
+<p>L'énergie mécanique du pendule simple se conserve en l'absence de frottements. En prenant l'origine de l'énergie potentielle de pesanteur au point le plus bas, l'énergie potentielle vaut \(E_{pp} = mg\ell(1 - \cos\theta)\) et l'énergie cinétique \(E_c = \frac{1}{2}m\ell^2\dot{\theta}^2\). L'énergie mécanique est donc \(E_m = \frac{1}{2}m\ell^2\dot{\theta}^2 + mg\ell(1 - \cos\theta) = \text{constante}\). Cette conservation permet de retrouver la vitesse à tout angle : \(\dot{\theta} = \sqrt{\frac{2g}{\ell}(\cos\theta - \cos\theta_0)}\), où \(\theta_0\) est l'amplitude maximale. La vitesse angulaire est maximale au passage par l'équilibre et nulle aux extrémités.</p>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un pendule de longueur \(\ell = 1{,}0\;\text{m}\) a une période \(T_0 = 2\pi\sqrt{1/9{,}81} \approx 2{,}01\;\text{s}\). Si on l'emmène à la Lune où \(g_{\text{Lune}} = 1{,}62\;\text{m/s}^2\), la période devient \(T_0' = 2\pi\sqrt{1/1{,}62} \approx 4{,}93\;\text{s}\). Le pendule « bat » plus lentement car la gravité est plus faible. C'est le principe de la gravimétrie : mesurer \(T_0\) permet de déterminer \(g\).</p>
+</div>
+
+<div class="box prop">
+<div class="box-label">Propriété</div>
+<p>La période du pendule simple permet de mesurer \(g\) avec grande précision. En mesurant \(T_0\) et \(\ell\), on obtient \(g = \frac{4\pi^2\ell}{T_0^2}\). Cette méthode, utilisée depuis le XVII<sup>e</sup> siècle, a permis de mettre en évidence les variations de \(g\) avec la latitude (aplatissement de la Terre) et l'altitude.</p>
+</div>
+
+<details class="demo-accordion">
+<summary>🧭 Démonstration — Isochronisme du pendule simple (période indépendante de l'amplitude)</summary>
+<div class="demo-steps">
+<p><strong>Étape 1 — Équation du pendule exact.</strong> Par le TRC sur l'axe tangentiel : \(m\ell\ddot\theta = -mg\sin\theta\), soit \(\ddot\theta + \frac{g}{\ell}\sin\theta = 0\). Non linéaire en général.</p>
+<p><strong>Étape 2 — Approximation petites oscillations.</strong> Pour \(|\theta| \lesssim 15°\), \(\sin\theta \approx \theta\) (écart &lt; 1 %). L'équation devient \(\ddot\theta + \frac{g}{\ell}\theta = 0\) — identique à l'oscillateur harmonique avec \(\omega_0 = \sqrt{g/\ell}\).</p>
+<p><strong>Étape 3 — Isochronisme.</strong> La période \(T_0 = 2\pi\sqrt{\ell/g}\) ne dépend ni de la masse \(m\) ni de l'amplitude \(\theta_0\) — c'est l'isochronisme de Galilée. Conséquence : deux pendules de même longueur mais de masses différentes ont la même période. ✓</p>
+</div>
+</details>
+<h2 id="s3">3. Amortissement et oscillations forcées</h2>
+
+<p>Dans la réalité, tout oscillateur est soumis à des forces de frottement qui dissipent progressivement son énergie mécanique. On distingue deux régimes d'amortissement selon l'importance des frottements. Pour un amortissement faible, le système oscille avec une amplitude qui décroît exponentiellement au cours du temps : c'est le <strong>régime pseudopériodique</strong>. L'amplitude suit une loi du type \(x_m(t) = x_{m,0}\,e^{-\gamma t}\), où \(\gamma\) est le coefficient d'amortissement. La pseudopériode \(T\) est légèrement supérieure à la période propre \(T_0\) du système non amorti. Pour un amortissement fort, le système revient à l'équilibre sans osciller : c'est le <strong>régime apériodique</strong>. La frontière entre ces deux régimes est le <strong>régime critique</strong>, qui correspond au retour le plus rapide à l'équilibre sans oscillation.</p>
+
+<div class="formula-block">$$\text{Pseudopériodique : } x(t) = x_{m,0}\,e^{-\gamma t}\cos(\omega t + \varphi) \qquad \text{Apériodique : retour monotone à l'équilibre}$$</div>
+
+<p>En oscillations forcées, le système est soumis à une force excitatrice périodique extérieure, par exemple \(F_{\text{ext}}(t) = F_0\cos(\omega_{\text{exc}} t)\). Après un régime transitoire, le système oscille à la fréquence de l'excitateur \(\omega_{\text{exc}}\) (et non à sa fréquence propre). L'amplitude des oscillations forcées dépend de l'écart entre la fréquence d'excitation et la fréquence propre du système. Lorsque \(\omega_{\text{exc}}\) est proche de \(\omega_0\), l'amplitude devient très grande : c'est le phénomène de <strong>résonance</strong>. À la résonance, le transfert d'énergie de l'excitateur vers l'oscillateur est maximal, et l'amplitude est limitée uniquement par l'amortissement.</p>
+
+<div class="box def">
+<div class="box-label">Définition</div>
+<p><strong>Résonance</strong> : phénomène d'amplification maximale des oscillations d'un système forcé lorsque la fréquence de l'excitation est voisine de la fréquence propre du système. L'amortissement contrôle la largeur et la hauteur de la résonance : faible amortissement \(\Rightarrow\) résonance aiguë et amplitude élevée ; fort amortissement \(\Rightarrow\) résonance large et amplitude faible (voire pas de résonance du tout).</p>
+</div>
+
+<p>L'influence de l'amortissement sur la résonance est fondamentale. Pour un amortissement très faible, la courbe de résonance (amplitude en fonction de la fréquence d'excitation) présente un pic étroit et élevé centré sur \(f_0\). L'amplitude à la résonance peut être considérablement supérieure à l'amplitude en basse fréquence. Quand l'amortissement augmente, le pic s'élargit et s'abaisse jusqu'à disparaître complètement au-delà d'un certain seuil (régime surcritique). Ce comportement est omniprésent dans la nature et la technologie : résonance d'un pont sous l'effet du vent, d'un verre qui se brise sous un son, d'un circuit RLC en électricité.</p>
+
+<details class="demo-accordion">
+<summary>🧭 Démonstration — Conservation de l'énergie dans l'oscillateur harmonique</summary>
+<div class="demo-steps">
+<p><strong>Étape 1 — Énergie cinétique.</strong> \(E_c = \frac12mv^2 = \frac12m\omega_0^2 x_m^2\sin^2(\omega_0 t+\varphi)\).</p>
+<p><strong>Étape 2 — Énergie potentielle élastique.</strong> \(E_p = \frac12kx^2 = \frac12kx_m^2\cos^2(\omega_0 t+\varphi)\). Comme \(k = m\omega_0^2\) : \(E_p = \frac12m\omega_0^2 x_m^2\cos^2(\omega_0 t+\varphi)\).</p>
+<p><strong>Étape 3 — Somme constante.</strong> \(E_m = E_c + E_p = \frac12m\omega_0^2 x_m^2\underbrace{(\sin^2+\cos^2)}_{=1} = \frac12kx_m^2 = \text{constante}\). L'énergie oscille entre \(E_c\) et \(E_p\) sans jamais varier au total — preuve directe de l'absence de dissipation dans le modèle harmonique idéal. ✓</p>
+</div>
+</details>
+<div class="box warn">
+<div class="box-label">Attention</div>
+<p>La résonance peut être dangereuse quand elle n'est pas contrôlée. Le célèbre effondrement du pont de Tacoma Narrows (1940) est dû à une résonance aérodynamique. En génie civil, on cherche toujours à éloigner les fréquences d'excitation (vent, séisme, machines) des fréquences propres de la structure. À l'inverse, la résonance est exploitée en résonance magnétique (IRM), en radio (accord du circuit sur la fréquence de l'émetteur), et en musique (caisse de résonance des instruments).</p>
+</div>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un amortisseur de voiture fonctionne en régime apériodique : après une bosse, la suspension revient à l'équilibre sans osciller (confort). Si l'amortisseur est usé (faible amortissement), la voiture oscille longtemps après une bosse (régime pseudopériodique), ce qui est dangereux. Le réglage optimal est proche du régime critique : retour rapide à l'équilibre sans rebond.</p>
+</div>
+
+<h2 id="s4">4. Étude énergétique</h2>
+
+<p>L'étude énergétique d'un oscillateur harmonique révèle un transfert continu entre énergie cinétique et énergie potentielle, leur somme restant constante en l'absence d'amortissement. Pour un système masse-ressort horizontal, l'énergie cinétique est \(E_c = \frac{1}{2}mv^2\) et l'énergie potentielle élastique est \(E_{pe} = \frac{1}{2}kx^2\). L'énergie mécanique totale est \(E_m = E_c + E_{pe} = \frac{1}{2}kx_m^2\). Aux extrémités du mouvement (\(x = \pm x_m\)), toute l'énergie est potentielle : \(E_m = \frac{1}{2}kx_m^2\). Au passage par l'équilibre (\(x = 0\)), toute l'énergie est cinétique : \(E_m = \frac{1}{2}mv_{\max}^2\). Ces deux expressions sont égales, ce qui donne \(v_{\max} = x_m\omega_0\).</p>
+
+<div class="formula-block">$$E_m = \frac{1}{2}kx_m^2 = \frac{1}{2}mv_{\max}^2 = \text{constante} \qquad E_c(t) = \frac{1}{2}kx_m^2\sin^2(\omega_0 t + \varphi) \qquad E_p(t) = \frac{1}{2}kx_m^2\cos^2(\omega_0 t + \varphi)$$</div>
+
+<p>Au cours d'une période, les énergies cinétique et potentielle varient sinusoïdalement avec une fréquence double de celle du mouvement. En effet, \(E_c = \frac{1}{2}mv^2 = \frac{1}{2}m x_m^2\omega_0^2\sin^2(\omega_0 t + \varphi)\) et \(E_p = \frac{1}{2}kx^2 = \frac{1}{2}kx_m^2\cos^2(\omega_0 t + \varphi)\). La somme \(E_c + E_p = \frac{1}{2}kx_m^2[\sin^2(\omega_0 t + \varphi) + \cos^2(\omega_0 t + \varphi)] = \frac{1}{2}kx_m^2\) est bien constante. L'énergie cinétique et l'énergie potentielle s'échangent constamment mais leur somme reste invariante, ce qui est la signature de la conservation de l'énergie mécanique pour un système conservatif.</p>
+
+<div class="box prop">
+<div class="box-label">Propriété</div>
+<p>Pour un oscillateur harmonique sans amortissement, \(E_c\) et \(E_p\) oscillent en opposition de phase avec une période \(T_0/2\). L'énergie mécanique \(E_m\) est constante. La valeur moyenne de \(E_c\) sur une période est égale à la valeur moyenne de \(E_p\) : \(\langle E_c \rangle = \langle E_p \rangle = \frac{1}{2}E_m\). C'est le théorème d'équipartition de l'énergie pour un oscillateur harmonique.</p>
+</div>
+
+<p>Avec amortissement, l'énergie mécanique décroît au cours du temps car les frottements dissipent l'énergie sous forme thermique. L'énergie mécanique suit une loi exponentielle : \(E_m(t) = E_{m,0}\,e^{-2\gamma t}\), où \(\gamma\) est le coefficient d'amortissement. Le facteur 2 dans l'exposant vient de ce que \(E_m\) est proportionnelle au carré de l'amplitude. Le temps caractéristique de décroissance de l'énergie est \(\tau_E = 1/(2\gamma)\), moitié du temps caractéristique de décroissance de l'amplitude. On définit le facteur de qualité \(Q = \frac{\omega_0}{2\gamma}\), qui mesure le nombre d'oscillations que le système effectue avant que son amplitude ne soit divisée par \(e\) (soit environ un facteur 3).</p>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un ressort de raideur \(k = 100\;\text{N/m}\) est étiré de \(x_m = 8\;\text{cm}\) avec une masse \(m = 0{,}5\;\text{kg}\). L'énergie mécanique vaut \(E_m = \frac{1}{2} \times 100 \times 0{,}08^2 = 0{,}32\;\text{J}\). La vitesse maximale est \(v_{\max} = x_m\sqrt{k/m} = 0{,}08 \times \sqrt{200} \approx 1{,}13\;\text{m/s}\). Vérification : \(\frac{1}{2}mv_{\max}^2 = \frac{1}{2} \times 0{,}5 \times 1{,}28 = 0{,}32\;\text{J}\).</p>
+</div>
+
+<div class="box warn">
+<div class="box-label">Attention</div>
+<p>Ne pas confondre la décroissance de l'amplitude (\(\propto e^{-\gamma t}\)) avec la décroissance de l'énergie mécanique (\(\propto e^{-2\gamma t}\)). L'énergie décroît deux fois plus vite que l'amplitude car elle est proportionnelle au carré de l'amplitude. C'est une source d'erreur fréquente dans les exercices.</p>
+</div>
+
+<h2 id="s5">5. Oscillations couplées et modes propres</h2>
+
+<p>Lorsque deux oscillateurs sont reliés par un couplage (par exemple deux masses reliées par trois ressorts, dont le ressort central assure le couplage), le système présente des comportements plus riches que les oscillateurs isolés. En particulier, il existe des <strong>modes propres</strong> de vibration dans lesquels les deux masses oscillent à la même fréquence avec un rapport d'amplitudes constant. Pour deux oscillateurs identiques couplés, on distingue le mode symétrique (les deux masses oscillent en phase, à la fréquence \(f_1\)) et le mode antisymétrique (les masses oscillent en opposition de phase, à la fréquence \(f_2 > f_1\)). Dans le mode symétrique, le ressort de couplage ne se déforme pas et la fréquence est celle de l'oscillateur isolé.</p>
+
+<div class="formula-block">$$\text{Mode symétrique : } f_1 = \frac{1}{2\pi}\sqrt{\frac{k}{m}} \qquad \text{Mode antisymétrique : } f_2 = \frac{1}{2\pi}\sqrt{\frac{k + 2k'}{m}}$$</div>
+
+<p>Toute oscillation du système couplé peut se décomposer en une combinaison linéaire des modes propres. Si l'on excite le système de manière quelconque, les deux modes coexistent et leur superposition produit des <strong>battements</strong> : l'amplitude de chaque masse oscille lentement entre un maximum et un minimum avec une fréquence égale à la différence des fréquences propres \(f_2 - f_1\). Les battements correspondent à un transfert périodique d'énergie d'un oscillateur à l'autre à travers le couplage. Ce phénomène est très général et se retrouve dans tous les systèmes couplés, qu'ils soient mécaniques, électriques ou optiques.</p>
+
+<div class="box def">
+<div class="box-label">Définition</div>
+<p><strong>Modes propres</strong> : configurations d'oscillation d'un système couplé dans lesquelles tous les éléments oscillent à la même fréquence avec des amplitudes relatives constantes. Le nombre de modes propres est égal au nombre de degrés de liberté du système. Tout mouvement du système est une superposition de ses modes propres.</p>
+</div>
+
+<p>Le concept de modes propres s'étend bien au-delà du système à deux masses. Pour une corde de guitare fixée à ses deux extrémités, les modes propres sont les harmoniques de fréquences \(f_n = n \times f_1\) (\(n = 1, 2, 3, \ldots\)), correspondant à des motifs stationnaires avec \(n\) ventres. Pour les molécules, les modes de vibration propres sont observés par spectroscopie infrarouge (IR) : chaque mode a une fréquence caractéristique qui dépend des masses atomiques et des constantes de force des liaisons. En génie civil, les modes propres de vibration des bâtiments et des ponts doivent être éloignés des fréquences d'excitation sismique pour éviter la résonance destructrice.</p>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Deux pendules identiques (\(T_0 = 2\;\text{s}\)) sont couplés par un ressort. Le mode symétrique a \(T_1 = 2\;\text{s}\) et le mode antisymétrique \(T_2 = 1{,}8\;\text{s}\). Si on écarte un seul pendule et on le lâche, on observe des battements : l'amplitude du premier pendule décroît pendant que celle du second augmente, puis le processus s'inverse. La période des battements est \(T_{\text{bat}} = \frac{T_1 T_2}{T_1 - T_2} = \frac{2 \times 1{,}8}{0{,}2} = 18\;\text{s}\).</p>
+</div>
+
+<h2 id="s6">6. Applications</h2>
+
+<p>Les oscillateurs sont omniprésents dans la vie quotidienne et dans la technologie. Les horloges, du pendule de Huygens au quartz des montres modernes, exploitent la périodicité des oscillations pour mesurer le temps. Un crystal de quartz vibre à une fréquence très stable (\(f_0 = 32\,768\;\text{Hz}\) dans les montres), ce qui garantit une précision de l'ordre de quelques secondes par mois. Les amortisseurs de voiture utilisent un régime voisin du critique pour dissiper rapidement l'énergie des oscillations sans rebond. Les sismographes mesurent les oscillations du sol pour détecter et localiser les séismes.</p>
+
+<p>L'analogie électromécanique est un outil puissant qui relie les oscillateurs mécaniques aux circuits électriques oscillants. Dans un circuit RLC série, l'inductance \(L\) joue le rôle de la masse \(m\), l'inverse de la capacité \(1/C\) celui de la raideur \(k\), et la résistance \(R\) celui de l'amortissement. L'équation du circuit \(L\ddot{q} + R\dot{q} + q/C = 0\) est formellement identique à l'équation de l'oscillateur amorti \(m\ddot{x} + \alpha\dot{x} + kx = 0\). Cette analogie permet de transposer tous les résultats mécaniques (période propre, régimes, résonance) au domaine de l'électricité et réciproquement.</p>
+
+<div class="formula-block">$$\text{Analogie : } L \leftrightarrow m \qquad \frac{1}{C} \leftrightarrow k \qquad R \leftrightarrow \alpha \qquad i = \dot{q} \leftrightarrow v = \dot{x}$$</div>
+
+<p>Le phénomène de résonance est exploité ou combattu selon les contextes. En résonance magnétique nucléaire (RMN et IRM), on excite les noyaux atomiques à leur fréquence de Larmor pour obtenir des images médicales de grande précision. En radio, le circuit d'accord est mis à la résonance avec la fréquence de l'émetteur pour sélectionner une station parmi d'autres. À l'inverse, on évite la résonance dans les ponts (pont de Tacoma), les avions (flutter des ailes), les bâtiments (séismes) et les machines tournantes (déséquilibre rotatif). La période du pendule permet aussi la gravimétrie : en mesurant \(T_0\) avec précision, on détermine \(g = 4\pi^2\ell/T_0^2\), ce qui a des applications en géophysique et en prospection minière.</p>
+
+<div class="box metho">
+<div class="box-label">Méthode</div>
+<p><strong>Analogie électromécanique</strong> : pour transposer un résultat mécanique en électricité (ou inversement), remplacer \(m \to L\), \(k \to 1/C\), \(\alpha \to R\), \(x \to q\), \(v \to i\). La période propre \(T_0 = 2\pi\sqrt{m/k}\) devient \(T_0 = 2\pi\sqrt{LC}\). Le facteur de qualité \(Q = \frac{\sqrt{mk}}{\alpha}\) devient \(Q = \frac{1}{R}\sqrt{L/C}\). Cette analogie permet de résoudre les problèmes d'un domaine avec les outils de l'autre.</p>
+</div>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un circuit LC possède \(L = 10\;\text{mH}\) et \(C = 1\;\text{nF}\). La fréquence propre est \(f_0 = \frac{1}{2\pi\sqrt{LC}} = \frac{1}{2\pi\sqrt{10^{-2} \times 10^{-9}}} \approx 1{,}59\;\text{MHz}\). C'est une fréquence radio, utilisée pour l'accord d'un récepteur sur une station en bande AM.</p>
+</div>
+
+<h2 id="s7">7. Résonance et phénomènes couplés</h2>
+
+<p>La résonance est un phénomène de transfert optimal d'énergie entre un excitateur et un résonateur lorsque leurs fréquences coïncident. Dans un oscillateur forcé amorti, l'amplitude en régime permanent varie avec la fréquence d'excitation selon une courbe de résonance dont la forme dépend du facteur de qualité \(Q\). Pour \(Q \gg 1\), la résonance est aiguë : l'amplitude est très grande à \(f \approx f_0\) et décroît rapidement quand on s'en écarte. Pour \(Q \sim 1\), la résonance est large et peu marquée. Pour \(Q < 1/2\), il n'y a plus de résonance (régime surcritique). Le facteur de qualité quantifie également la sélectivité du résonateur : la bande passante à \(-3\;\text{dB}\) est \(\Delta f = f_0/Q\). Plus \(Q\) est grand, plus le système est sélectif.</p>
+
+<div class="formula-block">$$Q = \frac{\omega_0}{2\gamma} = \frac{\omega_0 m}{\alpha} \qquad \Delta f = \frac{f_0}{Q} \qquad \text{Amplitude à la résonance : } A_{\max} \propto Q \cdot A_{\text{stat}}$$</div>
+
+<p>Les phénomènes couplés sont au cœur de nombreuses applications physiques. Lorsqu'un oscillateur est couplé à un autre, l'énergie peut être transférée d'un système à l'autre. Dans un émetteur radio, le circuit oscillant est couplé à l'antenne pour rayonner l'onde électromagnétique. Dans un instrument de musique, la corde (oscillateur) est couplée à la caisse de résonance qui amplifie et rayonne le son. En mécanique, le couplage entre le vent et la structure d'un pont peut conduire à une résonance destructrice si les fréquences coïncident. La compréhension de ces couplages est essentielle pour la conception d'ouvrages sûrs et de dispositifs performants.</p>
+
+<div class="box prop">
+<div class="box-label">Propriété</div>
+<p><strong>Bande passante et sélectivité</strong> : la bande passante \(\Delta f = f_0/Q\) est l'intervalle de fréquences dans lequel l'amplitude est supérieure à \(A_{\max}/\sqrt{2}\) (soit une puissance supérieure à la moitié de la puissance maximale). Un résonateur très sélectif (\(Q\) élevé) ne résonne que pour une bande étroite de fréquences, ce qui est souhaitable en radio (sélection d'une station) mais dangereux en structure (sensibilité à une excitation précise).</p>
+</div>
+
+<p>La résonance couplée se manifeste aussi dans les systèmes moléculaires. Les molécules polyatomiques possèdent plusieurs modes de vibration propres (élongation, déformation, torsion) qui interagissent entre eux. La spectroscopie infrarouge exploite la résonance entre la fréquence du rayonnement IR et les fréquences de vibration des liaisons chimiques, permettant d'identifier les groupes fonctionnels d'une molécule. En résonance magnétique (IRM), c'est la résonance entre la fréquence du champ électromagnétique et la fréquence de précession des noyaux d'hydrogène qui est utilisée. Ces exemples illustrent l'universalité du concept de résonance dans toutes les branches de la physique.</p>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p>Un circuit RLC possède \(f_0 = 1\;\text{MHz}\) et \(Q = 50\). La bande passante est \(\Delta f = f_0/Q = 20\;\text{kHz}\). Le circuit ne résonera efficacement que pour les fréquences comprises entre \(990\;\text{kHz}\) et \(1{,}01\;\text{MHz}\). Cela permet de sélectionner une seule station radio parmi les nombreuses stations émettrices. Si \(Q\) était 500, la bande passante ne serait que de \(2\;\text{kHz}\), trop étroite pour transmettre fidèlement la voix (qui nécessite environ \(10\;\text{kHz}\)).</p>
+</div>
+
+<h2 id="s8">8. Méthodes et résolution</h2>
+
+<p>La résolution des problèmes d'oscillations mécaniques repose sur quelques méthodes fondamentales qu'il faut maîtriser. La première est l'établissement de l'équation différentielle du mouvement à partir de la deuxième loi de Newton. Pour un système masse-ressort horizontal sans frottement : projeter le Principe Fondamental de la Dynamique (PFD) sur l'axe du mouvement, identifier la force de rappel \(-kx\), et obtenir \(m\ddot{x} + kx = 0\). Pour un pendule simple : projeter sur la tangente à la trajectoire et obtenir \(\ddot{\theta} + \frac{g}{\ell}\theta = 0\) (après linéarisation). La forme canonique \(\ddot{x} + \omega_0^2 x = 0\) permet d'identifier immédiatement \(\omega_0\) et donc \(T_0\).</p>
+
+<div class="box metho">
+<div class="box-label">Méthode</div>
+<p><strong>Établir l'équation différentielle d'un oscillateur</strong> :</p>
+<p>1. Définir le système, le référentiel et le repère.<br>
+2. Faire le bilan des forces (poids, tension, rappel, frottements).<br>
+3. Appliquer le PFD (ou le théorème du moment cinétique pour un pendule).<br>
+4. Projeter sur la direction du mouvement.<br>
+5. Identifier l'équation canonique \(\ddot{x} + 2\gamma\dot{x} + \omega_0^2 x = 0\) (amorti) ou \(\ddot{x} + \omega_0^2 x = 0\) (non amorti).<br>
+6. En déduire \(\omega_0\), \(T_0\), \(f_0\) et la nature du régime.</p>
+</div>
+
+<p>La détermination des constantes d'intégration (amplitude \(x_m\) et phase \(\varphi\)) nécessite les conditions initiales. Si à \(t = 0\), \(x(0) = x_0\) et \(\dot{x}(0) = v_0\), alors \(x_0 = x_m\cos\varphi\) et \(v_0 = -x_m\omega_0\sin\varphi\). On en déduit \(x_m = \sqrt{x_0^2 + (v_0/\omega_0)^2}\) et \(\tan\varphi = -v_0/(\omega_0 x_0)\). Un cas fréquent au bac est le lâcher sans vitesse initiale : \(v_0 = 0\) donne \(\varphi = 0\) et \(x_m = x_0\). Un autre cas est le passage par l'équilibre avec une vitesse \(v_0\) : \(x_0 = 0\) donne \(\varphi = -\pi/2\) et \(x_m = v_0/\omega_0\).</p>
+
+<div class="formula-block">$$x_m = \sqrt{x_0^2 + \left(\frac{v_0}{\omega_0}\right)^2} \qquad \tan\varphi = -\frac{v_0}{\omega_0 x_0} \qquad \text{Conditions initiales : } x(0) = x_0,\; \dot{x}(0) = v_0$$</div>
+
+<p>L'approche énergétique constitue une alternative puissante à la résolution de l'équation différentielle. En écrivant la conservation de l'énergie mécanique (système non amorti) ou la décroissance de \(E_m\) (système amorti), on peut déterminer la vitesse à toute position, l'amplitude maximale, ou le coefficient d'amortissement. Pour un oscillateur amorti, on mesure l'amplitude à deux instants séparés de \(n\) périodes et on utilise \(\ln\frac{x_m(t)}{x_m(t+nT)} = n\delta\) où \(\delta = \gamma T\) est le décrément logarithmique. Cette méthode expérimentale est très utilisée pour déterminer le coefficient d'amortissement d'un système réel.</p>
+
+<div class="box warn">
+<div class="box-label">Attention</div>
+<p>Erreurs fréquentes dans les exercices d'oscillations : (1) Oublier de linéariser \(\sin\theta \approx \theta\) pour le pendule. (2) Confondre pulsation \(\omega_0\) (en rad/s) et fréquence \(f_0\) (en Hz). (3) Appliquer la formule du pendule simple à un pendule pesant (solide étendu). (4) Oublier les conditions initiales pour déterminer \(x_m\) et \(\varphi\). (5) Confondre période propre et pseudopériode en régime amorti. (6) Utiliser des unités incohérentes (masse en g, longueur en cm).</p>
+</div>
+
+<div class="example-box">
+<div class="ex-label">💡 Exemple</div>
+<p><strong>Exercice type bac</strong> : Un ressort de raideur \(k = 20\;\text{N/m}\) est attaché à un solide de masse \(m = 100\;\text{g}\) posé sur un plan horizontal. Le solide est écarté de \(x_0 = 5\;\text{cm}\) de sa position d'équilibre et lâché sans vitesse initiale. Une force de frottement \(f = 0{,}1\;\text{N}\) s'oppose au mouvement.<br>
+1. Équation : \(m\ddot{x} + f\,\text{sgn}(\dot{x}) + kx = 0\). En première approximation (faible amortissement) : \(m\ddot{x} + \alpha\dot{x} + kx = 0\).<br>
+2. \(\omega_0 = \sqrt{k/m} = \sqrt{200} \approx 14{,}1\;\text{rad/s}\), \(T_0 = 2\pi/\omega_0 \approx 0{,}445\;\text{s}\).<br>
+3. Énergie initiale : \(E_m = \frac{1}{2}kx_0^2 = \frac{1}{2} \times 20 \times 0{,}05^2 = 0{,}025\;\text{J}\).<br>
+4. Vitesse maximale : \(v_{\max} = x_0\omega_0 = 0{,}05 \times 14{,}1 \approx 0{,}71\;\text{m/s}\).</p>
+</div>
+
+</div></section>
+<section class="panel " id="tab-outils"><div class="imported-content">
+<div class="cours-wrap">
+<aside class="toc"><div class="toc-title">Relations &amp; dimensions</div><ul>
+<li><a href="#rel-osc">1. Oscillateur harmonique</a></li>
+<li><a href="#rel-pend">2. Pendule simple</a></li>
+<li><a href="#rel-calcs">3. Calculatrices</a></li>
+</ul></aside>
+<div class="cours-body">
+<h2 id="rel-osc">∑ 1. Oscillateur harmonique — relations clés</h2>
+<div class="table-wrap"><table class="cours-table">
+<thead><tr><th>Grandeur</th><th>Relation</th><th>Unités</th></tr></thead>
+<tbody>
+<tr><td>Pulsation propre</td><td>\(\omega_0 = \sqrt{k/m}\)</td><td>rad·s⁻¹</td></tr>
+<tr><td>Période propre</td><td>\(T_0 = 2\pi\sqrt{m/k}\)</td><td>s</td></tr>
+<tr><td>Solution</td><td>\(x(t)=x_m\cos(\omega_0 t+\varphi)\)</td><td>m</td></tr>
+<tr><td>Vitesse max</td><td>\(v_{\max}=x_m\omega_0\)</td><td>m·s⁻¹</td></tr>
+<tr><td>Énergie mécanique</td><td>\(E_m=\frac12kx_m^2\)</td><td>J</td></tr>
+</tbody></table></div>
+<h2 id="rel-pend">∑ 2. Pendule simple</h2>
+<div class="table-wrap"><table class="cours-table">
+<thead><tr><th>Grandeur</th><th>Relation</th><th>Unités</th></tr></thead>
+<tbody>
+<tr><td>Pulsation propre</td><td>\(\omega_0 = \sqrt{g/\ell}\)</td><td>rad·s⁻¹</td></tr>
+<tr><td>Période propre</td><td>\(T_0 = 2\pi\sqrt{\ell/g}\)</td><td>s</td></tr>
+<tr><td>Mesure de g</td><td>\(g = 4\pi^2\ell/T_0^2\)</td><td>m·s⁻²</td></tr>
+</tbody></table></div>
+<h2 id="rel-calcs" style="margin-top:32px">🧮 3. Calculatrices interactives</h2>
+<div class="calc-grid">
+  <div class="calc-card">
+    <div class="calc-title">Oscillateur masse-ressort</div>
+    <div class="calc-desc">Calcule T₀, ω₀ et v_max</div>
+    <label>Raideur k (N/m)</label>
+    <input class="calc-input" id="r13-k" type="number" value="20" step="1"/>
+    <label>Masse m (kg)</label>
+    <input class="calc-input" id="r13-m" type="number" value="0.2" step="0.01"/>
+    <label>Amplitude x_m (m)</label>
+    <input class="calc-input" id="r13-x" type="number" value="0.05" step="0.005"/>
+    <button class="calc-btn" onclick="calcRessort13()">Calculer</button>
+    <div class="calc-result" id="r13-res"></div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">Pendule simple</div>
+    <div class="calc-desc">Calcule T₀ et ω₀ depuis ℓ et g</div>
+    <label>Longueur ℓ (m)</label>
+    <input class="calc-input" id="p13-l" type="number" value="1.0" step="0.1"/>
+    <label>Pesanteur g (m/s²)</label>
+    <input class="calc-input" id="p13-g" type="number" value="9.81" step="0.01"/>
+    <button class="calc-btn" onclick="calcPendule13()">Calculer T₀</button>
+    <div class="calc-result" id="p13-res"></div>
+  </div>
+  <div class="calc-card">
+    <div class="calc-title">Mesure de g par pendule</div>
+    <div class="calc-desc">g à partir de ℓ et T₀ mesurée</div>
+    <label>Longueur ℓ (m)</label>
+    <input class="calc-input" id="g13-l" type="number" value="1.0" step="0.01"/>
+    <label>Période T₀ mesurée (s)</label>
+    <input class="calc-input" id="g13-T" type="number" value="2.01" step="0.01"/>
+    <button class="calc-btn" onclick="calcG13()">Calculer g</button>
+    <div class="calc-result" id="g13-res"></div>
+  </div>
+</div>
+</div>
+</div>
+</div></section>
+<section class="panel " id="tab-flashcards"><div class="imported-content">
+<div class="fc-wrap">
+<!-- TERM TAB RIGOR flashcards -->
+<div class="box prop" style="margin:18px 0 22px">
+<div class="box-label">Notation rigoureuse à conserver</div>
+<p>Dans cet onglet, les relations du chapitre se lisent avec la même exigence que dans le cours : grandeurs nommées, unités explicites, fractions et vecteurs écrits en MathJax.</p>
+<div class="formula-block">\[T_0 = 2\pi\sqrt{\frac{m}{k}}\qquad T_0 = 2\pi\sqrt{\frac{\ell}{g}}\qquad x(t) = x_m\cos(\omega_0 t + \varphi)\]</div>
+</div>
+<!-- /TERM TAB RIGOR flashcards -->
+<h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">🃏 Flashcards — Oscillations mécaniques</h2>
+<p style="color:var(--text-2);margin-bottom:22px">15 cartes · 3 modes</p>
+<div class="fc-filters" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+  <button class="fc-filter-btn on" data-filter="all" onclick="filterFC('all')">Toutes</button>
+  <button class="fc-filter-btn" data-filter="Harmonique" onclick="filterFC('Harmonique')">Harmonique</button>
+  <button class="fc-filter-btn" data-filter="Pendule" onclick="filterFC('Pendule')">Pendule</button>
+  <button class="fc-filter-btn" data-filter="Amortissement" onclick="filterFC('Amortissement')">Amortissement</button>
+  <button class="fc-filter-btn" data-filter="Énergie" onclick="filterFC('Énergie')">Énergie</button>
+  <button class="fc-filter-btn" data-filter="Méthodes" onclick="filterFC('Méthodes')">Méthodes</button>
+</div>
+<div class="fc-progress-bar" style="display:flex;gap:4px;margin-bottom:14px;"></div>
+<div class="fc-mode-tabs">
+<button class="fc-mode-btn on" onclick="switchFCMode('libre',this)">📖 Révision libre</button>
+<button class="fc-mode-btn" onclick="switchFCMode('completion',this)">✍️ Complétion</button>
+<button class="fc-mode-btn" onclick="switchFCMode('chrono',this)">⏱ Chrono 2 min</button>
+</div>
+<div class="fc-section active" id="fc-libre">
+<div class="fc-counter" id="fc-counter">Carte 1 / 15</div>
+<div class="card-scene" onclick="flipCard()">
+<div class="card-3d" id="fc-card">
+<div class="card-face card-front"><div class="card-q-icon" id="fc-icon">❓</div><div class="card-q-text" id="fc-question">Chargement...</div><div class="card-hint">Cliquez pour retourner</div></div>
+<div class="card-face card-back"><div class="card-a-text" id="fc-answer">Réponse...</div></div>
+</div>
+</div>
+<div class="fc-controls">
+<button class="fc-btn" onclick="prevCard()">← Préc.</button>
+<button class="fc-btn primary" onclick="flipCard()">↻ Retourner</button>
+<button class="fc-btn" onclick="nextCard()">Suiv. →</button>
+<button class="fc-btn shuffle" onclick="shuffleCards()">🔀 Mélanger</button>
+</div>
+</div>
+<div class="fc-section" id="fc-completion">
+<div style="font-size:13px;color:var(--text-3);margin-bottom:16px">Score : <strong id="comp-score">0</strong></div>
+<div id="comp-container"></div>
+</div>
+<div class="fc-section" id="fc-chrono">
+<div class="chrono-bar">
+<div class="chrono-display" id="chrono-time">2:00</div>
+<div class="chrono-progress"><div class="chrono-fill" id="chrono-fill" style="width:100%"></div></div>
+<div id="chrono-counter" style="font-size:13px;color:var(--text-3);font-weight:600">0/10</div>
+</div>
+<div class="chrono-card" id="chrono-card"><div class="chrono-q" id="chrono-q">Appuyez sur "Démarrer"</div></div>
+<div class="chrono-actions" id="chrono-actions"><button class="btn-knew" onclick="startChrono()">▶ Démarrer</button></div>
+<div class="chrono-result" id="chrono-result">
+<div class="result-big" id="result-big">0/10</div>
+<div id="result-sub" style="font-size:15px;color:var(--text-2);margin:8px 0 24px">—</div>
+<div class="missed-list" id="missed-list" style="display:none"><h4 style="font-size:13px;font-weight:700;color:var(--warn);margin-bottom:8px">🔄 À revoir :</h4><div id="missed-items"></div></div>
+<button class="fc-btn primary" onclick="startChrono()" style="margin-top:18px">🔄 Recommencer</button>
+</div>
+</div>
+</div>
+</div></section>
+<section class="panel " id="tab-mindmap"><div class="imported-content">
+<div class="mindmap-wrap">
+<h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">🧠 Carte mentale — Oscillations mécaniques</h2>
+<p style="color:var(--text-2);margin-bottom:20px">Vue d'ensemble animée du chapitre</p>
+<style>
+.m13-wrap{background:#050e1a;border-radius:18px;padding:12px;overflow:hidden;box-shadow:0 0 40px rgba(0,200,255,.08)}
+.m13-wrap svg{width:100%;height:auto;display:block}
+@keyframes m13Draw{to{stroke-dashoffset:0}}
+@keyframes m13Fade{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes m13Pulse{0%,100%{filter:drop-shadow(0 0 4px currentColor)}50%{filter:drop-shadow(0 0 14px currentColor)}}
+.m13-branch{stroke-dasharray:300;stroke-dashoffset:300;animation:m13Draw .9s ease forwards}
+.m13-node{opacity:0;animation:m13Fade .5s ease forwards}
+.m13-center{animation:m13Pulse 3s ease-in-out infinite}
+.m13-b1{animation-delay:.1s}.m13-b2{animation-delay:.3s}.m13-b3{animation-delay:.5s}.m13-b4{animation-delay:.7s}.m13-b5{animation-delay:.9s}
+.m13-n1{animation-delay:.5s}.m13-n2{animation-delay:.7s}.m13-n3{animation-delay:.9s}.m13-n4{animation-delay:1.1s}.m13-n5{animation-delay:1.3s}
+</style>
+<div class="m13-wrap">
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" font-family="'IBM Plex Mono',monospace">
+  <line class="m13-branch m13-b1" x1="480" y1="280" x2="200" y2="110" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round"/>
+  <line class="m13-branch m13-b2" x1="480" y1="280" x2="760" y2="110" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"/>
+  <line class="m13-branch m13-b3" x1="480" y1="280" x2="820" y2="310" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round"/>
+  <line class="m13-branch m13-b4" x1="480" y1="280" x2="610" y2="460" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round"/>
+  <line class="m13-branch m13-b5" x1="480" y1="280" x2="155" y2="430" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="480" y1="280" x2="200" y2="110" stroke="#22d3ee" stroke-width="6" opacity=".15"/>
+  <line x1="480" y1="280" x2="760" y2="110" stroke="#4ade80" stroke-width="6" opacity=".15"/>
+  <line x1="480" y1="280" x2="820" y2="310" stroke="#fb923c" stroke-width="6" opacity=".15"/>
+  <line x1="480" y1="280" x2="610" y2="460" stroke="#a78bfa" stroke-width="6" opacity=".15"/>
+  <line x1="480" y1="280" x2="155" y2="430" stroke="#60a5fa" stroke-width="6" opacity=".15"/>
+  <ellipse class="m13-center" cx="480" cy="280" rx="74" ry="38" fill="#0f1f3d" stroke="#38bdf8" stroke-width="2.2"/>
+  <text x="480" y="276" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="700">Oscillations</text>
+  <text x="480" y="292" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="700">mécaniques</text>
+  <g class="m13-node m13-n1">
+    <rect x="96" y="76" width="208" height="68" rx="12" fill="#082030" stroke="#22d3ee" stroke-width="1.8"/>
+    <rect x="96" y="76" width="208" height="68" rx="12" fill="#22d3ee" opacity=".06"/>
+    <text x="200" y="103" text-anchor="middle" fill="#22d3ee" font-size="13" font-weight="700">Oscillateur masse-ressort</text>
+    <text x="200" y="119" text-anchor="middle" fill="#94e8fb" font-size="10">ẍ + ω₀²x = 0 · T₀=2π√(m/k)</text>
+    <text x="200" y="133" text-anchor="middle" fill="#94e8fb" font-size="10">x(t)=x_m·cos(ω₀t+φ)</text>
+  </g>
+  <g class="m13-node m13-n2">
+    <rect x="656" y="76" width="208" height="68" rx="12" fill="#082010" stroke="#4ade80" stroke-width="1.8"/>
+    <rect x="656" y="76" width="208" height="68" rx="12" fill="#4ade80" opacity=".06"/>
+    <text x="760" y="103" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Pendule simple</text>
+    <text x="760" y="119" text-anchor="middle" fill="#86efac" font-size="10">T₀=2π√(ℓ/g) · isochronisme</text>
+    <text x="760" y="133" text-anchor="middle" fill="#86efac" font-size="10">sin θ ≈ θ (petits angles)</text>
+  </g>
+  <g class="m13-node m13-n3">
+    <rect x="826" y="272" width="120" height="76" rx="12" fill="#1a1000" stroke="#fb923c" stroke-width="1.8"/>
+    <rect x="826" y="272" width="120" height="76" rx="12" fill="#fb923c" opacity=".07"/>
+    <text x="886" y="299" text-anchor="middle" fill="#fb923c" font-size="13" font-weight="700">Amortissement</text>
+    <text x="886" y="315" text-anchor="middle" fill="#fcd34d" font-size="10">pseudo-pér. · apér.</text>
+    <text x="886" y="329" text-anchor="middle" fill="#fcd34d" font-size="10">e^{−γt}·cos(ωt+φ)</text>
+  </g>
+  <g class="m13-node m13-n4">
+    <rect x="506" y="436" width="208" height="68" rx="12" fill="#100020" stroke="#a78bfa" stroke-width="1.8"/>
+    <rect x="506" y="436" width="208" height="68" rx="12" fill="#a78bfa" opacity=".07"/>
+    <text x="610" y="463" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Résonance</text>
+    <text x="610" y="479" text-anchor="middle" fill="#c4b5fd" font-size="10">ω_exc ≈ ω₀ · Q = ω₀/2γ</text>
+    <text x="610" y="493" text-anchor="middle" fill="#c4b5fd" font-size="10">pont Tacoma · RLC · IRM</text>
+  </g>
+  <g class="m13-node m13-n5">
+    <rect x="51" y="396" width="208" height="68" rx="12" fill="#001020" stroke="#60a5fa" stroke-width="1.8"/>
+    <rect x="51" y="396" width="208" height="68" rx="12" fill="#60a5fa" opacity=".07"/>
+    <text x="155" y="423" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="700">Énergie</text>
+    <text x="155" y="439" text-anchor="middle" fill="#93c5fd" font-size="10">E_m = ½kx_m² = cste</text>
+    <text x="155" y="453" text-anchor="middle" fill="#93c5fd" font-size="10">échange E_c ↔ E_p</text>
+  </g>
+</svg>
+</div>
+</div>
+</div></section>
+<section class="panel " id="tab-animations"><div style="margin:16px 0;background:var(--surface);border-radius:16px;padding:16px;border:1px solid var(--border);">
+<h4 style="margin:0 0 8px;font-size:14px;">〰️ Simulation : Oscillateur masse-ressort</h4>
+<p style="font-size:12px;color:var(--text-3);margin:0 0 8px;">Ajuste les paramètres et observe les oscillations, les graphes et l'espace des phases.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+<label style="font-size:12px;color:var(--text-3);">k (N/m) : <input type="range" id="sim13-k" min="5" max="100" step="1" value="20" style="accent-color:var(--accent);width:80px;"><span id="sim13-k-val">20</span></label>
+<label style="font-size:12px;color:var(--text-3);">m (kg) : <input type="range" id="sim13-m" min="0.1" max="2" step="0.1" value="0.5" style="accent-color:var(--accent);width:80px;"><span id="sim13-m-val">0.5</span></label>
+<label style="font-size:12px;color:var(--text-3);">Amort. : <input type="range" id="sim13-damp" min="0" max="2" step="0.05" value="0" style="accent-color:var(--accent);width:80px;"><span id="sim13-damp-val">0</span></label>
+<label style="font-size:12px;color:var(--text-3);">Amp. (cm) : <input type="range" id="sim13-amp" min="1" max="10" step="0.5" value="5" style="accent-color:var(--accent);width:80px;"><span id="sim13-amp-val">5</span></label>
+<button onclick="sim13PlayPause()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-md);background:var(--surface);font-size:12px;cursor:pointer;" id="sim13-play">▶ Lecture</button>
+<button onclick="sim13Reset()" style="padding:4px 12px;border-radius:6px;border:1px solid var(--border-md);background:var(--surface);font-size:12px;cursor:pointer;">↺ Reset</button>
+</div>
+<canvas id="simCanvas13" style="width:100%;max-width:600px;border-radius:12px;background:var(--bg2);display:block;margin:0 auto;"></canvas>
+<script>
+function initSim13(){
+  const c=document.getElementById('simCanvas13');
+  if(!c)return;
+  c.width=600;c.height=380;
+  const ctx=c.getContext('2d');
+  let k=20,m=0.5,damp=0,amp=0.05;
+  let x=amp,v=0,t=0,running=false,animId=null;
+  const hist=[];const phaseHist=[];
+  const kSlider=document.getElementById('sim13-k');
+  const mSlider=document.getElementById('sim13-m');
+  const dampSlider=document.getElementById('sim13-damp');
+  const ampSlider=document.getElementById('sim13-amp');
+  if(kSlider)kSlider.oninput=function(){k=parseFloat(this.value);document.getElementById('sim13-k-val').textContent=k;sim13Reset();};
+  if(mSlider)mSlider.oninput=function(){m=parseFloat(this.value);document.getElementById('sim13-m-val').textContent=m;sim13Reset();};
+  if(dampSlider)dampSlider.oninput=function(){damp=parseFloat(this.value);document.getElementById('sim13-damp-val').textContent=damp;sim13Reset();};
+  if(ampSlider)ampSlider.oninput=function(){amp=parseFloat(this.value)/100;document.getElementById('sim13-amp-val').textContent=(amp*100).toFixed(1);sim13Reset();};
+  function draw(){
+    ctx.fillStyle=(window.getComputedStyle(document.documentElement).getPropertyValue('--bg2')||'#f1f4f8').trim();ctx.fillRect(0,0,600,380);
+    // Main animation area (top half)
+    const cx=200,cy=80;
+    // Draw spring
+    const eqX=cx+100;const massX=eqX+x*600;
+    ctx.strokeStyle='#6a6aaa';ctx.lineWidth=2;ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    const nCoils=12;const springLen=massX-cx;
+    for(let i=0;i<=nCoils;i++){
+      const px=cx+i*springLen/nCoils;
+      const py=cy+(i%2===0?-8:8);
+      ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // Draw mass
+    ctx.fillStyle='#4a9eff';ctx.fillRect(massX-10,cy-15,20,30);
+    ctx.fillStyle='#fff';ctx.font='10px IBM Plex Mono';ctx.fillText('m',massX-4,cy+4);
+    // Draw equilibrium line
+    ctx.strokeStyle='#444';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(eqX,cy-25);ctx.lineTo(eqX,cy+25);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#888';ctx.font='9px IBM Plex Mono';ctx.fillText('x=0',eqX-8,cy+35);
+    // Arrow for displacement
+    if(Math.abs(x)>0.001){
+      ctx.strokeStyle='#ff6';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(eqX,cy+42);ctx.lineTo(massX,cy+42);ctx.stroke();
+      ctx.fillStyle='#ff6';ctx.fillText('x='+(x*100).toFixed(1)+'cm',Math.min(eqX,massX)+5,cy+52);
+    }
+    // Position graph (middle section)
+    const gx=20,gy=140,gw=260,gh=100;
+    ctx.strokeStyle='#3a3a5e';ctx.strokeRect(gx,gy,gw,gh);
+    ctx.fillStyle='#888';ctx.font='9px IBM Plex Mono';ctx.fillText('x(t)',gx+2,gy-4);
+    ctx.strokeStyle='#333';ctx.beginPath();ctx.moveTo(gx,gy+gh/2);ctx.lineTo(gx+gw,gy+gh/2);ctx.stroke();
+    if(hist.length>1){
+      ctx.strokeStyle='#4a9eff';ctx.lineWidth=1.5;ctx.beginPath();
+      const tWindow=5;
+      for(let i=0;i<hist.length;i++){
+        const px=gx+i/hist.length*gw;
+        const py=gy+gh/2-hist[i]/amp*(gh/2-5);
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    // Velocity graph
+    const vx=20,vy=250,vw=260,vh=80;
+    ctx.strokeStyle='#3a3a5e';ctx.strokeRect(vx,vy,vw,vh);
+    ctx.fillStyle='#888';ctx.font='9px IBM Plex Mono';ctx.fillText('v(t)',vx+2,vy-4);
+    ctx.strokeStyle='#333';ctx.beginPath();ctx.moveTo(vx,vy+vh/2);ctx.lineTo(vx+vw,vy+vh/2);ctx.stroke();
+    if(hist.length>1){
+      ctx.strokeStyle='#e74c3c';ctx.lineWidth=1.5;ctx.beginPath();
+      const vMax=amp*Math.sqrt(k/m);
+      for(let i=0;i<hist.length;i++){
+        const px=vx+i/hist.length*vw;
+        const py=vy+vh/2-(hist.length>0?0:0);
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    // Phase space diagram
+    const px0=310,py0=250,pw=270,ph=120;
+    ctx.strokeStyle='#3a3a5e';ctx.strokeRect(px0,py0,pw,ph);
+    ctx.fillStyle='#888';ctx.font='9px IBM Plex Mono';ctx.fillText('Espace des phases (x, v)',px0+2,py0-4);
+    ctx.strokeStyle='#333';ctx.beginPath();ctx.moveTo(px0,py0+ph/2);ctx.lineTo(px0+pw,py0+ph/2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px0+pw/2,py0);ctx.lineTo(px0+pw/2,py0+ph);ctx.stroke();
+    if(phaseHist.length>1){
+      const vMax=amp*Math.sqrt(k/m)+0.01;
+      ctx.strokeStyle='#2ecc71';ctx.lineWidth=1.5;ctx.beginPath();
+      for(let i=0;i<phaseHist.length;i++){
+        const ppx=px0+pw/2+phaseHist[i][0]/amp*(pw/2-5);
+        const ppy=py0+ph/2-phaseHist[i][1]/vMax*(ph/2-5);
+        i===0?ctx.moveTo(ppx,ppy):ctx.lineTo(ppx,ppy);
+      }
+      ctx.stroke();
+      // Current point
+      const lastP=phaseHist[phaseHist.length-1];
+      const lpx=px0+pw/2+lastP[0]/amp*(pw/2-5);
+      const lpy=py0+ph/2-lastP[1]/vMax*(ph/2-5);
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(lpx,lpy,3,0,Math.PI*2);ctx.fill();
+    }
+    // Energy bars
+    const bx=310,by=140,bw=270,bh=80;
+    ctx.strokeStyle='#3a3a5e';ctx.strokeRect(bx,by,bw,bh);
+    const Ek=0.5*m*v*v;const Ep=0.5*k*x*x;const Em=0.5*k*amp*amp;
+    const barW=60;
+    const ekH=Em>0?Ek/Em*(bh-10):0;
+    const epH=Em>0?Ep/Em*(bh-10):0;
+    ctx.fillStyle='#e74c3c';ctx.fillRect(bx+30,by+bh-5-ekH,barW-10,ekH);
+    ctx.fillStyle='#3498db';ctx.fillRect(bx+100,by+bh-5-epH,barW-10,epH);
+    ctx.fillStyle='#2ecc71';ctx.fillRect(bx+170,by+bh-5-(bh-10),barW-10,bh-10);
+    ctx.fillStyle='#fff';ctx.font='9px IBM Plex Mono';
+    ctx.fillText('Ek',bx+35,by+12);ctx.fillText('Ep',bx+105,by+12);ctx.fillText('Em',bx+175,by+12);
+    ctx.fillText(Ek.toFixed(4)+'J',bx+30,by+bh+12);ctx.fillText(Ep.toFixed(4)+'J',bx+100,by+bh+12);ctx.fillText(Em.toFixed(4)+'J',bx+170,by+bh+12);
+    // Info
+    const omega0=Math.sqrt(k/m);const T0=2*Math.PI/omega0;
+    ctx.fillStyle='#888';ctx.font='10px IBM Plex Mono';
+    ctx.fillText(`ω₀=${omega0.toFixed(2)} rad/s  T₀=${T0.toFixed(3)}s  f₀=${(1/T0).toFixed(2)}Hz`,10,370);
+    ctx.fillText(`x=${(x*100).toFixed(2)}cm  v=${v.toFixed(3)}m/s  t=${t.toFixed(2)}s`,10,358);
+  }
+  function step(){
+    if(!running)return;
+    const dt=0.002;const omega0sq=k/m;
+    // Velocity Verlet integration
+    const a=(-k*x-damp*v)/m;
+    x+=v*dt+0.5*a*dt*dt;
+    const aNew=(-k*x-damp*(v+a*dt))/m;
+    v+=0.5*(a+aNew)*dt;
+    t+=dt;
+    hist.push(x);
+    phaseHist.push([x,v]);
+    if(hist.length>500)hist.shift();
+    if(phaseHist.length>2000)phaseHist.shift();
+    draw();animId=requestAnimationFrame(step);
+  }
+  window.sim13PlayPause=function(){running=!running;const b=document.getElementById('sim13-play');if(b)b.textContent=running?'⏸ Pause':'▶ Lecture';if(running)step();};
+  window.sim13Reset=function(){running=false;x=amp;v=0;t=0;hist.length=0;phaseHist.length=0;const b=document.getElementById('sim13-play');if(b)b.textContent='▶ Lecture';if(animId)cancelAnimationFrame(animId);draw();};
+  sim13Reset();
+}
+setTimeout(()=>{if(typeof initSim13==='function')initSim13();else window.addEventListener('load',initSim13);},200);
+</script>
+</div>
+<div class="imported-content">
+<div class="anim-wrap" id="electroLabs">
+
+<div class="box prop" style="margin:18px 0 22px">
+<div class="box-label">Notation rigoureuse à conserver</div>
+<p>Dans cet onglet, les relations du chapitre se lisent avec la même exigence que dans le cours : grandeurs nommées, unités explicites, fractions et transferts de protons écrits en MathJax.</p>
+<div class="formula-block">\[T_0 = 2\pi\sqrt{\frac{m}{k}}\qquad T_0 = 2\pi\sqrt{\frac{\ell}{g}}\qquad x(t) = x_m\cos(\omega_0 t + \varphi)\]</div>
+</div>
+
+<div class="electro-sim" style="margin-bottom:22px;">
+<h4>🔧 Calculateur pendule simple</h4>
+<div class="sim-grid">
+<div class="sim-group"><label>Longueur ℓ (m)</label><input class="sim-input" id="pendule-L" type="number" value="1.0" step="0.1" oninput="calcPendule()"></div>
+<div class="sim-group"><label>Gravité g (m/s²)</label><input class="sim-input" id="pendule-g" type="number" value="9.81" step="0.01" oninput="calcPendule()"></div>
+<div class="sim-group"><label>Amplitude θ₀ (°)</label><input class="sim-input" id="pendule-theta0" type="number" value="15" step="1" oninput="calcPendule()"></div>
+</div>
+<div class="sim-result" id="pendule-result"></div>
+</div>
+<div class="electro-sim" style="margin-bottom:22px;">
+<h4>🔩 Calculateur oscillateur élastique</h4>
+<div class="sim-grid">
+<div class="sim-group"><label>Raideur k (N/m)</label><input class="sim-input" id="ressort-k" type="number" value="20" step="1" oninput="calcRessort()"></div>
+<div class="sim-group"><label>Masse m (kg)</label><input class="sim-input" id="ressort-m" type="number" value="0.5" step="0.1" oninput="calcRessort()"></div>
+<div class="sim-group"><label>Amplitude x₀ (cm)</label><input class="sim-input" id="ressort-x0" type="number" value="5" step="0.5" oninput="calcRessort()"></div>
+</div>
+<div class="sim-result" id="ressort-result"></div>
+</div>
+
+<div class="anim-section-title">Simulations oscillations et ondes</div>
+
+<div class="anim-section-title">Simulations PhET Colorado</div>
+<p style="color:var(--text-2);font-size:14px;margin:-6px 0 14px">Explorez les oscillations mécaniques, les ressorts et les pendules avec les simulations PhET.</p>
+<div class="anim-grid">
+<div class="anim-card">
+<div class="anim-top"><span style="font-size:22px">🔧</span><div><h3>Masse et ressort</h3><p>Visualisez les oscillations élastiques</p></div><span class="anim-source">PhET Colorado</span></div>
+<div class="iframe-wrap"><iframe allowfullscreen="" loading="lazy" src="https://phet.colorado.edu/sims/html/masses-and-springs/latest/masses-and-springs_fr.html"></iframe></div>
+<div class="anim-caption">Accrochez des masses à des ressorts, observez les oscillations et mesurez les périodes. Modifiez la raideur et la masse.</div>
+</div>
+<div class="anim-card">
+<div class="anim-top"><span style="font-size:22px">〰️</span><div><h3>Pendule simple</h3><p>Explorez la période et l'amplitude</p></div><span class="anim-source">PhET Colorado</span></div>
+<div class="iframe-wrap"><iframe allowfullscreen="" loading="lazy" src="https://phet.colorado.edu/sims/html/pendulum-lab/latest/pendulum-lab_fr.html"></iframe></div>
+<div class="anim-caption">Manipulez la longueur du pendule, la masse et l'amplitude. Vérifiez que la période ne dépend pas de la masse.</div>
+</div>
+</div>
+
+<div class="anim-section-title">Vidéos recommandées</div>
+<div class="video-grid" id="videoGrid"></div>
+
+<script>
+// Ch13 simulation is handled by initSim13() above
+</script>
+</div>
+</div></section>
+<section class="panel " id="tab-chatbot"><div class="imported-content">
+<div class="interactive-wrap">
+<!-- TERM TAB RIGOR chatbot -->
+<div class="box prop" style="margin:18px 0 22px">
+<div class="box-label">Notation rigoureuse à conserver</div>
+<p>Dans cet onglet, les relations du chapitre se lisent avec la même exigence que dans le cours : grandeurs nommées, unités explicites, fractions et vecteurs écrits en MathJax.</p>
+<div class="formula-block">\[T_0 = 2\pi\sqrt{\frac{m}{k}}\qquad T_0 = 2\pi\sqrt{\frac{\ell}{g}}\qquad x(t) = x_m\cos(\omega_0 t + \varphi)\]</div>
+</div>
+<!-- /TERM TAB RIGOR chatbot -->
+
+<div class="chatbot-col">
+<div class="col-header">
+<div class="bot-pill">🤖</div>
+<div><h3>Assistant Multi-IA — Oscillations mécaniques</h3><p>5 intelligences artificielles · Terminale Spé</p></div>
+<div class="online"></div>
+</div>
+
+<div class="ai-selector">
+<div class="ai-selector-label">Choisis ton IA :</div>
+<div class="ai-btns">
+<button class="ai-btn ai-claude" onclick="openAI('claude')" title="Claude par Anthropic">
+<span class="ai-icon">🟠</span><span class="ai-name">Claude</span>
+</button>
+<button class="ai-btn ai-chatgpt" onclick="openAI('chatgpt')" title="ChatGPT par OpenAI">
+<span class="ai-icon">🟢</span><span class="ai-name">ChatGPT</span>
+</button>
+<button class="ai-btn ai-gemini" onclick="openAI('gemini')" title="Gemini par Google">
+<span class="ai-icon">🔵</span><span class="ai-name">Gemini</span>
+</button>
+<button class="ai-btn ai-copilot" onclick="openAI('copilot')" title="Copilot par Microsoft">
+<span class="ai-icon">🟣</span><span class="ai-name">Copilot</span>
+</button>
+<button class="ai-btn ai-glm" onclick="openAI('glm')" title="GLM par Z.ai">
+<span class="ai-icon">🔶</span><span class="ai-name">GLM 5</span>
+</button>
+</div>
+</div>
+
+<div class="suggestions-row">
+<button class="sug-chip" onclick="document.getElementById('chatIn').value='Quels sont les concepts cl\u00e9s du chapitre Oscillations m\u00e9caniques ?'">Quels sont les concepts clés du cha</button>
+<button class="sug-chip" onclick="document.getElementById('chatIn').value='Comment appliquer les formules de Oscillations m\u00e9caniques ?'">Comment appliquer les formules de O</button>
+<button class="sug-chip" onclick="document.getElementById('chatIn').value='Quelles sont les applications de Oscillations m\u00e9caniques ?'">Quelles sont les applications de Os</button>
+</div>
+<div class="msg-bub">Bonjour ! Pose ta question ci-dessous puis clique sur l'IA de ton choix <strong>Oscillations mécaniques</strong> 🧪. Tu peux aussi utiliser la <strong>Réponse rapide</strong> pour une aide locale.</div>
+</div>
+</div>
+
+<div class="chat-input-row">
+<textarea class="chat-textarea" id="chatIn" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();quickReply()}" placeholder="Tape ta question puis choisis une IA…" rows="1"></textarea>
+<div class="input-btns">
+<button class="quick-btn" onclick="quickReply()" title="Réponse rapide (locale)">💬</button>
+</div>
+</div>
+
+<div class="chat-toast" id="chatToast"></div>
+</div>
+<div class="quiz-col">
+<div class="quiz-top"><h3>📝 Quiz</h3><div class="score-pill" id="scorePill">0/0</div></div>
+<div class="quiz-prog-row"><div class="quiz-prog-bar"><div class="quiz-prog-fill" id="qProgFill" style="width:0%"></div></div><div class="quiz-prog-lbl" id="qProgLbl">Q 1/10</div></div>
+<div id="qContainer"></div>
+<div class="quiz-final" id="qFinal"><div class="final-big" id="finalBig">—</div><div class="final-msg" id="finalMsg">—</div><button class="restart-btn" onclick="startQuiz()">🔄 Recommencer</button></div>
+</div>
+</div>
+</div></section>
+<section class="panel " id="tab-annales"><div class="imported-content">
+<div class="annales-wrap">
+<div class="box prop" style="margin:18px 0 22px">
+<div class="box-label">Architecture Studio 2027 · entraînement prioritaire PDF</div>
+<p>Les exercices ci-dessous proviennent essentiellement de tes fichiers PDF progressifs. Les annales bac sont ajoutées ensuite avec les titres exacts et l'accès direct VecteurBac.</p>
+<div class="formula-block">$$T_0 = 2\pi\sqrt{\frac{m}{k}} \qquad T_0 = 2\pi\sqrt{\frac{L}{g}} \qquad x(t) = x_m\cos(\omega_0 t + \varphi)$$</div>
+</div>
+<h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px">📝 Exercices d'entraînement — Oscillations mécaniques</h2>
+<p style="color:var(--text-2);font-size:14px;margin-bottom:18px">Sources principales : Exercices progressifs de Physique Tle Spécialité par chapitre — Oscillations mécaniques.</p>
+<div class="content-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:28px">
+<div class="exo-card" data-source="pdf">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">PDF progressif · Exercice 1</div>
+<div class="exo-title">1. Période d'un pendule simple</div>
+<div class="exo-subtitle">Exercices progressifs — Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill dur">Fondamental</span></div>
+</div>
+<div class="exo-card-body">
+<div class="exo-enonce">Un pendule simple a une longueur L = 1,5 m. Calculer sa période sur Terre (g = 9,81 m/s²) puis sur la Lune (g = 1,62 m/s²).</div>
+<details class="qcm-item"><summary>Correction guidée</summary><p>T₀ = 2π√(L/g). Sur Terre : T₀ = 2π√(1,5/9,81) = 2,46 s. Sur la Lune : T₀ = 2π√(1,5/1,62) = 6,05 s. La période est environ 2,5 fois plus grande sur la Lune.</p></details>
+</div>
+</div>
+<div class="exo-card" data-source="pdf">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">PDF progressif · Exercice 2</div>
+<div class="exo-title">2. Oscillateur masse-ressort</div>
+<div class="exo-subtitle">Exercices progressifs — Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">REA</span><span class="pill dur">Calcul</span></div>
+</div>
+<div class="exo-card-body">
+<div class="exo-enonce">Un ressort de constante de raideur k porte une masse m = 200 g. On mesure 10 oscillations en 4,0 s. Calculer la constante de raideur k.</div>
+<details class="qcm-item"><summary>Correction guidée</summary><p>T₀ = 4,0/10 = 0,40 s. T₀ = 2π√(m/k) → k = 4π²m/T₀² = 4π²×0,200/0,40² = 49,3 N/m ≈ 49 N/m.</p></details>
+</div>
+</div>
+<div class="exo-card" data-source="pdf">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">PDF progressif · Exercice 3</div>
+<div class="exo-title">3. Amortissement et régime critique</div>
+<div class="exo-subtitle">Exercices progressifs — Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill dur">Méthode</span></div>
+</div>
+<div class="exo-card-body">
+<div class="exo-enonce">Un oscillateur masse-ressort est soumis à une force de frottement fluide f = −hv. On observe que l'amplitude diminue de moitié en 5 oscillations. Identifier le régime et estimer le temps caractéristique d'amortissement.</div>
+<details class="qcm-item"><summary>Correction guidée</summary><p>Les oscillations s'atténuent progressivement : régime pseudo-périodique. L'amplitude décroît exponentiellement : A(t) = A₀e^(−t/τ). Après 5T₀, A = A₀/2, donc e^(−5T₀/τ) = 0,5 → τ = 5T₀/ln2 ≈ 7,2T₀.</p></details>
+</div>
+</div>
+<div class="exo-card" data-source="pdf">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">PDF progressif · Type Bac</div>
+<div class="exo-title">4. Résonance d'un oscillateur forcé</div>
+<div class="exo-subtitle">Exercices progressifs — Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill cp">VAL</span><span class="pill dur">Bac guidé</span></div>
+</div>
+<div class="exo-card-body">
+<div class="exo-enonce">Un oscillateur est excité par une force périodique de fréquence f variable. L'amplitude maximale est observée pour f = 2,0 Hz. La largeur de la résonance est Δf = 0,4 Hz. Déterminer la fréquence propre et le facteur de qualité Q.</div>
+<details class="qcm-item"><summary>Correction guidée</summary><p>La résonance se produit à f₀ ≈ 2,0 Hz (fréquence propre). Facteur de qualité Q = f₀/Δf = 2,0/0,4 = 5,0. Un Q élevé signifie une résonance pointue et peu de pertes énergétiques.</p></details>
+</div>
+</div>
+</div>
+<h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin:28px 0 6px">🎯 Annales bac — titres exacts et accès direct</h2>
+<p style="color:var(--text-2);font-size:14px;margin-bottom:14px">Les cartes sont filtrables par année ou compétence. Chaque bouton ouvre la page sujet/corrigé correspondante.</p>
+<input class="search-bar" id="exoSearch" oninput="filterExos()" placeholder="🔍 Rechercher un sujet, une notion, une compétence…" type="text"/>
+<div class="filters">
+<button class="filter-btn on" data-f="all" onclick="setFilter(this)">Tous</button>
+<button class="filter-btn" data-f="2025" onclick="setFilter(this)">2025</button>
+<button class="filter-btn" data-f="2024" onclick="setFilter(this)">2024</button>
+<button class="filter-btn" data-f="2023" onclick="setFilter(this)">2023</button>
+<button class="filter-btn" data-f="2022" onclick="setFilter(this)">2022</button>
+<button class="filter-btn" data-f="APP" onclick="setFilter(this)">APP</button>
+<button class="filter-btn" data-f="ANA" onclick="setFilter(this)">ANA</button>
+<button class="filter-btn" data-f="REA" onclick="setFilter(this)">REA</button>
+<button class="filter-btn" data-f="VAL" onclick="setFilter(this)">VAL</button>
+</div>
+<div id="exoList"></div>
+</div>
+</div></section>
+<section class="panel " id="tab-ece"><div class="imported-content">
+<div class="annales-wrap">
+<div class="box prop" style="margin:18px 0 22px">
+<div class="box-label">ECE — Oscillations mécaniques</div>
+<p>L'objectif n'est pas d'apprendre un protocole par cœur : il faut savoir choisir une grandeur mesurable, justifier le matériel, exploiter une relation avec les unités, puis discuter la fiabilité de la mesure.</p>
+<div class="formula-block">$$T_0 = 2\pi\sqrt{\frac{m}{k}} \qquad T_0 = 2\pi\sqrt{\frac{L}{g}} \qquad x(t) = x_m\cos(\omega_0 t + \varphi)$$</div>
+</div>
+<h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px">🧪 Situations expérimentales à travailler</h2>
+<p style="color:var(--text-2);font-size:14px;margin-bottom:18px">Quatre situations complètes couvrant la détermination de la période propre d'un pendule, l'étude d'un oscillateur masse-ressort amorti, la mise en évidence de la résonance et la vérification de la relation T=2π√(m/k).</p>
+<div class="content-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px">
+
+<div class="exo-card">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">ECE 1 · Sujet expérimental</div>
+<div class="exo-title">Détermination de la période propre d'un pendule</div>
+<div class="exo-subtitle">Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill cp">VAL</span></div>
+</div>
+<div class="exo-card-body">
+<p><strong>Contexte :</strong> On dispose d'un pendule simple de longueur réglable, d'un chronomètre et d'une règle graduée.</p>
+<p><strong>Question :</strong> Mesurer la période T₀ pour différentes longueurs L et vérifier la relation T₀ = 2π√(L/g).</p>
+<div class="formula">\(T_0 = 2\pi\sqrt{\dfrac{L}{g}}\)</div>
+<p><strong>Indice :</strong> Mesurer la durée de 10 oscillations pour minimiser l'incertitude. Tracer T₀² en fonction de L : la pente donne 4π²/g.</p>
+<p><strong>Réponse attendue :</strong> Le graphique T₀² = f(L) est une droite passant par l'origine. La pente permet de retrouver g ≈ 9,8 m/s² avec un écart relatif &lt; 5 %.</p>
+</div>
+</div>
+
+<div class="exo-card">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">ECE 2 · Sujet expérimental</div>
+<div class="exo-title">Étude d'un oscillateur masse-ressort amorti</div>
+<div class="exo-subtitle">Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill cp">VAL</span></div>
+</div>
+<div class="exo-card-body">
+<p><strong>Contexte :</strong> Un mobile sur rail à coussin d'air est relié à un ressort. On filme les oscillations avec une webcam et on pointe les positions.</p>
+<p><strong>Question :</strong> Mesurer l'amortissement et déterminer le temps caractéristique τ de décroissance de l'amplitude.</p>
+<div class="formula">\(A(t) = A_0 \, e^{-t/\tau} \qquad \text{Régime pseudo-périodique si } \tau \gg T_0\)</div>
+<p><strong>Indice :</strong> Tracer ln(A) en fonction de t. La pente donne −1/τ. Comparer τ à la période T₀ pour identifier le régime.</p>
+<p><strong>Réponse attendue :</strong> Le tracé de ln(A) = f(t) est une droite de pente −1/τ. On vérifie que τ ≫ T₀ (régime pseudo-périodique) ou τ ≈ T₀ (régime critique).</p>
+</div>
+</div>
+
+<div class="exo-card">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">ECE 3 · Sujet expérimental</div>
+<div class="exo-title">Mise en évidence de la résonance</div>
+<div class="exo-subtitle">Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill cp">VAL</span></div>
+</div>
+<div class="exo-card-body">
+<p><strong>Contexte :</strong> Un pendule est excité par un moteur excentrique dont on fait varier la fréquence de rotation. On mesure l'amplitude des oscillations.</p>
+<p><strong>Question :</strong> Mettre en évidence le phénomène de résonance et déterminer la fréquence de résonance.</p>
+<div class="formula">\(f_{\text{résonance}} \approx f_0 = \frac{1}{T_0}\)</div>
+<p><strong>Indice :</strong> Tracer l'amplitude en fonction de la fréquence d'excitation. Le maximum correspond à la résonance.</p>
+<p><strong>Réponse attendue :</strong> La courbe d'amplitude présente un maximum à f ≈ f₀. Plus l'amortissement est faible, plus la résonance est marquée (pic étroit et élevé).</p>
+</div>
+</div>
+
+<div class="exo-card">
+<div class="exo-card-header">
+<div class="exo-sujet-badge">ECE 4 · Sujet expérimental</div>
+<div class="exo-title">Vérification de la relation T=2π√(m/k)</div>
+<div class="exo-subtitle">Oscillations mécaniques</div>
+<div class="exo-pills"><span class="pill cp">APP</span><span class="pill cp">ANA</span><span class="pill cp">REA</span><span class="pill cp">VAL</span></div>
+</div>
+<div class="exo-card-body">
+<p><strong>Contexte :</strong> On dispose d'un ressort, de masses marquées et d'un chronomètre. On mesure la période pour différentes masses accrochées.</p>
+<p><strong>Question :</strong> Vérifier la relation T₀ = 2π√(m/k) en faisant varier systématiquement m et k.</p>
+<div class="formula">\(T_0 = 2\pi\sqrt{\dfrac{m}{k}} \quad \Rightarrow \quad T_0^2 = \dfrac{4\pi^2}{k} \cdot m\)</div>
+<p><strong>Indice :</strong> Tracer T₀² en fonction de m. La pente donne 4π²/k. Vérifier avec un second ressort de raideur différente.</p>
+<p><strong>Réponse attendue :</strong> Le graphique T₀² = f(m) est une droite passant par l'origine. La pente permet de déterminer k. L'écart relatif entre k mesuré et k attendu doit être &lt; 8 %.</p>
+</div>
+</div>
+
+</div>
+<div class="box ok"><div class="box-label">Méthode ECE à automatiser</div>
+<p>Lire toute la situation avant de manipuler, identifier la grandeur mesurée, écrire la relation exploitée avec les unités, puis conclure en comparant la valeur expérimentale à la valeur attendue avec une incertitude ou un écart relatif.</p>
+<div class="formula">\[
+u_c=\sqrt{u_A^2+u_B^2}
+\qquad ;\qquad
+\varepsilon_r=\frac{|x_{\mathrm{exp}}-x_{\mathrm{ref}}|}{x_{\mathrm{ref}}}\times100
+\]</div>
+<p>\(u_c\) est l'incertitude-type composée, \(u_A\) et \(u_B\) des contributions d'incertitude, \(x_{\mathrm{exp}}\) la valeur mesurée et \(x_{\mathrm{ref}}\) la valeur de référence. Les grandeurs \(x_{\mathrm{exp}}\) et \(x_{\mathrm{ref}}\) doivent être exprimées dans la même unité.</p>
+</div>
+<div class="box warn"><div class="box-label">Réflexe de copie</div>
+<p>Dans une réponse ECE, une valeur sans unité ou une relation non nommée coûte cher. Écris toujours la relation, les grandeurs utilisées, les unités, puis la conclusion expérimentale.</p>
+</div>
+</div>
+</div></section>
+<section class="panel " id="tab-prepa"><div class="imported-content">
+<div class="cours-wrap">
+<aside class="toc">
+<div class="toc-title">Vers prépa PCSI</div>
+<ul>
+<li><a href="#prepa-esprit-1">1. Changement de regard</a></li>
+<li><a href="#prepa-rel-1">2. Relations propres</a></li>
+<li><a href="#prepa-demo-1">3. Mini-démonstration</a></li>
+<li><a href="#prepa-app-1">4. Application guidée</a></li>
+<li><a href="#prepa-colle-1">5. Mini-colle</a></li>
+</ul>
+</aside>
+<div class="cours-body">
+<h2 id="prepa-esprit-1">🎓 1. Changement de regard</h2>
+<div class="box prop"><div class="box-label">Oscillations mécaniques</div>
+<p><strong>De l'oscillateur simple aux oscillateurs couplés :</strong> en Terminale, on étudie un seul oscillateur (pendule ou ressort) isolé. En PCSI, on découvre les <strong>oscillateurs couplés</strong> : deux pendules reliés par un ressort échangent de l'énergie et présentent des <strong>modes propres</strong> (mode symétrique et mode antisymétrique). L'<strong>analyse de Fourier</strong> révèle que tout signal périodique se décompose en somme de sinusoïdes : c'est la base du traitement du signal. Le <strong>facteur de qualité</strong> Q = 2πE<sub>m</sub>/ΔE (énergie stockée sur énergie dissipée par cycle) quantifie la sélectivité d'un résonateur. On aborde aussi les <strong>oscillations forcées</strong> en régime sinusoïdal avec la notation complexe, qui relie directement les oscillations à l'électrocinétique (circuit RLC). Ce changement de regard permet de comprendre les phénomènes de résonance dans tous les domaines de la physique.</p></div>
+
+<h2 id="prepa-rel-1">∑ 2. Relations propres, grandeurs et unités</h2>
+<div class="table-wrap"><table class="cours-table">
+<thead><tr><th>Objet</th><th>Relation</th><th>Lecture prépa</th></tr></thead>
+<tbody>
+<tr><td><strong>Période propre (ressort)</strong></td><td>\(T_0 = 2\pi\sqrt{\dfrac{m}{k}}\)</td><td>Valable pour les petites oscillations. En PCSI, on ajoute la correction anharmonique.</td></tr>
+<tr><td><strong>Période propre (pendule)</strong></td><td>\(T_0 = 2\pi\sqrt{\dfrac{L}{g}}\)</td><td>Approximation des petits angles (θ &lt; 10°). En PCSI : T = T₀(1 + θ₀²/16 + …).</td></tr>
+<tr><td><strong>Équation différentielle amortie</strong></td><td>\(m\ddot{x} + h\dot{x} + kx = 0\)</td><td>Résolue en PCSI : régime pseudo-périodique, critique ou apériodique selon h.</td></tr>
+<tr><td><strong>Facteur de qualité</strong></td><td>\(Q = \dfrac{\sqrt{mk}}{h} = \dfrac{\omega_0 m}{h}\)</td><td>Q ≫ 1 : oscillations faiblement amorties. Q ≈ 0,5 : régime critique.</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="prepa-demo-1">🧠 3. Mini-démonstration</h2>
+<div class="example-box"><div class="ex-label">Ce qu'un étudiant doit savoir reconstruire</div>
+<p><strong>But :</strong> Démontrer l'équation différentielle d'un oscillateur amorti à partir des lois de Newton.</p>
+<p>Partons du bilan des forces sur une masse m attachée à un ressort de raideur k, soumise à une force de frottement fluide \(\vec{f} = -h\vec{v}\) :</p>
+\[m\ddot{x} = -kx - h\dot{x}\]
+<p>Réarrangeons :</p>
+\[m\ddot{x} + h\dot{x} + kx = 0\]
+<p>Divisons par m et posons \(\omega_0^2 = k/m\) et \(2\lambda = h/m\) :</p>
+\[\ddot{x} + 2\lambda\dot{x} + \omega_0^2 x = 0\]
+<p>C'est l'équation différentielle canonique d'un oscillateur harmonique amorti. Le discriminant du polynôme caractéristique détermine le régime :</p>
+\[\Delta = 4\lambda^2 - 4\omega_0^2 = 4(\lambda^2 - \omega_0^2)\]
+<ul style="color:var(--text-2);margin-top:8px">
+<li>Si \(\lambda &lt; \omega_0\) : régime <strong>pseudo-périodique</strong> (oscillations amorties)</li>
+<li>Si \(\lambda = \omega_0\) : régime <strong>critique</strong> (retour le plus rapide sans oscillation)</li>
+<li>Si \(\lambda &gt; \omega_0\) : régime <strong>apériodique</strong> (retour lent sans oscillation)</li>
+</ul>
+</div>
+
+<h2 id="prepa-app-1">🧪 4. Application guidée</h2>
+<div class="box ok"><div class="box-label">Calcul modèle — Période et énergie d'un pendule</div>
+<p><strong>Données :</strong> Un pendule simple de longueur \(L = 2{,}0\,\mathrm{m}\) est écarté de \(\theta_0 = 15°\) de sa position d'équilibre et lâché sans vitesse initiale. \(g = 9{,}81\,\mathrm{m/s^2}\).</p>
+<p><strong>1. Période propre :</strong></p>
+\[T_0 = 2\pi\sqrt{\frac{L}{g}} = 2\pi\sqrt{\frac{2{,}0}{9{,}81}} = 2{,}84\,\mathrm{s}\]
+<p><strong>2. Énergie mécanique initiale :</strong></p>
+\[E_m = E_p = mgL(1 - \cos\theta_0) = m \times 9{,}81 \times 2{,}0 \times (1 - \cos 15°) = m \times 0{,}666\,\mathrm{J}\]
+<p><strong>3. Vitesse maximale (au passage à la verticale) :</strong></p>
+\[\frac{1}{2}mv_{\max}^2 = E_m \Rightarrow v_{\max} = \sqrt{2gL(1-\cos\theta_0)} = \sqrt{2 \times 9{,}81 \times 2{,}0 \times 0{,}0341} = 1{,}15\,\mathrm{m/s}\]
+<p><strong>4. Interprétation :</strong> L'énergie mécanique oscille entre forme cinétique (au passage à la verticale) et forme potentielle (aux extrémités). La période est indépendante de l'amplitude (isochronisme) pour les petits angles.</p>
+</div>
+
+<h2 id="prepa-colle-1">🎙️ 5. Mini-colle</h2>
+<div class="box warn"><div class="box-label">Questions courtes type oral</div>
+<p><strong>(a)</strong> Un pendule a une période T₀ = 1,5 s sur Terre. Quelle est sa longueur ?</p>
+<p><em>Réponse :</em> T₀ = 2π√(L/g) → L = gT₀²/(4π²) = 9,81×1,5²/(4π²) = 0,56 m.</p>
+<p><strong>(b)</strong> Démontrer que la période d'un pendule simple ne dépend pas de la masse.</p>
+<p><em>Réponse :</em> T₀ = 2π√(L/g). La masse n'apparaît pas dans l'expression. C'est parce que l'inertie (m) et le poids (mg) ont des effets qui se compensent exactement.</p>
+<p><strong>(c)</strong> Un oscillateur masse-ressort (m = 100 g, k = 40 N/m) est amorti par frottement. L'amplitude est divisée par e en 10 oscillations. Calculer le facteur de qualité Q.</p>
+<p><em>Réponse :</em> τ = 10T₀. T₀ = 2π√(0,1/40) = 0,314 s. Q = πτ/T₀ = π×10 = 31,4. L'oscillateur est très peu amorti.</p>
+</div>
+</div>
+</div>
+</div></section>
+<div class="footer-nav"><button class="secondary" onclick="openFirstMatching(['cours'])">← Revenir au cours</button><button class="primary" onclick="openFirstMatching(['quiz','exercices','annales'])">Tester / s'entraîner →</button></div>
+</div>
+    </main>
+  </div>
+</div>
+<script>
+
+/* THEME */
+function toggleTheme(){const h=document.documentElement,next=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',next);const tb=document.getElementById('themeBtn');if(tb)tb.textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('physichem_theme',next);if(document.getElementById('tab-mindmap')&&document.getElementById('tab-mindmap').classList.contains('active'))renderMM();}
+function showTab(name,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');btn.setAttribute('aria-selected','true');if(name==='mindmap')setTimeout(renderMM,50);if(name==='flashcards'&&!fcInit)initFC();if(name==='annales'&&!exoInit)initExos();trackMastery(name);}
+window.addEventListener('scroll',()=>{if(!document.getElementById('tab-cours').classList.contains('active'))return;const pct=Math.min(100,Math.round(window.scrollY/Math.max(document.body.scrollHeight-window.innerHeight,1)*100));const pt=document.getElementById('progressTop');const pl=document.getElementById('pctLbl');if(pt)pt.style.width=pct+'%';if(pl)pl.textContent=pct+'%';if(pct>=80)trackMastery('cours');});
+function getMastery(){return JSON.parse(localStorage.getItem('physichem_mastery')||'{}');}
+function setMastery(d){localStorage.setItem('physichem_mastery',JSON.stringify(d));}
+function trackMastery(a){const d=getMastery(),k='chap13';if(!d[k])d[k]={cours:0,flashcards:0,quiz:0,annales:0};if(a==='cours')d[k].cours=1;if(a==='flashcards')d[k].flashcards=1;setMastery(d);updateMasteryUI();}
+function updateMasteryUI(){const d=getMastery()['chap13']||{};const s=Math.round(((d.cours||0)+(d.flashcards||0)+(d.quiz||0)+(d.annales||0))/4*100);const fill=document.getElementById('masteryFill');const pct=document.getElementById('masteryPct');if(fill){fill.style.width=s+'%';fill.style.background=s<=30?'var(--text-3)':s<=60?'var(--warn)':s<=85?'var(--blue)':'var(--ok)';}if(pct)pct.textContent=s+'%';}
+updateMasteryUI();
+
+/* SIMULATEURS */
+function calcPendule(){
+  const L=parseFloat(document.getElementById('pendule-L').value)||1.0;
+  const g=parseFloat(document.getElementById('pendule-g').value)||9.81;
+  const theta0=parseFloat(document.getElementById('pendule-theta0').value)||15;
+  const rad=theta0*Math.PI/180;
+  const T=2*Math.PI*Math.sqrt(L/g);
+  const omega=2*Math.PI/T;
+  const f=1/T;
+  const vmax=Math.sqrt(2*g*L*(1-Math.cos(rad)));
+  document.getElementById('pendule-result').innerHTML=`
+    <strong>Pendule simple</strong><br>
+    T₀ = 2π√(ℓ/g) = 2π√(${L}/${g}) = <span style="font-size:18px;color:var(--accent)">${T.toFixed(3)} s</span><br>
+    ω₀ = 2π/T₀ = <span style="color:var(--accent)">${omega.toFixed(3)} rad/s</span><br>
+    f = 1/T₀ = <span style="color:var(--accent)">${f.toFixed(3)} Hz</span><br>
+    v_max = √(2gℓ(1−cosθ₀)) = <span style="color:var(--accent)">${vmax.toFixed(3)} m/s</span><br>
+    <small>Approximation : T₀ valide pour θ₀ < 20° (oscillations faibles)</small>`;
+}
+calcPendule();
+
+function calcRessort(){
+  const k=parseFloat(document.getElementById('ressort-k').value)||20;
+  const m=parseFloat(document.getElementById('ressort-m').value)||0.5;
+  const x0=parseFloat(document.getElementById('ressort-x0').value)||5;
+  const T=2*Math.PI*Math.sqrt(m/k);
+  const omega=2*Math.PI/T;
+  const f=1/T;
+  const Emax=0.5*k*(x0/100)*(x0/100);
+  document.getElementById('ressort-result').innerHTML=`
+    <strong>Oscillateur élastique (masse-ressort)</strong><br>
+    T₀ = 2π√(m/k) = 2π√(${m}/${k}) = <span style="font-size:18px;color:var(--accent)">${T.toFixed(3)} s</span><br>
+    ω₀ = 2π/T₀ = <span style="color:var(--accent)">${omega.toFixed(3)} rad/s</span><br>
+    f = 1/T₀ = <span style="color:var(--accent)">${f.toFixed(3)} Hz</span><br>
+    E_max = ½kx₀² = ½×${k}×(${x0}/100)² = <span style="color:var(--accent)">${Emax.toFixed(4)} J</span><br>
+    <small>x₀ converti en mètres : ${x0} cm = ${(x0/100).toFixed(3)} m</small>`;
+}
+calcRessort();
+
+/* FLASHCARDS */
+const FC=[
+{icon:'〰️',q:"Qu'est-ce qu'un oscillateur harmonique ?",a:"Un système qui oscille autour d'une position d'équilibre avec une période propre, sous l'effet d'une force de rappel proportionnelle à l'écart.",formula:'F = −[___]·x (force de rappel)',blanks:['k'],answers:['k'],topic:'Harmonique'},
+{icon:'📐',q:"Quelle est l'équation différentielle d'un oscillateur harmonique ?",a:"ẍ + ω₀²x = 0, avec ω₀ = √(k/m) pour un ressort ou ω₀ = √(g/ℓ) pour un pendule.",formula:'ẍ + [___]²·x = 0',blanks:['ω₀'],answers:['ω₀','omega0'],topic:'Harmonique'},
+{icon:'📐',q:"Quelle est la solution de l'équation harmonique ?",a:"x(t) = xm·cos(ω₀t + φ), avec xm l'amplitude et φ la phase à l'origine.",formula:'x(t) = [___]·cos(ω₀t + φ)',blanks:['xm'],answers:['xm','amplitude'],topic:'Harmonique'},
+{icon:'📏',q:"Quelle est la période propre d'un pendule simple ?",a:"T₀ = 2π√(ℓ/g). Ne dépend que de la longueur ℓ et de g, pas de la masse.",formula:'T₀ = 2π√([___]/g)',blanks:['ℓ'],answers:['ℓ','L','l'],topic:'Pendule'},
+{icon:'🔄',q:"Quelle est la période propre d'un système masse-ressort ?",a:"T₀ = 2π√(m/k). Dépend de la masse et de la raideur, pas de l'amplitude.",formula:'T₀ = 2π√([___]/k)',blanks:['m'],answers:['m'],topic:'Pendule'},
+{icon:'🎯',q:"Qu'est-ce que la pulsation propre ω₀ ?",a:"ω₀ = 2π/T₀. Pour un ressort : ω₀ = √(k/m). Pour un pendule : ω₀ = √(g/ℓ).",formula:'ω₀ = [___] / T₀',blanks:['2π'],answers:['2π','2pi'],topic:'Pendule'},
+{icon:'📉',q:"Qu'est-ce que l'amortissement ?",a:"Diminution progressive de l'amplitude des oscillations due aux frottements. Régimes : pseudo-périodique, critique, apériodique.",formula:'Amortissement → amplitude [___]',blanks:['décroît'],answers:['décroît','decroît','diminue'],topic:'Amortissement'},
+{icon:'📊',q:"Quels sont les trois régimes d'amortissement ?",a:"Pseudo-périodique (oscillations amorties), critique (retour le plus rapide), apériodique (pas d'oscillation).",formula:'Régime [___] : retour le plus rapide sans oscillation',blanks:['critique'],answers:['critique'],topic:'Amortissement'},
+{icon:'🔊',q:"Qu'est-ce que la résonance ?",a:"Phénomène d'amplification maximale quand la fréquence d'excitation est proche de la fréquence propre. Amplitude maximale.",formula:'Résonance : f_excitation ≈ [___]',blanks:['f₀'],answers:['f₀','f0','fréquence propre'],topic:'Amortissement'},
+{icon:'🔴',q:"Comment varie l'énergie cinétique dans un oscillateur harmonique ?",a:"Ec = ½mv² = ½mω₀²xm²sin²(ω₀t+φ). Maximale au passage par x=0, nulle aux extrémités.",formula:'Ec maximale quand x = [___]',blanks:['0'],answers:['0','zéro'],topic:'Énergie'},
+{icon:'🔵',q:"Comment varie l'énergie potentielle dans un oscillateur harmonique ?",a:"Ep = ½kx² = ½kxm²cos²(ω₀t+φ). Maximale aux extrémités, nulle au passage par x=0.",formula:'Ep maximale quand v = [___]',blanks:['0'],answers:['0','zéro'],topic:'Énergie'},
+{icon:'🟢',q:"Que vaut l'énergie mécanique d'un oscillateur harmonique ?",a:"Em = Ec + Ep = ½kxm² = constante. Se conserve sans frottement.",formula:'Em = ½k[___]² = constante',blanks:['xm'],answers:['xm','amplitude'],topic:'Énergie'},
+{icon:'🔄',q:"Comment l'énergie s'échange-t-elle dans un oscillateur ?",a:"Quand Ec ↑, Ep ↓ et inversement. L'énergie oscille entre forme cinétique et potentielle à 2ω₀.",formula:'Échange Ek ↔ Ep à fréquence [___]·ω₀',blanks:['2'],answers:['2','deux'],topic:'Énergie'},
+{icon:'📝',q:"Comment déterminer expérimentalement la période propre ?",a:"Mesurer la durée de plusieurs oscillations (≥10) et diviser par le nombre. Réduire l'incertitude relative.",formula:'T₀ = Δt / [___]',blanks:['N'],answers:['N','n','nombre'],topic:'Méthodes'},
+{icon:'⚡',q:"Comment vérifier la conservation de Em expérimentalement ?",a:"Tracer Em en fonction du temps : si Em ≈ constante, la conservation est vérifiée. Sinon, frottements.",formula:'Si Em ≈ [___] → conservation vérifiée',blanks:['constante'],answers:['constante','cte'],topic:'Méthodes'}
+];
+
+let fcIdx=0,fcFlipped=false,fcInit=false;FC.filtered=[...FC];FC.seen=new Set();
+function initFC(){fcInit=true;renderFC();initComp();}
+function renderFC(){if(!FC.filtered.length)return;const c=FC.filtered[fcIdx];document.getElementById('fc-icon').textContent=c.icon;document.getElementById('fc-question').textContent=c.q;document.getElementById('fc-answer').textContent=c.a;document.getElementById('fc-counter').textContent=`Carte ${fcIdx+1}/${FC.filtered.length}`;document.getElementById('fc-card').classList.remove('flipped');fcFlipped=false;updateFCProgress();}
+function flipCard(){document.getElementById('fc-card').classList.toggle('flipped');fcFlipped=!fcFlipped;FC.seen.add(FC.indexOf(FC.filtered[fcIdx]));updateFCProgress();}
+function nextCard(){fcIdx=(fcIdx+1)%FC.filtered.length;renderFC();}
+function prevCard(){fcIdx=(fcIdx-1+FC.filtered.length)%FC.filtered.length;renderFC();}
+function shuffleCards(){for(let i=FC.filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[FC.filtered[i],FC.filtered[j]]=[FC.filtered[j],FC.filtered[i]];}fcIdx=0;renderFC();}
+function filterFC(topic){document.querySelectorAll('.fc-filter-btn').forEach(b=>b.classList.toggle('on',b.dataset.filter===topic));FC.filtered=topic==='all'?[...FC]:FC.filter(c=>c.topic===topic);fcIdx=0;renderFC();}
+function updateFCProgress(){const bar=document.querySelector('.fc-progress-bar');if(!bar)return;bar.innerHTML=FC.filtered.map((_,i)=>{const seen=FC.seen.has(FC.indexOf(FC.filtered[i]));return '<span style="width:8px;height:8px;border-radius:50%;background:'+(seen?'var(--ok)':'var(--border-md)')+';transition:background .3s"></span>';}).join('');}
+function switchFCMode(m,btn){document.querySelectorAll('.fc-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.fc-section').forEach(s=>s.classList.remove('active'));document.getElementById('fc-'+m).classList.add('active');if(m==='completion')renderComp();if(m==='chrono')resetChrono();trackMastery('flashcards');}
+let compIdx=0,compScore=0;
+function initComp(){compIdx=0;compScore=0;}
+function renderComp(){const c=FC[compIdx];document.getElementById('comp-score').textContent=compScore;document.getElementById('comp-container').innerHTML=`<div class="completion-card"><div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.6">${c.formula.replace(/\[___\]/g,'<input class="blank" type="text" id="blank0" placeholder="?" autocomplete="off">')}</div><button class="fc-btn primary" onclick="checkComp()">Vérifier ✓</button><div class="check-result" id="check-res"></div><button class="fc-btn" style="margin-top:9px" onclick="nextComp()">Suivante →</button></div>`;setTimeout(()=>document.getElementById('blank0')?.focus(),80);}
+function checkComp(){const c=FC[compIdx];const v=(document.getElementById('blank0').value||'').trim().toLowerCase();const ok=c.answers.map(a=>a.toLowerCase());const r=document.getElementById('check-res');if(ok.includes(v)){r.className='check-result ok show';r.textContent='✓ Correct ! '+c.answers[0];compScore++;document.getElementById('comp-score').textContent=compScore;}else{r.className='check-result ko show';r.textContent='✗ Réponse : '+c.answers[0];}}
+function nextComp(){compIdx=(compIdx+1)%FC.length;renderComp();}
+let chronoTimer=null,chronoLeft=120,chronoCurrent=0,chronoKnew=0,chronoMissed=[],chronoOrder=[];
+function resetChrono(){clearInterval(chronoTimer);chronoLeft=120;chronoCurrent=0;chronoKnew=0;chronoMissed=[];document.getElementById('chrono-time').textContent='2:00';document.getElementById('chrono-fill').style.width='100%';document.getElementById('chrono-counter').textContent='0/10';document.getElementById('chrono-q').textContent='Appuyez sur "Démarrer"';document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="startChrono()">▶ Démarrer</button>';document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';}
+function startChrono(){const pool=[...Array(FC.length).keys()];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}chronoOrder=pool.slice(0,10);chronoCurrent=0;chronoKnew=0;chronoMissed=[];chronoLeft=120;document.getElementById('chrono-result').classList.remove('show');document.getElementById('chrono-card').style.display='flex';showCC();clearInterval(chronoTimer);chronoTimer=setInterval(()=>{chronoLeft--;const m=Math.floor(chronoLeft/60),s=chronoLeft%60;document.getElementById('chrono-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('chrono-time').className='chrono-display'+(chronoLeft<=20?' urgent':'');document.getElementById('chrono-fill').style.width=(chronoLeft/120*100)+'%';if(chronoLeft<=0){clearInterval(chronoTimer);finishChrono();}},1000);}
+function showCC(){if(chronoCurrent>=chronoOrder.length){finishChrono();return;}const c=FC[chronoOrder[chronoCurrent]];document.getElementById('chrono-q').textContent=c.q;document.getElementById('chrono-counter').textContent=`${chronoCurrent}/10`;document.getElementById('chrono-actions').innerHTML='<button class="btn-knew" onclick="caAnswer(true)">Je savais ✓</button><button class="btn-retry" onclick="caAnswer(false)">À revoir ✗</button>';}
+function caAnswer(k){const c=FC[chronoOrder[chronoCurrent]];if(k)chronoKnew++;else chronoMissed.push(c);chronoCurrent++;if(chronoCurrent>=chronoOrder.length)finishChrono();else showCC();}
+function finishChrono(){clearInterval(chronoTimer);document.getElementById('chrono-card').style.display='none';document.getElementById('chrono-actions').innerHTML='';const el=120-chronoLeft;document.getElementById('result-big').textContent=`${chronoKnew}/10`;document.getElementById('result-sub').textContent=`${chronoKnew*10}% — ${Math.floor(el/60)}m${(el%60).toString().padStart(2,'0')}s`;const ml=document.getElementById('missed-list');if(chronoMissed.length){ml.style.display='block';document.getElementById('missed-items').innerHTML=chronoMissed.map(c=>`<div style="font-size:13px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--warn-bd)">📌 ${c.q}</div>`).join('');}else ml.style.display='none';document.getElementById('chrono-result').classList.add('show');const s=JSON.parse(localStorage.getItem('physichem_stats')||'{}');s.chrono_done=(s.chrono_done||0)+1;localStorage.setItem('physichem_stats',JSON.stringify(s));}
+
+/* MIND MAP */
+const MM_B=[
+  {label:'Harmonique',color:'#0d9488',nodes:[{label:'ẍ + ω₀²x = 0',def:'Équation différentielle de l\'oscillateur harmonique.'},{label:'x(t) = xm·cos(ω₀t+φ)',def:'Solution sinusoïdale. xm = amplitude, φ = phase.'},{label:'ω₀ = √(k/m)',def:'Pulsation propre du système masse-ressort.'}]},
+  {label:'Pendule',color:'#14b8a6',nodes:[{label:'T₀ = 2π√(ℓ/g)',def:'Période propre du pendule simple. Pas de masse !'},{label:'T₀ = 2π√(m/k)',def:'Période propre du ressort. Pas d\'amplitude !'},{label:'f₀ = 1/T₀',def:'Fréquence propre en hertz (Hz).'}]},
+  {label:'Amortissement',color:'#0f766e',nodes:[{label:'Pseudo-périodique',def:'Oscillations avec amplitude décroissante. Faible amortissement.'},{label:'Critique',def:'Retour le plus rapide sans oscillation. Amortissement optimal.'},{label:'Apériodique',def:'Pas d\'oscillation. Fort amortissement.'}]},
+  {label:'Résonance',color:'#2dd4bf',nodes:[{label:'f_excitation ≈ f₀',def:'Amplification maximale à la résonance.'},{label:'Pic de résonance',def:'Plus l\'amortissement est faible, plus le pic est étroit et haut.'},{label:'Résonance destructive',def:'Risque de rupture si l\'amplitude devient trop grande.'}]},
+  {label:'Énergie',color:'#0d9488',nodes:[{label:'Em = ½kxm²',def:'Énergie mécanique totale, constante si pas de frottements.'},{label:'Ec ↔ Ep',def:'Échange permanent entre énergie cinétique et potentielle.'},{label:'Dissipation',def:'Avec frottements, Em décroît. Énergie transférée en chaleur.'}]},
+];
+function renderMM(){
+  const svg=document.getElementById('mindmap-svg');
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#162032':'#FFFFFF',tc=isDark?'#DCE8F5':'#1A2340',cc='#7B6FD0';
+  const W=960,H=540,cx=W/2,cy=H/2;
+  let h=`<rect width="${W}" height="${H}" fill="${bg}" rx="16"/><g id="mm-group">`;
+  h+=`<rect x="${cx-110}" y="${cy-28}" width="220" height="56" rx="13" fill="${cc}" opacity=".13" stroke="${cc}" stroke-width="2"/>
+  <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">OSCILLA-</text>
+  <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="13" font-weight="700" fill="${cc}">TIONS</text>`;
+  const angles=[0,72,144,216,288];
+  MM_B.forEach((br,i)=>{
+    const a=(angles[i]-90)*Math.PI/180,r=165;
+    const bx=cx+r*Math.cos(a),by=cy+r*Math.sin(a);
+    h+=`<path d="M${cx},${cy} Q${(cx+bx)/2+26*Math.sin(a)},${(cy+by)/2-26*Math.cos(a)} ${bx},${by}" fill="none" stroke="${br.color}" stroke-width="2.5" opacity=".55"/>`;
+    const bw=130,bh=34;
+    h+=`<g class="mm-branch-label" data-branch="${i}" style="cursor:pointer">`;
+    h+=`<rect x="${bx-bw/2}" y="${by-bh/2}" width="${bw}" height="${bh}" rx="9" fill="${br.color}" opacity=".12" stroke="${br.color}" stroke-width="1.5"/>
+    <text x="${bx}" y="${by+5}" text-anchor="middle" font-family="Clash Display,sans-serif" font-size="11" font-weight="700" fill="${br.color}">${br.label}</text>`;
+    h+=`</g>`;
+    h+=`<g class="mm-child-${i}">`;
+    br.nodes.forEach((nd,j)=>{
+      const na=a+(j-(br.nodes.length-1)/2)*0.4,nr=265;
+      const nx=cx+nr*Math.cos(na),ny=cy+nr*Math.sin(na);
+      h+=`<line x1="${bx}" y1="${by}" x2="${nx}" y2="${ny}" stroke="${br.color}" stroke-width="1.5" opacity=".4" stroke-dasharray="4,3"/>`;
+      const nw=Math.max(90,nd.label.length*7+14),nh=25;
+      h+=`<rect x="${nx-nw/2}" y="${ny-nh/2}" width="${nw}" height="${nh}" rx="6" fill="${isDark?'#1C2A40':'#F8FAFD'}" stroke="${br.color}" stroke-width="1" opacity=".85"/>
+      <text x="${nx}" y="${ny+5}" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="${tc}" opacity=".85">${nd.label}</text>`;
+    });
+    h+=`</g>`;
+  });
+  h+=`</g>`;
+svg.innerHTML=h;
+document.querySelectorAll('.mm-branch-label').forEach(el=>{el.addEventListener('click',()=>{const branch=el.dataset.branch;document.querySelectorAll(`.mm-child-${branch}`).forEach(c=>{c.style.transition='opacity .3s';c.style.opacity=c.style.opacity==='0'?'1':'0';});});});
+if(typeof mmApply==='function')mmApply();
+}
+function downloadMM(){const svg=document.getElementById('mindmap-svg');const data=new XMLSerializer().serializeToString(svg);const c=document.createElement('canvas');c.width=960;c.height=540;const ctx=c.getContext('2d');const img=new Image();img.onload=()=>{ctx.drawImage(img,0,0);const a=document.createElement('a');a.download='carte-mentale-ch13.png';a.href=c.toDataURL();a.click();};img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(data)));}
+setTimeout(renderMM,100);
+
+let mmScale=1,mmX=0,mmY=0,mmDragging=false,mmStartX,mmStartY;
+function mmZoom(f){mmScale*=f;mmScale=Math.max(0.3,Math.min(3,mmScale));mmApply();}
+function mmReset(){mmScale=1;mmX=0;mmY=0;mmApply();}
+function mmApply(){const c=document.querySelector('.mindmap-svg');if(c){const g=c.querySelector('g');if(g)g.setAttribute('transform','translate('+mmX+','+mmY+') scale('+mmScale+')');}}
+(function(){
+  const mc=document.querySelector('.mindmap-container');
+  if(!mc)return;
+  mc.addEventListener('mousedown',function(e){mmDragging=true;mmStartX=e.clientX-mmX;mmStartY=e.clientY-mmY;});
+  mc.addEventListener('mousemove',function(e){if(!mmDragging)return;mmX=e.clientX-mmStartX;mmY=e.clientY-mmStartY;mmApply();});
+  mc.addEventListener('mouseup',function(){mmDragging=false;});
+  mc.addEventListener('mouseleave',function(){mmDragging=false;});
+  mc.addEventListener('wheel',function(e){e.preventDefault();mmZoom(e.deltaY<0?1.1:0.9);},{passive:false});
+})();
+
+
+/* VIDEOS */
+const VIDEOS=[
+  {id:'2dHq1j7E8dI',title:'Oscillateur harmonique — cours complet',channel:'Physique-Chimie',duration:'12 min',level:'easy',levelTxt:'Accessible'},
+  {id:'xLQR8gkHvYw',title:'Pendule simple et période propre',channel:'Scilabus',duration:'14 min',level:'easy',levelTxt:'Accessible'},
+  {id:'jR3M6j9fKpA',title:'Amortissement et résonance expliqués',channel:'Science étonnante',duration:'13 min',level:'hard',levelTxt:'Approfondi'},
+  {id:'m8P3R2j9hKc',title:'Énergie d\'un oscillateur — tout comprendre',channel:'E-penser',duration:'10 min',level:'hard',levelTxt:'Approfondi'},
+];
+function renderVideos(){document.getElementById('videoGrid').innerHTML=VIDEOS.map(v=>`<div class="vid-card" onclick="openVid('${v.id}','${v.title}')"><div class="vid-thumb"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="vid-play"><div class="vid-play-icon">▶</div></div></div><div class="vid-info"><div class="vid-title">${v.title}</div><div class="vid-meta"><span>${v.channel} · ${v.duration}</span><span class="vid-level ${v.level}">${v.levelTxt}</span></div></div></div>`).join('');}
+renderVideos();
+function openVid(id,title){document.getElementById('vidModalTitle').textContent=title;document.getElementById('vidFrame').src=`https://www.youtube.com/embed/${id}?rel=0`;document.getElementById('vidModal').classList.add('open');}
+function closeVid(){document.getElementById('vidModal').classList.remove('open');document.getElementById('vidFrame').src='';}
+(()=>{const el=document.getElementById('vidModal');if(el)el.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVid();});})();
+
+
+/* CHATBOT — Multi-IA Externe + Réponse rapide locale */
+const AI_URLS={
+  claude:   {url:"https://claude.ai/new",name:"Claude",color:"#d97706"},
+  chatgpt:  {url:"https://chat.openai.com/",name:"ChatGPT",color:"#10a37f"},
+  gemini:   {url:"https://gemini.google.com/app",name:"Gemini",color:"#4285f4"},
+  copilot:  {url:"https://copilot.microsoft.com/",name:"Copilot",color:"#7c3aed"},
+  glm:      {url:"https://chatglm.cn/",name:"GLM 5",color:"#f59e0b"}
+};
+
+function openAI(provider){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt){showToast("Tape d'abord ta question !","#ef4444");inp.focus();return;}
+  const ai=AI_URLS[provider];
+  // Copy question to clipboard
+  navigator.clipboard.writeText(txt).then(()=>{
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Question copiée ! Colle-la dans <strong>${ai.name}</strong> (Ctrl+V). Ouverture en cours…`);
+    showToast(`Question copiée — ouverture de ${ai.name}…`,ai.color);
+    setTimeout(()=>{window.open(ai.url,'_blank');},600);
+  }).catch(()=>{
+    // Fallback: open without clipboard
+    addMsg('user',txt);
+    inp.value='';inp.style.height='auto';
+    addMsg('bot',`🔄 Ouverture de <strong>${ai.name}</strong>… Copie ta question manuellement.`);
+    window.open(ai.url,'_blank');
+  });
+}
+
+function quickReply(){
+  const inp=document.getElementById('chatIn');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  addMsg('user',txt);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const reply=findFAQ(txt)||"Je n'ai pas de réponse locale pour cette question. Essaie avec l'une des IA externes (Claude, ChatGPT, Gemini, Copilot, GLM 5) pour une réponse complète !";
+    addMsg('bot',reply);
+  },400+Math.random()*600);
+}
+
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs'),d=document.createElement('div');
+  d.className='msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="msg-av">${role==='bot'?'🤖':'👤'}</div><div class="msg-bub">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function showTyping(){const c=document.getElementById('chatMsgs'),d=document.createElement('div');d.className='msg';d.id='typing';d.innerHTML='<div class="msg-av">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+function showToast(msg,color){const t=document.getElementById('chatToast');t.textContent=msg;t.style.background=color||'var(--accent)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+
+/* QUIZ */
+const QS=[
+  {q:"La période propre d'un pendule simple de longueur ℓ = 1 m vaut environ :",opts:["0,5 s","1,0 s","2,0 s","3,1 s"],ans:2,corr:"T₀ = 2π√(ℓ/g) = 2π√(1/9,81) ≈ 2,0 s. La période ne dépend pas de la masse."},
+  {q:"L'équation différentielle d'un oscillateur harmonique libre est :",opts:["ẍ + ω₀²x = 0","ẍ − ω₀²x = 0","ẍ + 2λω₀ẋ + ω₀²x = 0","ẋ + ω₀x = 0"],ans:0,corr:"ẍ + ω₀²x = 0 est l'équation de l'oscillateur harmonique non amorti. Le terme 2λω₀ẋ apparaît avec amortissement."},
+  {q:"La période propre d'un système masse-ressort (m=0,5 kg, k=20 N/m) vaut :",opts:["0,31 s","0,63 s","0,99 s","1,40 s"],ans:2,corr:"T₀ = 2π√(m/k) = 2π√(0,5/20) = 2π×0,158 ≈ 0,99 s."},
+  {q:"Dans un oscillateur harmonique, l'énergie mécanique s'écrit :",opts:["Em = ½kx²","Em = ½mv²","Em = ½kxm²","Em = mgℓ"],ans:2,corr:"Em = ½kxm² est constante. C'est la somme Ec + Ep = ½mv² + ½kx² = ½kxm²."},
+  {q:"Un oscillateur amorti en régime pseudo-périodique :",opts:["oscille avec amplitude constante","oscille avec amplitude décroissante","revient à l'équilibre sans osciller","ne revient jamais à l'équilibre"],ans:1,corr:"En régime pseudo-périodique, le système oscille mais l'amplitude diminue exponentiellement au cours du temps."},
+  {q:"La résonance se produit quand la fréquence d'excitation est :",opts:["très supérieure à f₀","très inférieure à f₀","proche de f₀","égale à 0"],ans:2,corr:"La résonance produit une amplitude maximale quand f_excitation ≈ f₀ (fréquence propre). L'amortissement diminue le pic de résonance."},
+  {q:"Pour un pendule simple, si on double la longueur ℓ, la période :",opts:["est multipliée par 2","est multipliée par √2","est divisée par 2","ne change pas"],ans:1,corr:"T₀ = 2π√(ℓ/g). Si ℓ → 2ℓ, T₀ → 2π√(2ℓ/g) = √2 × T₀. La période est multipliée par √2 ≈ 1,41."},
+  {q:"Au passage par la position d'équilibre d'un oscillateur harmonique :",opts:["Ec est maximale, Ep est nulle","Ec est nulle, Ep est maximale","Ec et Ep sont égales","Em est nulle"],ans:0,corr:"À x=0 : v=vmax donc Ec=½mvmax² est maximale, et Ep=½k×0²=0. Em=Ec+Ep=½kxm² se conserve."},
+  {q:"La pulsation propre ω₀ d'un ressort (k=50 N/m, m=0,2 kg) vaut :",opts:["10 rad/s","15,8 rad/s","250 rad/s","0,063 rad/s"],ans:1,corr:"ω₀ = √(k/m) = √(50/0,2) = √250 ≈ 15,8 rad/s."},
+  {q:"Quel régime correspond au retour le plus rapide à l'équilibre sans oscillation ?",opts:["Pseudo-périodique","Critique","Apériodique","Harmonique"],ans:1,corr:"Le régime critique est le retour le plus rapide à l'équilibre sans oscillation. L'amortissement est optimal."}
+];
+let cur=0,score=0,answered=false;
+function startQuiz(){cur=0;score=0;answered=false;document.getElementById('qFinal').classList.remove('show');updateScore();renderQ();}
+function renderQ(){if(cur>=QS.length){showFinal();return;}const q=QS[cur];document.getElementById('qProgFill').style.width=(cur/QS.length*100)+'%';document.getElementById('qProgLbl').textContent=`Q ${cur+1}/${QS.length}`;document.getElementById('qContainer').innerHTML=`<div class="q-card"><div class="q-num">Q ${cur+1}/${QS.length}</div><div class="q-text">${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="ansQ(${i})" id="o${i}"><span class="opt-letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div><div class="corr-reveal" id="corrBox"><strong>💡</strong> ${q.corr}</div><button class="next-btn" id="nextBtn" onclick="nextQ()">${cur<QS.length-1?'Suivante →':'Résultats 🏆'}</button></div>`;answered=false;}
+function ansQ(i){if(answered)return;answered=true;const q=QS[cur];document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);document.getElementById('o'+q.ans).classList.add('correct');if(i!==q.ans)document.getElementById('o'+i).classList.add('wrong');else score++;updateScore();document.getElementById('corrBox').classList.add('show');document.getElementById('nextBtn').classList.add('show');}
+function nextQ(){cur++;renderQ();}
+function updateScore(){document.getElementById('scorePill').textContent=`${score}/${Math.min(cur,QS.length)}`;}
+function showFinal(){document.getElementById('qContainer').innerHTML='';document.getElementById('qProgFill').style.width='100%';const pct=Math.round(score/QS.length*100);document.getElementById('finalBig').textContent=`${score}/${QS.length}`;document.getElementById('finalMsg').textContent=`${pct}% — ${pct>=90?'🏆 Excellent !':pct>=70?'👍 Très bien !':pct>=50?'📚 À revoir.':'🧪 Relis le cours !'}`;document.getElementById('qFinal').classList.add('show');const d=getMastery();if(!d.chap13)d.chap13={};d.chap13.quiz=1;setMastery(d);updateMasteryUI();}
+startQuiz();
+
+/* ============================================================
+   ANNALES VECTEURBAC — VRAIS SUJETS BAC 2022–2025
+   Sources : vecteurbac.fr/oscillations-mecaniques
+   ============================================================ */
+const EXOS=[{"title":"Période d'un pendule simple","subtitle":"Métropole 2025 — Exercice oscillations","sujet":"25-OS1","year":"2025","duration":"20 min","points":5,"diff":"⭐⭐","comp":["ANA"],"keywords":["période","pendule","pesanteur","longueur"],"enonce":"Un pendule simple a une longueur L = 1,0 m. Calculer sa période sur Terre puis sur Mars (g = 3,72 m/s²).","url":"https://vecteurbac.fr"},{"title":"Oscillateur masse-ressort et raideur","subtitle":"Asie 2025 — Exercice oscillations","sujet":"25-OS2","year":"2025","duration":"15 min","points":4,"diff":"⭐⭐","comp":["REA"],"keywords":["ressort","raideur","période","masse"],"enonce":"Un ressort de raideur k porte une masse m = 150 g. On mesure 20 oscillations en 6,0 s. Déterminer k.","url":"https://vecteurbac.fr"},{"title":"Pendule amorti et dissipation","subtitle":"Métropole 2024 — Exercice amortissement","sujet":"24-OS3","year":"2024","duration":"25 min","points":6,"diff":"⭐⭐⭐","comp":["RAI"],"keywords":["amortissement","régime pseudo-périodique","énergie","dissipation"],"enonce":"Un pendule amorti voit son amplitude divisée par 2 en 8 oscillations. Calculer le temps caractéristique et le facteur de qualité.","url":"https://vecteurbac.fr"},{"title":"Résonance d'un pont","subtitle":"Amérique du Sud 2024 — Exercice résonance","sujet":"24-OS4","year":"2024","duration":"20 min","points":5,"diff":"⭐⭐","comp":["VAL"],"keywords":["résonance","fréquence propre","facteur de qualité","amplitude"],"enonce":"Un pont a une fréquence propre f₀ = 1,2 Hz. Des soldats marchent au pas à f = 1,0 Hz. Le pont oscille-t-il en résonance ? Comment éviter le danger ?","url":"https://vecteurbac.fr"}];
+
+let activeFilter='all',exoInit=false;
+function initExos(){exoInit=true;renderExos();}
+function renderExos(){
+  const search=document.getElementById('exoSearch').value.toLowerCase();
+  const statuses=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const filtered=EXOS.filter(e=>{
+    const mf=activeFilter==='all'||e.year===activeFilter||e.comp.includes(activeFilter)||e.diff===activeFilter;
+    const ms=!search||e.title.toLowerCase().includes(search)||e.keywords.some(k=>k.toLowerCase().includes(search))||e.sujet.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  document.getElementById('exoList').innerHTML=filtered.length?filtered.map(e=>{
+    const st=statuses[e.title]||'none';
+    return`<div class="exo-card">
+      <div class="exo-card-header">
+        <div class="exo-sujet-badge">📋 Sujet ${e.sujet}</div>
+        <div class="exo-title">${e.title}</div>
+        <div class="exo-subtitle">${e.subtitle}</div>
+        <div class="exo-pills">
+          <span class="pill yr">📅 ${e.year}</span>
+          <span class="pill dur">⏱ ${e.duration}</span>
+          <span class="pill pt">📊 ${e.points} pts</span>
+          ${e.comp.map(c=>`<span class="pill cp">${c}</span>`).join('')}
+          <span class="pill" style="background:var(--surface2);border:1px solid var(--border-md);color:var(--text-3)">${e.diff}</span>
+        </div>
+      </div>
+      <div class="exo-card-body">
+        <div class="exo-enonce">${e.enonce}</div>
+        <div class="exo-keywords"><strong>🔑 Notions :</strong> ${e.keywords.join(' · ')}</div>
+        <div class="exo-actions">
+          <a href="${e.url}" target="_blank" class="exo-link-btn" rel="noopener noreferrer">🔗 Voir sur VecteurBac ↗</a>
+          <button class="exo-status-btn ${st==='done'?'done':st==='redo'?'redo':''}" onclick="toggleStatus(decodeURIComponent('${encodeURIComponent(e.title)}'),this)">
+            ${st==='done'?'✓ Fait':st==='redo'?'🔄 À refaire':'Marquer…'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join(''):'<p style="color:var(--text-3);text-align:center;padding:36px">Aucun exercice trouvé.</p>';
+}
+function setFilter(btn){activeFilter=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderExos();}
+function filterExos(){renderExos();}
+function toggleStatus(key,btn){
+  const s=JSON.parse(localStorage.getItem('physichem_exo_status')||'{}');
+  const n=!s[key]||s[key]==='none'?'done':s[key]==='done'?'redo':'none';
+  s[key]=n;localStorage.setItem('physichem_exo_status',JSON.stringify(s));
+  btn.className='exo-status-btn'+(n==='done'?' done':n==='redo'?' redo':'');
+  btn.textContent=n==='done'?'✓ Fait':n==='redo'?'🔄 À refaire':'Marquer…';
+  if(n==='done'){const d=getMastery();if(!d.chap13)d.chap13={};d.chap13.annales=1;setMastery(d);updateMasteryUI();}
+}
+
+
+// 2026 Ultimate Aesthetics (Canvas)
+const canvas=document.getElementById('starfield');
+if(canvas){
+    const ctx=canvas.getContext('2d');
+    let w=canvas.width=window.innerWidth;
+    let h=canvas.height=window.innerHeight;
+    const stars=Array.from({length:250},()=>({x:Math.random()*w,y:Math.random()*h,s:Math.random()*1.5,a:Math.random()}));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      stars.forEach(st=>{
+        st.a+=0.02;
+        ctx.fillStyle=`rgba(255,255,255,${Math.abs(Math.sin(st.a))*0.5+0.1})`;
+        ctx.beginPath(); ctx.arc(st.x,st.y,st.s,0,Math.PI*2); ctx.fill();
+        st.y-=0.2; if(st.y<0) st.y=h;
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+    window.addEventListener('resize',()=>{w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;});
+}
+
+// Ensure tab switching updates the 2026 sidebar
+const originalSwitchTab = window.switchTab;
+if (typeof originalSwitchTab === 'function') {
+    window.switchTab = function(tabId) {
+        originalSwitchTab(tabId);
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+    };
+} else {
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.tablist .tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.tablist .tab[data-tab="${tabId}"]`);
+        if(targetTab) targetTab.classList.add('active');
+
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + tabId);
+        if(targetPanel) targetPanel.classList.add('active');
+    }
+}
+
+document.querySelectorAll('.tablist .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof window.switchTab === 'function') {
+        window.switchTab(btn.dataset.tab);
+    }
+  });
+});
+
+</script>
+</body>
+</html>
