@@ -1,0 +1,3 @@
+## 2024-05-19 - Missing ARIA Labels on Core UI Elements
+**Learning:** In a highly interactive app that replicates a desktop environment, icon-only buttons (like `themeBtn`, modal `close` buttons) and placeholder-only inputs (like search, login/register fields) often lack inherent accessible names. This breaks the experience for screen reader users as they encounter interactive controls with missing descriptions.
+**Action:** Always verify that icon-only buttons and form fields without `<label>` tags explicitly declare an `aria-label`. Use a quick global regex or component scanner to enforce this pattern moving forward.
