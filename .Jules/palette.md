@@ -1,0 +1,3 @@
+## 2024-06-25 - ARIA labels for icon-only buttons
+**Learning:** This app heavily uses static HTML files with duplicated components. Many icon-only buttons (like `#themeBtn` and modal close buttons) lacked `aria-label`s, causing accessibility issues for screen reader users. Because these buttons are duplicated across many files without a templating engine, fixing them requires batch regex updates.
+**Action:** Implemented a batch Python script to add `aria-label="Changer de thème"`, `aria-label="Fermer"`, `aria-label="Imprimer"`, `aria-label="Copier prompt IA"`, and `aria-label="Accueil"` to all icon-only buttons across the site's HTML files. Remember to always include ARIA labels when introducing new icon-only controls.
