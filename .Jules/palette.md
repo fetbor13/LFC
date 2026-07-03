@@ -1,0 +1,3 @@
+## 2026-07-03 - Localized ARIA Labels for Modals and Theme Toggles
+**Learning:** Icon-only utility buttons (such as theme toggles and modal close "X" buttons) are frequent components in this interface but lacked screen reader support. Because the site is exclusively in French, generic English ARIA labels or default fallbacks break immersion and fail accessibility checks.
+**Action:** When implementing modal overlays or theme switchers, ensure that translated `aria-label` attributes (e.g., `aria-label="Fermer"`, `aria-label="Changer de thème"`) are explicitly added to the raw HTML structures. Prioritize updating the main `index.html` hub first, as it serves as the entry point for all academic levels.
