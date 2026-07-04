@@ -1,0 +1,3 @@
+## 2025-01-28 - Custom Modal Accessibility in Student/Prof Hub
+**Learning:** Custom `.modal-overlay` implementations in this application lack native dialog accessibility out-of-the-box, meaning screen readers are not correctly trapped inside the modal, they do not announce it as a dialog, and internal icon-only close buttons plus form inputs without visible `<label>` elements are missing descriptive contexts.
+**Action:** When working with `.modal-overlay` elements across the app (like `profModal` and `studentModal`), strictly ensure they receive `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` linked to the modal title. Additionally, explicitly add `aria-label` to the `.close` buttons and to any unlabelled `<input>` elements relying solely on placeholders.
