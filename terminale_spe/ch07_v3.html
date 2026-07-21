@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="papier">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSpé · Ch.07 — Mouvement des satellites et des planètes · Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},svg:{fontCache:'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+/* ==========================================================================
+   ATLAS CÉLESTE — Édition savante · Physique-Chimie LFC · v3
+   Deux palettes calmes : « Papier » (jour) et « Observatoire » (nuit)
+   Aucun néon. Encre, hairlines, gravures.
+   ========================================================================== */
+:root{
+  --paper:#F6F2E9;         /* fond page */
+  --card:#FCFAF3;          /* surfaces */
+  --card-2:#F1ECDF;        /* surfaces appuyées */
+  --ink:#20242E;           /* texte principal */
+  --ink-2:#4A5264;         /* texte secondaire */
+  --ink-3:#8A8F9C;         /* texte discret */
+  --line:#E0D9C8;          /* filets */
+  --line-2:#C9C0AA;        /* filets appuyés */
+  --oxford:#31548F;        /* accent principal — bleu d'Oxford */
+  --oxford-soft:#E4EAF4;   /* fond bleu très pâle */
+  --copper:#9A6B3F;        /* accent secondaire — cuivre */
+  --copper-soft:#F3EADD;
+  --sage:#5F7E62;          /* validation */
+  --sage-soft:#E7EEE7;
+  --wine:#8C4A4A;          /* erreur / mise en garde */
+  --wine-soft:#F2E4E4;
+  --gold:#A98A44;          /* filet d'or discret */
+  --fd:'Fraunces',serif;            /* display */
+  --fs:'Source Serif 4',Georgia,serif; /* prose */
+  --ft:'Inter',system-ui,sans-serif;   /* interface */
+  --fm:'JetBrains Mono',monospace;     /* chiffres */
+  --r:14px;--r-s:9px;
+  --shadow:0 1px 2px rgba(32,36,46,.05),0 10px 30px -18px rgba(32,36,46,.18);
+}
+html[data-theme="nuit"]{
+  --paper:#14171E;--card:#1A1E27;--card-2:#20242F;
+  --ink:#E8E6DF;--ink-2:#B5B3AA;--ink-3:#7D7F88;
+  --line:#2A2F3A;--line-2:#3A404E;
+  --oxford:#8FA9D6;--oxford-soft:#1E2634;
+  --copper:#C9A26E;--copper-soft:#282218;
+  --sage:#8FAE91;--sage-soft:#1C241D;
+  --wine:#C08484;--wine-soft:#2A1D1D;
+  --gold:#B99B5C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink-2);font:400 16px/1.75 var(--fs);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+/* grain de papier discret (jour uniquement) */
+html[data-theme="papier"] body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .02 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:var(--oxford);text-decoration:none}
+::selection{background:var(--oxford);color:var(--paper)}
+
+/* ---------- Structure : dos de livre + page ---------- */
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh;position:relative;z-index:1}
+.spine{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--card);padding:26px 0 18px}
+.spine .brand{display:flex;align-items:center;gap:11px;padding:0 22px 20px;border-bottom:1px solid var(--line)}
+.spine .sigil{width:38px;height:38px;border:1.5px solid var(--oxford);border-radius:50%;display:grid;place-items:center;font:600 .95rem var(--fd);color:var(--oxford)}
+.spine .brand b{display:block;font:600 .92rem/1.25 var(--fd);color:var(--ink)}
+.spine .brand small{display:block;font:500 .6rem var(--ft);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.spine .chap{padding:18px 22px 10px}
+.spine .chap .no{font:500 .66rem var(--ft);letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+.spine .chap .ti{font:600 1rem/1.3 var(--fd);color:var(--ink);margin-top:4px}
+.nav{flex:1;overflow-y:auto;padding:8px 12px 8px 0;scrollbar-width:thin}
+.nv{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:8.5px 14px 8.5px 22px;border:0;border-left:2px solid transparent;background:none;color:var(--ink-2);cursor:pointer;font:500 .86rem var(--ft);transition:.15s;border-radius:0 var(--r-s) var(--r-s) 0}
+.nv .ro{font:500 .68rem var(--fm);color:var(--ink-3);width:20px;flex:0 0 20px}
+.nv:hover{color:var(--ink);background:var(--card-2)}
+.nv.on{color:var(--oxford);border-left-color:var(--oxford);background:var(--oxford-soft);font-weight:600}
+.nv.on .ro{color:var(--oxford)}
+.nv .bd{margin-left:auto;font:500 .62rem var(--fm);color:var(--ink-3);background:var(--card-2);border:1px solid var(--line);padding:1px 7px;border-radius:99px}
+.spine .foot{padding:14px 22px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:var(--r-s);padding:8px 12px;cursor:pointer;font:600 .78rem var(--ft);transition:.2s;width:100%}
+.btn-ghost:hover{border-color:var(--oxford);color:var(--oxford)}
+
+/* ---------- Page ---------- */
+.page{min-width:0}
+.pagehead{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:13px 34px;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.pagehead .bc{font:500 .78rem var(--ft);color:var(--ink-3)}
+.pagehead .bc b{color:var(--ink-2)}
+.pagehead .right{margin-left:auto;display:flex;gap:8px}
+.pagehead .mini{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:99px;padding:5px 13px;cursor:pointer;font:600 .74rem var(--ft);transition:.2s}
+.pagehead .mini:hover{border-color:var(--oxford);color:var(--oxford)}
+
+/* bande mobile */
+.strip{display:none;position:sticky;top:49px;z-index:29;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;padding:7px 12px;gap:4px}
+.strip::-webkit-scrollbar{display:none}
+.strip .nv{border-left:0;border-bottom:2px solid transparent;border-radius:var(--r-s) var(--r-s) 0 0;padding:7px 12px;white-space:nowrap;flex:0 0 auto}
+.strip .nv.on{border-left:0;border-bottom-color:var(--oxford);background:var(--oxford-soft)}
+@media(max-width:1000px){
+  .app{grid-template-columns:1fr}
+  .spine{display:none}
+  .strip{display:flex}
+}
+
+/* ---------- Panneaux ---------- */
+.pane{display:none}
+.pane.on{display:block;animation:appear .35s ease}
+@keyframes appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sheet{max-width:1080px;margin:0 auto;padding:38px 34px 90px}
+.sheet.narrow{max-width:850px}
+@media(max-width:760px){.sheet{padding:24px 16px 70px}}
+
+/* en-tête de panneau (éditorial) */
+.ph{margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--line);position:relative}
+.ph::after{content:'';position:absolute;left:0;bottom:-1px;width:64px;height:1px;background:var(--gold)}
+.ph .k{font:600 .68rem var(--ft);letter-spacing:.22em;text-transform:uppercase;color:var(--copper)}
+.ph h2{font:600 1.72rem/1.2 var(--fd);color:var(--ink);letter-spacing:-.005em;margin-top:5px}
+.ph p{font:400 .95rem/1.65 var(--ft);color:var(--ink-3);margin-top:7px;max-width:640px}
+
+/* ---------- Frontispice (Cours uniquement) ---------- */
+.front{display:flex;align-items:flex-start;gap:26px;margin-bottom:30px;padding-bottom:22px;border-bottom:1px solid var(--line);position:relative}
+.front::after{content:'';position:absolute;left:0;bottom:-1px;width:90px;height:1px;background:var(--gold)}
+.front .roman{flex:0 0 auto;width:74px;height:74px;border:1.5px solid var(--line-2);border-radius:50%;display:grid;place-items:center;font:500 1.5rem var(--fd);color:var(--copper);position:relative}
+.front .roman::after{content:'';position:absolute;inset:5px;border:1px solid var(--line);border-radius:50%}
+.front h1{font:600 clamp(1.5rem,2.6vw,2.1rem)/1.18 var(--fd);color:var(--ink);letter-spacing:-.008em}
+.front .em{font-style:italic;color:var(--oxford)}
+.front .lede{font:italic 400 .96rem/1.6 var(--fs);color:var(--ink-2);margin-top:7px;max-width:600px}
+.front .objline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.obj{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);color:var(--ink-2);border-radius:99px;padding:4px 12px;font:500 .74rem var(--ft);cursor:pointer;transition:.15s}
+.obj:hover{border-color:var(--line-2)}
+.obj .bx{width:13px;height:13px;border-radius:4px;border:1.2px solid var(--ink-3);display:grid;place-items:center;font-size:.5rem;color:transparent;transition:.15s}
+.obj.done{color:var(--ink-3)}
+.obj.done .bx{background:var(--sage);border-color:var(--sage);color:#fff}
+
+/* ---------- Corps du cours : article + marge ---------- */
+.folio{display:grid;grid-template-columns:minmax(0,1fr) 252px;gap:44px}
+@media(max-width:1080px){.folio{grid-template-columns:1fr}.marge{display:none}}
+.article{max-width:720px;font-size:1.01rem}
+.article p{margin-bottom:15px}
+.article b{color:var(--ink);font-weight:600}
+.kw{color:var(--oxford);font-weight:600}
+.marge-inner{position:sticky;top:120px;display:flex;flex-direction:column;gap:16px}
+.toc{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:16px 18px;box-shadow:var(--shadow)}
+.toc h4,.formulaire h4{font:600 .66rem var(--ft);letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-bottom:10px}
+.toc a{display:flex;gap:9px;padding:5.5px 0;font:500 .82rem var(--ft);color:var(--ink-3);border-left:2px solid transparent;padding-left:10px;margin-left:-12px;transition:.15s}
+.toc a .ix{font:500 .66rem var(--fm);opacity:.7}
+.toc a:hover{color:var(--ink)}.toc a.on{color:var(--oxford);border-left-color:var(--oxford)}
+.formulaire{border:1px solid var(--line);border-top:2px solid var(--oxford);border-radius:var(--r);background:var(--card);padding:16px 18px;box-shadow:var(--shadow)}
+.formulaire .kf{font:500 .8rem var(--fm);color:var(--ink);padding:6.5px 0;border-bottom:1px dashed var(--line)}
+.formulaire .kf:last-child{border:none}
+.formulaire .kf small{display:block;font:400 .68rem var(--ft);color:var(--ink-3)}
+
+/* sections numérotées façon traité */
+.sct{margin:0 0 46px}
+.sct-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.sct-head .pn{font:500 .78rem var(--fm);color:var(--copper)}
+.sct-head h3{font:600 1.28rem/1.25 var(--fd);color:var(--ink)}
+.sct-head::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* encadrés d'édition */
+.enc{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:16px 20px;margin:16px 0;box-shadow:var(--shadow)}
+.enc .et{display:block;font:600 .64rem var(--ft);letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+.enc.df{border-left:3px solid var(--oxford)}.enc.df .et{color:var(--oxford)}
+.enc.pp{border-left:3px solid var(--sage)}.enc.pp .et{color:var(--sage)}
+.enc.gd{border-left:3px solid var(--wine);background:var(--wine-soft)}.enc.gd .et{color:var(--wine)}
+.enc.id{border-left:3px solid var(--copper)}.enc.id .et{color:var(--copper)}
+
+/* planche de formule (double filet) */
+.planche{margin:22px 0;border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.planche .rule{height:5px;border-bottom:1px solid var(--line-2);position:relative}
+.planche .rule::after{content:'';position:absolute;left:0;right:0;top:1px;height:1px;background:var(--line)}
+.planche .fx{padding:24px 24px 18px;text-align:center;font-size:1.12rem;color:var(--ink)}
+.planche .units{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid var(--line)}
+.planche .u{padding:10px 15px;border-right:1px solid var(--line);font:400 .76rem var(--ft);color:var(--ink-3)}
+.planche .u:last-child{border-right:none}
+.planche .u b{display:block;font:500 .82rem var(--fm);color:var(--ink)}
+
+/* démonstration (bloc repliable sobre) */
+details.dem{margin:16px 0;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden}
+details.dem summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:13px 19px;font:600 .9rem var(--ft);color:var(--ink);transition:.15s}
+details.dem summary::-webkit-details-marker{display:none}
+details.dem summary .tri{font-size:.68rem;color:var(--copper);transition:transform .2s}
+details.dem[open] summary .tri{transform:rotate(90deg)}
+details.dem summary:hover{background:var(--card-2)}
+details.dem .dem-body{padding:4px 22px 16px;border-top:1px dashed var(--line);font-size:.97rem}
+
+/* figures — gravures */
+.grav{margin:22px 0;border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);padding:16px 16px 8px;text-align:center;box-shadow:var(--shadow)}
+.grav svg{width:100%;height:auto;max-width:100%}
+.grav figcaption{margin-top:6px;padding:8px 6px 6px;border-top:1px solid var(--line);font:italic 400 .8rem var(--fs);color:var(--ink-3)}
+.grav .fno{font:500 .72rem var(--ft);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--copper)}
+
+/* renvois de fin de cours */
+.renvois{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0}
+.renvoi{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:16px 18px;cursor:pointer;transition:.18s;box-shadow:var(--shadow)}
+.renvoi:hover{border-color:var(--oxford);transform:translateY(-2px)}
+.renvoi b{display:block;font:600 .95rem var(--fd);color:var(--ink);margin-bottom:3px}
+.renvoi span{font:400 .78rem var(--ft);color:var(--ink-3)}
+.renvoi .ic{font-size:1.1rem;margin-bottom:7px;display:block;color:var(--oxford)}
+
+/* ---------- Carte mentale ---------- */
+.mm-frame{border:1px solid var(--line-2);border-radius:var(--r);overflow:hidden;background:#fff;cursor:zoom-in;box-shadow:var(--shadow)}
+.mm-frame img{display:block;width:100%;height:auto}
+.mm-tools{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.mm-lightbox{position:fixed;inset:0;z-index:200;background:rgba(15,17,22,.92);display:none;place-items:center;padding:24px;cursor:zoom-out}
+.mm-lightbox.on{display:grid}
+.mm-lightbox img{max-width:96%;max-height:92vh;border-radius:10px;box-shadow:0 30px 90px -20px #000}
+
+/* ---------- Simulation ---------- */
+.sim-cadre{border:1px solid var(--line-2);border-radius:var(--r);overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+.sim-bar{display:flex;align-items:center;gap:11px;padding:12px 17px;border-bottom:1px solid var(--line);font:500 .82rem var(--ft)}
+.sim-bar .pt{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+.sim-bar b{color:var(--ink);font-family:var(--fd)}
+.sim-bar .full{margin-left:auto;font:600 .74rem var(--ft);color:var(--ink-3);border:1px solid var(--line-2);padding:5px 12px;border-radius:var(--r-s);cursor:pointer;background:var(--card)}
+.sim-bar .full:hover{color:var(--oxford);border-color:var(--oxford)}
+.sim-cadre iframe{display:block;width:100%;height:640px;border:0;background:#0b0d12}
+@media(max-width:760px){.sim-cadre iframe{height:440px}}
+
+/* ---------- Méthodes ---------- */
+.method{margin:14px 0 26px}
+.step{position:relative;padding:0 0 20px 38px}.step:last-child{padding-bottom:0}
+.step::before{content:'';position:absolute;left:11px;top:26px;bottom:0;width:1px;background:var(--line-2)}
+.step:last-child::before{display:none}
+.step .dot{position:absolute;left:0;top:2px;width:23px;height:23px;border-radius:50%;border:1.4px solid var(--oxford);background:var(--card);display:grid;place-items:center;font:600 .66rem var(--fm);color:var(--oxford)}
+.step b{color:var(--ink);font-weight:600}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);margin:14px 0;box-shadow:var(--shadow)}
+table.const{border-collapse:collapse;width:100%;min-width:460px;font:400 .87rem var(--ft);background:var(--card)}
+table.const th{background:var(--card-2);color:var(--ink);font:600 .82rem var(--ft);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-2)}
+table.const td{padding:9px 14px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+table.const tr:last-child td{border-bottom:none}
+
+/* ---------- Flashcards ---------- */
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:14px}
+.flip{height:172px;perspective:1100px;cursor:pointer}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);border:1px solid var(--line-2);padding:18px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow)}
+.flip .f{background:var(--card)}
+.flip .f small{font:600 .6rem var(--ft);letter-spacing:.18em;color:var(--copper);margin-bottom:8px}
+.flip .f strong{font:600 .98rem/1.35 var(--fd);color:var(--ink)}
+.flip .b{transform:rotateY(180deg);background:var(--oxford-soft);border-color:var(--oxford);color:var(--ink);font:400 .87rem/1.55 var(--ft)}
+.flip .b .lab{display:block;font:600 .58rem var(--ft);letter-spacing:.18em;color:var(--oxford);margin-bottom:6px}
+
+/* ---------- Quiz ---------- */
+.q{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:18px 20px;margin-bottom:13px;box-shadow:var(--shadow)}
+.q .qq{color:var(--ink);font:600 .97rem var(--ft);margin-bottom:12px;line-height:1.5}
+.q .qq b{color:var(--copper);font-family:var(--fm);margin-right:8px;font-weight:500}
+.opt{display:block;width:100%;text-align:left;padding:10px 14px;border-radius:var(--r-s);border:1px solid var(--line);background:var(--paper);color:var(--ink-2);cursor:pointer;margin-bottom:7px;transition:.15s;font:450 .88rem var(--ft)}
+.opt:hover{border-color:var(--line-2);color:var(--ink)}
+.opt.ok{border-color:var(--sage);background:var(--sage-soft);color:var(--ink)}
+.opt.no{border-color:var(--wine);background:var(--wine-soft);color:var(--ink)}
+.opt .fb{float:right;font-weight:700;color:var(--sage)}
+.qscore{position:sticky;bottom:16px;margin-top:20px;display:flex;align-items:center;gap:13px;padding:13px 20px;border:1px solid var(--line-2);border-radius:var(--r);background:var(--card);box-shadow:var(--shadow)}
+.qscore b{font:600 1.35rem var(--fd);color:var(--oxford)}
+.qscore button{margin-left:auto;padding:8px 16px;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);cursor:pointer;font:600 .8rem var(--ft)}
+.qscore button:hover{border-color:var(--oxford);color:var(--oxford)}
+
+/* ---------- Exercices ---------- */
+.exo-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.filter-btn{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);border-radius:99px;padding:6px 14px;cursor:pointer;font:600 .78rem var(--ft);transition:.15s}
+.filter-btn:hover{border-color:var(--oxford);color:var(--oxford)}
+.filter-btn.on{background:var(--oxford);color:var(--paper);border-color:var(--oxford)}
+.exo{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:18px 22px;margin-bottom:14px;box-shadow:var(--shadow)}
+.lvlx{display:inline-flex;font:600 .6rem var(--ft);letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:10px}
+.lx-1{color:var(--sage);border:1px solid var(--sage)}
+.lx-2{color:var(--copper);border:1px solid var(--copper)}
+.lx-3{color:var(--wine);border:1px solid var(--wine)}
+.lx-bac{color:var(--oxford);border:1px solid var(--oxford)}
+.exo h3{font:600 1.02rem var(--fd);color:var(--ink);margin-bottom:8px}
+.exo .stmt{color:var(--ink-2);font-size:.97rem}
+.exo ol{margin:7px 0 0 20px;color:var(--ink-2);font-size:.95rem}.exo ol li{margin:3px 0}
+.rev{margin-top:12px;padding:7px 15px;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--card-2);color:var(--ink-2);cursor:pointer;font:600 .8rem var(--ft);transition:.15s}
+.rev:hover{border-color:var(--sage);color:var(--sage)}
+.sol{margin-top:13px;padding:14px 18px;border-radius:var(--r-s);background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--sage);display:none;line-height:1.7;font-size:.96rem}
+.sol.on{display:block;animation:appear .25s}
+.sol b.slab{color:var(--sage)}
+
+/* ---------- Interro ---------- */
+.interro-bar{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:16px}
+.interro-print{cursor:pointer;border:1px solid var(--oxford);background:var(--oxford-soft);color:var(--oxford);padding:8px 15px;border-radius:var(--r-s);font:600 .82rem var(--ft)}
+.i-score{font:600 .88rem var(--ft);color:var(--sage)}
+.i-part{margin:20px 0 9px;font:600 .95rem var(--fd);color:var(--oxford);border-bottom:1px solid var(--line-2);padding-bottom:5px}
+.i-q,.i-mcq{border:1px solid var(--line);border-radius:var(--r);padding:13px 16px;margin:9px 0;background:var(--card);box-shadow:var(--shadow)}
+.i-head{display:flex;justify-content:space-between;margin-bottom:5px}
+.i-num{font:600 .8rem var(--fm);color:var(--copper)}
+.i-pts{font:400 .7rem var(--ft);color:var(--ink-3)}
+.i-txt{margin-bottom:7px;line-height:1.55;color:var(--ink-2);font-size:.96rem}
+.i-txt ol{margin:5px 0 0 18px}
+.i-opts{display:flex;flex-direction:column;gap:7px;margin-top:7px}
+.i-opt{display:flex;gap:8px;text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink-2);padding:8px 12px;border-radius:var(--r-s);font:450 .87rem var(--ft);transition:.15s}
+.i-opt:hover{border-color:var(--line-2)}
+.i-opt .let{font-weight:700;color:var(--copper)}
+.i-opt.good{border-color:var(--sage);background:var(--sage-soft);color:var(--ink)}
+.i-opt.bad{border-color:var(--wine);background:var(--wine-soft);color:var(--ink)}
+.i-reveal{cursor:pointer;border:1px solid var(--line-2);background:transparent;color:var(--ink-2);padding:5px 12px;border-radius:var(--r-s);font:600 .78rem var(--ft)}
+.i-reveal:hover{border-color:var(--sage);color:var(--sage)}
+.i-corr,.i-exp{display:none;margin-top:8px;padding:9px 12px;border-left:3px solid var(--sage);background:var(--sage-soft);border-radius:5px;line-height:1.55;color:var(--ink-2);font-size:.88rem}
+.i-corr.on,.i-exp.on{display:block}
+
+/* ---------- Type Bac ---------- */
+.bac-card{border:1px solid var(--line-2);border-top:2px solid var(--copper);border-radius:var(--r);background:var(--card);padding:22px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.bac-card .exam{display:inline-block;font:600 .62rem var(--ft);letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:5px}
+.bac-card h3{font:600 1.14rem var(--fd);color:var(--ink);margin-bottom:3px}
+.bac-card .src{font:italic 400 .78rem var(--fs);color:var(--ink-3);margin-bottom:11px}
+.bac-part{padding:10px 0;border-bottom:1px dashed var(--line)}.bac-part:last-child{border:none}
+.bac-part .pq{color:var(--ink-2)}.bac-part .pq b{color:var(--copper);font-family:var(--fm);margin-right:8px;font-weight:500}
+.vb-list{list-style:none}
+.vb-list li{padding:8px 0;border-bottom:1px dashed var(--line);font:400 .9rem var(--ft)}
+.vb-list li:last-child{border:none}
+.vb-list a{font-weight:600}
+.vb-list .tagv{font:400 .68rem var(--fm);color:var(--ink-3)}
+
+/* ---------- Vers le Sup ---------- */
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px;margin:16px 0}
+.fcard{border:1px solid var(--line-2);border-top:2px solid var(--oxford);border-radius:var(--r);padding:16px 18px;background:var(--card);box-shadow:var(--shadow)}
+.fcard .fl{display:inline-block;font:600 .58rem var(--ft);letter-spacing:.14em;text-transform:uppercase;color:var(--oxford);margin-bottom:10px}
+.fcard .fe{color:var(--ink);text-align:center;margin:4px 0 9px;font-size:.99rem;overflow-x:auto}
+.fcard .fd2{color:var(--ink-3);font:400 .83rem/1.6 var(--ft)}
+
+/* ---------- Hub IA ---------- */
+.bots{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:11px;margin:4px 0 20px}
+.bot{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:15px;cursor:pointer;transition:.18s;text-align:center;box-shadow:var(--shadow)}
+.bot:hover{border-color:var(--oxford);transform:translateY(-2px)}
+.bot .bi{font-size:1.35rem;display:block;margin-bottom:5px}
+.bot .bn{display:block;font:600 .88rem var(--fd);color:var(--ink);margin-bottom:2px}
+.bot .bu{font:400 .73rem var(--ft);color:var(--ink-3)}
+.prompt-selects{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:12px;margin-bottom:14px}
+.pf label{display:block;font:600 .68rem var(--ft);color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.pf select{width:100%;background:var(--paper);border:1px solid var(--line-2);color:var(--ink);border-radius:var(--r-s);padding:9px 11px;font:450 .87rem var(--ft);cursor:pointer}
+.prompt-out{position:relative;border:1px solid var(--line);border-radius:var(--r-s);background:var(--paper);padding:16px;min-height:84px}
+.prompt-out #ptext{color:var(--ink-2);font:400 .9rem/1.6 var(--ft);padding-right:78px}
+.copy-p{position:absolute;right:11px;top:11px;border:1px solid var(--oxford);background:var(--oxford-soft);color:var(--oxford);border-radius:var(--r-s);padding:5px 13px;cursor:pointer;font:600 .78rem var(--ft)}
+.ia-q{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:var(--r-s);background:var(--card);color:var(--ink);padding:12px 16px;margin-bottom:9px;cursor:pointer;font:550 .9rem var(--ft);transition:.15s;position:relative}
+.ia-q:hover{border-color:var(--oxford)}
+.ia-q::after{content:'+';position:absolute;right:16px;color:var(--copper);font-weight:700;transition:.2s}
+.ia-q.on::after{transform:rotate(45deg)}
+.ia-a{display:none;padding:7px 16px 15px;color:var(--ink-2);font:400 .89rem/1.7 var(--ft);border-left:2px solid var(--line-2);margin:2px 0 12px 7px}
+.ia-a.on{display:block;animation:appear .25s}
+
+.wbox{display:flex;gap:11px;border:1px solid var(--line);border-left:3px solid var(--wine);background:var(--wine-soft);border-radius:var(--r-s);padding:13px 15px;margin:15px 0;font:400 .89rem/1.6 var(--ft);color:var(--ink-2)}
+.section-title{font:600 1.08rem var(--fd);color:var(--ink);margin:6px 0 11px}
+
+/* ---------- Pied ---------- */
+.foliot{display:flex;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}
+.fnav{flex:1;border:1px solid var(--line);border-radius:var(--r);padding:15px 19px;background:var(--card);transition:.18s;box-shadow:var(--shadow)}
+.fnav:hover{border-color:var(--oxford);transform:translateY(-2px)}
+.fnav small{font:600 .62rem var(--ft);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.fnav b{display:block;margin-top:3px;font:600 .95rem var(--fd);color:var(--ink)}
+.fnav.next{text-align:right}
+@media(max-width:600px){.foliot{flex-direction:column}}
+
+@media print{
+  .spine,.strip,.pagehead,.rev,.i-reveal,.interro-print,.foliot{display:none!important}
+  .pane{display:block!important}.sol,.i-corr,.i-exp{display:block!important}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<div class="mm-lightbox" id="mmLightbox" onclick="this.classList.remove('on')"><img id="mmImg" src="" alt="Carte mentale agrandie"></div>
+
+<div class="app">
+<!-- ══════════ DOS DE LIVRE ══════════ -->
+<aside class="spine">
+  <a class="brand" href="../../index.html">
+    <span class="sigil">EA</span>
+    <span><b>Le Cercle d'El-Abili</b><small>Physique · Chimie</small></span>
+  </a>
+  <div class="chap"><div class="no">Terminale Spé · Chapitre VII</div><div class="ti">Satellites &amp; planètes</div></div>
+  <nav class="nav" id="nav">
+    <button class="nv on" data-v="cours"><span class="ro">01</span>Cours</button>
+    <button class="nv" data-v="carte"><span class="ro">02</span>Carte mentale</button>
+    <button class="nv" data-v="sim"><span class="ro">03</span>Simulation</button>
+    <button class="nv" data-v="methode"><span class="ro">04</span>Méthodes</button>
+    <button class="nv" data-v="flash"><span class="ro">05</span>Flashcards<span class="bd">12</span></button>
+    <button class="nv" data-v="quiz"><span class="ro">06</span>Quiz<span class="bd">10</span></button>
+    <button class="nv" data-v="exos"><span class="ro">07</span>Exercices<span class="bd">12</span></button>
+    <button class="nv" data-v="interro"><span class="ro">08</span>Interro</button>
+    <button class="nv" data-v="bac"><span class="ro">09</span>Type Bac</button>
+    <button class="nv" data-v="ia"><span class="ro">10</span>Hub IA</button>
+    <button class="nv" data-v="sup"><span class="ro">11</span>Vers le Sup</button>
+  </nav>
+  <div class="foot">
+    <button class="btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙 Observatoire</button>
+    <button class="btn-ghost" onclick="location.href='../../index.html'">🧭 Astrolabe</button>
+  </div>
+</aside>
+
+<!-- ══════════ PAGE ══════════ -->
+<div class="page">
+<header class="pagehead">
+  <span class="bc">Terminale Spé · <b>Ch. VII — Mouvement des satellites et des planètes</b></span>
+  <span class="right">
+    <button class="mini" id="themeBtnM" onclick="toggleTheme()">🌙</button>
+    <button class="mini" onclick="location.href='../../index.html'">🧭</button>
+  </span>
+</header>
+<nav class="strip" id="strip">
+  <button class="nv on" data-v="cours">📖 Cours</button>
+  <button class="nv" data-v="carte">🧠 Carte</button>
+  <button class="nv" data-v="sim">🛰️ Sim</button>
+  <button class="nv" data-v="methode">🧰 Méthodes</button>
+  <button class="nv" data-v="flash">🃏 Flash</button>
+  <button class="nv" data-v="quiz">✅ Quiz</button>
+  <button class="nv" data-v="exos">🧩 Exos</button>
+  <button class="nv" data-v="interro">📋 Interro</button>
+  <button class="nv" data-v="bac">🎓 Bac</button>
+  <button class="nv" data-v="ia">🤖 IA</button>
+  <button class="nv" data-v="sup">🚀 Sup</button>
+</nav>
+<main>
+
+<!-- ══════════ 01 · COURS ══════════ -->
+<section class="pane on" id="p-cours"><div class="sheet">
+  <div class="front">
+    <div class="roman">VII</div>
+    <div>
+      <h1>Mouvement des <span class="em">satellites</span> et des planètes</h1>
+      <p class="lede">Des lois de Kepler à la gravitation de Newton — pourquoi la Lune tombe sans jamais toucher la Terre.</p>
+      <div class="objline" id="objs">
+        <span class="obj"><span class="bx">✓</span>Les trois lois de Kepler</span>
+        <span class="obj"><span class="bx">✓</span>Loi de gravitation universelle</span>
+        <span class="obj"><span class="bx">✓</span>Vitesse &amp; période orbitales</span>
+        <span class="obj"><span class="bx">✓</span>Satellite géostationnaire</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="folio">
+  <article class="article">
+    <div class="sct" id="s1">
+      <div class="sct-head"><span class="pn">§ 1</span><h3>Les trois lois de Kepler</h3></div>
+      <p>Entre 1609 et 1618, <b>Johannes Kepler</b> analyse les observations de Tycho Brahé et en tire trois lois <span class="kw">purement empiriques</span> — la théorie qui les explique n'arrivera que 70 ans plus tard, avec Newton.</p>
+      <div class="enc df"><span class="et">Première loi — les orbites</span>
+        Dans le référentiel héliocentrique, chaque planète décrit une <b>ellipse</b> dont le Soleil occupe l'un des <span class="kw">foyers</span>.</div>
+      <div class="enc df"><span class="et">Deuxième loi — les aires</span>
+        Le segment Soleil-planète balaie des <b>aires égales pendant des durées égales</b> : la planète accélère au périhélie, ralentit à l'aphélie.</div>
+
+      <figure class="grav">
+        <svg viewBox="0 0 640 330" role="img" aria-label="Orbite elliptique, Soleil au foyer, loi des aires">
+          <defs>
+            <pattern id="hachA" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="7" stroke="#9A6B3F" stroke-width="1" opacity=".55"/></pattern>
+            <pattern id="hachB" width="7" height="7" patternTransform="rotate(-45)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="7" stroke="#31548F" stroke-width="1" opacity=".5"/></pattern>
+          </defs>
+          <ellipse cx="320" cy="163" rx="248" ry="140" fill="none" stroke="var(--ink-2)" stroke-width="1.6"/>
+          <line x1="72" y1="163" x2="568" y2="163" stroke="var(--line-2)" stroke-dasharray="5 5" stroke-width="1"/>
+          <polygon points="122,163 92,105 80,163 92,221" fill="url(#hachA)" stroke="var(--copper)" stroke-width="1"/>
+          <polygon points="122,163 560,150 568,163 560,176" fill="url(#hachB)" stroke="var(--oxford)" stroke-width="1"/>
+          <circle cx="122" cy="163" r="15" fill="none" stroke="var(--copper)" stroke-width="1.6"/>
+          <circle cx="122" cy="163" r="6.5" fill="var(--copper)"/>
+          <circle cx="80" cy="163" r="6" fill="none" stroke="var(--oxford)" stroke-width="1.6"/>
+          <circle cx="564" cy="163" r="5.5" fill="none" stroke="var(--ink-2)" stroke-width="1.5"/>
+          <text x="122" y="197" fill="var(--copper)" font-size="12.5" text-anchor="middle" font-family="Georgia,serif" font-style="italic">Soleil (foyer)</text>
+          <text x="72" y="143" fill="var(--oxford)" font-size="12.5" text-anchor="middle" font-family="Georgia,serif" font-style="italic">périhélie</text>
+          <text x="562" y="143" fill="var(--ink-2)" font-size="12.5" text-anchor="middle" font-family="Georgia,serif" font-style="italic">aphélie</text>
+          <text x="440" y="156" fill="var(--ink-3)" font-size="12" text-anchor="middle" font-family="Georgia,serif" font-style="italic">demi-grand axe a</text>
+          <text x="152" y="112" fill="var(--copper)" font-size="11.5" font-family="Georgia,serif" font-style="italic">aire A₁</text>
+          <text x="462" y="196" fill="var(--oxford)" font-size="11.5" font-family="Georgia,serif" font-style="italic">aire A₂</text>
+        </svg>
+        <figcaption><span class="fno">Planche I</span> — Orbite elliptique : le Soleil occupe un foyer. Les aires hachurées A₁ = A₂ sont balayées en des durées égales — la planète court au périhélie, flâne à l'aphélie.</figcaption>
+      </figure>
+
+      <div class="enc df"><span class="et">Troisième loi — les périodes</span>
+        Le carré de la période est proportionnel au cube du demi-grand axe :
+        <p style="text-align:center;margin:8px 0 0">\( \dfrac{T^2}{a^3} = \text{constante} \) — la même pour toutes les planètes du système.</p></div>
+      <div class="enc id"><span class="et">L'idée à retenir</span>
+        La 3ᵉ loi est un <b>outil de mesure cosmique</b> : connaître la période d'un astre, c'est connaître sa distance. C'est ainsi qu'on « pèse » les exoplanètes aujourd'hui.</div>
+    </div>
+
+    <div class="sct" id="s2">
+      <div class="sct-head"><span class="pn">§ 2</span><h3>La gravitation universelle</h3></div>
+      <p>Newton unifie ciel et Terre : la force qui fait tomber la pomme est <b>la même</b> qui retient la Lune. Deux corps de masses \(m_A\) et \(m_B\) séparés de \(d\) s'attirent selon :</p>
+      <div class="planche"><div class="rule"></div>
+        <div class="fx">\[ \vec{F}_{A/B} = -\,G\,\frac{m_A\,m_B}{d^2}\,\vec{u}_{AB} \]</div>
+        <div class="units">
+          <div class="u"><b>F</b> force en newtons (N)</div>
+          <div class="u"><b>G</b> 6,67 × 10⁻¹¹ N·m²·kg⁻²</div>
+          <div class="u"><b>m</b> masses en kg</div>
+          <div class="u"><b>d</b> distance centre à centre (m)</div>
+        </div></div>
+
+      <figure class="grav">
+        <svg viewBox="0 0 640 180" role="img" aria-label="Attraction gravitationnelle entre deux corps">
+          <defs>
+            <pattern id="hachC" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="6" stroke="#31548F" stroke-width=".9" opacity=".5"/></pattern>
+            <marker id="arw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--wine)"/></marker>
+          </defs>
+          <line x1="150" y1="88" x2="490" y2="88" stroke="var(--line-2)" stroke-dasharray="5 5" stroke-width="1"/>
+          <circle cx="150" cy="88" r="29" fill="url(#hachC)" stroke="var(--ink-2)" stroke-width="1.6"/>
+          <circle cx="490" cy="88" r="20" fill="none" stroke="var(--ink-2)" stroke-width="1.6"/>
+          <text x="150" y="93" fill="var(--ink)" font-size="14" text-anchor="middle" font-family="JetBrains Mono,monospace">mₐ</text>
+          <text x="490" y="93" fill="var(--ink)" font-size="13" text-anchor="middle" font-family="JetBrains Mono,monospace">m_b</text>
+          <line x1="188" y1="88" x2="252" y2="88" stroke="var(--wine)" stroke-width="2" marker-end="url(#arw)"/>
+          <line x1="452" y1="88" x2="388" y2="88" stroke="var(--wine)" stroke-width="2" marker-end="url(#arw)"/>
+          <text x="220" y="74" fill="var(--wine)" font-size="13" text-anchor="middle" font-family="Georgia,serif" font-style="italic">F</text>
+          <text x="420" y="74" fill="var(--wine)" font-size="13" text-anchor="middle" font-family="Georgia,serif" font-style="italic">F</text>
+          <line x1="150" y1="142" x2="490" y2="142" stroke="var(--ink-3)" stroke-width="1"/>
+          <line x1="150" y1="136" x2="150" y2="148" stroke="var(--ink-3)" stroke-width="1"/>
+          <line x1="490" y1="136" x2="490" y2="148" stroke="var(--ink-3)" stroke-width="1"/>
+          <text x="320" y="162" fill="var(--ink-3)" font-size="12.5" text-anchor="middle" font-family="Georgia,serif" font-style="italic">d — distance entre les centres</text>
+        </svg>
+        <figcaption><span class="fno">Planche II</span> — Forces opposées, de même valeur (3ᵉ loi de Newton), portées par la droite des centres.</figcaption>
+      </figure>
+
+      <div class="enc gd"><span class="et">Mise en garde</span>
+        <b>d est la distance entre les centres</b>, pas entre les surfaces. Pour un satellite à l'altitude \(h\) : \(d = R_T + h\), jamais \(h\) seul.</div>
+
+      <details class="dem"><summary><span class="tri">▶</span>Démonstration — le mouvement circulaire uniforme est possible</summary>
+        <div class="dem-body">
+          <p>Dans le référentiel géocentrique, appliquons la 2ᵉ loi de Newton au satellite de masse \(m\) en orbite circulaire de rayon \(r\) :</p>
+          <p style="text-align:center">\( m\,\vec a = -\,G\,\dfrac{M_T\,m}{r^2}\,\vec u_r \)</p>
+          <p>L'accélération est <b>centripète</b> : dans le repère de Frenet, \(a_T = \dfrac{dv}{dt} = 0\) — la norme de la vitesse est constante, le mouvement circulaire est nécessairement <b>uniforme</b>. Et \(a_N = \dfrac{v^2}{r} = \dfrac{GM_T}{r^2}\) fournit immédiatement la vitesse orbitale.</p></div></details>
+    </div>
+
+    <div class="sct" id="s3">
+      <div class="sct-head"><span class="pn">§ 3</span><h3>Vitesse et période orbitales</h3></div>
+      <p>De la démonstration précédente découlent les deux relations reines du chapitre :</p>
+      <div class="planche"><div class="rule"></div>
+        <div class="fx">\[ v=\sqrt{\frac{G\,M_T}{r}} \qquad\qquad T = 2\pi\sqrt{\frac{r^{3}}{G\,M_T}} \]</div>
+        <div class="units">
+          <div class="u"><b>v</b> vitesse orbitale (m·s⁻¹)</div>
+          <div class="u"><b>T</b> période de révolution (s)</div>
+          <div class="u"><b>r = R_T + h</b> rayon d'orbite (m)</div>
+          <div class="u"><b>M_T</b> masse de l'astre central (kg)</div>
+        </div></div>
+
+      <div class="grav" style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <div style="border-right:1px solid var(--line);padding:2px">
+        <svg viewBox="0 0 300 290" role="img" aria-label="Orbite circulaire, vecteurs vitesse et accélération">
+          <defs>
+            <marker id="arv" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--sage)"/></marker>
+            <marker id="ara" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--copper)"/></marker>
+            <pattern id="hachT" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="6" stroke="#31548F" stroke-width=".9" opacity=".45"/></pattern>
+          </defs>
+          <circle cx="150" cy="155" r="102" fill="none" stroke="var(--ink-2)" stroke-dasharray="4 5" stroke-width="1.3"/>
+          <circle cx="150" cy="155" r="29" fill="url(#hachT)" stroke="var(--ink-2)" stroke-width="1.5"/>
+          <text x="150" y="160" fill="var(--ink)" font-size="11" text-anchor="middle" font-family="Georgia,serif" font-style="italic">Terre</text>
+          <line x1="150" y1="155" x2="150" y2="53" stroke="var(--ink-3)" stroke-width="1"/>
+          <text x="141" y="108" fill="var(--ink-3)" font-size="12" text-anchor="end" font-family="JetBrains Mono">r</text>
+          <circle cx="150" cy="53" r="7" fill="none" stroke="var(--oxford)" stroke-width="1.6"/>
+          <line x1="157" y1="53" x2="242" y2="53" stroke="var(--sage)" stroke-width="2" marker-end="url(#arv)"/>
+          <text x="208" y="43" fill="var(--sage)" font-size="13" font-family="Georgia,serif" font-style="italic">v</text>
+          <line x1="150" y1="61" x2="150" y2="118" stroke="var(--copper)" stroke-width="2" marker-end="url(#ara)"/>
+          <text x="158" y="98" fill="var(--copper)" font-size="12" font-family="Georgia,serif" font-style="italic">a = v²/r</text>
+        </svg></div>
+        <div style="padding:2px">
+        <svg viewBox="0 0 300 290" role="img" aria-label="Graphe T carré en fonction de a cube">
+          <line x1="52" y1="248" x2="284" y2="248" stroke="var(--ink-2)" stroke-width="1.2"/>
+          <line x1="52" y1="248" x2="52" y2="34" stroke="var(--ink-2)" stroke-width="1.2"/>
+          <line x1="52" y1="248" x2="268" y2="50" stroke="var(--oxford)" stroke-width="1.8"/>
+          <circle cx="63" cy="245" r="3.5" fill="none" stroke="var(--ink-2)" stroke-width="1.4"/><text x="70" y="241" fill="var(--ink-3)" font-size="10" font-family="Georgia,serif" font-style="italic">Mercure</text>
+          <circle cx="91" cy="228" r="3.5" fill="none" stroke="var(--ink-2)" stroke-width="1.4"/><text x="98" y="224" fill="var(--ink-3)" font-size="10" font-family="Georgia,serif" font-style="italic">Vénus</text>
+          <circle cx="147" cy="190" r="4" fill="var(--sage)"/><text x="154" y="186" fill="var(--ink-3)" font-size="10" font-family="Georgia,serif" font-style="italic">Terre</text>
+          <circle cx="232" cy="76" r="4" fill="none" stroke="var(--copper)" stroke-width="1.5"/><text x="184" y="78" fill="var(--ink-3)" font-size="10" font-family="Georgia,serif" font-style="italic">Mars</text>
+          <text x="284" y="266" fill="var(--ink-3)" font-size="11" text-anchor="end" font-family="JetBrains Mono">a³ (UA³)</text>
+          <text x="46" y="40" fill="var(--ink-3)" font-size="11" text-anchor="end" font-family="JetBrains Mono">T² (an²)</text>
+          <text x="152" y="118" fill="var(--oxford)" font-size="10.5" transform="rotate(-27 152 118)" font-family="Georgia,serif" font-style="italic">pente = 4π²/GM</text>
+        </svg></div>
+        <figcaption style="grid-column:1/3;margin-top:0;padding:8px 6px 6px;border-top:1px solid var(--line);font:italic 400 .8rem var(--fs);color:var(--ink-3)"><span class="fno">Planche III</span> — À gauche : \(\vec v\) tangente, \(\vec a\) centripète. À droite : la 3ᵉ loi trace une droite \(T^2\) vs \(a^3\), de pente \(4\pi^2/GM\).</figcaption>
+      </div>
+
+      <p>Deux lectures : <span class="kw">plus l'orbite est basse, plus le satellite est rapide</span> (l'ISS à 400 km file à 7,7 km/s, tour du monde en 92 min) ; et en élevant \(T^2\), on <b>retrouve la 3ᵉ loi de Kepler</b> — Newton explique Kepler :</p>
+      <p style="text-align:center">\( \dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G\,M_T} \)</p>
+    </div>
+
+    <div class="sct" id="s4">
+      <div class="sct-head"><span class="pn">§ 4</span><h3>Le satellite géostationnaire</h3></div>
+      <div class="enc pp"><span class="et">Cas d'école</span>
+        Immobile au-dessus d'un point de l'équateur : il faut \(T = 23\,\text{h}\,56\,\text{min}\) (jour sidéral), une orbite <b>équatoriale</b>, parcourue dans le <b>sens de rotation terrestre</b>. La 3ᵉ loi impose alors une altitude unique : <b>h ≈ 36 000 km</b> — là où vivent les satellites météo et de télévision (Nilesat inclus 🇪🇬).</div>
+      <div class="renvois">
+        <div class="renvoi" data-goto="flash"><span class="ic">🃏</span><b>Flashcards</b><span>12 cartes de mémoire active</span></div>
+        <div class="renvoi" data-goto="quiz"><span class="ic">✅</span><b>Quiz</b><span>10 questions corrigées</span></div>
+        <div class="renvoi" data-goto="exos"><span class="ic">🧩</span><b>Exercices</b><span>12 corrigés progressifs</span></div>
+        <div class="renvoi" data-goto="bac"><span class="ic">🎓</span><b>Type Bac</b><span>annales VecteurBac.fr</span></div>
+      </div>
+    </div>
+  </article>
+
+  <aside class="marge"><div class="marge-inner">
+    <nav class="toc" id="toc">
+      <h4>Sommaire</h4>
+      <a href="#s1" class="on"><span class="ix">§1</span>Lois de Kepler</a>
+      <a href="#s2"><span class="ix">§2</span>Gravitation universelle</a>
+      <a href="#s3"><span class="ix">§3</span>Vitesse &amp; période</a>
+      <a href="#s4"><span class="ix">§4</span>Géostationnaire</a>
+    </nav>
+    <div class="formulaire">
+      <h4>Formulaire</h4>
+      <div class="kf">F = G·m·m′ / d² <small>gravitation — N</small></div>
+      <div class="kf">v = √(GM / r) <small>vitesse orbitale — m·s⁻¹</small></div>
+      <div class="kf">T = 2π√(r³/GM) <small>période — s</small></div>
+      <div class="kf">T² / a³ = cte <small>3ᵉ loi de Kepler</small></div>
+      <div class="kf">h(géo) ≈ 36 000 km <small>orbite géostationnaire</small></div>
+    </div>
+  </div></aside>
+  </div>
+
+  <div class="foliot">
+    <a class="fnav" href="ch06_v2.html"><small>← Chapitre VI</small><b>Champs et forces</b></a>
+    <a class="fnav next" href="ch08_v2.html"><small>Chapitre VIII →</small><b>Cinétique chimique</b></a>
+  </div>
+</div></section>
+
+<!-- ══════════ 02 · CARTE MENTALE ══════════ -->
+<section class="pane" id="p-carte"><div class="sheet narrow">
+  <div class="ph"><span class="k">Planche hors-texte</span><h2>Carte mentale du chapitre</h2>
+    <p>Lois de Kepler, gravitation, vitesse/période et géostationnaire d'un seul coup d'œil. Cliquer pour agrandir.</p></div>
+  <figure class="mm-frame" onclick="openMM()">
+    <img src="../../../Cartes%20mentale%20Tle%20Sp%C3%A9/Carte_Mentale_Kepler_TSp%C3%A9.png" loading="lazy" alt="Carte mentale — Mouvement des satellites et des planètes">
+  </figure>
+  <div class="mm-tools">
+    <button class="btn-ghost" style="width:auto" onclick="openMM()">🔍 Agrandir</button>
+    <button class="btn-ghost" style="width:auto" onclick="printMM()">🖨️ Imprimer</button>
+    <button class="btn-ghost" style="width:auto" onclick="window.open('../../../Cartes%20mentale%20Tle%20Sp%C3%A9/Carte_Mentale_Kepler_TSp%C3%A9.png','_blank')">↗ Plein écran</button>
+  </div>
+</div></section>
+
+<!-- ══════════ 03 · SIMULATION ══════════ -->
+<section class="pane" id="p-sim"><div class="sheet">
+  <div class="ph"><span class="k">Laboratoire</span><h2>Le laboratoire orbital</h2>
+    <p>Manipuler l'excentricité, activer le balayage des aires (2ᵉ loi), vérifier la 3ᵉ loi en direct.</p></div>
+  <div class="sim-cadre">
+    <div class="sim-bar"><span class="pt"></span><b>Kepler Interactif</b><span style="color:var(--ink-3)">· PhysiChem Studio</span>
+      <button class="full" onclick="const f=this.closest('.sim-cadre').querySelector('iframe');f.requestFullscreen&&f.requestFullscreen()">⛶ Plein écran</button></div>
+    <iframe data-src="../../../Simulations/KeplerInteractif.html" title="Simulation Kepler" loading="lazy" allow="fullscreen"></iframe>
+  </div>
+</div></section>
+
+<!-- ══════════ 04 · MÉTHODES ══════════ -->
+<section class="pane" id="p-methode"><div class="sheet narrow">
+  <div class="ph"><span class="k">Vade-mecum</span><h2>Outils, unités &amp; méthodes</h2>
+    <p>Constantes utiles, démarche pas à pas, exemple entièrement résolu.</p></div>
+
+  <div class="section-title">Constantes &amp; conversions</div>
+  <div class="table-wrap"><table class="const">
+    <thead><tr><th>Grandeur</th><th>Valeur / unité</th><th>Remarque</th></tr></thead>
+    <tbody>
+      <tr><td>\(G\)</td><td>6,67×10⁻¹¹ m³·kg⁻¹·s⁻²</td><td>Constante gravitationnelle</td></tr>
+      <tr><td>\(M_T\)</td><td>5,98×10²⁴ kg</td><td>Masse de la Terre</td></tr>
+      <tr><td>\(R_T\)</td><td>6,38×10⁶ m</td><td>Rayon terrestre</td></tr>
+      <tr><td>\(M_S\)</td><td>1,99×10³⁰ kg</td><td>Masse du Soleil</td></tr>
+      <tr><td>1 km</td><td>10³ m</td><td>Jamais de km dans les formules SI</td></tr>
+      <tr><td>1 jour</td><td>86 400 s</td><td>Jour solaire ; géostationnaire : jour sidéral 86 164 s</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="section-title" style="margin-top:24px">Résoudre un exercice d'orbite circulaire</div>
+  <div class="method">
+    <div class="step"><span class="dot">1</span><b>Référentiel &amp; système.</b> Géocentrique (ou héliocentrique) supposé galiléen ; système = {satellite / planète}.</div>
+    <div class="step"><span class="dot">2</span><b>Astre attracteur &amp; rayon.</b> Identifier \(M\) ; convertir \(r=R_{astre}+h\) en mètres.</div>
+    <div class="step"><span class="dot">3</span><b>2ᵉ loi de Newton + Frenet.</b> La gravitation impose l'accélération centripète : \(a_T=0\), \(a_N=v^2/r\).</div>
+    <div class="step"><span class="dot">4</span><b>Vitesse puis période.</b> \(v=\sqrt{GM/r}\) puis \(T=\dfrac{2\pi r}{v}=2\pi\sqrt{\dfrac{r^3}{GM}}\).</div>
+    <div class="step"><span class="dot">5</span><b>Application numérique.</b> Homogénéité (m, kg, s) et chiffres significatifs.</div>
+  </div>
+  <div class="wbox"><span>⚠️</span><div><b>Erreur fréquente :</b> remplacer \(r\) par l'altitude \(h\). Les lois orbitales utilisent la <b>distance au centre</b> : \(r=R_{astre}+h\).</div></div>
+
+  <div class="section-title" style="margin-top:24px">Exploiter une loi de Kepler sans connaître M</div>
+  <div class="enc df"><p style="text-align:center;margin:0 0 6px">\[ \dfrac{T_1^{2}}{a_1^{3}}=\dfrac{T_2^{2}}{a_2^{3}} \]</p>
+    <p style="margin:0;color:var(--ink-3);font:400 .85rem var(--ft)">Valable uniquement pour deux objets autour du <b>même astre</b>. Pratique pour comparer deux planètes (Soleil) ou deux satellites (Terre).</p></div>
+
+  <div class="enc pp"><span class="et">Exemple résolu — vitesse de l'ISS</span>
+    <p style="margin:6px 0 0">Altitude \(h=400\) km, donc \(r=R_T+h=6{,}78\times10^{6}\) m :</p>
+    <p style="text-align:center;margin:10px 0">\( v=\sqrt{\dfrac{G\,M_T}{r}}=\sqrt{\dfrac{6{,}67\times10^{-11}\times5{,}98\times10^{24}}{6{,}78\times10^{6}}}\approx 7{,}7\times10^{3}\ \text{m·s}^{-1} \)</p>
+    <p style="margin:0">soit ≈ 27 700 km/h, un tour de Terre en \(T=2\pi r/v \approx\) 92 minutes. ✔</p></div>
+</div></section>
+
+<!-- ══════════ 05 · FLASHCARDS ══════════ -->
+<section class="pane" id="p-flash"><div class="sheet">
+  <div class="ph"><span class="k">Mémoire active</span><h2>Flashcards</h2>
+    <p>Cliquer une carte pour la retourner. 12 notions clés.</p></div>
+  <div class="flash-grid" id="flashgrid"></div>
+</div></section>
+
+<!-- ══════════ 06 · QUIZ ══════════ -->
+<section class="pane" id="p-quiz"><div class="sheet narrow">
+  <div class="ph"><span class="k">Auto-évaluation</span><h2>Quiz</h2>
+    <p>10 questions type Bac — correction immédiate, score en direct.</p></div>
+  <div id="quizbox"></div>
+  <div class="qscore"><b><span id="sc">0</span>/10</b><span style="color:var(--ink-3);font:400 .84rem var(--ft)">bonnes réponses</span>
+    <button onclick="resetQuiz()">↺ Recommencer</button></div>
+</div></section>
+
+<!-- ══════════ 07 · EXERCICES ══════════ -->
+<section class="pane" id="p-exos"><div class="sheet narrow">
+  <div class="ph"><span class="k">Travaux dirigés</span><h2>Exercices progressifs</h2>
+    <p>Des paramètres d'ellipse au transfert orbital — 12 exercices corrigés. Données : \(G=6{,}67\times10^{-11}\), \(M_T=5{,}98\times10^{24}\) kg, \(R_T=6{,}38\times10^{6}\) m, \(M_S=1{,}99\times10^{30}\) kg.</p></div>
+  <div class="exo-filters">
+    <button class="filter-btn on" data-f="all">Tous</button>
+    <button class="filter-btn" data-f="n1">Niveau 1</button>
+    <button class="filter-btn" data-f="n2">Niveau 2</button>
+    <button class="filter-btn" data-f="n3">Niveau 3</button>
+    <button class="filter-btn" data-f="bac">Type Bac</button>
+  </div>
+
+  <div class="exo" data-cat="n1"><span class="lvlx lx-1">Niveau 1 · Ellipse</span>
+    <h3>Exercice 1 — Lire les paramètres d'une ellipse</h3>
+    <p class="stmt">Une orbite elliptique possède un demi-grand axe \(a=1{,}20\times10^{11}\) m et une excentricité \(e=0{,}25\).</p>
+    <ol><li>Calculer les distances au périhélie \(r_p\) et à l'aphélie \(r_a\).</li><li>L'orbite est-elle proche d'un cercle ?</li></ol>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b>
+      \[ r_p=a(1-e)=1{,}20\times10^{11}(1-0{,}25)=9{,}0\times10^{10}\ \text{m} \]
+      \[ r_a=a(1+e)=1{,}20\times10^{11}(1+0{,}25)=1{,}50\times10^{11}\ \text{m} \]
+      <p style="margin:0">\(e=0{,}25\neq0\) : orbite elliptique, modérément étirée.</p></div>
+  </div>
+
+  <div class="exo" data-cat="n1"><span class="lvlx lx-1">Niveau 1 · 3ᵉ loi</span>
+    <h3>Exercice 2 — Période de Mars</h3>
+    <p class="stmt">Demi-grand axe de Mars : \(a_M=1{,}524\) UA. Terre : \(a_T=1\) UA, \(T_T=1\) an. Calculer la période de révolution de Mars.</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> Deux planètes autour du Soleil : \(\dfrac{T^2}{a^3}=\text{cste}\), donc
+      \[ T_M=T_T\left(\dfrac{a_M}{a_T}\right)^{3/2}=1\times(1{,}524)^{3/2}=1{,}88\ \text{an} \]
+      <p style="margin:0">soit environ 687 jours. ✔</p></div>
+  </div>
+
+  <div class="exo" data-cat="n2"><span class="lvlx lx-2">Niveau 2 · Vitesse orbitale</span>
+    <h3>Exercice 3 — Vitesse de la Terre autour du Soleil</h3>
+    <p class="stmt">Données : \(M_S=1{,}99\times10^{30}\) kg, \(r=1{,}50\times10^{11}\) m.</p>
+    <ol><li>Calculer la vitesse orbitale de la Terre.</li><li>Convertir en km·h⁻¹.</li></ol>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b>
+      \[ v=\sqrt{\dfrac{GM_S}{r}}=\sqrt{\dfrac{6{,}67\times10^{-11}\times1{,}99\times10^{30}}{1{,}50\times10^{11}}}\approx 2{,}97\times10^{4}\ \text{m·s}^{-1} \]
+      <p style="margin:0">soit \(2{,}97\times10^{4}\times3{,}6\approx 1{,}07\times10^{5}\) km·h⁻¹.</p></div>
+  </div>
+
+  <div class="exo" data-cat="n2"><span class="lvlx lx-2">Niveau 2 · Circulaire uniforme</span>
+    <h3>Exercice 4 — Satellite SPOT</h3>
+    <p class="stmt">Mouvement circulaire uniforme de rayon \(R=7200\) km ; un tour en \(T=1\) h 41 min.</p>
+    <ol><li>Calculer sa vitesse.</li><li>Calculer son accélération centripète.</li></ol>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> \(R=7{,}20\times10^{6}\) m ; \(T=101\) min \(=6060\) s.
+      \[ v=\dfrac{2\pi R}{T}=\dfrac{2\pi\times7{,}20\times10^{6}}{6060}\approx 7{,}47\times10^{3}\ \text{m·s}^{-1} \]
+      \[ a=\dfrac{v^2}{R}=\dfrac{(7{,}47\times10^{3})^2}{7{,}20\times10^{6}}\approx 7{,}7\ \text{m·s}^{-2} \]</div>
+  </div>
+
+  <div class="exo" data-cat="n2"><span class="lvlx lx-2">Niveau 2 · Géostationnaire</span>
+    <h3>Exercice 5 — Altitude géostationnaire</h3>
+    <p class="stmt">Donnée : \(T=86164\) s. Calculer l'altitude d'une orbite géostationnaire.</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b>
+      \[ r=\sqrt[3]{\dfrac{G M_T\,T^2}{4\pi^2}}\approx 4{,}22\times10^{7}\ \text{m} \]
+      \[ h=r-R_T\approx 4{,}22\times10^{7}-6{,}38\times10^{6}=3{,}58\times10^{7}\ \text{m} \]
+      <p style="margin:0">soit environ 36 000 km. ✔</p></div>
+  </div>
+
+  <div class="exo" data-cat="n3"><span class="lvlx lx-3">Niveau 3 · Démonstration</span>
+    <h3>Exercice 6 — Retrouver la 3ᵉ loi par Newton</h3>
+    <p class="stmt">Satellite de masse \(m\), orbite circulaire de rayon \(r\), astre de masse \(M\). Montrer que \(\dfrac{T^2}{r^3}=\dfrac{4\pi^2}{GM}\).</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> La gravitation fournit l'accélération centripète :
+      \[ G\dfrac{mM}{r^2}=m\dfrac{v^2}{r}\ \Rightarrow\ v^2=\dfrac{GM}{r} \]
+      <p>Or \(v=\dfrac{2\pi r}{T}\), donc \(\dfrac{4\pi^2 r^2}{T^2}=\dfrac{GM}{r}\), d'où</p>
+      \[ T^2=\dfrac{4\pi^2 r^3}{GM}\ \Rightarrow\ \dfrac{T^2}{r^3}=\dfrac{4\pi^2}{GM} \]</div>
+  </div>
+
+  <div class="exo" data-cat="n3"><span class="lvlx lx-3">Niveau 3 · Énergétique</span>
+    <h3>Exercice 7 — Vitesse de libération terrestre</h3>
+    <p class="stmt">Par conservation de l'énergie mécanique entre la surface (\(R_T\)) et l'infini (où \(E_c=0\) et \(E_p=0\)), établir puis calculer la vitesse de libération \(v_\ell\).</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> \(E_m=\tfrac12 m v_\ell^2-\dfrac{GM_T m}{R_T}=0\) à la limite, donc
+      \[ v_\ell=\sqrt{\dfrac{2GM_T}{R_T}}=\sqrt{\dfrac{2\times6{,}67\times10^{-11}\times5{,}98\times10^{24}}{6{,}38\times10^{6}}}\approx 1{,}12\times10^{4}\ \text{m·s}^{-1} \]
+      <p style="margin:0">soit ≈ 11,2 km·s⁻¹. On note \(v_\ell=v_s\sqrt2\) avec \(v_s=\sqrt{GM/R}\).</p></div>
+  </div>
+
+  <div class="exo" data-cat="n3"><span class="lvlx lx-3">Niveau 3 · 3ᵉ loi inversée</span>
+    <h3>Exercice 8 — Peser Jupiter avec Io</h3>
+    <p class="stmt">Io orbite Jupiter à \(r=4{,}22\times10^{8}\) m avec une période \(T=1{,}77\) jour. En déduire la masse de Jupiter.</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> \(T=1{,}77\times86400=1{,}53\times10^{5}\) s.
+      \[ M_J=\dfrac{4\pi^2 r^3}{G\,T^2}=\dfrac{4\pi^2 (4{,}22\times10^{8})^3}{6{,}67\times10^{-11}\times(1{,}53\times10^{5})^2}\approx 1{,}9\times10^{27}\ \text{kg} \]
+      <p style="margin:0">valeur admise : \(1{,}90\times10^{27}\) kg. ✔</p></div>
+  </div>
+
+  <div class="exo" data-cat="n3"><span class="lvlx lx-3">Niveau 3 · Loi des aires</span>
+    <h3>Exercice 9 — Comète : vitesses aux apsides</h3>
+    <p class="stmt">Une comète a un périhélie \(r_p=8{,}8\times10^{10}\) m (\(v_p=54{,}6\) km·s⁻¹) et un aphélie \(r_a=5{,}3\times10^{12}\) m. Estimer sa vitesse \(v_a\) à l'aphélie.</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> La loi des aires impose la conservation de \(r\,v\) aux apsides :
+      \[ r_p\,v_p=r_a\,v_a\ \Rightarrow\ v_a=v_p\dfrac{r_p}{r_a}=54{,}6\times10^{3}\times\dfrac{8{,}8\times10^{10}}{5{,}3\times10^{12}}\approx 907\ \text{m·s}^{-1} \]
+      <p style="margin:0">~60 fois plus lente à l'aphélie qu'au périhélie.</p></div>
+  </div>
+
+  <div class="exo" data-cat="n3"><span class="lvlx lx-3">Niveau 3 · Vers le sup</span>
+    <h3>Exercice 10 — Énergie mécanique orbitale</h3>
+    <p class="stmt">Pour une orbite circulaire de rayon \(r\), montrer que \(E_m=-\dfrac{GMm}{2r}\), puis exprimer l'énergie à fournir pour passer de \(r_1\) à \(r_2>r_1\).</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> \(E_m=\tfrac12 m v^2-\dfrac{GMm}{r}\) avec \(v^2=\dfrac{GM}{r}\) :
+      \[ E_m=\tfrac12\dfrac{GMm}{r}-\dfrac{GMm}{r}=-\dfrac{GMm}{2r} \]
+      \[ \Delta E_m=\dfrac{GMm}{2}\left(\dfrac{1}{r_1}-\dfrac{1}{r_2}\right)>0 \]
+      <p style="margin:0">Monter plus haut coûte de l'énergie — bien que la vitesse y soit plus faible !</p></div>
+  </div>
+
+  <div class="exo" data-cat="bac"><span class="lvlx lx-bac">Type Bac · Analyse</span>
+    <h3>Exercice 11 — Erreur de raisonnement</h3>
+    <p class="stmt">Un élève écrit : « Un satellite plus haut va plus vite car il parcourt une plus grande circonférence. » Corriger ce raisonnement.</p>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> Confusion entre distance parcourue et vitesse imposée par la gravitation. En orbite circulaire \(v=\sqrt{\dfrac{GM}{r}}\) : quand \(r\) augmente, \(v\) <b>diminue</b>. Le satellite haut parcourt une plus grande circonférence, mais plus lentement, avec \(T=2\pi\sqrt{\dfrac{r^3}{GM}}\) plus longue.</div>
+  </div>
+
+  <div class="exo" data-cat="bac"><span class="lvlx lx-bac">Type Bac · Galileo</span>
+    <h3>Exercice 12 — Le système Galileo</h3>
+    <p class="stmt">Un satellite Galileo orbite à \(h=23222\) km. Données : \(R_T=6371\) km, \(GM_T=3{,}986\times10^{14}\) m³·s⁻².</p>
+    <ol><li>Calculer son rayon orbital.</li><li>Calculer sa vitesse.</li><li>Calculer sa période.</li></ol>
+    <button class="rev">▼ Voir le corrigé</button>
+    <div class="sol"><b class="slab">Solution.</b> \(r=(6371+23222)\) km \(=2{,}9593\times10^{7}\) m.
+      \[ v=\sqrt{\dfrac{GM_T}{r}}=\sqrt{\dfrac{3{,}986\times10^{14}}{2{,}9593\times10^{7}}}\approx 3{,}67\times10^{3}\ \text{m·s}^{-1} \]
+      \[ T=\dfrac{2\pi r}{v}=\dfrac{2\pi\times2{,}9593\times10^{7}}{3{,}67\times10^{3}}\approx 5{,}07\times10^{4}\ \text{s}\approx 14{,}1\ \text{h} \]</div>
+  </div>
+</div></section>
+
+<!-- ══════════ 08 · INTERRO ══════════ -->
+<section class="pane" id="p-interro"><div class="sheet narrow">
+  <div class="ph"><span class="k">Épreuve</span><h2>Interro — Satellites &amp; planètes</h2>
+    <p>Durée conseillée 30 min · barème /20. QCM auto-corrigé, score en direct, sujet imprimable.</p></div>
+  <div class="interro-bar">
+    <button class="interro-print" onclick="interroPrint()">🖨️ Sujet + corrigé à imprimer</button>
+    <span class="i-score" id="i-score">Score QCM : 0 / 6</span>
+  </div>
+
+  <div class="i-part">Partie A — Questions d'application (14 pts)</div>
+  <div class="i-q"><div class="i-head"><span class="i-num">A1</span><span class="i-pts">10 pts</span></div>
+    <div class="i-txt">Un satellite décrit une orbite circulaire de rayon \(r\) autour d'un astre de masse \(M\).
+      <ol><li>Quelle force assure le mouvement ?</li><li>Établir \(v=\sqrt{\dfrac{GM}{r}}\) et justifier la dépendance en \(r\).</li></ol></div>
+    <button class="i-reveal">Voir la correction</button>
+    <div class="i-corr">1. La force d'attraction gravitationnelle (centripète).<br>2. \(G\dfrac{Mm}{r^2}=m\dfrac{v^2}{r}\Rightarrow v=\sqrt{GM/r}\) : \(v\) <b>diminue</b> quand \(r\) augmente (\(v\propto 1/\sqrt r\)).</div>
+  </div>
+  <div class="i-q"><div class="i-head"><span class="i-num">A2</span><span class="i-pts">4 pts</span></div>
+    <div class="i-txt">3ᵉ loi de Kepler : \(\dfrac{T^2}{a^3}=\) cste. Si le demi-grand axe est multiplié par 4, par combien la période est-elle multipliée ?</div>
+    <button class="i-reveal">Voir la correction</button>
+    <div class="i-corr">\(T^2\propto a^3\Rightarrow T\propto a^{3/2}\Rightarrow\) facteur \(4^{3/2}=8\). La période est multipliée par <b>8</b>.</div>
+  </div>
+
+  <div class="i-part">Partie B — QCM (6 pts)</div>
+  <div id="i-qcm"></div>
+</div></section>
+
+<!-- ══════════ 09 · TYPE BAC ══════════ -->
+<section class="pane" id="p-bac"><div class="sheet narrow">
+  <div class="ph"><span class="k">Annales</span><h2>Type Bac — d'après VecteurBac.fr</h2>
+    <p>Deux sujets rédigés et corrigés, puis les annales officielles à travailler sur <a href="https://www.vecteurbac.fr" target="_blank" rel="noopener">VecteurBac.fr</a>.</p></div>
+
+  <div class="bac-card">
+    <span class="exam">Sujet 1 · 6 points</span>
+    <h3>Mars vue sous l'œil de Kepler</h3>
+    <div class="src">d'après Métropole, septembre 2023 — satellites &amp; lois de Kepler</div>
+    <p style="color:var(--ink-2);margin-bottom:6px"><b>Phobos</b> décrit une orbite quasi circulaire de rayon \(r=9{,}38\times10^{3}\) km autour de Mars, de période \(T=7\) h 39 min. Donnée : \(G=6{,}67\times10^{-11}\) SI.</p>
+    <div class="bac-part"><div class="pq"><b>a.</b> Justifier que le mouvement de Phobos est circulaire uniforme.</div></div>
+    <div class="bac-part"><div class="pq"><b>b.</b> Établir la relation \(T^2=\dfrac{4\pi^2 r^3}{G\,M_{Mars}}\).</div></div>
+    <div class="bac-part"><div class="pq"><b>c.</b> En déduire la masse de Mars.</div></div>
+    <button class="rev">▼ Afficher le corrigé</button>
+    <div class="sol"><b class="slab">a.</b> Seule la gravitation agit (radiale) : \(a_T=0\Rightarrow v\) constante ; trajectoire circulaire imposée → circulaire uniforme.
+      <p><b class="slab">b.</b> \(G\dfrac{M m}{r^2}=m\dfrac{v^2}{r}\) et \(v=\dfrac{2\pi r}{T}\) donnent \(T^2=\dfrac{4\pi^2 r^3}{GM}\).</p>
+      <p><b class="slab">c.</b> \(r=9{,}38\times10^{6}\) m, \(T=27\,540\) s :</p>
+      \[ M_{Mars}=\dfrac{4\pi^2 r^3}{G T^2}=\dfrac{4\pi^2(9{,}38\times10^{6})^3}{6{,}67\times10^{-11}(27540)^2}\approx 6{,}4\times10^{23}\ \text{kg} \]
+      <p style="margin:0">valeur admise : \(6{,}42\times10^{23}\) kg. ✔</p></div>
+  </div>
+
+  <div class="bac-card">
+    <span class="exam">Sujet 2 · 5 points</span>
+    <h3>La planète Mercure</h3>
+    <div class="src">d'après Polynésie, 2022 — mouvement des planètes</div>
+    <p style="color:var(--ink-2);margin-bottom:6px">Mercure décrit autour du Soleil une orbite de demi-grand axe \(a=5{,}79\times10^{10}\) m et de période \(T=88{,}0\) jours. Donnée : \(M_S=1{,}99\times10^{30}\) kg.</p>
+    <div class="bac-part"><div class="pq"><b>a.</b> Vérifier la 3ᵉ loi : comparer \(\dfrac{T^2}{a^3}\) à \(\dfrac{4\pi^2}{G M_S}\).</div></div>
+    <div class="bac-part"><div class="pq"><b>b.</b> Calculer la vitesse orbitale moyenne de Mercure.</div></div>
+    <button class="rev">▼ Afficher le corrigé</button>
+    <div class="sol"><b class="slab">a.</b> \(T=88{,}0\times86400=7{,}60\times10^{6}\) s.
+      \[ \dfrac{T^2}{a^3}=\dfrac{(7{,}60\times10^{6})^2}{(5{,}79\times10^{10})^3}\approx 2{,}98\times10^{-19}\ \text{SI} \]
+      \[ \dfrac{4\pi^2}{G M_S}=\dfrac{4\pi^2}{6{,}67\times10^{-11}\times1{,}99\times10^{30}}\approx 2{,}98\times10^{-19}\ \text{SI} \]
+      <p>Les deux valeurs coïncident : 3ᵉ loi vérifiée. ✔</p>
+      <p><b class="slab">b.</b> \(v=\dfrac{2\pi a}{T}=\dfrac{2\pi\times5{,}79\times10^{10}}{7{,}60\times10^{6}}\approx 4{,}79\times10^{4}\) m·s⁻¹ ≈ 47,9 km·s⁻¹.</p></div>
+  </div>
+
+  <div class="bac-card" style="border-top-color:var(--oxford)">
+    <span class="exam" style="color:var(--oxford)">Annales officielles</span>
+    <h3 style="margin-bottom:9px">À travailler sur VecteurBac.fr</h3>
+    <ul class="vb-list">
+      <li><a href="https://www.vecteurbac.fr/mouvement-du-telescope-james-webb-dans-un-champ-de-gravitation/" target="_blank" rel="noopener">Mouvement du télescope James-Webb dans un champ de gravitation</a> <span class="tagv">· Polynésie 2024 · 10 pts</span></li>
+      <li><a href="https://www.vecteurbac.fr/mars-vue-sous-loeil-de-kepler/" target="_blank" rel="noopener">Mars vue sous l'œil de Kepler</a> <span class="tagv">· Métropole sept. 2023 · 6 pts</span></li>
+      <li><a href="https://www.vecteurbac.fr/la-planete-mercure/" target="_blank" rel="noopener">La planète Mercure</a> <span class="tagv">· Polynésie 2022 · 5 pts</span></li>
+      <li><a href="https://www.vecteurbac.fr/le-destin-funeste-de-la-planete-kepler-1658b/" target="_blank" rel="noopener">Le destin funeste de la planète Kepler-1658b</a> <span class="tagv">· Métropole 2025 · 10 pts</span></li>
+      <li><a href="https://www.vecteurbac.fr/etude-de-la-deuxieme-loi-de-kepler/" target="_blank" rel="noopener">Étude de la deuxième loi de Kepler</a> <span class="tagv">· sujet + corrigé</span></li>
+      <li><a href="https://www.vecteurbac.fr/terminale-specialite-physique-satellites-lois-de-kepler/" target="_blank" rel="noopener">Tous les sujets « Satellites &amp; lois de Kepler »</a> <span class="tagv">· collection complète</span></li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- ══════════ 10 · HUB IA ══════════ -->
+<section class="pane" id="p-ia"><div class="sheet narrow">
+  <div class="ph"><span class="k">Tutorat</span><h2>Hub IA d'assistance scolaire</h2>
+    <p>Utiliser les IA comme des tuteurs : une explication, une méthode, un exercice, une correction. Comprendre, pas copier.</p></div>
+  <div class="bots">
+    <div class="bot" onclick="window.open('https://claude.ai','_blank')"><span class="bi">🧠</span><span class="bn">Claude.ai</span><span class="bu">Explications en profondeur</span></div>
+    <div class="bot" onclick="window.open('https://gemini.google.com','_blank')"><span class="bi">✨</span><span class="bn">Google Gemini</span><span class="bu">Analyser une image / un graphe</span></div>
+    <div class="bot" onclick="window.open('https://chatgpt.com','_blank')"><span class="bi">💬</span><span class="bn">ChatGPT</span><span class="bu">Méthodes &amp; exercices</span></div>
+    <div class="bot" onclick="window.open('https://copilot.microsoft.com','_blank')"><span class="bi">🪟</span><span class="bn">MS Copilot</span><span class="bu">Recherche web intégrée</span></div>
+  </div>
+
+  <div class="enc df"><span class="et">Générateur de prompts — Kepler &amp; gravitation</span>
+    <div class="prompt-selects" style="margin-top:12px">
+      <div class="pf"><label>Ce que tu veux faire</label>
+        <select id="p-task">
+          <option value="explain" selected>Comprendre une notion</option>
+          <option value="solve">Résoudre un exercice</option>
+          <option value="bac">Préparer un contrôle</option>
+          <option value="quiz">Créer un quiz difficile</option>
+          <option value="correct">Corriger ma solution</option>
+          <option value="pcsi">Aller vers la PCSI</option>
+        </select></div>
+      <div class="pf"><label>Sujet d'étude</label>
+        <select id="p-topic">
+          <option value="kepler" selected>Les trois lois de Kepler</option>
+          <option value="aires">La loi des aires</option>
+          <option value="vsat">La vitesse de satellisation</option>
+          <option value="demo">La démonstration de la 3ᵉ loi</option>
+          <option value="geo">Les satellites géostationnaires</option>
+          <option value="frenet">Le repère de Frenet</option>
+          <option value="grav">La force gravitationnelle</option>
+        </select></div>
+      <div class="pf"><label>Style de réponse</label>
+        <select id="p-tone">
+          <option value="simple" selected>Très pédagogique (Terminale)</option>
+          <option value="step">Avec étapes de calcul détaillées</option>
+          <option value="short">Court et efficace (fiche)</option>
+          <option value="rigorous">Rigoureux niveau PCSI</option>
+          <option value="visual">Avec analogies visuelles</option>
+        </select></div>
+    </div>
+    <div class="prompt-out"><button class="copy-p" onclick="copyPrompt()">Copier</button><div id="ptext">Prompt généré…</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px">Questions fréquentes d'élèves</div>
+  <div id="iabox"></div>
+</div></section>
+
+<!-- ══════════ 11 · VERS LE SUP ══════════ -->
+<section class="pane" id="p-sup"><div class="sheet">
+  <div class="ph"><span class="k">Prolongements</span><h2>Vers le Supérieur / PCSI</h2>
+    <p>La mécanique céleste est un sommet du programme de prépa : moment cinétique, coordonnées polaires, coniques et transferts orbitaux prolongent directement ce chapitre.</p></div>
+  <div class="sup-grid">
+    <div class="fcard"><span class="fl">Force centrale &amp; moment cinétique</span>
+      <div class="fe">\[ \dfrac{d\vec L_O}{dt}=\vec{\mathcal M}_O(\vec F)=\vec 0\ \Rightarrow\ \vec L_O=\text{cste} \]</div>
+      <div class="fd2">La loi des aires n'est plus admise mais <b>démontrée</b> : pour une force centrale \(\vec r\times\vec F=\vec 0\), donc \(\vec L_O=\vec r\times m\vec v\) est conservé.</div></div>
+    <div class="fcard"><span class="fl">Coordonnées polaires</span>
+      <div class="fe">\[ \vec v=\dot r\,\vec e_r+r\dot\theta\,\vec e_\theta \]\[ \vec a=(\ddot r-r\dot\theta^2)\vec e_r+(r\ddot\theta+2\dot r\dot\theta)\vec e_\theta \]</div>
+      <div class="fd2">La base mobile \((\vec e_r,\vec e_\theta)\) permet de traiter les orbites non circulaires.</div></div>
+    <div class="fcard"><span class="fl">Équation de Binet &amp; coniques</span>
+      <div class="fe">\[ r(\theta)=\dfrac{p}{1+e\cos\theta} \]</div>
+      <div class="fd2">Sous gravitation, l'orbite est une conique : \(e<1\) ellipse, \(e=1\) parabole, \(e>1\) hyperbole.</div></div>
+    <div class="fcard"><span class="fl">Énergie &amp; transfert orbital</span>
+      <div class="fe">\[ E_m=-\dfrac{GMm}{2a} \]</div>
+      <div class="fd2">Un transfert de Hohmann relie deux orbites circulaires par une ellipse : vitesses orbitales, énergie et géométrie des ellipses réunies.</div></div>
+  </div>
+  <div class="enc pp"><span class="et">Ce qu'il faudra savoir faire après la Terminale</span>
+    <ul style="margin:6px 0 0 20px;line-height:1.8">
+      <li>Démontrer la conservation du moment cinétique et en déduire la <b>loi des aires</b>.</li>
+      <li>Manier la base polaire et dériver des vecteurs unitaires mobiles.</li>
+      <li>Relier énergie mécanique et demi-grand axe : orbite liée (\(E_m<0\)) ou de diffusion (\(E_m\ge0\)).</li>
+      <li>Calculer une <b>vitesse de libération</b> \(v_\ell=\sqrt{2GM/R}\), à comparer à \(v_s=\sqrt{GM/R}\) (\(v_\ell=v_s\sqrt2\)).</li>
+    </ul></div>
+  <div class="wbox"><span>⚠️</span><div><b>Piège classique d'oral :</b> la 3ᵉ loi \(T^2/a^3=\text{cste}\) ne vaut que pour des objets autour du <b>même astre</b> — la constante dépend de \(M\).</div></div>
+  <div class="enc id"><span class="et">Mini-défi de transition</span>
+    <b>Vitesse de libération.</b> Par conservation de l'énergie mécanique entre la surface de la Terre et l'infini, montrer que \(v_\ell=\sqrt{\dfrac{2GM_T}{R_T}}\approx 11{,}2\) km·s⁻¹. <span style="color:var(--ink-3)">(corrigé : exercice 7)</span></div>
+</div></section>
+
+</main>
+</div>
+</div>
+
+<script>
+/* ---------- Thème (persisté) ---------- */
+(function(){var t=localStorage.getItem('atlas-theme');if(t)document.documentElement.dataset.theme=t;syncThemeBtn();})();
+function toggleTheme(){
+  var h=document.documentElement;
+  h.dataset.theme=(h.dataset.theme==='nuit')?'papier':'nuit';
+  localStorage.setItem('atlas-theme',h.dataset.theme);
+  syncThemeBtn();
+}
+function syncThemeBtn(){
+  var nuit=document.documentElement.dataset.theme==='nuit';
+  var b=document.getElementById('themeBtn');if(b)b.textContent=nuit?'☀️ Papier':'🌙 Observatoire';
+  var m=document.getElementById('themeBtnM');if(m)m.textContent=nuit?'☀️':'🌙';
+}
+
+/* ---------- Navigation entre panneaux ---------- */
+var PANES={cours:'p-cours',carte:'p-carte',sim:'p-sim',methode:'p-methode',flash:'p-flash',quiz:'p-quiz',exos:'p-exos',interro:'p-interro',bac:'p-bac',ia:'p-ia',sup:'p-sup'};
+function goMode(v){
+  document.querySelectorAll('.nv').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);});
+  Object.keys(PANES).forEach(function(k){document.getElementById(PANES[k]).classList.toggle('on',k===v);});
+  if(v==='sim'){var f=document.querySelector('#p-sim iframe');if(f&&!f.src)f.src=f.dataset.src;}
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();
+  scrollTo(0,0);
+}
+document.getElementById('nav').addEventListener('click',function(e){var b=e.target.closest('.nv');if(b)goMode(b.dataset.v);});
+document.getElementById('strip').addEventListener('click',function(e){var b=e.target.closest('.nv');if(b)goMode(b.dataset.v);});
+document.querySelectorAll('.renvoi[data-goto]').forEach(function(c){c.onclick=function(){goMode(c.dataset.goto);};});
+
+/* ---------- Scrollspy sommaire (cours) ---------- */
+var tlinks=[].slice.call(document.querySelectorAll('#toc a'));
+var spy=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){tlinks.forEach(function(l){l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id);});}});},{rootMargin:'-25% 0px -60% 0px'});
+document.querySelectorAll('#p-cours .sct').forEach(function(s){spy.observe(s);});
+
+/* ---------- Objectifs cochables ---------- */
+document.querySelectorAll('.obj').forEach(function(o,i){var k='atlas07-obj-'+i;
+  if(localStorage.getItem(k))o.classList.add('done');
+  o.onclick=function(){o.classList.toggle('done');o.classList.contains('done')?localStorage.setItem(k,'1'):localStorage.removeItem(k);};});
+
+/* ---------- Carte mentale ---------- */
+function openMM(){var img=document.querySelector('#p-carte .mm-frame img');document.getElementById('mmImg').src=img.src;document.getElementById('mmLightbox').classList.add('on');}
+function printMM(){var src=document.querySelector('#p-carte .mm-frame img').src;var w=window.open('','_blank');w.document.write('<html><head><title>Carte mentale — Kepler</title><style>@page{size:A4 landscape;margin:8mm}body{margin:0}img{width:100%}</style></head><body><img src="'+src+'" onload="setTimeout(function(){window.print();window.close();},300)"></body></html>');w.document.close();}
+
+/* ---------- Reveal générique (exos + type bac) ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.rev');if(!b)return;
+  var s=b.nextElementSibling;if(!s||!s.classList.contains('sol'))return;
+  s.classList.toggle('on');
+  b.textContent=s.classList.contains('on')?'▲ Masquer le corrigé':'▼ Voir le corrigé';
+  if(s.classList.contains('on')&&window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([s]);
+});
+
+/* ---------- Filtres exercices ---------- */
+document.querySelector('.exo-filters').addEventListener('click',function(e){
+  var b=e.target.closest('.filter-btn');if(!b)return;var f=b.dataset.f;
+  this.querySelectorAll('.filter-btn').forEach(function(x){x.classList.toggle('on',x===b);});
+  document.querySelectorAll('#p-exos .exo').forEach(function(c){
+    c.style.display=(f==='all'||c.dataset.cat===f)?'':'none';});
+});
+
+/* ---------- FLASHCARDS ---------- */
+var FLASH=[
+ ["1ʳᵉ loi de Kepler ?","Les planètes décrivent des ellipses dont le Soleil occupe l'un des foyers."],
+ ["2ᵉ loi de Kepler ?","Loi des aires : le rayon Soleil-planète balaie des aires égales pendant des durées égales."],
+ ["3ᵉ loi de Kepler ?","T²/a³ = constante, identique pour tous les astres orbitant autour du même corps."],
+ ["Loi de gravitation ?","F = G·mₐ·m_b / d², attractive, portée par la droite reliant les centres."],
+ ["Valeur de G ?","G = 6,67 × 10⁻¹¹ N·m²·kg⁻² (constante universelle de gravitation)."],
+ ["Vitesse orbitale (cercle) ?","v = √(G·M / r) — remarquable : indépendante de la masse du satellite."],
+ ["Période orbitale ?","T = 2π·√(r³ / G·M)."],
+ ["Pourquoi le mouvement est-il uniforme ?","La force est centripète (⊥ à la vitesse) → a_T = 0 → norme de v constante."],
+ ["Que vaut la distance d ?","La distance entre les CENTRES des deux corps : d = R_T + h, pas l'altitude seule."],
+ ["Altitude géostationnaire ?","h ≈ 36 000 km au-dessus de l'équateur."],
+ ["Conditions d'un géostationnaire ?","T = jour sidéral (23 h 56), orbite équatoriale, même sens que la rotation terrestre."],
+ ["Newton retrouve Kepler ?","En élevant T² : T²/r³ = 4π²/GM = constante → c'est la 3ᵉ loi de Kepler démontrée."]
+];
+document.getElementById('flashgrid').innerHTML=FLASH.map(function(c){
+ return '<div class="flip"><div class="in"><div class="f"><small>QUESTION</small><strong>'+c[0]+'</strong></div><div class="b"><span class="lab">RÉPONSE</span>'+c[1]+'</div></div></div>';}).join('');
+document.querySelectorAll('.flip').forEach(function(f){f.onclick=function(){f.classList.toggle('on');};});
+
+/* ---------- QUIZ ---------- */
+var QUIZ=[
+ ["Dans la loi de gravitation F = G·m·m′/d², la distance d désigne…",["le rayon terrestre","l'altitude h du satellite","la distance entre les centres des deux corps","le diamètre de l'orbite"],2],
+ ["Comparé à un satellite haut, un satellite en orbite basse se déplace…",["plus lentement","plus vite","à la même vitesse","il reste immobile"],1],
+ ["Le rapport T²/a³ dépend…",["de la masse du satellite","seulement de l'astre central","de l'excentricité de l'orbite","de l'altitude"],1],
+ ["Le mouvement d'un satellite en orbite circulaire est…",["accéléré uniformément","circulaire uniforme","au repos","rectiligne uniforme"],1],
+ ["La 2ᵉ loi de Kepler traduit avant tout…",["la conservation de l'énergie","la loi des aires (moment cinétique)","la 3ᵉ loi","la relativité générale"],1],
+ ["La vitesse orbitale circulaire vaut…",["√(GM/r)","GM/r²","2πr (par tour)","G·M·r"],0],
+ ["La période d'un satellite géostationnaire est…",["24 h 00 exactement","23 h 56 min (jour sidéral)","12 h","1 h 30"],1],
+ ["Au périhélie (point le plus proche du Soleil), la planète se déplace…",["plus vite","plus lentement","à la même vitesse","en ligne droite"],0],
+ ["L'unité SI de la constante G est…",["N·m²·kg⁻²","N·kg⁻¹","m·s⁻²","J·kg⁻¹"],0],
+ ["La force gravitationnelle entre deux astres est…",["répulsive","attractive, portée par la droite des centres","toujours nulle","tangente à l'orbite"],1]
+];
+function buildQuiz(){
+  document.getElementById('quizbox').innerHTML=QUIZ.map(function(q,i){
+   return '<div class="q"><div class="qq"><b>Q'+(i+1)+'</b>'+q[0]+'</div>'+q[1].map(function(o,j){
+     return '<button class="opt" data-q="'+i+'" data-o="'+j+'">'+o+'</button>';}).join('')+'</div>';}).join('');
+  document.getElementById('sc').textContent='0';answered={};
+}
+var answered={};
+document.getElementById('quizbox').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b)return;var qi=+b.dataset.q;if(answered[qi])return;answered[qi]=1;
+  var good=QUIZ[qi][2];var opts=b.parentElement.querySelectorAll('.opt');
+  opts.forEach(function(o,j){o.style.pointerEvents='none';
+    if(j===good){o.classList.add('ok');o.insertAdjacentHTML('beforeend','<span class="fb">✓</span>');}});
+  if(+b.dataset.o!==good)b.classList.add('no');
+  var score=[].slice.call(document.querySelectorAll('.q')).filter(function(q){return q.querySelector('.opt.ok')&&!q.querySelector('.opt.no');}).length;
+  document.getElementById('sc').textContent=score;
+});
+function resetQuiz(){buildQuiz();}
+buildQuiz();
+
+/* ---------- INTERRO ---------- */
+var IQCM=[
+ ["Le mouvement d'un satellite en orbite circulaire est :",["uniformément accéléré","circulaire uniforme","rectiligne","au repos"],1,"Vitesse constante en norme (a_T = 0)."],
+ ["La force qui maintient un satellite sur son orbite est :",["électrique","gravitationnelle","magnétique","de frottement"],1,"L'attraction gravitationnelle."],
+ ["La 3ᵉ loi de Kepler relie :",["T et a (T²/a³ = cste)","v et m","F et q","P et V"],0,"Période et demi-grand axe."],
+ ["Un satellite géostationnaire a une période de :",["1 h","24 h (jour sidéral)","1 an","1 mois"],1,"Synchrone avec la rotation terrestre."],
+ ["La vitesse v = √(GM/r), si r augmente :",["augmente","diminue","reste constante","s'annule"],1,"v ∝ 1/√r."],
+ ["L'accélération d'un satellite en orbite circulaire est :",["nulle","centripète (vers le centre)","tangentielle","vers l'extérieur"],1,"Portée par u_r, vers l'astre."]
+];
+function buildInterro(){
+  document.getElementById('i-qcm').innerHTML=IQCM.map(function(m,k){
+   return '<div class="i-mcq" data-c="'+m[2]+'" data-done="0"><div class="i-txt">'+(k+1)+'. '+m[0]+'</div><div class="i-opts">'+
+     m[1].map(function(o,j){return '<button class="i-opt" data-o="'+j+'"><span class="let">'+'ABCD'.charAt(j)+'</span><span>'+o+'</span></button>';}).join('')+
+     '</div><div class="i-exp">'+m[3]+'</div></div>';}).join('');
+  iScore=0;updateIScore();
+}
+var iScore=0;
+function updateIScore(){var tot=IQCM.length;var done=document.querySelectorAll('#i-qcm .i-mcq[data-done="1"]').length;
+  document.getElementById('i-score').textContent='Score QCM : '+iScore+' / '+tot+(done===tot?' ✓ terminé':'');}
+document.getElementById('i-qcm').addEventListener('click',function(e){
+  var b=e.target.closest('.i-opt');if(!b)return;var mcq=b.closest('.i-mcq');if(mcq.dataset.done==='1')return;mcq.dataset.done='1';
+  var good=+mcq.dataset.c;var opts=mcq.querySelectorAll('.i-opt');
+  opts.forEach(function(o,j){o.style.pointerEvents='none';if(j===good)o.classList.add('good');});
+  if(+b.dataset.o!==good)b.classList.add('bad');else iScore++;
+  var exp=mcq.querySelector('.i-exp');if(exp)exp.classList.add('on');updateIScore();
+});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.i-reveal');if(!b)return;var c=b.nextElementSibling;if(!c||!c.classList.contains('i-corr'))return;
+  c.classList.toggle('on');b.textContent=c.classList.contains('on')?'Masquer la correction':'Voir la correction';
+  if(c.classList.contains('on')&&window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([c]);
+});
+function interroPrint(){var box=document.getElementById('p-interro');
+  box.querySelectorAll('.i-corr,.i-exp').forEach(function(x){x.classList.add('on');});
+  if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([box]).then(function(){window.print();});}else window.print();}
+buildInterro();
+
+/* ---------- HUB IA — générateur de prompts ---------- */
+function generatePrompt(){
+  var task=document.getElementById('p-task');if(!task)return;
+  var t=task.value,tp=document.getElementById('p-topic').value,tn=document.getElementById('p-tone').value;
+  var topics={kepler:"les trois lois de Kepler (orbites, aires, T²/a³=cste)",aires:"la loi des aires et la vitesse au périhélie/aphélie",vsat:"la vitesse de satellisation v=√(GM/r) et sa démonstration",demo:"la démonstration de la 3ᵉ loi de Kepler à partir de la loi de Newton",geo:"les satellites géostationnaires (période sidérale 86164 s, altitude ≈ 36 000 km)",frenet:"le repère de Frenet et l'accélération centripète v²/r",grav:"la force gravitationnelle F=GmM/r² et le champ de gravitation"};
+  var tones={simple:"Réponds de façon très pédagogique, niveau Terminale spécialité.",step:"Détaille toutes les étapes de calcul avec conversions et unités.",short:"Sois court et efficace, format fiche de révision.",rigorous:"Sois rigoureux niveau PCSI : vecteurs, dérivées, justification du référentiel.",visual:"Utilise des analogies visuelles et des images mentales."};
+  var tasks={explain:"Tu es professeur de physique-chimie en Terminale Spécialité. Explique-moi en détail "+topics[tp]+" (chapitre Mouvement des Satellites et des Planètes).",
+   solve:"Tu es professeur de physique-chimie en Terminale Spécialité. Je travaille sur "+topics[tp]+". Propose-moi un exercice type Bac, attends ma réponse, puis corrige-la étape par étape.",
+   bac:"Tu es professeur de physique-chimie en Terminale Spécialité. Construis un sujet type Bac complet sur "+topics[tp]+", avec barème, puis corrige ma copie.",
+   quiz:"Tu es professeur de physique-chimie en Terminale Spécialité. Crée un quiz difficile de 10 questions (4 choix, explication après chaque) sur "+topics[tp]+".",
+   correct:"Tu es professeur de physique-chimie en Terminale Spécialité. Je te donne ma solution d'un exercice sur "+topics[tp]+" : corrige-la point par point en signalant les erreurs d'unités et de raisonnement.",
+   pcsi:"Tu es professeur en CPGE (PCSI). Montre-moi comment "+topics[tp]+" sera approfondi en prépa : moment cinétique, coordonnées polaires, coniques r(θ)=p/(1+e·cosθ), énergie Em=−GMm/(2a), transfert de Hohmann. Donne un exercice de transition."};
+  document.getElementById('ptext').textContent=tasks[t]+" "+tones[tn];
+}
+['p-task','p-topic','p-tone'].forEach(function(id){document.getElementById(id).addEventListener('change',generatePrompt);});
+function copyPrompt(){var tx=document.getElementById('ptext').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(tx).then(function(){var b=document.querySelector('.copy-p');b.textContent='Copié ✓';setTimeout(function(){b.textContent='Copier';},1500);});}}
+generatePrompt();
+
+/* ---------- FAQ élèves ---------- */
+var IA=[
+ ["Pourquoi la Lune ne tombe-t-elle pas sur la Terre ?","En réalité, la Lune <b>tombe</b> en permanence ! Mais elle avance aussi latéralement à grande vitesse : à chaque instant, elle « rate » la Terre car celle-ci est courbe. Chute et avancée se compensent → une orbite. C'est une chute libre perpétuelle."],
+ ["Différence entre masse et poids ?","La <b>masse</b> (kg) mesure la quantité de matière, invariable. Le <b>poids</b> P = mg est la force de gravitation locale. En orbite, tout est en chute libre : les astronautes flottent (impesanteur), mais leur masse n'a pas changé."],
+ ["Pourquoi un satellite bas va-t-il plus vite ?","Parce que v = √(GM/r) : plus r est petit, plus v est grand. L'ISS (400 km) : 7,7 km/s ; un géostationnaire (36 000 km) : 3,1 km/s."],
+ ["C'est quoi le « jour sidéral » ?","La durée d'un tour de la Terre par rapport aux étoiles : <b>23 h 56 min 4 s</b>, un peu moins que le jour solaire (24 h). C'est la période d'un satellite géostationnaire."],
+ ["Comment retrouver la 3ᵉ loi de Kepler ?","Pars de T = 2π√(r³/GM), élève au carré : <b>T²/r³ = 4π²/GM = constante</b>. Le membre de droite ne dépend que de l'astre central — c'est Kepler démontré par Newton."],
+ ["À quoi sert un satellite géostationnaire ?","Il paraît <b>immobile</b> dans le ciel : une antenne pointe vers lui une fois pour toutes. Télévision, météo, télécoms (Nilesat, en Égypte, en est un). Inconvénient : très loin (36 000 km), léger délai du signal."]
+];
+document.getElementById('iabox').innerHTML=IA.map(function(q,i){
+ return '<button class="ia-q" data-i="'+i+'">'+q[0]+'</button><div class="ia-a" id="ia-'+i+'">'+q[1]+'</div>';}).join('');
+document.getElementById('iabox').addEventListener('click',function(e){
+  var b=e.target.closest('.ia-q');if(!b)return;var a=document.getElementById('ia-'+b.dataset.i);
+  b.classList.toggle('on');a.classList.toggle('on');});
+</script>
+</body>
+</html>

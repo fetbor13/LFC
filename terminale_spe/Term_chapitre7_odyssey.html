@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odyssey | Ch.07 : Mécanique Céleste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},svg:{fontCache:'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+:root {
+  --bg: #03050A;
+  --panel: rgba(15, 20, 35, 0.4);
+  --panel-solid: #0A0D18;
+  --line: rgba(100, 120, 160, 0.2);
+  --text: #F1F5F9;
+  --muted: #94A3B8;
+  --accent: #38BDF8;
+  --accent-glow: rgba(56, 189, 248, 0.5);
+  --ion: #818CF8;
+  --kepler: #34D399;
+
+  --font-title: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-math: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  height: 100vh;
+  display: flex;
+}
+
+/* Background Stars */
+#starfield {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Layout Split */
+.scrolly-container {
+  width: 45%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 40px;
+  position: relative;
+  z-index: 10;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ion) var(--bg);
+}
+
+.scrolly-container::-webkit-scrollbar { width: 6px; }
+.scrolly-container::-webkit-scrollbar-thumb { background: var(--ion); border-radius: 4px; }
+
+.canvas-container {
+  width: 55%;
+  height: 100vh;
+  position: relative;
+  z-index: 5;
+  background: radial-gradient(circle at center, rgba(30,40,70,0.3) 0%, var(--bg) 70%);
+  display: flex;
+  flex-direction: column;
+}
+
+canvas#simCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Scrollytelling Cards */
+.story-card {
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 80vh; /* creates scrolling gap */
+  opacity: 0.3;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.story-card.active {
+  opacity: 1;
+  transform: translateY(0);
+  border-color: rgba(129, 140, 248, 0.6);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(129, 140, 248, 0.1);
+}
+
+.story-card:last-child {
+  margin-bottom: 20vh;
+}
+
+/* Typography in Cards */
+.tag {
+  display: inline-block;
+  font-family: var(--font-math);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.story-card h2 {
+  font-family: var(--font-title);
+  font-size: 32px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #fff, var(--ion));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.story-card p {
+  color: var(--muted);
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.formula-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  font-size: 1.1em;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+/* UI Overlay Controls */
+.hud {
+  position: absolute;
+  top: 24px; right: 24px;
+  display: flex;
+  gap: 12px;
+}
+.btn {
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: 0.3s;
+}
+.btn:hover {
+  background: rgba(129, 140, 248, 0.2);
+  border-color: var(--ion);
+}
+.btn.active {
+  background: var(--ion);
+  color: #fff;
+}
+
+/* Overlay Info on Canvas */
+.telemetry {
+  position: absolute;
+  bottom: 24px; right: 24px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  font-family: var(--font-math);
+  font-size: 13px;
+  color: var(--accent);
+}
+.telemetry-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 8px;
+}
+.telemetry-row:last-child { margin-bottom: 0; }
+.telemetry-label { color: var(--muted); }
+
+/* Professor Mode Transitions */
+body.prof-mode .scrolly-container {
+  transform: translateX(-100%);
+  width: 0;
+  padding: 0;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+body.prof-mode .canvas-container {
+  width: 100%;
+  transition: width 0.5s ease;
+}
+.prof-controls {
+  display: none;
+  position: absolute;
+  bottom: 24px; left: 24px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  gap: 12px;
+}
+body.prof-mode .prof-controls {
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.slider-group label {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-title);
+}
+input[type=range] {
+  accent-color: var(--ion);
+}
+
+/* Intro Hero */
+.intro-hero {
+  margin-bottom: 60vh;
+  padding-top: 10vh;
+}
+.intro-hero h1 {
+  font-family: var(--font-title);
+  font-size: 3vw;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.intro-hero p {
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- LEFT: TEXT FLOW (Scrollytelling) -->
+<div class="scrolly-container" id="scrolly">
+
+  <div class="intro-hero">
+    <div class="tag">Physique Terminale Spé</div>
+    <h1>Mouvement des Satellites & Planètes</h1>
+    <p>Une odyssée gravitationnelle. Faites défiler pour voyager à travers les lois qui régissent l'univers.</p>
+  </div>
+
+  <div class="story-card" data-step="1">
+    <div class="tag">01 · Orbite Circulaire</div>
+    <h2>La Gravitation Universelle</h2>
+    <p>Tout corps massif attire les autres. Newton formalise cela : la force d'attraction est radiale, centripète, et décroît avec le carré de la distance.</p>
+    <div class="formula-box">
+      $$ \vec{F}_{A/B} = -G \frac{m_A m_B}{r^2} \vec{u}_{AB} $$
+    </div>
+    <p>Le satellite subit une accélération uniquement normale. Son mouvement est circulaire uniforme.</p>
+  </div>
+
+  <div class="story-card" data-step="2">
+    <div class="tag">02 · Lois de Kepler</div>
+    <h2>1ère Loi : Les Orbites Elliptiques</h2>
+    <p>Johannes Kepler découvre que les planètes ne décrivent pas des cercles parfaits, mais des <b>ellipses</b>. Le Soleil occupe l'un des deux foyers.</p>
+    <p>Plus l'excentricité $e$ est proche de 1, plus l'ellipse est aplatie. Si $e=0$, c'est un cercle.</p>
+  </div>
+
+  <div class="story-card" data-step="3">
+    <div class="tag">03 · Lois de Kepler</div>
+    <h2>2ème Loi : La Loi des Aires</h2>
+    <p>Le segment reliant le Soleil à la planète balaie des <b>aires égales en des durées égales</b>.</p>
+    <p>Conséquence directe : la planète accélère lorsqu'elle s'approche du Soleil (périhélie) et ralentit lorsqu'elle s'en éloigne (aphélie).</p>
+  </div>
+
+  <div class="story-card" data-step="4">
+    <div class="tag">04 · Lois de Kepler</div>
+    <h2>3ème Loi : Les Périodes</h2>
+    <p>Le carré de la période de révolution $T$ est proportionnel au cube du demi-grand axe $a$ de l'orbite.</p>
+    <div class="formula-box">
+      $$ \frac{T^2}{a^3} = \frac{4\pi^2}{GM} = \text{constante} $$
+    </div>
+    <p>Cette constante ne dépend que de l'astre central (le Soleil, ou la Terre pour un satellite).</p>
+  </div>
+
+  <div class="story-card" data-step="5">
+    <div class="tag">05 · Application</div>
+    <h2>Satellites Géostationnaires</h2>
+    <p>Pour rester à la verticale d'un même point sur Terre, un satellite doit être dans le plan de l'équateur et avoir une période de révolution égale à la période de rotation de la Terre (jour sidéral $\approx 23h 56min$).</p>
+    <p>La 3ème loi de Kepler nous donne une altitude unique : $h \approx 36\,000 \text{ km}$.</p>
+  </div>
+
+</div>
+
+<!-- RIGHT: INTERACTIVE CANVAS -->
+<div class="canvas-container">
+
+  <div class="hud">
+    <button class="btn" id="btn-eleve" aria-label="Mode Élève" class="active">Mode Élève (Récit)</button>
+    <button class="btn" id="btn-prof" aria-label="Mode Professeur">Mode Prof (Tableau)</button>
+  </div>
+
+  <canvas id="simCanvas"></canvas>
+
+  <div class="telemetry">
+    <div class="telemetry-row">
+      <span class="telemetry-label">Vitesse orbitale:</span>
+      <span id="tel-v">0.00 km/s</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Distance (r):</span>
+      <span id="tel-r">0.00 km</span>
+    </div>
+    <div class="telemetry-row">
+      <span class="telemetry-label">Excentricité:</span>
+      <span id="tel-e">0.00</span>
+    </div>
+  </div>
+
+  <div class="prof-controls">
+    <div class="slider-group">
+      <label>Excentricité orbitale</label>
+      <input type="range" id="ctrl-e" min="0" max="0.8" step="0.05" value="0">
+    </div>
+    <div class="slider-group">
+      <label>Vitesse de simulation</label>
+      <input type="range" id="ctrl-speed" min="0.1" max="3" step="0.1" value="1">
+    </div>
+    <button class="btn" id="btn-trace" style="margin-top:8px">Afficher Vecteurs (F, v)</button>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// BACKGROUND STARFIELD
+// ==========================================
+const starCanvas = document.getElementById('starfield');
+const ctxS = starCanvas.getContext('2d');
+let stars = [];
+function initStars() {
+  starCanvas.width = window.innerWidth;
+  starCanvas.height = window.innerHeight;
+  stars = [];
+  for(let i=0; i<300; i++){
+    stars.push({
+      x: Math.random() * starCanvas.width,
+      y: Math.random() * starCanvas.height,
+      r: Math.random() * 1.5,
+      alpha: Math.random()
+    });
+  }
+}
+function drawStars() {
+  ctxS.clearRect(0,0,starCanvas.width,starCanvas.height);
+  stars.forEach(s => {
+    ctxS.beginPath();
+    ctxS.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctxS.fillStyle = `rgba(255, 255, 255, ${s.alpha})`;
+    ctxS.fill();
+    s.alpha += (Math.random() - 0.5) * 0.05;
+    if(s.alpha < 0) s.alpha = 0;
+    if(s.alpha > 1) s.alpha = 1;
+  });
+  requestAnimationFrame(drawStars);
+}
+initStars();
+drawStars();
+window.addEventListener('resize', initStars);
+
+
+// ==========================================
+// SIMULATION ENGINE (Canvas)
+// ==========================================
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+let cw, ch;
+const dpr = window.devicePixelRatio || 1;
+
+let state = {
+  step: 0,
+  eccentricity: 0,
+  semiMajorAxis: 200,
+  angle: 0,
+  speedMultiplier: 1,
+  showVectors: false,
+  showArea: false,
+  planetColor: '#38BDF8',
+  centralBodyRadius: 30,
+  areaSweepAngle: 0,
+  areaPoints: []
+};
+
+function resizeSim() {
+  cw = canvas.parentElement.clientWidth;
+  ch = canvas.parentElement.clientHeight;
+  canvas.width = cw * dpr;
+  canvas.height = ch * dpr;
+  ctx.scale(dpr, dpr);
+}
+window.addEventListener('resize', resizeSim);
+resizeSim();
+
+function drawArrow(x1, y1, x2, y2, color, label) {
+  const headlen = 10;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const angle = Math.atan2(dy, dx);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6), y2 - headlen * Math.sin(angle - Math.PI / 6));
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6), y2 - headlen * Math.sin(angle + Math.PI / 6));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  if (label) {
+    ctx.fillStyle = color;
+    ctx.font = "14px 'JetBrains Mono'";
+    ctx.fillText(label, x2 + 5, y2 + 5);
+  }
+}
+
+function updateSim() {
+  ctx.clearRect(0, 0, cw, ch);
+
+  const cx = cw / 2;
+  const cy = ch / 2;
+
+  const a = state.semiMajorAxis;
+  const e = state.eccentricity;
+  const b = a * Math.sqrt(1 - e*e);
+  const c = a * e; // focal distance
+
+  // Center is not the focal point. Focal point is at (cx, cy)
+  // Ellipse center is at (cx - c, cy)
+  const ellipseCenter = { x: cx - c, y: cy };
+
+  // Draw orbit path
+  ctx.beginPath();
+  ctx.ellipse(ellipseCenter.x, ellipseCenter.y, a, b, 0, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Draw central body (Sun/Earth)
+  const centralGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, state.centralBodyRadius);
+  centralGradient.addColorStop(0, '#FFC46B');
+  centralGradient.addColorStop(1, '#D97706');
+  ctx.beginPath();
+  ctx.arc(cx, cy, state.centralBodyRadius, 0, Math.PI*2);
+  ctx.fillStyle = centralGradient;
+  ctx.fill();
+  ctx.shadowBlur = 30;
+  ctx.shadowColor = '#D97706';
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Calculate satellite position
+  // r = a(1-e^2) / (1 + e*cos(theta))
+  const r = (a * (1 - e*e)) / (1 + e * Math.cos(state.angle));
+  const px = cx + r * Math.cos(state.angle);
+  const py = cy + r * Math.sin(state.angle);
+
+  // Sweep Area (Kepler 2nd Law)
+  if (state.showArea) {
+    state.areaPoints.push({x: px, y: py});
+    if (state.areaPoints.length > 50) {
+      state.areaPoints.shift();
+    }
+
+    if (state.areaPoints.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(state.areaPoints[0].x, state.areaPoints[0].y);
+      for(let i=1; i<state.areaPoints.length; i++){
+        ctx.lineTo(state.areaPoints[i].x, state.areaPoints[i].y);
+      }
+      ctx.lineTo(cx, cy);
+      ctx.fillStyle = 'rgba(52, 211, 153, 0.2)'; // Kepler green
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.5)';
+      ctx.stroke();
+    }
+  } else {
+    state.areaPoints = [];
+  }
+
+  // Draw Satellite
+  ctx.beginPath();
+  ctx.arc(px, py, 6, 0, Math.PI*2);
+  ctx.fillStyle = state.planetColor;
+  ctx.fill();
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = state.planetColor;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Vectors
+  if (state.showVectors) {
+    // Force/Acceleration vector (towards center)
+    const forceMag = 5000 / (r); // Arbitrary scaling for vis
+    const fx = px - forceMag * Math.cos(state.angle);
+    const fy = py - forceMag * Math.sin(state.angle);
+    drawArrow(px, py, fx, fy, '#FF6A9C', 'F');
+
+    // Velocity vector (tangent)
+    // specific angular momentum h = r^2 * d(theta)/dt = const
+    // v_theta = h / r. Here we approximate direction.
+    const dx = -Math.sin(state.angle);
+    const dy = Math.cos(state.angle) + e; // Hodograph approach
+    const mag = Math.sqrt(dx*dx + dy*dy);
+    const vMag = 8000 / r; // Arbitrary vis scaling
+
+    drawArrow(px, py, px + (dx/mag)*vMag, py + (dy/mag)*vMag, '#38BDF8', 'v');
+  }
+
+  // Update Telemetry UI
+  document.getElementById('tel-r').innerText = (r * 100).toFixed(0) + ' km';
+  document.getElementById('tel-v').innerText = (1000 / r).toFixed(2) + ' km/s';
+  document.getElementById('tel-e').innerText = state.eccentricity.toFixed(2);
+
+  // Time evolution (conservation of angular momentum d(theta)/dt = h / r^2)
+  const dt = 0.02 * state.speedMultiplier;
+  const dTheta = (20000 / (r*r)) * dt;
+  state.angle += dTheta;
+
+  if(state.angle > Math.PI*2) state.angle -= Math.PI*2;
+
+  requestAnimationFrame(updateSim);
+}
+updateSim();
+
+
+// ==========================================
+// SCROLLYTELLING LOGIC
+// ==========================================
+const scrollyContainer = document.getElementById('scrolly');
+const cards = document.querySelectorAll('.story-card');
+
+function handleScroll() {
+  // We want to detect which card is currently in the middle of the screen
+  const containerCenter = scrollyContainer.scrollTop + (scrollyContainer.clientHeight / 2);
+
+  let activeIndex = -1;
+  cards.forEach((card, index) => {
+    const cardTop = card.offsetTop;
+    const cardBottom = cardTop + card.offsetHeight;
+
+    // Check if container center is within card bounds (with padding)
+    if (containerCenter >= cardTop - 150 && containerCenter <= cardBottom + 150) {
+      activeIndex = index + 1;
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+
+  // Apply state changes based on active story step
+  if (activeIndex !== state.step) {
+    state.step = activeIndex;
+    applyStepState(activeIndex);
+  }
+}
+
+function applyStepState(step) {
+  // Default values
+  const tgt = {
+    e: 0,
+    showVectors: false,
+    showArea: false,
+    color: '#38BDF8',
+    speed: 1,
+    radius: 30
+  };
+
+  switch(step) {
+    case 1: // Gravitation - Cercle + Vecteurs
+      tgt.e = 0;
+      tgt.showVectors = true;
+      break;
+    case 2: // Kepler 1 - Ellipse
+      tgt.e = 0.6;
+      tgt.color = '#F59E0B';
+      break;
+    case 3: // Kepler 2 - Aires
+      tgt.e = 0.6;
+      tgt.showArea = true;
+      tgt.speed = 0.5; // slow down to see area better
+      tgt.color = '#34D399';
+      break;
+    case 4: // Kepler 3 - Périodes
+      tgt.e = 0.3;
+      tgt.showArea = false;
+      tgt.color = '#A78BFA';
+      break;
+    case 5: // Géo - Terre, Cercle
+      tgt.e = 0;
+      tgt.radius = 40; // bigger earth
+      tgt.color = '#fff';
+      break;
+  }
+
+  // Smooth transition for eccentricity
+  animateValue(state, 'eccentricity', tgt.e, 1000);
+  state.showVectors = tgt.showVectors;
+  state.showArea = tgt.showArea;
+  state.planetColor = tgt.color;
+  state.speedMultiplier = tgt.speed;
+  state.centralBodyRadius = tgt.radius;
+}
+
+function animateValue(obj, prop, target, duration) {
+  const start = obj[prop];
+  const change = target - start;
+  const startTime = performance.now();
+
+  function update(time) {
+    const elapsed = time - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // easeInOutQuad
+    const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    obj[prop] = start + change * ease;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+scrollyContainer.addEventListener('scroll', handleScroll);
+// Trigger initial
+setTimeout(handleScroll, 100);
+
+
+// ==========================================
+// PROFESSOR MODE TOGGLE
+// ==========================================
+const btnEleve = document.getElementById('btn-eleve');
+const btnProf = document.getElementById('btn-prof');
+const ctrlE = document.getElementById('ctrl-e');
+const ctrlSpeed = document.getElementById('ctrl-speed');
+const btnTrace = document.getElementById('btn-trace');
+
+btnProf.addEventListener('click', () => {
+  document.body.classList.add('prof-mode');
+  btnProf.classList.add('active');
+  btnEleve.classList.remove('active');
+  setTimeout(resizeSim, 500); // resize canvas after CSS transition
+
+  // Sync sliders to current state
+  ctrlE.value = state.eccentricity;
+  ctrlSpeed.value = state.speedMultiplier;
+});
+
+btnEleve.addEventListener('click', () => {
+  document.body.classList.remove('prof-mode');
+  btnEleve.classList.add('active');
+  btnProf.classList.remove('active');
+  setTimeout(resizeSim, 500);
+  handleScroll(); // restore state from scroll pos
+});
+
+ctrlE.addEventListener('input', (e) => {
+  state.eccentricity = parseFloat(e.target.value);
+});
+ctrlSpeed.addEventListener('input', (e) => {
+  state.speedMultiplier = parseFloat(e.target.value);
+});
+btnTrace.addEventListener('click', () => {
+  state.showVectors = !state.showVectors;
+});
+
+</script>
+</body>
+</html>
