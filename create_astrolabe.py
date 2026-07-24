@@ -1,0 +1,667 @@
+import os
+
+html_content = """<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitre 07 - Mouvement des Satellites et des Planètes | LFC Astrolabe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+        displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
+      },
+      svg: {fontCache: 'global'},
+      startup: {typeset: false}
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ASTROLABE ARCHITECTURE - ISLAMIC GOLDEN AGE X 2026 WEBOS */
+    :root {
+      --bg-dark: #05080e;
+      --bg-panel: rgba(10, 15, 25, 0.7);
+      --gold-primary: #d4af37;
+      --gold-glow: rgba(212, 175, 55, 0.4);
+      --amber-accent: #ff8c00;
+      --cyan-neon: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.3);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-gold: rgba(212, 175, 55, 0.25);
+      --border-cyan: rgba(0, 240, 255, 0.2);
+      --glass-bg: rgba(5, 8, 14, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      line-height: 1.6;
+    }
+
+    #nbody-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: all;
+    }
+
+    #app-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 280px 1fr 340px;
+      grid-template-rows: 70px 1fr;
+      grid-template-areas:
+        "header header header"
+        "nav main aside";
+      pointer-events: none;
+    }
+
+    /* Top Bar */
+    header {
+      grid-area: header;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+      background: linear-gradient(to bottom, rgba(5,8,14,0.9), transparent);
+      pointer-events: auto;
+      border-bottom: 1px solid var(--border-gold);
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--gold-primary);
+      text-shadow: 0 0 15px var(--gold-glow);
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--cyan-neon);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .top-controls {
+      display: flex;
+      gap: 1rem;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+      background: var(--gold-glow);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      grid-area: nav;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: linear-gradient(to right, rgba(5,8,14,0.95), transparent);
+      border-right: 1px solid var(--glass-border);
+      pointer-events: auto;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .sidebar-eyebrow {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-chap {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .nav-btn.active {
+      background: rgba(0, 240, 255, 0.05);
+      color: var(--cyan-neon);
+      border-left: 3px solid var(--cyan-neon);
+    }
+    .nav-icon {
+      font-size: 1.2rem;
+      filter: grayscale(100%) opacity(0.7);
+    }
+    .nav-btn.active .nav-icon {
+      filter: none;
+    }
+
+    /* Main Content Area */
+    .content-overlay {
+      grid-area: main;
+      padding: 2rem;
+      position: relative;
+      pointer-events: auto;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+    }
+    .glass-panel {
+      display: none;
+      width: 100%;
+      max-width: 900px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    .glass-panel.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Content Styles */
+    h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-primary);
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 0.5rem;
+    }
+    h3 {
+      color: var(--amber-accent);
+      font-size: 1.4rem;
+      margin: 1.5rem 0 1rem 0;
+    }
+    h4 {
+      color: var(--cyan-neon);
+      font-size: 1.1rem;
+      margin: 1rem 0 0.5rem 0;
+    }
+    p, li {
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+    ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+
+    .formula-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-cyan);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.05);
+    }
+    .formula-label {
+      position: absolute;
+      top: -10px;
+      left: 1rem;
+      background: var(--bg-dark);
+      padding: 0 0.5rem;
+      font-size: 0.75rem;
+      color: var(--cyan-neon);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Right HUD */
+    .hud-right {
+      grid-area: aside;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      background: linear-gradient(to left, rgba(5,8,14,0.9), transparent);
+      border-left: 1px solid var(--glass-border);
+      pointer-events: auto;
+    }
+    .hud-box {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .hud-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    .hud-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+    .hud-unit {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .interactive-instructions {
+      border-top: 1px solid var(--glass-border);
+      padding-top: 1.5rem;
+      margin-top: auto;
+    }
+    .instruction-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Interactive Canvas -->
+  <canvas id="nbody-canvas"></canvas>
+
+  <div id="app-grid">
+    <header>
+      <div class="brand">
+        <div class="logo-text">ASTROLABE</div>
+        <div class="subtitle">Laboratoire de Mécanique Céleste</div>
+      </div>
+      <div class="top-controls">
+        <button class="btn-outline" onclick="toggleSim()">PAUSE</button>
+        <button class="btn-outline" onclick="resetSim()">RESET</button>
+        <button class="btn-outline" onclick="window.location.href='index.html'">FERMER COURS</button>
+      </div>
+    </header>
+
+    <nav class="sidebar pointer-events-auto">
+      <div class="sidebar-header">
+        <div class="sidebar-eyebrow">Terminale Spécialité PC</div>
+        <div class="sidebar-chap">Chapitre 07</div>
+      </div>
+      <button class="nav-btn active" onclick="showPanel('cours', this)"><span class="nav-icon">📖</span> Cours</button>
+      <button class="nav-btn" onclick="showPanel('schemas', this)"><span class="nav-icon">🧠</span> Carte mentale</button>
+      <button class="nav-btn" onclick="showPanel('flash', this)"><span class="nav-icon">🃏</span> Flashcards</button>
+      <button class="nav-btn" onclick="showPanel('quiz', this)"><span class="nav-icon">✅</span> Quiz</button>
+      <button class="nav-btn" onclick="showPanel('sim', this)"><span class="nav-icon">🛰️</span> Simulations (Externe)</button>
+      <button class="nav-btn" onclick="showPanel('exos', this)"><span class="nav-icon">🧩</span> Exercices</button>
+      <button class="nav-btn" onclick="showPanel('methodes', this)"><span class="nav-icon">🧰</span> Méthodes</button>
+      <button class="nav-btn" onclick="showPanel('ia', this)"><span class="nav-icon">🤖</span> Hub IA</button>
+      <button class="nav-btn" onclick="showPanel('sup', this)"><span class="nav-icon">🚀</span> Vers le Sup</button>
+    </nav>
+
+    <main class="content-overlay">
+      <!-- Panels will be injected here -->
+    </main>
+
+    <aside class="hud-right pointer-events-auto">
+      <div class="hud-box">
+        <div class="hud-title">Vitesse Orbitale (Satellite)</div>
+        <div class="hud-value" id="hud-v">0.00 <span class="hud-unit">km/s</span></div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-title">Altitude (r)</div>
+        <div class="hud-value" id="hud-r">0 <span class="hud-unit">km</span></div>
+      </div>
+      <div class="hud-box" style="border-color: var(--border-cyan);">
+        <div class="hud-title" style="color: var(--cyan-neon);">Excentricité (e)</div>
+        <div class="hud-value" id="hud-e">0.000</div>
+      </div>
+
+      <div class="interactive-instructions">
+        <div class="hud-title" style="color: var(--cyan-neon);">Instructions Interactives</div>
+        <div class="instruction-text">
+          - Cliquez et glissez sur le fond pour déplacer la vue.<br>
+          - Molette pour zoomer.<br>
+          - Maintenez le clic sur le satellite rouge pour le "lancer" avec une nouvelle vitesse (drag & drop).
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Panel Navigation Logic
+    function showPanel(id, btn) {
+      document.querySelectorAll('.glass-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const panel = document.getElementById('panel-' + id);
+      if (panel) panel.classList.add('active');
+      btn.classList.add('active');
+
+      // Re-trigger MathJax typesetting if a panel becomes visible
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetClear([panel]);
+        MathJax.typesetPromise([panel]).catch(err => console.error(err));
+      }
+    }
+
+    // N-Body Simulation Engine (Astrolabe Background)
+    const canvas = document.getElementById('nbody-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Simulation State
+    let isPaused = false;
+    let offsetX = width / 2;
+    let offsetY = height / 2;
+    let scale = 1.0;
+
+    // Physics constants (abstracted for visual simulation)
+    const G = 0.5;
+    const CENTRAL_MASS = 10000;
+
+    let bodies = [
+      { x: 0, y: 0, vx: 0, vy: 0, mass: CENTRAL_MASS, color: '#ffcc00', radius: 40, isCentral: true }, // Sun/Earth
+      { x: 300, y: 0, vx: 0, vy: 4, mass: 10, color: '#00f0ff', radius: 8, isCentral: false },     // Planet/Satellite 1
+      { x: -500, y: 200, vx: -1.5, vy: -3, mass: 5, color: '#ff4444', radius: 6, isCentral: false, isControllable: true } // Interactive satellite
+    ];
+
+    let trail = [];
+
+    // Interaction state
+    let isDragging = false;
+    let dragStart = {x:0, y:0};
+    let dragTarget = null;
+
+    // Pan state
+    let isPanning = false;
+    let panStart = {x:0, y:0};
+
+    canvas.addEventListener('mousedown', (e) => {
+      const mouseX = (e.clientX - offsetX) / scale;
+      const mouseY = (e.clientY - offsetY) / scale;
+
+      // Check if clicking controllable body
+      let clickedBody = false;
+      for (let b of bodies) {
+        if (b.isControllable) {
+          const dx = mouseX - b.x;
+          const dy = mouseY - b.y;
+          if (Math.sqrt(dx*dx + dy*dy) < b.radius * 3) { // Generous hitbox
+            isDragging = true;
+            dragTarget = b;
+            dragStart = {x: e.clientX, y: e.clientY};
+            b.vx = 0; b.vy = 0; // Stop moving while dragging
+            clickedBody = true;
+            break;
+          }
+        }
+      }
+
+      if (!clickedBody) {
+        isPanning = true;
+        panStart = {x: e.clientX - offsetX, y: e.clientY - offsetY};
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDragging && dragTarget) {
+        // Just drawing the sling line, update happens in render
+      } else if (isPanning) {
+        offsetX = e.clientX - panStart.x;
+        offsetY = e.clientY - panStart.y;
+      }
+    });
+
+    canvas.addEventListener('mouseup', (e) => {
+      if (isDragging && dragTarget) {
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        // Launch with new velocity (sling mechanic)
+        dragTarget.vx = -dx * 0.05 / scale;
+        dragTarget.vy = -dy * 0.05 / scale;
+
+        isDragging = false;
+        dragTarget = null;
+        trail = []; // Clear trail on new launch
+      }
+      isPanning = false;
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoom = Math.exp(-e.deltaY * 0.001);
+      scale *= zoom;
+      scale = Math.max(0.1, Math.min(scale, 5));
+    }, {passive: false});
+
+    function toggleSim() {
+      isPaused = !isPaused;
+      document.querySelector('.top-controls button').innerText = isPaused ? "PLAY" : "PAUSE";
+    }
+
+    function resetSim() {
+      bodies[2].x = -500; bodies[2].y = 200;
+      bodies[2].vx = -1.5; bodies[2].vy = -3;
+      trail = [];
+      offsetX = width/2;
+      offsetY = height/2;
+      scale = 1.0;
+    }
+
+    function update() {
+      if (isPaused) return;
+
+      // Update positions
+      for (let b of bodies) {
+        if (!b.isCentral && (!isDragging || b !== dragTarget)) {
+          b.x += b.vx;
+          b.y += b.vy;
+        }
+      }
+
+      // Calculate Gravity
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const b1 = bodies[i];
+          const b2 = bodies[j];
+
+          const dx = b2.x - b1.x;
+          const dy = b2.y - b1.y;
+          const distSq = dx*dx + dy*dy;
+          const dist = Math.sqrt(distSq);
+
+          if (dist > 10) { // Prevent singularity
+            const f = (G * b1.mass * b2.mass) / distSq;
+            const ax = (f * dx / dist);
+            const ay = (f * dy / dist);
+
+            if (!b1.isCentral && (!isDragging || b1 !== dragTarget)) { b1.vx += ax / b1.mass; b1.vy += ay / b1.mass; }
+            if (!b2.isCentral && (!isDragging || b2 !== dragTarget)) { b2.vx -= ax / b2.mass; b2.vy -= ay / b2.mass; }
+          }
+        }
+      }
+
+      // Record trail for controllable body
+      const ctrlBody = bodies.find(b => b.isControllable);
+      if (ctrlBody && !isDragging) {
+        if (trail.length === 0 || Math.hypot(trail[trail.length-1].x - ctrlBody.x, trail[trail.length-1].y - ctrlBody.y) > 5) {
+          trail.push({x: ctrlBody.x, y: ctrlBody.y});
+          if (trail.length > 500) trail.shift();
+        }
+      }
+
+      // Update HUD
+      if (ctrlBody) {
+        const v = Math.sqrt(ctrlBody.vx*ctrlBody.vx + ctrlBody.vy*ctrlBody.vy);
+        const r = Math.sqrt(ctrlBody.x*ctrlBody.x + ctrlBody.y*ctrlBody.y);
+
+        document.getElementById('hud-v').innerHTML = (v * 10).toFixed(2) + ' <span class="hud-unit">km/s</span>';
+        document.getElementById('hud-r').innerHTML = Math.round(r * 10) + ' <span class="hud-unit">km</span>';
+
+        // Pseudo-eccentricity based on vis-viva (highly simplified for visual effect)
+        const mu = G * CENTRAL_MASS;
+        const E = (v*v)/2 - mu/r;
+        const h = r * v; // Approximation
+        const ecc = Math.sqrt(Math.max(0, 1 + (2*E*h*h)/(mu*mu)));
+        document.getElementById('hud-e').innerText = ecc.toFixed(3);
+      }
+    }
+
+    function drawGrid() {
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+      ctx.lineWidth = 1;
+      const gridSize = 100 * scale;
+      const startX = offsetX % gridSize;
+      const startY = offsetY % gridSize;
+
+      ctx.beginPath();
+      for (let x = startX; x < width; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, height); }
+      for (let y = startY; y < height; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(width, y); }
+      ctx.stroke();
+    }
+
+    function render() {
+      ctx.fillStyle = '#05080e';
+      ctx.fillRect(0, 0, width, height);
+
+      drawGrid();
+
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      // Draw orbit trail
+      if (trail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(trail[0].x, trail[0].y);
+        for (let i=1; i<trail.length; i++) {
+          ctx.lineTo(trail[i].x, trail[i].y);
+        }
+        ctx.strokeStyle = 'rgba(255, 68, 68, 0.4)';
+        ctx.lineWidth = 2 / scale;
+        ctx.stroke();
+      }
+
+      // Draw bodies
+      for (let b of bodies) {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
+
+        if (b.isCentral) {
+          // Sun glow
+          let gradient = ctx.createRadialGradient(b.x, b.y, b.radius*0.5, b.x, b.y, b.radius*3);
+          gradient.addColorStop(0, '#ffcc00');
+          gradient.addColorStop(1, 'rgba(212, 175, 55, 0)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath(); ctx.arc(b.x, b.y, b.radius*3, 0, Math.PI*2); ctx.fill();
+        }
+
+        ctx.fillStyle = b.color;
+        ctx.fill();
+
+        if (b.isControllable) {
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1/scale;
+          ctx.stroke();
+
+          // Draw velocity vector
+          if (!isDragging) {
+            ctx.beginPath();
+            ctx.moveTo(b.x, b.y);
+            ctx.lineTo(b.x + b.vx * 20, b.y + b.vy * 20);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2/scale;
+            ctx.stroke();
+          }
+        }
+      }
+
+      ctx.restore();
+
+      // Draw drag sling UI
+      if (isDragging && dragTarget) {
+        ctx.beginPath();
+        ctx.moveTo(dragStart.x, dragStart.y);
+        ctx.lineTo(mouseX, mouseY);
+        ctx.strokeStyle = '#00f0ff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    let mouseX = 0, mouseY = 0;
+    canvas.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    function loop() {
+      update();
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    // Start after slight delay to ensure UI mounts
+    setTimeout(() => {
+      loop();
+      // Ensure MathJax renders initially
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
+    }, 500);
+
+  </script>
+</body>
+</html>
+"""
+with open('astrolabe_template.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
