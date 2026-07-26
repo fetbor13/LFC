@@ -1,0 +1,3 @@
+## 2026-07-26 - Adding Accessible Modals and Inputs in French UI
+**Learning:** Custom modals require specific ARIA attributes (`role="dialog"`, `aria-modal="true"`, and `aria-labelledby`) to be correctly identified by screen readers. Furthermore, input fields without visible labels (relying only on placeholders) must have explicit `aria-label` attributes. Icon-only buttons (like the theme toggle or modal close '✕' buttons) also must be properly labeled in the site's primary language (e.g., `aria-label="Fermer"`).
+**Action:** When creating or modifying custom interactive elements, always ensure appropriate ARIA roles, labels (in French for this site), and bindings are included to maintain accessibility.
