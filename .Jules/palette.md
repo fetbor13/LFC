@@ -1,0 +1,3 @@
+## 2024-05-30 - Modal and Placeholder-only Input Accessibility
+**Learning:** Custom modals implemented via `.modal-overlay` lacked structural semantic tags (`role="dialog"`, `aria-modal="true"`, and `aria-labelledby`) and the close icon buttons lacked `aria-label` attributes. Furthermore, form inputs relied entirely on visual placeholders without `<label>` elements or `aria-label` attributes, rendering them inaccessible to screen readers.
+**Action:** Added proper ARIA roles and labels to modals, their close buttons, and all inputs within the modals to ensure full screen reader support. I will consistently add `aria-label` to form fields lacking a visible `<label>` and ensure custom modals have the required WAI-ARIA attributes.
