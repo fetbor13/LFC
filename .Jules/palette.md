@@ -1,0 +1,3 @@
+## 2024-12-07 - Accessibility of Custom Modals and Placeholder Inputs
+**Learning:** Custom modals implemented as HTML `<div>` elements lack semantic meaning for screen readers. They require explicit roles (`role="dialog"`), modal state (`aria-modal="true"`), and labeling (`aria-labelledby`). Furthermore, form inputs that rely entirely on placeholder text for visual labeling are inaccessible to screen readers without an explicit `aria-label`.
+**Action:** When implementing custom modals, always include the necessary ARIA attributes (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`). Ensure all form inputs, especially those without visible `<label>` elements, have descriptive `aria-label` attributes.
