@@ -1,0 +1,1 @@
+## 2024-05-15 - ARIA Labels on Icon Buttons\n**Learning:** Icon-only buttons without aria-labels are a frequent accessibility issue in this codebase.\n**Action:** Add aria-labels to all icon-only buttons to ensure they are accessible to screen readers.
