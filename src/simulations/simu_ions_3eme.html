@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulation : Tests d'identification des ions</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #simu-container {
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            touch-action: none; /* Empêche le scroll lors du drag sur mobile */
+        }
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #0d9488;
+            pointer-events: none;
+        }
+        h2 { margin: 0 0 5px 0; font-size: 1.1rem; color: #134e4a; }
+        p { margin: 0; font-size: 0.9rem; color: #475569; }
+
+        #btn-reset {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #0d9488;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        #btn-reset:hover { background: #0f766e; }
+    </style>
+</head>
+<body>
+
+    <div id="simu-container">
+        <div id="instructions">
+            <h2>Tests caractéristiques des ions</h2>
+            <p>Glissez un réactif au-dessus d'un tube pour faire le test.</p>
+        </div>
+        <button id="btn-reset">Recommencer</button>
+        <canvas id="simCanvas" width="1000" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Dimensions de base de la simulation (indépendantes du redimensionnement)
+        const SIM_WIDTH = 1000;
+        const SIM_HEIGHT = 600;
+
+        // --- DONNÉES DES IONS (Tubes) ---
+        // 6 tubes : Cu2+, Fe2+, Fe3+, Zn2+, Cl-, SO4 2-
+        const tubes = [
+            { id: 'cu2', label: 'Cu²⁺', initialColor: 'rgba(173, 216, 230, 0.5)', x: 150, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+            { id: 'fe2', label: 'Fe²⁺', initialColor: 'rgba(144, 238, 144, 0.3)', x: 250, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+            { id: 'fe3', label: 'Fe³⁺', initialColor: 'rgba(255, 165, 0, 0.3)',   x: 350, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+            { id: 'zn2', label: 'Zn²⁺', initialColor: 'rgba(240, 248, 255, 0.3)', x: 450, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+            { id: 'cl',  label: 'Cl⁻',  initialColor: 'rgba(240, 248, 255, 0.3)', x: 550, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+            { id: 'so4', label: 'SO₄²⁻',initialColor: 'rgba(240, 248, 255, 0.3)', x: 650, y: 350, w: 40, h: 150, state: 'initial', precipiteColor: null },
+        ];
+
+        // --- DONNÉES DES RÉACTIFS (Flacons) ---
+        const reactifs = [
+            { id: 'soude', label: 'Soude (HO⁻)', color: '#e2e8f0', x: 200, y: 100, w: 60, h: 80, isDragging: false },
+            { id: 'nitrate', label: 'Nitrate d\'argent (Ag⁺)', color: '#cbd5e1', x: 400, y: 100, w: 60, h: 80, isDragging: false },
+            { id: 'baryum', label: 'Chlorure de baryum (Ba²⁺)', color: '#94a3b8', x: 600, y: 100, w: 60, h: 80, isDragging: false },
+        ];
+
+        // --- RÉSULTATS ATTENDUS ---
+        const reactions = {
+            'soude': {
+                'cu2': '#1d4ed8', // Bleu
+                'fe2': '#15803d', // Vert
+                'fe3': '#b45309', // Rouille
+                'zn2': '#ffffff'  // Blanc
+            },
+            'nitrate': {
+                'cl': '#ffffff'   // Blanc (noircit à la lumière, on fera blanc ici)
+            },
+            'baryum': {
+                'so4': '#ffffff'  // Blanc
+            }
+        };
+
+        let activeReactif = null;
+        let mouseX = 0;
+        let mouseY = 0;
+        let isAnimating = false;
+        let dropAnimation = null;
+
+        function draw() {
+            ctx.clearRect(0, 0, SIM_WIDTH, SIM_HEIGHT);
+
+            // Dessiner le portoir
+            ctx.fillStyle = '#8b5a2b';
+            ctx.fillRect(100, 450, 640, 20); // base
+            ctx.fillRect(100, 380, 640, 10); // barre haute
+
+            // Dessiner les tubes
+            tubes.forEach(tube => {
+                // Verre du tube
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 3;
+                ctx.fillStyle = 'rgba(200, 220, 240, 0.2)';
+
+                // Forme du tube (arrondi en bas)
+                ctx.beginPath();
+                ctx.moveTo(tube.x, tube.y);
+                ctx.lineTo(tube.x, tube.y + tube.h - 20);
+                ctx.arc(tube.x + tube.w/2, tube.y + tube.h - 20, tube.w/2, Math.PI, 0, true);
+                ctx.lineTo(tube.x + tube.w, tube.y);
+                ctx.fill();
+                ctx.stroke();
+
+                // Liquide
+                ctx.fillStyle = tube.initialColor;
+                ctx.beginPath();
+                ctx.moveTo(tube.x + 3, tube.y + 50);
+                ctx.lineTo(tube.x + 3, tube.y + tube.h - 20);
+                ctx.arc(tube.x + tube.w/2, tube.y + tube.h - 20, (tube.w-6)/2, Math.PI, 0, true);
+                ctx.lineTo(tube.x + tube.w - 3, tube.y + 50);
+                ctx.fill();
+
+                // Précipité s'il existe
+                if (tube.state === 'precipite' && tube.precipiteColor) {
+                    // Ombrage pour simuler le solide
+                    const grad = ctx.createLinearGradient(tube.x, tube.y+tube.h, tube.x+tube.w, tube.y+tube.h);
+                    grad.addColorStop(0, tube.precipiteColor);
+                    grad.addColorStop(1, 'rgba(0,0,0,0.5)'); // Assombrir un peu
+
+                    ctx.fillStyle = tube.precipiteColor;
+                    ctx.beginPath();
+                    // On dessine le précipité au fond du tube
+                    ctx.moveTo(tube.x + 3, tube.y + tube.h - 40);
+                    ctx.lineTo(tube.x + 3, tube.y + tube.h - 20);
+                    ctx.arc(tube.x + tube.w/2, tube.y + tube.h - 20, (tube.w-6)/2, Math.PI, 0, true);
+                    ctx.lineTo(tube.x + tube.w - 3, tube.y + tube.h - 40);
+                    // Effet "nuageux"
+                    ctx.bezierCurveTo(tube.x + tube.w - 10, tube.y + tube.h - 45, tube.x + 10, tube.y + tube.h - 35, tube.x + 3, tube.y + tube.h - 40);
+                    ctx.fill();
+                }
+
+                // Étiquette du tube
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(tube.x - 5, tube.y + tube.h + 10, 50, 20);
+                ctx.fillStyle = '#000';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(tube.label, tube.x + tube.w/2, tube.y + tube.h + 25);
+            });
+
+            // Animation d'une goutte
+            if (dropAnimation) {
+                ctx.fillStyle = dropAnimation.color;
+                ctx.beginPath();
+                ctx.arc(dropAnimation.x, dropAnimation.y, 5, 0, Math.PI*2);
+                ctx.fill();
+                dropAnimation.y += 5; // vitesse de chute
+
+                // Si la goutte touche le liquide
+                const targetTube = tubes.find(t => t.id === dropAnimation.tubeId);
+                if (dropAnimation.y > targetTube.y + 60) {
+                    // Evaluer la réaction
+                    const rColor = reactions[dropAnimation.reactifId]?.[targetTube.id];
+                    if (rColor) {
+                        targetTube.state = 'precipite';
+                        targetTube.precipiteColor = rColor;
+                    }
+                    dropAnimation = null; // Fin animation
+                    isAnimating = false;
+                }
+            }
+
+            // Dessiner les réactifs
+            reactifs.forEach(reactif => {
+                let rx = reactif.x;
+                let ry = reactif.y;
+                if (reactif.isDragging) {
+                    rx = mouseX - reactif.w / 2;
+                    ry = mouseY - reactif.h / 2;
+                }
+
+                // Dessiner la bouteille
+                ctx.fillStyle = reactif.color;
+                ctx.beginPath();
+                ctx.moveTo(rx, ry + 20);
+                ctx.lineTo(rx + reactif.w, ry + 20);
+                ctx.lineTo(rx + reactif.w, ry + reactif.h);
+                ctx.lineTo(rx, ry + reactif.h);
+                ctx.fill();
+                // Bouchon/Goulot
+                ctx.fillStyle = '#64748b';
+                ctx.fillRect(rx + reactif.w/2 - 10, ry, 20, 20);
+
+                // Étiquette
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(rx + 5, ry + 30, reactif.w - 10, 40);
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                // Multiline text trick
+                let line1 = "";
+                let line2 = "";
+                if (reactif.id === 'baryum') {
+                    line1 = "Chlorure";
+                    line2 = "de baryum";
+                } else if (reactif.id === 'nitrate') {
+                    line1 = "Nitrate";
+                    line2 = "d'argent";
+                } else if (reactif.id === 'soude') {
+                    line1 = "Soude";
+                    line2 = "(HO⁻)";
+                }
+                ctx.fillText(line1, rx + reactif.w/2, ry + 45);
+                ctx.fillText(line2, rx + reactif.w/2, ry + 58);
+
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // --- GESTION SOURIS / TOUCH ---
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            // Scale if CSS resizes canvas
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            return {
+                x: (evt.clientX - rect.left) * scaleX,
+                y: (evt.clientY - rect.top) * scaleY
+            };
+        }
+
+        function handlePointerDown(evt) {
+            if (isAnimating) return;
+            const pos = getMousePos(evt.touches ? evt.touches[0] : evt);
+            mouseX = pos.x;
+            mouseY = pos.y;
+
+            // Check if clicking a reactif
+            for (let i = reactifs.length - 1; i >= 0; i--) {
+                const r = reactifs[i];
+                if (mouseX > r.x && mouseX < r.x + r.w && mouseY > r.y && mouseY < r.y + r.h) {
+                    r.isDragging = true;
+                    activeReactif = r;
+                    break;
+                }
+            }
+        }
+
+        function handlePointerMove(evt) {
+            if (activeReactif) {
+                const pos = getMousePos(evt.touches ? evt.touches[0] : evt);
+                mouseX = pos.x;
+                mouseY = pos.y;
+            }
+        }
+
+        function handlePointerUp(evt) {
+            if (activeReactif) {
+                // Check if dropped over a tube
+                const rCenterX = mouseX;
+                const rBottomY = mouseY + activeReactif.h/2;
+
+                const targetTube = tubes.find(t =>
+                    rCenterX > t.x && rCenterX < t.x + t.w &&
+                    rBottomY > t.y - 50 && rBottomY < t.y + t.h
+                );
+
+                if (targetTube && targetTube.state === 'initial') {
+                    // Déclencher l'animation d'une goutte
+                    isAnimating = true;
+                    dropAnimation = {
+                        x: rCenterX,
+                        y: rBottomY,
+                        color: activeReactif.color,
+                        tubeId: targetTube.id,
+                        reactifId: activeReactif.id
+                    };
+                }
+
+                // Reset position flacon
+                activeReactif.isDragging = false;
+                activeReactif = null;
+            }
+        }
+
+        canvas.addEventListener('mousedown', handlePointerDown);
+        canvas.addEventListener('mousemove', handlePointerMove);
+        canvas.addEventListener('mouseup', handlePointerUp);
+
+        canvas.addEventListener('touchstart', handlePointerDown, {passive: false});
+        canvas.addEventListener('touchmove', handlePointerMove, {passive: false});
+        canvas.addEventListener('touchend', handlePointerUp);
+
+        // --- RESET ---
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            tubes.forEach(t => { t.state = 'initial'; t.precipiteColor = null; });
+            isAnimating = false;
+            dropAnimation = null;
+        });
+
+        // Start loop
+        requestAnimationFrame(draw);
+
+    </script>
+</body>
+</html>
