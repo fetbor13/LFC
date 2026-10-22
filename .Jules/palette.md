@@ -1,0 +1,3 @@
+## 2024-05-14 - ARIA Labels on Modals and Theme Controls
+**Learning:** Found an accessibility issue pattern specific to this app's components regarding icon-only buttons for theme toggles (`🌙`) and modal close buttons (`✕`). While routine a11y, these specific patterns are pervasive in the `index.html`, `index_college.html`, and `index2F.html` main views and significantly degrade screen reader navigation for critical layout controls.
+**Action:** Applied `aria-label="Changer de thème"`, `aria-label="Réduire la barre latérale"`, and `aria-label="Fermer"` to these core icon-only interactive elements to establish a reusable UX pattern for this design system's modal controls.
