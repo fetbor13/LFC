@@ -1,0 +1,3 @@
+## 2024-05-24 - Modal Accessibility Improvements
+**Learning:** Custom modals and form inputs lacking visible labels (placeholder-only) are prevalent in this application. They require explicit ARIA attributes for screen reader support.
+**Action:** Added `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` to `.modal` elements. Added `aria-label` to placeholder-only inputs and icon-only close buttons (`✕`).
